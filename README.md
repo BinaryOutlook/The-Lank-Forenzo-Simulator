@@ -84,6 +84,10 @@ content/
 docs/
   PRD.md
   TECHNICAL_BRIEF.md
+PRDs/
+  v0.1.1/
+    v0.1.1.md
+    v0.1.1-demo.html
 tests/
   unit/
   e2e/
@@ -93,3 +97,4 @@ tests/
 
 - Product requirements: [docs/PRD.md](docs/PRD.md)
 - Systems and design brief: [docs/TECHNICAL_BRIEF.md](docs/TECHNICAL_BRIEF.md)
+- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md)

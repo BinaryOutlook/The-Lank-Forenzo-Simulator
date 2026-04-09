@@ -18,6 +18,12 @@
   --danger-soft: oklch(0.92 0.04 28 / 0.65);
   --success: oklch(0.65 0.18 152);
   --success-soft: oklch(0.93 0.05 152 / 0.75);
+  --decision-preview-positive-bg: oklch(0.93 0.045 152 / 0.86);
+  --decision-preview-positive-border: oklch(0.71 0.13 152 / 0.42);
+  --decision-preview-positive-text: oklch(0.36 0.09 152);
+  --decision-preview-negative-bg: oklch(0.93 0.05 28 / 0.82);
+  --decision-preview-negative-border: oklch(0.68 0.14 28 / 0.45);
+  --decision-preview-negative-text: oklch(0.4 0.12 28);
   --warning: oklch(0.82 0.17 86);
   --shadow-ambient: 0 16px 42px rgb(15 98 254 / 0.08);
   --backdrop:

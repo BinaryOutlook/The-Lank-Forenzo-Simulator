@@ -44,26 +44,50 @@
   background: var(--accent);
   color: var(--canvas);
   font-weight: 600;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.resolveButton:hover {
+  transform: translateY(-1px);
+}
+
+.resolveButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 26%, transparent);
 }
 
 .list {
   display: grid;
-  gap: 0.85rem;
+  gap: 0.75rem;
 }
 
 .card {
   display: grid;
-  gap: 0.9rem;
-  padding: 1.1rem;
+  gap: 0.8rem;
+  padding: 1rem;
   border: 1px solid var(--border);
   background: var(--panel);
   text-align: left;
-  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .card:hover {
   transform: translateY(-2px);
   border-color: color-mix(in oklab, var(--accent) 35%, var(--border));
+}
+
+.card:focus-visible {
+  outline: none;
+  border-color: color-mix(in oklab, var(--accent) 58%, var(--border));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
 }
 
 .cardSelected {
@@ -112,14 +136,22 @@
 .previewNegative {
   display: inline-flex;
   align-items: center;
-  min-height: 2rem;
+  min-height: 1.95rem;
   padding: 0 0.7rem;
-  font-size: 0.8rem;
-  background: var(--success-soft);
+  border: 1px solid var(--decision-preview-positive-border);
+  background: var(--decision-preview-positive-bg);
+  color: var(--decision-preview-positive-text);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .previewNegative {
-  background: var(--danger-soft);
+  border-color: var(--decision-preview-negative-border);
+  background: var(--decision-preview-negative-bg);
+  color: var(--decision-preview-negative-text);
 }
 
 @media (max-width: 860px) {
