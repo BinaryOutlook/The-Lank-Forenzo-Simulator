@@ -1,5 +1,6 @@
 import { hashNumber, hashString, pickWeighted, shuffleWithSeed } from "../../lib/random/seeded";
 import { getImpactSetScore } from "../state/metricSemantics";
+import { getAvailableDecisions } from "../systems/decisionEngine";
 import { loadContent } from "../content";
 import {
   boundedMetricKeys,
@@ -209,6 +210,7 @@ export function createInitialRunState(): RunState {
       offshoreReadiness: 8,
     },
     selectedDecisionIds: [],
+    lastOfferedDecisionIds: [],
     pendingEvents: [],
     flags: [],
     endingId: null,
@@ -230,12 +232,16 @@ function getDecisionMap(content: ContentBundle): Map<string, DecisionDefinition>
   return new Map(content.decisions.map((decision) => [decision.id, decision]));
 }
 
-function pickDelayedEventId(decisionId: string, round: number, delayed: DecisionDefinition["delayedConsequences"][number]): string | null {
+function pickDelayedEventId(
+  decisionId: string,
+  round: number,
+  delayed: NonNullable<DecisionDefinition["delayedConsequences"]>[number],
+): string | null {
   if (delayed.eventId) {
     return delayed.eventId;
   }
 
-  const eventIds = delayed.eventIds ?? [];
+  const eventIds: string[] = delayed.eventIds ?? [];
 
   if (eventIds.length === 0) {
     return null;
@@ -251,6 +257,7 @@ function pickDelayedEventId(decisionId: string, round: number, delayed: Decision
 
 export function resolveRound(run: RunState): RunState {
   const content = loadContent();
+  const offeredThisRound = getAvailableDecisions(content.decisions, run).map((decision) => decision.id);
   const decisionMap = getDecisionMap(content);
   const round = run.round + 1;
   let metrics = { ...run.metrics };
@@ -361,6 +368,7 @@ export function resolveRound(run: RunState): RunState {
     round,
     metrics,
     selectedDecisionIds: [],
+    lastOfferedDecisionIds: offeredThisRound,
     pendingEvents: remainingPendingEvents,
     flags: [...flags],
     endingId,

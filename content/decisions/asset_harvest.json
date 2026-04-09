@@ -1,0 +1,139 @@
+[
+  {
+    "id": "sell_the_gates_lease_the_story",
+    "title": "Sell the Gates, Lease the Story",
+    "summary": "Monetize terminal access, then call the loss of control a partnership model.",
+    "group": "operations",
+    "tags": ["assets", "gates", "cash"],
+    "impacts": {
+      "airlineCash": 24,
+      "assetValue": -22,
+      "marketConfidence": 5,
+      "creditorPatience": 4
+    },
+    "delayedConsequences": [
+      { "eventIds": ["gate_covenant_trap", "slot_auction_humiliation", "regional_feed_unravels"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "auction_the_maintenance_base",
+    "title": "Auction the Maintenance Base",
+    "summary": "Cash out the real estate and trust the next operator to respect metal more than margin.",
+    "group": "finance",
+    "tags": ["assets", "maintenance", "cash"],
+    "impacts": {
+      "airlineCash": 28,
+      "assetValue": -26,
+      "safetyIntegrity": -10,
+      "workforceMorale": -4,
+      "legalHeat": 4
+    },
+    "delayedConsequences": [
+      { "eventIds": ["maintenance_paper_trail", "parts_cannibalization", "vendor_safety_dispute"], "delay": 3 }
+    ]
+  },
+  {
+    "id": "dump_the_owned_simulators",
+    "title": "Dump the Owned Simulators",
+    "summary": "Sell the training hardware and outsource realism to a schedule you no longer control.",
+    "group": "finance",
+    "tags": ["assets", "training", "cash"],
+    "impacts": {
+      "airlineCash": 16,
+      "assetValue": -12,
+      "safetyIntegrity": -5,
+      "workforceMorale": -3
+    },
+    "delayedConsequences": [
+      { "eventIds": ["inspection_memo_leak", "maintenance_near_miss", "parts_cannibalization"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "harvest_the_spare_engines",
+    "title": "Harvest the Spare Engines",
+    "summary": "Turn resilience into liquidity and hope nobody notices the fleet is now one bad week from prayer.",
+    "group": "finance",
+    "tags": ["assets", "fleet", "risk"],
+    "impacts": {
+      "airlineCash": 18,
+      "assetValue": -14,
+      "safetyIntegrity": -9,
+      "legalHeat": 5
+    },
+    "delayedConsequences": [
+      { "eventIds": ["parts_cannibalization", "maintenance_near_miss", "inspection_memo_leak"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "close_the_crown_jewel_lounge",
+    "title": "Close the Crown Jewel Lounge",
+    "summary": "Strip the premium veneer for savings and trust loyalty to confuse nostalgia with discipline.",
+    "group": "operations",
+    "tags": ["assets", "brand", "cuts"],
+    "impacts": {
+      "airlineCash": 8,
+      "marketConfidence": -3,
+      "publicAnger": 4,
+      "stockPrice": -2
+    },
+    "delayedConsequences": [
+      { "eventIds": ["turnaround_story_cracks", "route_overlap_chart", "gate_covenant_trap"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "mortgage_the_loyalty_program",
+    "title": "Mortgage the Loyalty Program",
+    "summary": "Borrow against future devotion and let tomorrow's passengers refinance today's desperation.",
+    "group": "finance",
+    "tags": ["finance", "loyalty", "cash"],
+    "impacts": {
+      "airlineCash": 36,
+      "debt": 18,
+      "marketConfidence": 8,
+      "creditorPatience": 6
+    },
+    "requirements": {
+      "roundAtLeast": 2
+    },
+    "delayedConsequences": [
+      { "eventIds": ["leaseback_bill_shock", "covenant_leak", "lender_cooperation_cracks"], "delay": 3 }
+    ]
+  },
+  {
+    "id": "prepay_the_sale_leaseback_dividend",
+    "title": "Prepay the Sale-Leaseback Dividend",
+    "summary": "Take a personal skim off the asset unwind and call it alignment with shareholder outcomes.",
+    "group": "extraction",
+    "tags": ["assets", "extraction", "leaseback"],
+    "impacts": {
+      "airlineCash": -18,
+      "personalWealth": 10,
+      "assetValue": -18,
+      "legalHeat": 7
+    },
+    "requirements": {
+      "metricMin": {
+        "airlineCash": 120
+      }
+    },
+    "delayedConsequences": [
+      { "eventIds": ["leaseback_bill_shock", "lessor_step_in_clause", "lease_reserve_trueup"], "delay": 3 }
+    ]
+  },
+  {
+    "id": "sell_the_hangar_and_sublease_it",
+    "title": "Sell the Hangar and Sublease It",
+    "summary": "Monetize the roof over your own maintenance work and clap when the spreadsheet says efficiency.",
+    "group": "operations",
+    "tags": ["assets", "hangar", "operations"],
+    "impacts": {
+      "airlineCash": 20,
+      "assetValue": -16,
+      "workforceMorale": -4,
+      "safetyIntegrity": -6
+    },
+    "delayedConsequences": [
+      { "eventIds": ["gate_covenant_trap", "parts_cannibalization", "maintenance_paper_trail"], "delay": 2 }
+    ]
+  }
+]

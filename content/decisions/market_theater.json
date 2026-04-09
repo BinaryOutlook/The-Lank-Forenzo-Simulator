@@ -1,0 +1,128 @@
+[
+  {
+    "id": "invent_capacity_discipline_story",
+    "title": "Invent a Capacity Discipline Story",
+    "summary": "Shrink the map, raise the rhetoric, and ask the market to applaud restraint instead of retreat.",
+    "group": "market",
+    "tags": ["market", "story", "capacity"],
+    "impacts": {
+      "marketConfidence": 7,
+      "stockPrice": 4,
+      "legalHeat": 3
+    },
+    "delayedConsequences": [
+      { "eventIds": ["analyst_model_walkback", "turnaround_story_cracks", "earnings_guidance_correction"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "walk_the_analysts_through_the_smoke",
+    "title": "Walk the Analysts Through the Smoke",
+    "summary": "Hold a detailed call full of selective detail and trust politeness to substitute for skepticism.",
+    "group": "market",
+    "tags": ["market", "analysts", "spin"],
+    "impacts": {
+      "marketConfidence": 6,
+      "stockPrice": 5,
+      "legalHeat": 4
+    },
+    "delayedConsequences": [
+      { "eventIds": ["call_transcript_supercut", "analyst_model_walkback", "turnaround_story_cracks"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "announce_a_strategic_review",
+    "title": "Announce a Strategic Review",
+    "summary": "Create a process, a banker slide deck, and several months of borrowed credibility.",
+    "group": "market",
+    "tags": ["market", "review", "board"],
+    "impacts": {
+      "marketConfidence": 5,
+      "creditorPatience": 4,
+      "legalHeat": 3
+    },
+    "delayedConsequences": [
+      { "eventIds": ["merger_interest", "turnaround_story_cracks", "fairness_opinion_underfire"], "delay": 3 }
+    ]
+  },
+  {
+    "id": "preload_the_earnings_deck",
+    "title": "Preload the Earnings Deck",
+    "summary": "Write the quarter for the headline first, then assign accounting to the clean-up crew.",
+    "group": "market",
+    "tags": ["market", "earnings", "accounting"],
+    "impacts": {
+      "marketConfidence": 8,
+      "stockPrice": 6,
+      "legalHeat": 5
+    },
+    "delayedConsequences": [
+      { "eventIds": ["earnings_guidance_correction", "call_transcript_supercut", "analyst_model_walkback"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "bury_the_cuts_in_synergy_language",
+    "title": "Bury the Cuts in Synergy Language",
+    "summary": "Hide the pain behind consultant nouns until the workforce realizes the grammar is lethal.",
+    "group": "market",
+    "tags": ["market", "labor", "synergy"],
+    "impacts": {
+      "marketConfidence": 4,
+      "stockPrice": 2,
+      "publicAnger": 5,
+      "legalHeat": 3
+    },
+    "delayedConsequences": [
+      { "eventIds": ["route_overlap_chart", "turnaround_story_cracks", "fairness_opinion_underfire"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "float_a_loyalty_spinoff",
+    "title": "Float a Loyalty Spinoff",
+    "summary": "Sell the market a cleaner jewel than the airline deserves and let complexity do the hiding.",
+    "group": "finance",
+    "tags": ["market", "loyalty", "finance"],
+    "impacts": {
+      "marketConfidence": 7,
+      "stockPrice": 5,
+      "debt": -12,
+      "legalHeat": 4
+    },
+    "requirements": {
+      "roundAtLeast": 2
+    },
+    "delayedConsequences": [
+      { "eventIds": ["turnaround_story_cracks", "covenant_leak", "fairness_opinion_underfire"], "delay": 3 }
+    ]
+  },
+  {
+    "id": "commission_a_friendly_fairness_opinion",
+    "title": "Commission a Friendly Fairness Opinion",
+    "summary": "Pay a prestigious third party to explain why your preferred outcome was inevitable and reasonable.",
+    "group": "legal",
+    "tags": ["market", "legal", "board"],
+    "impacts": {
+      "airlineCash": -8,
+      "creditorPatience": 5,
+      "marketConfidence": 4,
+      "legalHeat": 3
+    },
+    "delayedConsequences": [
+      { "eventIds": ["fairness_opinion_underfire", "call_transcript_supercut", "director_indemnity_alarm"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "seed_the_turnaround_podcast",
+    "title": "Seed the Turnaround Podcast",
+    "summary": "Package the rot as leadership content and let the audience confuse candor with control.",
+    "group": "market",
+    "tags": ["market", "press", "story"],
+    "impacts": {
+      "marketConfidence": 4,
+      "stockPrice": 3,
+      "legalHeat": 2
+    },
+    "delayedConsequences": [
+      { "eventIds": ["call_transcript_supercut", "analyst_model_walkback", "turnaround_story_cracks"], "delay": 2 }
+    ]
+  }
+]

@@ -1,0 +1,154 @@
+[
+  {
+    "id": "launch_a_leisure_shell",
+    "title": "Launch a Leisure Shell",
+    "summary": "Create a cheaper certificate, a softer brand voice, and a much harder labor problem.",
+    "group": "operations",
+    "tags": ["shell", "subsidiary", "growth"],
+    "impacts": {
+      "airlineCash": 16,
+      "marketConfidence": 5,
+      "workforceMorale": -6,
+      "legalHeat": 4
+    },
+    "setsFlags": ["shellCarrierLive"],
+    "delayedConsequences": [
+      { "eventIds": ["shell_route_map_leak", "scope_clause_arbitration", "route_overlap_chart"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "move_the_flying_off_book",
+    "title": "Move the Flying Off-Book",
+    "summary": "Shift growth into the shell and let the mainline discover the news from the schedule update.",
+    "group": "labor",
+    "tags": ["shell", "labor", "flying"],
+    "impacts": {
+      "airlineCash": 15,
+      "workforceMorale": -8,
+      "publicAnger": 7,
+      "legalHeat": 5
+    },
+    "requirements": {
+      "flagsAll": ["shellCarrierLive"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["scope_clause_arbitration", "shell_route_map_leak", "seniority_map_fight"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "shift_the_pension_obligation",
+    "title": "Shift the Pension Obligation",
+    "summary": "Reassign liabilities through corporate geometry and hope the retirees never learn topology.",
+    "group": "finance",
+    "tags": ["shell", "pensions", "finance"],
+    "impacts": {
+      "airlineCash": 20,
+      "creditorPatience": 3,
+      "workforceMorale": -9,
+      "publicAnger": 8,
+      "legalHeat": 6
+    },
+    "requirements": {
+      "flagsAll": ["shellCarrierLive"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["pension_class_action", "nominee_structure_leak", "retiree_tv_tour"], "delay": 3 }
+    ]
+  },
+  {
+    "id": "dual_brand_the_retreat",
+    "title": "Dual-Brand the Retreat",
+    "summary": "Give the contraction a fresh paint job and trust the press to confuse segmentation with surrender.",
+    "group": "market",
+    "tags": ["shell", "brand", "market"],
+    "impacts": {
+      "marketConfidence": 6,
+      "stockPrice": 3,
+      "publicAnger": 4,
+      "legalHeat": 2
+    },
+    "requirements": {
+      "flagsAll": ["shellCarrierLive"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["shell_route_map_leak", "call_transcript_supercut", "turnaround_story_cracks"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "wet_lease_the_growth",
+    "title": "Wet-Lease the Growth",
+    "summary": "Buy expansion off someone else's certificate and keep the accountability graph pleasantly blurry.",
+    "group": "operations",
+    "tags": ["shell", "wet-lease", "operations"],
+    "impacts": {
+      "airlineCash": 18,
+      "safetyIntegrity": -7,
+      "workforceMorale": -5,
+      "legalHeat": 4
+    },
+    "requirements": {
+      "flagsAll": ["shellCarrierLive"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["vendor_safety_dispute", "contractor_walkout", "scope_clause_arbitration"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "interline_the_liability",
+    "title": "Interline the Liability",
+    "summary": "Push the messy economics across entity lines and see how long the debt story stays legible.",
+    "group": "finance",
+    "tags": ["shell", "finance", "liability"],
+    "impacts": {
+      "airlineCash": 14,
+      "debt": -8,
+      "creditorPatience": -3,
+      "legalHeat": 5
+    },
+    "requirements": {
+      "flagsAll": ["shellCarrierLive"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["shell_invoice_exposed", "lender_cooperation_cracks", "nominee_structure_leak"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "rehire_through_the_shell",
+    "title": "Rehire Through the Shell",
+    "summary": "Offer workers their own jobs back at a lower wage and call the humiliation optional.",
+    "group": "labor",
+    "tags": ["shell", "labor", "rehire"],
+    "impacts": {
+      "workforceSize": 240,
+      "workforceMorale": -7,
+      "publicAnger": 5,
+      "legalHeat": 4
+    },
+    "requirements": {
+      "flagsAll": ["shellCarrierLive"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["scope_clause_arbitration", "shell_route_map_leak", "severance_injunction"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "fold_the_shell_back_in",
+    "title": "Fold the Shell Back In",
+    "summary": "Declare the shell a successful experiment and absorb the wreckage back into the main balance sheet.",
+    "group": "market",
+    "tags": ["shell", "integration", "board"],
+    "impacts": {
+      "marketConfidence": 5,
+      "creditorPatience": 4,
+      "legalHeat": 4,
+      "workforceMorale": -3
+    },
+    "requirements": {
+      "flagsAll": ["shellCarrierLive"],
+      "roundAtLeast": 5
+    },
+    "delayedConsequences": [
+      { "eventIds": ["call_transcript_supercut", "merger_interest", "nominee_structure_leak"], "delay": 3 }
+    ]
+  }
+]

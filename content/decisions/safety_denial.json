@@ -1,0 +1,139 @@
+[
+  {
+    "id": "downgrade_the_inspection_memo",
+    "title": "Downgrade the Inspection Memo",
+    "summary": "Reclassify urgent work as manageable drift and let the paperwork do the flying.",
+    "group": "operations",
+    "tags": ["safety", "maintenance", "paperwork"],
+    "impacts": {
+      "airlineCash": 12,
+      "safetyIntegrity": -8,
+      "legalHeat": 6
+    },
+    "delayedConsequences": [
+      { "eventIds": ["faa_ramp_audit", "maintenance_paper_trail", "inspection_memo_leak"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "vendor_swap_the_heavy_checks",
+    "title": "Vendor-Swap the Heavy Checks",
+    "summary": "Hand the heaviest maintenance to the cheapest bidder and call the risk transfer expertise.",
+    "group": "operations",
+    "tags": ["safety", "contractors", "fleet"],
+    "impacts": {
+      "airlineCash": 18,
+      "safetyIntegrity": -10,
+      "workforceMorale": -5,
+      "legalHeat": 6
+    },
+    "delayedConsequences": [
+      { "eventIds": ["vendor_safety_dispute", "contractor_walkout", "maintenance_near_miss"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "declare_the_parts_shortage_temporary",
+    "title": "Declare the Parts Shortage Temporary",
+    "summary": "Move the shortage into language first and hope the hardware eventually catches up.",
+    "group": "operations",
+    "tags": ["safety", "parts", "spin"],
+    "impacts": {
+      "airlineCash": 10,
+      "marketConfidence": 2,
+      "safetyIntegrity": -7,
+      "legalHeat": 4
+    },
+    "delayedConsequences": [
+      { "eventIds": ["inspection_memo_leak", "parts_cannibalization", "maintenance_near_miss"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "borrow_from_training_hours",
+    "title": "Borrow from Training Hours",
+    "summary": "Steal from the future proficiency budget and hope repetition still counts as mastery.",
+    "group": "operations",
+    "tags": ["safety", "training", "cuts"],
+    "impacts": {
+      "airlineCash": 14,
+      "safetyIntegrity": -6,
+      "workforceMorale": -4,
+      "publicAnger": 2
+    },
+    "delayedConsequences": [
+      { "eventIds": ["maintenance_near_miss", "inspection_memo_leak", "vendor_safety_dispute"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "stretch_the_mel_clock",
+    "title": "Stretch the MEL Clock",
+    "summary": "Treat temporary deferrals as a lifestyle and dare the regulator to synchronize watches.",
+    "group": "operations",
+    "tags": ["safety", "legal", "deferments"],
+    "impacts": {
+      "airlineCash": 13,
+      "safetyIntegrity": -9,
+      "legalHeat": 7,
+      "marketConfidence": 1
+    },
+    "delayedConsequences": [
+      { "eventIds": ["faa_ramp_audit", "inspection_memo_leak", "maintenance_near_miss"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "collapse_the_qc_layers",
+    "title": "Collapse the QC Layers",
+    "summary": "Remove redundant quality checks until what remains is speed, faith, and a memo about accountability.",
+    "group": "operations",
+    "tags": ["safety", "quality", "cuts"],
+    "impacts": {
+      "airlineCash": 20,
+      "safetyIntegrity": -11,
+      "workforceMorale": -6,
+      "legalHeat": 5
+    },
+    "delayedConsequences": [
+      { "eventIds": ["vendor_safety_dispute", "inspection_memo_leak", "contractor_walkout"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "buy_the_audit_weekend",
+    "title": "Buy the Audit Weekend",
+    "summary": "Spend enough real money to survive the next inspection and present that as a culture reset.",
+    "group": "legal",
+    "tags": ["safety", "audit", "cleanup"],
+    "impacts": {
+      "airlineCash": -16,
+      "safetyIntegrity": 9,
+      "legalHeat": -7,
+      "publicAnger": -2
+    },
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 38
+      }
+    },
+    "delayedConsequences": [
+      { "eventIds": ["faa_ramp_audit", "inspection_memo_leak", "maintenance_paper_trail"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "sacrifice_on_time_to_hide_safety",
+    "title": "Sacrifice On-Time to Hide Safety",
+    "summary": "Let the schedule suffer so the metal survives, then see how long the market tolerates integrity.",
+    "group": "operations",
+    "tags": ["safety", "operations", "stability"],
+    "impacts": {
+      "airlineCash": -10,
+      "safetyIntegrity": 12,
+      "marketConfidence": -5,
+      "legalHeat": -4
+    },
+    "requirements": {
+      "metricMax": {
+        "safetyIntegrity": 64
+      }
+    },
+    "delayedConsequences": [
+      { "eventIds": ["maintenance_paper_trail", "faa_ramp_audit", "inspection_memo_leak"], "delay": 2 }
+    ]
+  }
+]

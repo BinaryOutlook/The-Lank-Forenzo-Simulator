@@ -1,0 +1,153 @@
+[
+  {
+    "id": "dress_for_due_diligence",
+    "title": "Dress for Due Diligence",
+    "summary": "Make the airline look acquirable for one quarter, whether or not it remains operable for two.",
+    "group": "market",
+    "tags": ["merger", "story", "board"],
+    "impacts": {
+      "airlineCash": -8,
+      "marketConfidence": 6,
+      "creditorPatience": 4,
+      "legalHeat": 2
+    },
+    "setsFlags": ["mergerNarrative"],
+    "delayedConsequences": [
+      { "eventIds": ["merger_interest", "slot_value_diligence", "synergy_diligence_snoop"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "leak_strategic_partner_rumor",
+    "title": "Leak a Strategic Partner Rumor",
+    "summary": "Float a disciplined whisper campaign and let the market hallucinate the premium for you.",
+    "group": "market",
+    "tags": ["merger", "market", "spin"],
+    "impacts": {
+      "marketConfidence": 8,
+      "stockPrice": 5,
+      "legalHeat": 4
+    },
+    "requirements": {
+      "flagsAll": ["mergerNarrative"]
+    },
+    "setsFlags": ["suitorWhispers"],
+    "delayedConsequences": [
+      { "eventIds": ["merger_term_sheet", "route_overlap_chart", "synergy_diligence_snoop"], "delay": 3 }
+    ]
+  },
+  {
+    "id": "carve_out_the_prize_slots",
+    "title": "Carve Out the Prize Slots",
+    "summary": "Quietly protect the pieces an acquirer wants and let the rest of the network learn what expendable means.",
+    "group": "operations",
+    "tags": ["merger", "slots", "network"],
+    "impacts": {
+      "airlineCash": 18,
+      "assetValue": -14,
+      "marketConfidence": 4,
+      "creditorPatience": 3,
+      "publicAnger": 3
+    },
+    "delayedConsequences": [
+      { "eventIds": ["slot_value_diligence", "slot_auction_humiliation", "gate_covenant_trap"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "pre_merger_labor_cleanup",
+    "title": "Pre-Merger Labor Cleanup",
+    "summary": "Cut headcount now so a buyer can call the blood loss synergy instead of admitting it was yours.",
+    "group": "labor",
+    "tags": ["merger", "labor", "cuts"],
+    "impacts": {
+      "airlineCash": 22,
+      "workforceSize": -480,
+      "workforceMorale": -10,
+      "marketConfidence": 4,
+      "publicAnger": 8,
+      "legalHeat": 5
+    },
+    "requirements": {
+      "roundAtLeast": 3
+    },
+    "delayedConsequences": [
+      { "eventIds": ["severance_injunction", "seniority_map_fight", "route_overlap_chart"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "backfill_the_synergy_model",
+    "title": "Backfill the Synergy Model",
+    "summary": "Write the merger math backward from the stock reaction and trust diligence fatigue to do the rest.",
+    "group": "market",
+    "tags": ["merger", "synergy", "market"],
+    "impacts": {
+      "marketConfidence": 7,
+      "stockPrice": 4,
+      "legalHeat": 5
+    },
+    "requirements": {
+      "flagsAll": ["mergerNarrative"]
+    },
+    "setsFlags": ["synergyDeckReady"],
+    "delayedConsequences": [
+      { "eventIds": ["analyst_model_walkback", "call_transcript_supercut", "synergy_diligence_snoop"], "delay": 3 }
+    ]
+  },
+  {
+    "id": "promise_no_redundant_hubs",
+    "title": "Promise No Redundant Hubs",
+    "summary": "Guarantee a painless integration in public while privately circling the overlap map in red ink.",
+    "group": "market",
+    "tags": ["merger", "hubs", "optics"],
+    "impacts": {
+      "marketConfidence": 5,
+      "creditorPatience": 4,
+      "legalHeat": 4,
+      "publicAnger": 2
+    },
+    "requirements": {
+      "flagsAll": ["synergyDeckReady"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["route_overlap_chart", "hub_delay_cascade", "merger_term_sheet"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "sell_the_transition_story",
+    "title": "Sell the Transition Story",
+    "summary": "Frame the takeover as continuity, discipline, and jobs, then pray nobody asks in what order.",
+    "group": "market",
+    "tags": ["merger", "spin", "press"],
+    "impacts": {
+      "marketConfidence": 6,
+      "stockPrice": 3,
+      "publicAnger": -2,
+      "legalHeat": 3
+    },
+    "requirements": {
+      "flagsAll": ["synergyDeckReady"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["call_transcript_supercut", "analyst_model_walkback", "earnings_guidance_correction"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "prime_the_breakup_fee",
+    "title": "Prime the Breakup Fee",
+    "summary": "Make sure even the failed merger path pays somebody, and make sure that somebody looks a lot like you.",
+    "group": "finance",
+    "tags": ["merger", "finance", "risk"],
+    "impacts": {
+      "airlineCash": 16,
+      "debt": -12,
+      "creditorPatience": -4,
+      "legalHeat": 5
+    },
+    "requirements": {
+      "flagsAll": ["synergyDeckReady"],
+      "roundAtLeast": 4
+    },
+    "delayedConsequences": [
+      { "eventIds": ["merger_term_sheet", "gate_covenant_trap", "creditor_revolt"], "delay": 3 }
+    ]
+  }
+]

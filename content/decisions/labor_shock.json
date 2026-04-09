@@ -1,0 +1,151 @@
+[
+  {
+    "id": "weaponize_the_scope_clause",
+    "title": "Weaponize the Scope Clause",
+    "summary": "Turn contract ambiguity into a growth strategy and call the grievance backlog innovation.",
+    "group": "labor",
+    "tags": ["labor", "scope", "legal"],
+    "impacts": {
+      "airlineCash": 18,
+      "workforceMorale": -8,
+      "publicAnger": 7,
+      "legalHeat": 4
+    },
+    "setsFlags": ["scopeWarOpen"],
+    "delayedConsequences": [
+      { "eventIds": ["scope_clause_arbitration", "severance_injunction", "seniority_map_fight"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "freeze_the_promise_book",
+    "title": "Freeze the Promise Book",
+    "summary": "Lock the obligations, unlock the outrage, and keep the quarter solvent anyway.",
+    "group": "labor",
+    "tags": ["labor", "benefits", "cash"],
+    "impacts": {
+      "airlineCash": 26,
+      "creditorPatience": 2,
+      "workforceMorale": -12,
+      "publicAnger": 11,
+      "legalHeat": 7
+    },
+    "delayedConsequences": [
+      { "eventIds": ["pension_freeze_probe", "retiree_tv_tour", "pension_class_action"], "delay": 3 }
+    ]
+  },
+  {
+    "id": "split_the_seniority_ladder",
+    "title": "Split the Seniority Ladder",
+    "summary": "Promise advancement to everyone, then let arithmetic and bitterness finish the meeting.",
+    "group": "labor",
+    "tags": ["labor", "seniority", "conflict"],
+    "impacts": {
+      "airlineCash": 16,
+      "workforceMorale": -11,
+      "publicAnger": 6,
+      "legalHeat": 5
+    },
+    "requirements": {
+      "flagsAll": ["scopeWarOpen"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["seniority_map_fight", "scope_clause_arbitration", "severance_injunction"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "outsource_the_overhaul_night_shift",
+    "title": "Outsource the Overhaul Night Shift",
+    "summary": "Move the hardest work off the books and let somebody else's logo absorb the blame.",
+    "group": "operations",
+    "tags": ["labor", "contractors", "safety"],
+    "impacts": {
+      "airlineCash": 20,
+      "workforceMorale": -7,
+      "safetyIntegrity": -8,
+      "legalHeat": 5
+    },
+    "delayedConsequences": [
+      { "eventIds": ["contractor_walkout", "vendor_safety_dispute", "maintenance_paper_trail"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "replace_the_strike_map",
+    "title": "Replace the Strike Map",
+    "summary": "Reroute labor pressure through layoffs, replacements, and enough chaos to blur intent.",
+    "group": "labor",
+    "tags": ["labor", "strike", "cuts"],
+    "impacts": {
+      "workforceSize": -360,
+      "workforceMorale": -9,
+      "marketConfidence": 3,
+      "publicAnger": 6,
+      "legalHeat": 5
+    },
+    "requirements": {
+      "metricMax": {
+        "workforceMorale": 52
+      }
+    },
+    "delayedConsequences": [
+      { "eventIds": ["severance_injunction", "scope_clause_arbitration", "seniority_map_fight"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "regionalize_the_feed",
+    "title": "Regionalize the Feed",
+    "summary": "Move flying to thinner contracts and call the shrinking mainline footprint strategic focus.",
+    "group": "operations",
+    "tags": ["regional", "operations", "labor"],
+    "impacts": {
+      "airlineCash": 14,
+      "assetValue": -10,
+      "workforceMorale": -6,
+      "marketConfidence": 4,
+      "publicAnger": 3
+    },
+    "delayedConsequences": [
+      { "eventIds": ["regional_feed_unravels", "badge_access_chaos", "scope_clause_arbitration"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "crush_the_grievance_backlog",
+    "title": "Crush the Grievance Backlog",
+    "summary": "Clear the docket with speed, intimidation, and just enough procedural polish to look civilized.",
+    "group": "legal",
+    "tags": ["labor", "legal", "pressure"],
+    "impacts": {
+      "airlineCash": 10,
+      "creditorPatience": 3,
+      "publicAnger": 4,
+      "legalHeat": 5
+    },
+    "requirements": {
+      "metricMin": {
+        "publicAnger": 34
+      }
+    },
+    "delayedConsequences": [
+      { "eventIds": ["severance_injunction", "pension_class_action", "seniority_map_fight"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "retention_for_loyal_captains",
+    "title": "Retention for Loyal Captains",
+    "summary": "Buy off the most visible flight-deck dissent and let everyone else call it selective respect.",
+    "group": "operations",
+    "tags": ["labor", "retention", "operations"],
+    "impacts": {
+      "airlineCash": -12,
+      "workforceMorale": 7,
+      "safetyIntegrity": 4,
+      "publicAnger": -3,
+      "legalHeat": -1
+    },
+    "requirements": {
+      "flagsAll": ["scopeWarOpen"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["scope_clause_arbitration", "regional_feed_unravels", "severance_injunction"], "delay": 2 }
+    ]
+  }
+]

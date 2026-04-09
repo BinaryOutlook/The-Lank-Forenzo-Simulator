@@ -10,6 +10,7 @@ import delayedExitPaths from "./delayed_exit_paths.json";
 import delayedLabor from "./delayed_labor.json";
 import delayedOperationsFinance from "./delayed_operations_finance.json";
 import delayedPersonalMarket from "./delayed_personal_market.json";
+import delayedStrategyFallout from "./delayed_strategy_fallout.json";
 
 export const eventPacks = {
   core,
@@ -24,6 +25,7 @@ export const eventPacks = {
   delayedOperationsFinance,
   delayedPersonalMarket,
   delayedExitPaths,
+  delayedStrategyFallout,
 };
 
 export const allEvents = Object.values(eventPacks).flat();

@@ -1,0 +1,149 @@
+[
+  {
+    "id": "amend_and_extend_ambush",
+    "title": "Amend-and-Extend Ambush",
+    "summary": "Hand lenders a rushed term sheet and present their surrender as partnership.",
+    "group": "finance",
+    "tags": ["creditors", "debt", "restructuring"],
+    "impacts": {
+      "airlineCash": 24,
+      "debt": -16,
+      "creditorPatience": -9,
+      "legalHeat": 6,
+      "marketConfidence": 2
+    },
+    "setsFlags": ["bankruptcyPlaybookLive"],
+    "delayedConsequences": [
+      { "eventIds": ["covenant_leak", "distressed_debt_pack_hunt", "covenant_default_clock"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "threaten_the_recovery_stack",
+    "title": "Threaten the Recovery Stack",
+    "summary": "Tell junior creditors they can take your paper now or fight over ash later.",
+    "group": "finance",
+    "tags": ["creditors", "threats", "debt"],
+    "impacts": {
+      "airlineCash": 20,
+      "debt": -12,
+      "creditorPatience": -11,
+      "legalHeat": 7,
+      "marketConfidence": 3
+    },
+    "requirements": {
+      "flagsAll": ["bankruptcyPlaybookLive"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["creditor_revolt", "lender_cooperation_cracks", "distressed_debt_pack_hunt"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "warehouse_the_vendor_arrears",
+    "title": "Warehouse the Vendor Arrears",
+    "summary": "Stretch payable dates until your suppliers realize they are now involuntary restructuring participants.",
+    "group": "finance",
+    "tags": ["vendors", "finance", "cash"],
+    "impacts": {
+      "airlineCash": 17,
+      "creditorPatience": -6,
+      "publicAnger": 4,
+      "legalHeat": 3
+    },
+    "delayedConsequences": [
+      { "eventIds": ["vendor_lien_blitz", "covenant_leak", "gate_covenant_trap"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "shop_for_dip_bully",
+    "title": "Shop for DIP Bullies",
+    "summary": "Invite the nastiest money in the room to call itself rescue capital.",
+    "group": "finance",
+    "tags": ["dip", "creditors", "capital"],
+    "impacts": {
+      "airlineCash": 30,
+      "debt": 20,
+      "creditorPatience": -7,
+      "legalHeat": 5
+    },
+    "requirements": {
+      "roundAtLeast": 3
+    },
+    "delayedConsequences": [
+      { "eventIds": ["distressed_debt_pack_hunt", "covenant_default_clock", "lender_cooperation_cracks"], "delay": 3 }
+    ]
+  },
+  {
+    "id": "spin_the_restructuring_timeline",
+    "title": "Spin the Restructuring Timeline",
+    "summary": "Present delay as discipline and discipline as inevitability until the market applauds the hostage note.",
+    "group": "market",
+    "tags": ["creditors", "market", "spin"],
+    "impacts": {
+      "marketConfidence": 6,
+      "stockPrice": 4,
+      "creditorPatience": -2,
+      "legalHeat": 4
+    },
+    "requirements": {
+      "flagsAll": ["bankruptcyPlaybookLive"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["analyst_model_walkback", "covenant_leak", "lender_cooperation_cracks"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "cramdown_term_sheet",
+    "title": "Cramdown Term Sheet",
+    "summary": "Offer a take-it-or-take-it plan and let procedure impersonate consensus.",
+    "group": "legal",
+    "tags": ["creditors", "legal", "restructuring"],
+    "impacts": {
+      "debt": -26,
+      "creditorPatience": -14,
+      "legalHeat": 10,
+      "publicAnger": 6
+    },
+    "requirements": {
+      "flagsAll": ["bankruptcyPlaybookLive"],
+      "metricMax": {
+        "creditorPatience": 42
+      }
+    },
+    "delayedConsequences": [
+      { "eventIds": ["creditor_revolt", "covenant_default_clock", "lender_cooperation_cracks"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "cross_default_gamble",
+    "title": "Cross-Default Gamble",
+    "summary": "Pull one legal thread on purpose and hope the rest of the debt stack blinks first.",
+    "group": "finance",
+    "tags": ["debt", "risk", "creditors"],
+    "impacts": {
+      "airlineCash": 14,
+      "debt": -10,
+      "creditorPatience": -8,
+      "legalHeat": 6,
+      "stockPrice": -2
+    },
+    "delayedConsequences": [
+      { "eventIds": ["covenant_leak", "creditor_revolt", "gate_covenant_trap"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "friendly_lessor_favor",
+    "title": "Friendly Lessor Favor",
+    "summary": "Cut a side understanding with one aircraft lessor and pretend it does not make the others murderous.",
+    "group": "finance",
+    "tags": ["lessors", "finance", "fleet"],
+    "impacts": {
+      "airlineCash": 18,
+      "assetValue": -12,
+      "creditorPatience": -5,
+      "legalHeat": 3
+    },
+    "delayedConsequences": [
+      { "eventIds": ["lessor_step_in_clause", "lease_reserve_trueup", "gate_covenant_trap"], "delay": 3 }
+    ]
+  }
+]

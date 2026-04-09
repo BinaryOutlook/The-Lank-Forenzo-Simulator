@@ -11,7 +11,7 @@ Implemented in the current build:
 - React + TypeScript + Vite app shell
 - browser-native deterministic simulation loop
 - local save persistence
-- authored decision content plus a validated multi-pack event library with deterministic delayed-event pools
+- expanded multi-pack decision and event libraries with deterministic delayed-event pools
 - personal wealth, legal heat, creditor patience, safety, market confidence, and workforce systems
 - shared metric-semantics rules so inverse-pressure indicators such as `legalHeat`, `publicAnger`, and `debt` read correctly
 - multiple endings, including merger, extraction, prison, and Bahamas escape
@@ -70,7 +70,7 @@ npm run dev
 
 Open the local Vite URL shown in the terminal.
 
-Event content is assembled from validated packs under `content/events/` through `content/events/index.ts`.
+Decision and event content are assembled from validated packs under `content/decisions/` and `content/events/` through their `index.ts` files.
 
 ## Scripts
 
@@ -104,6 +104,8 @@ src/
   theme/
 content/
   decisions/
+    index.ts
+    *.json
   events/
     index.ts
     *.json

@@ -26,6 +26,17 @@ export type DecisionGroup =
   | "extraction"
   | "exit";
 
+export type DecisionPackId =
+  | "core"
+  | "mergerBait"
+  | "creditorWarfare"
+  | "laborShock"
+  | "assetHarvest"
+  | "safetyDenial"
+  | "shadowSubsidiaries"
+  | "marketTheater"
+  | "executiveEscape";
+
 export type EventKind = "ambient" | "delayed";
 
 export interface RunMetrics {
@@ -63,6 +74,7 @@ export interface DelayedConsequenceRef {
 
 export interface DecisionDefinition {
   id: string;
+  pack: DecisionPackId;
   title: string;
   summary: string;
   group: DecisionGroup;
@@ -112,6 +124,7 @@ export interface RunState {
   round: number;
   metrics: RunMetrics;
   selectedDecisionIds: string[];
+  lastOfferedDecisionIds: string[];
   pendingEvents: PendingEvent[];
   flags: string[];
   history: HistoryEntry[];

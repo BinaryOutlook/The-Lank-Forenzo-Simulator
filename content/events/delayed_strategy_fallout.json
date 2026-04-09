@@ -1,0 +1,209 @@
+[
+  {
+    "id": "synergy_diligence_snoop",
+    "kind": "delayed",
+    "title": "Synergy Diligence Snoop",
+    "body": "A diligence team starts asking why your merger math reads like fiction with footnotes.",
+    "weight": 6,
+    "tags": ["merger", "legal"],
+    "impacts": {
+      "marketConfidence": -4,
+      "creditorPatience": -2,
+      "legalHeat": 4
+    }
+  },
+  {
+    "id": "route_overlap_chart",
+    "kind": "delayed",
+    "title": "Route Overlap Chart",
+    "body": "A leaked network map shows the post-merger plan consists mostly of amputations with arrows.",
+    "weight": 5,
+    "tags": ["merger", "operations"],
+    "impacts": {
+      "marketConfidence": -3,
+      "publicAnger": 4,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "gate_covenant_trap",
+    "kind": "delayed",
+    "title": "Gate Covenant Trap",
+    "body": "A monetized gate package turns out to contain just enough restrictions to feel like a trap in a tie.",
+    "weight": 5,
+    "tags": ["finance", "operations"],
+    "impacts": {
+      "airlineCash": -14,
+      "creditorPatience": -4,
+      "legalHeat": 3
+    }
+  },
+  {
+    "id": "seniority_map_fight",
+    "kind": "delayed",
+    "title": "Seniority Map Fight",
+    "body": "Workers discover that your elegant integration plan starts by erasing someone else's future.",
+    "weight": 6,
+    "tags": ["labor", "legal"],
+    "impacts": {
+      "workforceMorale": -8,
+      "publicAnger": 6,
+      "legalHeat": 4
+    }
+  },
+  {
+    "id": "scope_clause_arbitration",
+    "kind": "delayed",
+    "title": "Scope Clause Arbitration",
+    "body": "The shell-game org chart arrives in front of an arbitrator with a very sharp pencil.",
+    "weight": 6,
+    "tags": ["labor", "legal"],
+    "impacts": {
+      "airlineCash": -10,
+      "workforceMorale": -5,
+      "legalHeat": 5
+    }
+  },
+  {
+    "id": "covenant_default_clock",
+    "kind": "delayed",
+    "title": "Covenant Default Clock",
+    "body": "The lenders produce a timetable so precise it feels like a hostage video with spreadsheets.",
+    "weight": 6,
+    "tags": ["creditors", "finance"],
+    "impacts": {
+      "airlineCash": -16,
+      "creditorPatience": -5,
+      "legalHeat": 4
+    }
+  },
+  {
+    "id": "lender_cooperation_cracks",
+    "kind": "delayed",
+    "title": "Lender Cooperation Cracks",
+    "body": "The friendliest creditors stop taking your calls and start comparing notes with each other instead.",
+    "weight": 5,
+    "tags": ["creditors", "finance"],
+    "impacts": {
+      "creditorPatience": -6,
+      "marketConfidence": -3,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "vendor_lien_blitz",
+    "kind": "delayed",
+    "title": "Vendor Lien Blitz",
+    "body": "Suppliers discover religion, paperwork, and the exact parts of your operation they can legally choke.",
+    "weight": 5,
+    "tags": ["finance", "operations"],
+    "impacts": {
+      "airlineCash": -12,
+      "publicAnger": 3,
+      "legalHeat": 3
+    }
+  },
+  {
+    "id": "inspection_memo_leak",
+    "kind": "delayed",
+    "title": "Inspection Memo Leak",
+    "body": "An internal memo about deferred work escapes into daylight and immediately finds a microphone.",
+    "weight": 6,
+    "tags": ["operations", "legal"],
+    "impacts": {
+      "marketConfidence": -3,
+      "safetyIntegrity": -4,
+      "legalHeat": 5
+    }
+  },
+  {
+    "id": "parts_cannibalization",
+    "kind": "delayed",
+    "title": "Parts Cannibalization",
+    "body": "The fleet starts donating organs to itself, which is efficient right up until it becomes public.",
+    "weight": 5,
+    "tags": ["operations", "safety"],
+    "impacts": {
+      "airlineCash": -8,
+      "safetyIntegrity": -8,
+      "legalHeat": 4
+    }
+  },
+  {
+    "id": "shell_route_map_leak",
+    "kind": "delayed",
+    "title": "Shell Route Map Leak",
+    "body": "A leaked route matrix makes the shell carrier look less like strategy and more like labor evasion with branding.",
+    "weight": 6,
+    "tags": ["market", "labor"],
+    "impacts": {
+      "marketConfidence": -4,
+      "publicAnger": 5,
+      "legalHeat": 3
+    }
+  },
+  {
+    "id": "nominee_structure_leak",
+    "kind": "delayed",
+    "title": "Nominee Structure Leak",
+    "body": "An ownership diagram escapes the vault and reveals just how many layers of deniability you bought.",
+    "weight": 5,
+    "tags": ["offshore", "legal"],
+    "impacts": {
+      "offshoreReadiness": -5,
+      "creditorPatience": -1,
+      "legalHeat": 5
+    }
+  },
+  {
+    "id": "fairness_opinion_underfire",
+    "kind": "delayed",
+    "title": "Fairness Opinion Under Fire",
+    "body": "The fairness opinion now requires its own fairness opinion.",
+    "weight": 5,
+    "tags": ["market", "legal"],
+    "impacts": {
+      "marketConfidence": -4,
+      "creditorPatience": -2,
+      "legalHeat": 4
+    }
+  },
+  {
+    "id": "turnaround_story_cracks",
+    "kind": "delayed",
+    "title": "Turnaround Story Cracks",
+    "body": "The market finally notices that the comeback story is mostly typography and selective arithmetic.",
+    "weight": 6,
+    "tags": ["market", "press"],
+    "impacts": {
+      "marketConfidence": -5,
+      "stockPrice": -3,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "director_indemnity_alarm",
+    "kind": "delayed",
+    "title": "Director Indemnity Alarm",
+    "body": "The board becomes fascinated by one topic only: whether you have quietly protected yourself better than them.",
+    "weight": 5,
+    "tags": ["board", "legal"],
+    "impacts": {
+      "creditorPatience": -3,
+      "publicAnger": 2,
+      "legalHeat": 4
+    }
+  },
+  {
+    "id": "customs_broker_ping",
+    "kind": "delayed",
+    "title": "Customs Broker Ping",
+    "body": "A routine offshore transfer attracts exactly the kind of curious intermediary you pay other people to notice first.",
+    "weight": 5,
+    "tags": ["offshore", "legal"],
+    "impacts": {
+      "offshoreReadiness": -4,
+      "legalHeat": 4
+    }
+  }
+]

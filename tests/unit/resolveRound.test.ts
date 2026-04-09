@@ -7,10 +7,46 @@ describe("resolveRound", () => {
   it("offers a curated decision tray for a fresh run", () => {
     const run = createInitialRunState();
     const decisions = getAvailableDecisions(loadContent().decisions, run);
+    const groups = new Map<string, number>();
+    const packs = new Set(decisions.filter((decision) => decision.group !== "exit").map((decision) => decision.pack));
+
+    for (const decision of decisions.filter((entry) => entry.group !== "exit")) {
+      groups.set(decision.group, (groups.get(decision.group) ?? 0) + 1);
+    }
 
     expect(decisions.length).toBeGreaterThanOrEqual(5);
-    expect(decisions.some((decision) => decision.group === "operations")).toBe(true);
-    expect(decisions.some((decision) => decision.group === "finance" || decision.group === "market")).toBe(true);
+    expect(packs.size).toBeGreaterThanOrEqual(3);
+    expect([...groups.values()].every((count) => count <= 2)).toBe(true);
+  });
+
+  it("suppresses immediate tray repeats when the pool is large enough", () => {
+    const content = loadContent();
+    const run = createInitialRunState();
+    const firstTrayIds = getAvailableDecisions(content.decisions, run)
+      .filter((decision) => decision.group !== "exit")
+      .map((decision) => decision.id);
+
+    run.selectedDecisionIds = [firstTrayIds[0]];
+    const next = resolveRound(run);
+    const secondTrayIds = getAvailableDecisions(content.decisions, next)
+      .filter((decision) => decision.group !== "exit")
+      .map((decision) => decision.id);
+
+    expect(firstTrayIds.length).toBeGreaterThan(0);
+    expect(secondTrayIds.length).toBeGreaterThan(0);
+    expect(firstTrayIds.some((id) => secondTrayIds.includes(id))).toBe(false);
+  });
+
+  it("surfaces flagged follow-up decisions once their playbook is live", () => {
+    const run = createInitialRunState();
+    run.round = 4;
+    run.flags = ["shellCarrierLive"];
+
+    const decisions = getAvailableDecisions(loadContent().decisions, run);
+
+    expect(
+      decisions.some((decision) => decision.requirements?.flagsAll?.includes("shellCarrierLive")),
+    ).toBe(true);
   });
 
   it("applies decision impacts, advances the round, and clears selections", () => {

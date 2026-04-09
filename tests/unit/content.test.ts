@@ -2,14 +2,27 @@ import { describe, expect, it } from "vitest";
 import { loadContent } from "../../src/simulation/content";
 
 describe("content library", () => {
+  it("loads a materially expanded multi-pack decision library", () => {
+    const content = loadContent();
+    const decisionPacks = new Set(content.decisions.map((decision) => decision.pack));
+    const delayedDecisions = content.decisions.filter((decision) => decision.delayedConsequences?.length);
+
+    expect(content.decisions.length).toBeGreaterThanOrEqual(85);
+    expect(decisionPacks.size).toBeGreaterThanOrEqual(9);
+    expect(decisionPacks.has("mergerBait")).toBe(true);
+    expect(decisionPacks.has("shadowSubsidiaries")).toBe(true);
+    expect(decisionPacks.has("executiveEscape")).toBe(true);
+    expect(delayedDecisions.length).toBeGreaterThanOrEqual(60);
+  });
+
   it("loads a materially expanded multi-pack event library", () => {
     const content = loadContent();
     const ambientEvents = content.events.filter((event) => event.kind === "ambient");
     const delayedEvents = content.events.filter((event) => event.kind === "delayed");
 
-    expect(content.events.length).toBeGreaterThanOrEqual(100);
+    expect(content.events.length).toBeGreaterThanOrEqual(117);
     expect(ambientEvents.length).toBeGreaterThanOrEqual(50);
-    expect(delayedEvents.length).toBeGreaterThanOrEqual(35);
+    expect(delayedEvents.length).toBeGreaterThanOrEqual(50);
   });
 
   it("keeps delayed consequence pools pointed at delayed events", () => {

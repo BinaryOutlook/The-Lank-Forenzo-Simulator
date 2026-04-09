@@ -16,7 +16,20 @@ const metricKeys = [
   "offshoreReadiness",
 ] as const;
 
+const decisionPackIds = [
+  "core",
+  "mergerBait",
+  "creditorWarfare",
+  "laborShock",
+  "assetHarvest",
+  "safetyDenial",
+  "shadowSubsidiaries",
+  "marketTheater",
+  "executiveEscape",
+] as const;
+
 export const metricKeySchema = z.enum(metricKeys);
+export const decisionPackIdSchema = z.enum(decisionPackIds);
 export const endingIdSchema = z.enum(["prison", "forcedRemoval", "merger", "extraction", "bahamas"]);
 
 const metricShape = Object.fromEntries(metricKeys.map((metric) => [metric, z.number().optional()])) as Record<
@@ -51,6 +64,7 @@ const delayedConsequenceSchema = z
 export const decisionSchema = z
   .object({
     id: z.string(),
+    pack: decisionPackIdSchema,
     title: z.string(),
     summary: z.string(),
     group: z.enum(["labor", "finance", "operations", "market", "legal", "extraction", "exit"]),
