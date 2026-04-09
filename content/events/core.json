@@ -1,0 +1,269 @@
+[
+  {
+    "id": "whistleblower_letter",
+    "kind": "delayed",
+    "title": "Whistleblower Letter",
+    "body": "A recently terminated operations manager leaves a detailed packet with a reporter and two senators.",
+    "weight": 8,
+    "tags": ["labor", "legal"],
+    "impacts": {
+      "legalHeat": 10,
+      "publicAnger": 7,
+      "marketConfidence": -4
+    }
+  },
+  {
+    "id": "pension_class_action",
+    "kind": "delayed",
+    "title": "Pension Class Action",
+    "body": "Retirees organize faster than counsel expected and the complaint reads like a campaign document.",
+    "weight": 7,
+    "tags": ["labor", "legal"],
+    "impacts": {
+      "legalHeat": 8,
+      "publicAnger": 9,
+      "creditorPatience": -4
+    }
+  },
+  {
+    "id": "hub_delay_cascade",
+    "kind": "delayed",
+    "title": "Delay Cascade",
+    "body": "Closing a hub cleaned up the map on paper. In reality, crews are now sleeping in the wrong cities.",
+    "weight": 6,
+    "tags": ["operations", "service"],
+    "impacts": {
+      "airlineCash": -14,
+      "marketConfidence": -5,
+      "publicAnger": 5
+    }
+  },
+  {
+    "id": "leaseback_bill_shock",
+    "kind": "delayed",
+    "title": "Leaseback Bill Shock",
+    "body": "The elegant fleet trade becomes a monthly obligation with teeth.",
+    "weight": 6,
+    "tags": ["finance", "assets"],
+    "impacts": {
+      "airlineCash": -20,
+      "creditorPatience": -3
+    }
+  },
+  {
+    "id": "maintenance_near_miss",
+    "kind": "delayed",
+    "title": "Maintenance Near Miss",
+    "body": "No one dies, which is the best case anyone in leadership can honestly claim.",
+    "weight": 9,
+    "tags": ["safety", "legal"],
+    "impacts": {
+      "safetyIntegrity": -10,
+      "legalHeat": 14,
+      "marketConfidence": -7,
+      "publicAnger": 9
+    }
+  },
+  {
+    "id": "contractor_walkout",
+    "kind": "delayed",
+    "title": "Contractor Walkout",
+    "body": "The cheap replacement labor discovers it is being treated like disposable avionics foam.",
+    "weight": 5,
+    "tags": ["labor", "operations"],
+    "impacts": {
+      "airlineCash": -11,
+      "workforceMorale": -5,
+      "publicAnger": 4
+    }
+  },
+  {
+    "id": "creditor_revolt",
+    "kind": "delayed",
+    "title": "Creditor Revolt",
+    "body": "A lender syndicate stops laughing at the threats and starts lawyering up.",
+    "weight": 8,
+    "tags": ["creditors", "legal"],
+    "impacts": {
+      "creditorPatience": -12,
+      "legalHeat": 6,
+      "marketConfidence": -5
+    }
+  },
+  {
+    "id": "shell_invoice_exposed",
+    "kind": "delayed",
+    "title": "Shell Invoice Exposed",
+    "body": "One invoice contains just enough sloppiness to make the whole arrangement look intentional.",
+    "weight": 8,
+    "tags": ["personal", "legal"],
+    "impacts": {
+      "legalHeat": 11,
+      "marketConfidence": -5,
+      "publicAnger": 6
+    }
+  },
+  {
+    "id": "insider_trade_whispers",
+    "kind": "delayed",
+    "title": "Insider Trade Whispers",
+    "body": "The tape looked clean until someone plotted your disposition window over the call transcript.",
+    "weight": 7,
+    "tags": ["stock", "legal"],
+    "impacts": {
+      "legalHeat": 12,
+      "stockPrice": -5,
+      "marketConfidence": -6
+    }
+  },
+  {
+    "id": "executive_perk_backlash",
+    "kind": "delayed",
+    "title": "Executive Perk Backlash",
+    "body": "The retention memo circulates next to photos of furloughed crews on local news.",
+    "weight": 5,
+    "tags": ["personal", "press"],
+    "impacts": {
+      "publicAnger": 8,
+      "marketConfidence": -3,
+      "legalHeat": 3
+    }
+  },
+  {
+    "id": "merger_interest",
+    "kind": "delayed",
+    "title": "Merger Interest",
+    "body": "A larger carrier likes your slots, dislikes your balance sheet, and thinks both problems are manageable.",
+    "weight": 4,
+    "tags": ["merger", "board"],
+    "impacts": {
+      "marketConfidence": 5,
+      "creditorPatience": 5
+    },
+    "setsFlags": ["mergerOffer"]
+  },
+  {
+    "id": "offshore_auditor_ping",
+    "kind": "delayed",
+    "title": "Offshore Auditor Ping",
+    "body": "A compliance team asks a small question with the terrifying shape of a much larger one.",
+    "weight": 6,
+    "tags": ["offshore", "legal"],
+    "impacts": {
+      "legalHeat": 7,
+      "offshoreReadiness": -4
+    }
+  },
+  {
+    "id": "analyst_relief_rally",
+    "kind": "ambient",
+    "title": "Analyst Relief Rally",
+    "body": "A brokerage mistakes brutality for discipline and calls the turnaround credible.",
+    "weight": 4,
+    "tags": ["market", "positive"],
+    "requirements": {
+      "metricMin": {
+        "marketConfidence": 50
+      }
+    },
+    "impacts": {
+      "stockPrice": 4,
+      "marketConfidence": 5
+    }
+  },
+  {
+    "id": "union_picket_lines",
+    "kind": "ambient",
+    "title": "Union Picket Lines",
+    "body": "The workers you reduced to a line item decide to become scenery on every camera shot.",
+    "weight": 6,
+    "tags": ["labor", "press"],
+    "requirements": {
+      "metricMax": {
+        "workforceMorale": 45
+      }
+    },
+    "impacts": {
+      "publicAnger": 6,
+      "marketConfidence": -3,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "airport_authority_warning",
+    "kind": "ambient",
+    "title": "Airport Authority Warning",
+    "body": "A major airport reminds you that gate access is not a birthright.",
+    "weight": 5,
+    "tags": ["operations", "creditors"],
+    "requirements": {
+      "metricMax": {
+        "creditorPatience": 40
+      }
+    },
+    "impacts": {
+      "assetValue": -12,
+      "marketConfidence": -4,
+      "creditorPatience": -3
+    }
+  },
+  {
+    "id": "tabloid_profile",
+    "kind": "ambient",
+    "title": "Tabloid Profile",
+    "body": "The feature intended to crown you a genius instead becomes a gallery of expensive dinners and moral vacancy.",
+    "weight": 4,
+    "tags": ["press", "personal"],
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 35
+      }
+    },
+    "impacts": {
+      "publicAnger": 5,
+      "marketConfidence": -2,
+      "legalHeat": 3
+    }
+  },
+  {
+    "id": "board_revolt",
+    "kind": "ambient",
+    "title": "Board Revolt",
+    "body": "Directors like cruelty in the abstract. They like subpoenas much less.",
+    "weight": 7,
+    "tags": ["board", "legal"],
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 70
+      },
+      "metricMax": {
+        "marketConfidence": 48
+      }
+    },
+    "impacts": {
+      "marketConfidence": -5,
+      "creditorPatience": -4
+    }
+  },
+  {
+    "id": "quiet_quarter",
+    "kind": "ambient",
+    "title": "Quiet Quarter",
+    "body": "Against all probability, nothing explodes this month and the numbers briefly resemble a strategy.",
+    "weight": 3,
+    "tags": ["positive", "ops"],
+    "requirements": {
+      "metricMin": {
+        "safetyIntegrity": 65
+      },
+      "metricMax": {
+        "legalHeat": 50
+      }
+    },
+    "impacts": {
+      "airlineCash": 10,
+      "marketConfidence": 4,
+      "publicAnger": -3
+    }
+  }
+]

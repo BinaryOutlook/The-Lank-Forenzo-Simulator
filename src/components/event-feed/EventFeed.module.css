@@ -1,0 +1,62 @@
+.feed {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  padding: 1.2rem;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  min-height: 100%;
+}
+
+.header {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--accent-strong);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+}
+
+.list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.entry {
+  display: grid;
+  gap: 0.45rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border);
+}
+
+.meta {
+  display: flex;
+  gap: 0.55rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.entryTitle {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.entryBody {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.55;
+}

@@ -1,0 +1,134 @@
+.tray {
+  display: grid;
+  gap: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--accent-strong);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2vw, 2rem);
+}
+
+.controls {
+  display: grid;
+  gap: 0.45rem;
+  justify-items: end;
+}
+
+.selectionCount {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.resolveButton {
+  min-height: 3rem;
+  padding: 0 1.1rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 55%, var(--border));
+  background: var(--accent);
+  color: var(--canvas);
+  font-weight: 600;
+}
+
+.list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.card {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.1rem;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  text-align: left;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--accent) 35%, var(--border));
+}
+
+.cardSelected {
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--panel) 82%, var(--accent-soft));
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.group,
+.tags {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.cardBody {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.cardSummary {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.previewList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.previewPositive,
+.previewNegative {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0 0.7rem;
+  font-size: 0.8rem;
+  background: var(--success-soft);
+}
+
+.previewNegative {
+  background: var(--danger-soft);
+}
+
+@media (max-width: 860px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .controls {
+    justify-items: stretch;
+  }
+}

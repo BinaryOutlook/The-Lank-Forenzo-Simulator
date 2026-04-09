@@ -1,0 +1,370 @@
+[
+  {
+    "id": "headcount_bloodletting",
+    "title": "Headcount Bloodletting",
+    "summary": "Cut management, gate crews, and support staff in a single public sweep.",
+    "group": "labor",
+    "tags": ["cuts", "labor", "optics"],
+    "impacts": {
+      "airlineCash": 36,
+      "workforceSize": -900,
+      "workforceMorale": -16,
+      "marketConfidence": 6,
+      "publicAnger": 9,
+      "legalHeat": 4
+    },
+    "delayedConsequences": [
+      { "eventId": "whistleblower_letter", "delay": 2 }
+    ]
+  },
+  {
+    "id": "pension_freeze",
+    "title": "Pension Firebreak",
+    "summary": "Freeze benefits and buy a quarter of breathing room with tomorrow's fury.",
+    "group": "labor",
+    "tags": ["labor", "benefits", "cash"],
+    "impacts": {
+      "airlineCash": 28,
+      "creditorPatience": 4,
+      "workforceMorale": -14,
+      "publicAnger": 12,
+      "legalHeat": 7
+    },
+    "delayedConsequences": [
+      { "eventId": "pension_class_action", "delay": 3 }
+    ]
+  },
+  {
+    "id": "close_the_hub",
+    "title": "Close the Cincinnati Hub",
+    "summary": "Abandon an underperforming hub and dare everyone to call it retreat.",
+    "group": "operations",
+    "tags": ["network", "cuts", "capacity"],
+    "impacts": {
+      "airlineCash": 42,
+      "assetValue": -26,
+      "workforceSize": -500,
+      "marketConfidence": 5,
+      "publicAnger": 10,
+      "creditorPatience": 2,
+      "legalHeat": 3
+    },
+    "delayedConsequences": [
+      { "eventId": "hub_delay_cascade", "delay": 2 }
+    ]
+  },
+  {
+    "id": "sale_leaseback_fleet",
+    "title": "Sale-Leaseback Fleet",
+    "summary": "Sell aircraft into applause, then pay rent on your own skeleton.",
+    "group": "finance",
+    "tags": ["assets", "cash", "stock"],
+    "impacts": {
+      "airlineCash": 58,
+      "assetValue": -70,
+      "marketConfidence": 9,
+      "creditorPatience": 4,
+      "stockPrice": 6
+    },
+    "delayedConsequences": [
+      { "eventId": "leaseback_bill_shock", "delay": 3 }
+    ]
+  },
+  {
+    "id": "maintenance_reclassification",
+    "title": "Maintenance Reclassification",
+    "summary": "Relabel urgent work as future capital planning and book the calm today.",
+    "group": "operations",
+    "tags": ["safety", "accounting", "margin"],
+    "impacts": {
+      "airlineCash": 24,
+      "marketConfidence": 4,
+      "safetyIntegrity": -14,
+      "legalHeat": 8
+    },
+    "delayedConsequences": [
+      { "eventId": "maintenance_near_miss", "delay": 2 }
+    ]
+  },
+  {
+    "id": "investor_turnaround_call",
+    "title": "Heroic Turnaround Call",
+    "summary": "Promise disciplined recovery on air and let the market fill in the lies.",
+    "group": "market",
+    "tags": ["market", "spin", "board"],
+    "impacts": {
+      "marketConfidence": 10,
+      "stockPrice": 8,
+      "legalHeat": 4
+    },
+    "delayedConsequences": [
+      { "eventId": "tabloid_profile", "delay": 3 }
+    ]
+  },
+  {
+    "id": "outsourcing_blitz",
+    "title": "Outsourcing Blitz",
+    "summary": "Swap in cheaper contractors and tell the board this is flexibility.",
+    "group": "operations",
+    "tags": ["labor", "contractors", "cost"],
+    "impacts": {
+      "airlineCash": 30,
+      "workforceSize": -420,
+      "workforceMorale": -10,
+      "marketConfidence": 3,
+      "safetyIntegrity": -8,
+      "legalHeat": 5
+    },
+    "delayedConsequences": [
+      { "eventId": "contractor_walkout", "delay": 2 }
+    ]
+  },
+  {
+    "id": "squeeze_creditors",
+    "title": "Squeeze the Creditors",
+    "summary": "Delay, threaten, and restructure until they accept your version of reality.",
+    "group": "finance",
+    "tags": ["creditors", "debt", "risk"],
+    "impacts": {
+      "airlineCash": 22,
+      "debt": -18,
+      "creditorPatience": -10,
+      "legalHeat": 6,
+      "marketConfidence": 2
+    },
+    "delayedConsequences": [
+      { "eventId": "creditor_revolt", "delay": 2 }
+    ]
+  },
+  {
+    "id": "quiet_settlement",
+    "title": "Quiet Settlement",
+    "summary": "Pay just enough to make one fire disappear before it lights the next room.",
+    "group": "legal",
+    "tags": ["legal", "cleanup", "cash"],
+    "impacts": {
+      "airlineCash": -18,
+      "legalHeat": -12,
+      "publicAnger": -6
+    },
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 30
+      }
+    }
+  },
+  {
+    "id": "shell_consulting_agreement",
+    "title": "Shell Consulting Agreement",
+    "summary": "Route cash through a respectable advisory contract that somehow lands at your door.",
+    "group": "extraction",
+    "tags": ["personal", "shells", "fraud"],
+    "impacts": {
+      "airlineCash": -14,
+      "personalWealth": 11,
+      "legalHeat": 9,
+      "offshoreReadiness": 6
+    },
+    "delayedConsequences": [
+      { "eventId": "shell_invoice_exposed", "delay": 3 }
+    ]
+  },
+  {
+    "id": "stock_sale_window",
+    "title": "Stock Sale Window",
+    "summary": "Use a clean quarter and a loud call to cash out before the tape changes its mind.",
+    "group": "extraction",
+    "tags": ["stock", "personal", "market"],
+    "impacts": {
+      "personalWealth": 18,
+      "stockPrice": -4,
+      "marketConfidence": -3,
+      "legalHeat": 8
+    },
+    "requirements": {
+      "metricMin": {
+        "marketConfidence": 58,
+        "stockPrice": 22
+      }
+    },
+    "delayedConsequences": [
+      { "eventId": "insider_trade_whispers", "delay": 2 }
+    ]
+  },
+  {
+    "id": "retention_bonus",
+    "title": "Executive Retention Bonus",
+    "summary": "Declare yourself critical infrastructure and invoice accordingly.",
+    "group": "extraction",
+    "tags": ["board", "personal", "optics"],
+    "impacts": {
+      "airlineCash": -10,
+      "personalWealth": 8,
+      "marketConfidence": -2,
+      "publicAnger": 5,
+      "legalHeat": 4
+    },
+    "delayedConsequences": [
+      { "eventId": "executive_perk_backlash", "delay": 2 }
+    ]
+  },
+  {
+    "id": "safety_spending_surge",
+    "title": "Emergency Safety Spend",
+    "summary": "Spend real money to quiet crews, patch metal, and buy back deniability.",
+    "group": "operations",
+    "tags": ["safety", "repair", "stability"],
+    "impacts": {
+      "airlineCash": -24,
+      "safetyIntegrity": 16,
+      "workforceMorale": 6,
+      "legalHeat": -7,
+      "publicAnger": -4
+    },
+    "requirements": {
+      "metricMax": {
+        "safetyIntegrity": 82
+      }
+    }
+  },
+  {
+    "id": "buyback_junk_debt",
+    "title": "Buy Back Junk Debt",
+    "summary": "Use liquidity to reduce leverage while the market still thinks you are doomed.",
+    "group": "finance",
+    "tags": ["debt", "creditors", "stability"],
+    "impacts": {
+      "airlineCash": -30,
+      "debt": -40,
+      "creditorPatience": 8,
+      "marketConfidence": 4
+    },
+    "requirements": {
+      "metricMin": {
+        "airlineCash": 120
+      }
+    }
+  },
+  {
+    "id": "route_purge",
+    "title": "Route Purge",
+    "summary": "Kill thin routes, shrink the map, and call it discipline.",
+    "group": "operations",
+    "tags": ["network", "focus", "cuts"],
+    "impacts": {
+      "airlineCash": 18,
+      "assetValue": -18,
+      "marketConfidence": 4,
+      "workforceMorale": -5,
+      "publicAnger": 4
+    }
+  },
+  {
+    "id": "boardroom_scapegoat",
+    "title": "Boardroom Scapegoat",
+    "summary": "Remove a lieutenant, leak their sins, and claim the culture has been corrected.",
+    "group": "legal",
+    "tags": ["board", "legal", "optics"],
+    "impacts": {
+      "legalHeat": -9,
+      "marketConfidence": 3,
+      "creditorPatience": 2
+    },
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 40
+      }
+    },
+    "setsFlags": ["scapegoatUsed"]
+  },
+  {
+    "id": "merger_backchannel",
+    "title": "Merger Backchannel",
+    "summary": "Quietly tell a larger carrier you can still deliver slots, gates, and a plausible story.",
+    "group": "market",
+    "tags": ["merger", "exit", "board"],
+    "impacts": {
+      "marketConfidence": 3,
+      "creditorPatience": 4,
+      "legalHeat": 2
+    },
+    "requirements": {
+      "roundAtLeast": 4
+    },
+    "delayedConsequences": [
+      { "eventId": "merger_interest", "delay": 2 }
+    ]
+  },
+  {
+    "id": "accept_merger_offer",
+    "title": "Accept the Merger",
+    "summary": "Take the paper, let someone else inherit the carcass, and exit under ceremonial dignity.",
+    "group": "exit",
+    "tags": ["merger", "ending", "board"],
+    "impacts": {
+      "personalWealth": 26,
+      "marketConfidence": 6
+    },
+    "requirements": {
+      "flagsAll": ["mergerOffer"]
+    },
+    "ending": "merger"
+  },
+  {
+    "id": "offshore_transfer_network",
+    "title": "Offshore Transfer Network",
+    "summary": "Convert trust into paper trails, paper trails into islands, and islands into options.",
+    "group": "extraction",
+    "tags": ["offshore", "personal", "escape"],
+    "impacts": {
+      "airlineCash": -8,
+      "personalWealth": 6,
+      "offshoreReadiness": 15,
+      "legalHeat": 5
+    },
+    "requirements": {
+      "roundAtLeast": 3
+    },
+    "delayedConsequences": [
+      { "eventId": "offshore_auditor_ping", "delay": 3 }
+    ]
+  },
+  {
+    "id": "cash_out_and_resign",
+    "title": "Cash Out and Resign",
+    "summary": "Leave the board a neat memo, sell the optimism, and disappear into respectable wealth.",
+    "group": "exit",
+    "tags": ["stock", "ending", "personal"],
+    "impacts": {
+      "personalWealth": 12
+    },
+    "requirements": {
+      "roundAtLeast": 7,
+      "metricMin": {
+        "marketConfidence": 65,
+        "stockPrice": 28,
+        "personalWealth": 35
+      },
+      "metricMax": {
+        "legalHeat": 74
+      }
+    },
+    "ending": "extraction"
+  },
+  {
+    "id": "run_for_nassau",
+    "title": "Run for Nassau",
+    "summary": "Stop pretending this can be cleaned up and board the plan you have been buying all along.",
+    "group": "exit",
+    "tags": ["bahamas", "escape", "ending"],
+    "impacts": {},
+    "requirements": {
+      "roundAtLeast": 6,
+      "metricMin": {
+        "offshoreReadiness": 60,
+        "personalWealth": 55
+      }
+    },
+    "ending": "bahamas"
+  }
+]

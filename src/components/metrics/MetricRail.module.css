@@ -1,0 +1,74 @@
+.rail {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  padding: 1.2rem;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.header {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--accent-strong);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  line-height: 1.1;
+}
+
+.metrics {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.metricRow {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.metricMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  align-items: baseline;
+}
+
+.metricLabel {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.metricValue {
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+}
+
+.meter {
+  position: relative;
+  overflow: hidden;
+  height: 0.35rem;
+  background: color-mix(in oklab, var(--text) 8%, transparent);
+}
+
+.meterFill,
+.meterDanger {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-soft), var(--accent-strong));
+}
+
+.meterDanger {
+  background: linear-gradient(90deg, var(--danger-soft), var(--danger));
+}
