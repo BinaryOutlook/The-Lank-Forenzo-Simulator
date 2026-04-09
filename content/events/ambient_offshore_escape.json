@@ -1,0 +1,141 @@
+[
+  {
+    "id": "customs_attention_ping",
+    "kind": "ambient",
+    "title": "Customs Attention Ping",
+    "body": "A border entry generates a polite alert that feels impolite in all the important ways.",
+    "weight": 4,
+    "tags": ["offshore", "legal"],
+    "requirements": {
+      "metricMin": {
+        "offshoreReadiness": 18
+      }
+    },
+    "impacts": {
+      "legalHeat": 3,
+      "offshoreReadiness": -2
+    }
+  },
+  {
+    "id": "nominee_service_delay",
+    "kind": "ambient",
+    "title": "Nominee Service Delay",
+    "body": "A routine filing goes missing inside the kind of bureaucracy rich people pretend does not exist.",
+    "weight": 4,
+    "tags": ["offshore", "legal"],
+    "requirements": {
+      "metricMin": {
+        "offshoreReadiness": 24
+      }
+    },
+    "impacts": {
+      "offshoreReadiness": -4,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "island_bank_reference_request",
+    "kind": "ambient",
+    "title": "Island Bank Reference Request",
+    "body": "A bank wants more comfort on source-of-funds than anyone in the structure finds romantic.",
+    "weight": 4,
+    "tags": ["offshore", "finance"],
+    "requirements": {
+      "metricMin": {
+        "offshoreReadiness": 30
+      }
+    },
+    "impacts": {
+      "offshoreReadiness": -3,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "trust_registrar_mixup",
+    "kind": "ambient",
+    "title": "Trust Registrar Mix-Up",
+    "body": "A registrar clerical error turns discretion into a week of frantic corrective signatures.",
+    "weight": 3,
+    "tags": ["offshore", "personal"],
+    "requirements": {
+      "metricMin": {
+        "offshoreReadiness": 20
+      }
+    },
+    "impacts": {
+      "offshoreReadiness": -2,
+      "personalWealth": -1
+    }
+  },
+  {
+    "id": "concierge_press_photo",
+    "kind": "ambient",
+    "title": "Concierge Press Photo",
+    "body": "A luxury travel photo links up with the wrong headline and suddenly the optics have a boarding pass.",
+    "weight": 4,
+    "tags": ["personal", "press"],
+    "requirements": {
+      "metricMin": {
+        "personalWealth": 24
+      }
+    },
+    "impacts": {
+      "publicAnger": 4,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "villa_wire_delay",
+    "kind": "ambient",
+    "title": "Villa Wire Delay",
+    "body": "A property transfer stalls long enough to remind you that escape infrastructure still runs on paperwork.",
+    "weight": 3,
+    "tags": ["offshore", "personal"],
+    "requirements": {
+      "metricMin": {
+        "personalWealth": 30
+      }
+    },
+    "impacts": {
+      "personalWealth": -1,
+      "offshoreReadiness": -3
+    }
+  },
+  {
+    "id": "passport_office_delay",
+    "kind": "ambient",
+    "title": "Passport Office Delay",
+    "body": "A document renewal takes on new emotional significance when contingency planning becomes a calendar item.",
+    "weight": 3,
+    "tags": ["offshore", "escape"],
+    "requirements": {
+      "roundAtLeast": 5,
+      "metricMin": {
+        "offshoreReadiness": 40
+      }
+    },
+    "impacts": {
+      "offshoreReadiness": -3
+    }
+  },
+  {
+    "id": "coral_capital_intro",
+    "kind": "ambient",
+    "title": "Coral Capital Intro",
+    "body": "A discreet intermediary introduces exactly the sort of people who never ask what the company needs.",
+    "weight": 3,
+    "tags": ["offshore", "positive"],
+    "requirements": {
+      "metricMin": {
+        "offshoreReadiness": 32
+      },
+      "metricMax": {
+        "legalHeat": 65
+      }
+    },
+    "impacts": {
+      "offshoreReadiness": 5,
+      "personalWealth": 3
+    }
+  }
+]

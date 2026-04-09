@@ -39,10 +39,14 @@ const requirementSchema = z
 
 const delayedConsequenceSchema = z
   .object({
-    eventId: z.string(),
     delay: z.number().int().min(1),
+    eventId: z.string().optional(),
+    eventIds: z.array(z.string()).min(1).optional(),
   })
-  .strict();
+  .strict()
+  .refine((value) => (value.eventId ? 1 : 0) + (value.eventIds ? 1 : 0) === 1, {
+    message: "Delayed consequence entries must provide exactly one of eventId or eventIds.",
+  });
 
 export const decisionSchema = z
   .object({

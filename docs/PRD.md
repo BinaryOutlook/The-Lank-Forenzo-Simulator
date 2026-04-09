@@ -187,6 +187,15 @@ The player should always understand the major sources of risk:
 - legal heat
 - social blowback
 
+Indicator semantics must respect metric direction.
+
+For example:
+
+- lower `legalHeat` is an improvement
+- lower `publicAnger` is an improvement
+- lower `debt` is an improvement
+- not every raw negative number should be presented as bad if the underlying metric is healthier when it falls
+
 Complexity is welcome. Obscurity is not.
 
 ### 8.4 The interface should feel like power under glass
@@ -607,6 +616,7 @@ This section is the anti-spaghetti contract for the reboot.
 
 - Decisions, events, and endings should be authored as content, not hardcoded in component files.
 - Content should be schema-validated.
+- Large authored content pools should be split into maintainable packs instead of one monolithic file when scale demands it.
 - Delayed consequence hooks should be explicit in data or clear system modules.
 
 ### 19.4 Theme system is foundational

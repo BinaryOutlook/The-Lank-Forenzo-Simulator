@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>V0.2 Demo Reference</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #07100d;
+        --panel: rgba(17, 30, 24, 0.94);
+        --panel-strong: rgba(21, 39, 30, 0.98);
+        --border: rgba(111, 145, 123, 0.24);
+        --text: #eef4ef;
+        --muted: #a7b7ad;
+        --accent: #5be08d;
+        --danger: #ff7163;
+        --warning: #f5c869;
+        --success: #7af2aa;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(55, 96, 77, 0.24), transparent 28%),
+          linear-gradient(180deg, #05100b, #09140f);
+        color: var(--text);
+      }
+
+      main {
+        width: min(1240px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 32px 0 48px;
+      }
+
+      .header {
+        margin-bottom: 24px;
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--accent);
+        font-size: 12px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
+        font-size: clamp(28px, 3vw, 44px);
+        line-height: 1.02;
+      }
+
+      .lede {
+        max-width: 780px;
+        margin: 12px 0 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+      }
+
+      .panel {
+        min-height: 100%;
+        padding: 20px;
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, var(--panel-strong), var(--panel));
+      }
+
+      .panel h2 {
+        margin: 0 0 14px;
+        font-size: 18px;
+      }
+
+      .callout {
+        margin: 0 0 16px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .stack {
+        display: grid;
+        gap: 10px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border: 1px solid transparent;
+        font-size: 13px;
+      }
+
+      .chip-good {
+        background: rgba(122, 242, 170, 0.18);
+        border-color: rgba(122, 242, 170, 0.34);
+      }
+
+      .chip-bad {
+        background: rgba(255, 113, 99, 0.16);
+        border-color: rgba(255, 113, 99, 0.34);
+      }
+
+      .chip-neutral {
+        background: rgba(245, 200, 105, 0.14);
+        border-color: rgba(245, 200, 105, 0.28);
+      }
+
+      .feed {
+        display: grid;
+        gap: 10px;
+      }
+
+      .feed-entry {
+        padding: 12px;
+        border: 1px solid var(--border);
+        background: rgba(11, 21, 16, 0.76);
+      }
+
+      .feed-entry strong {
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .count {
+        display: inline-block;
+        margin-top: 8px;
+        color: var(--accent);
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .notes {
+        margin-top: 20px;
+        padding-left: 18px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      @media (max-width: 980px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="header">
+        <p class="eyebrow">V0.2 demo reference</p>
+        <h1>More event variety, clearer stat semantics, tighter consequence recap.</h1>
+        <p class="lede">
+          This reference captures the direction for the `V0.2` packet: the event system scales beyond the tiny current
+          pool, indicator meaning is based on reviewed metric semantics instead of raw sign, and the consequence feed
+          becomes a focused latest-fallout rail.
+        </p>
+      </section>
+
+      <section class="grid">
+        <article class="panel">
+          <h2>Event scale</h2>
+          <p class="callout">
+            The current baseline of `18` events is not enough to carry repeated runs. The content structure should
+            support a much larger authored pool and broader category coverage.
+          </p>
+          <div class="stack">
+            <div class="chip chip-neutral">Current: 18 total events</div>
+            <div class="chip chip-good">Target structure: category packs or maintainable multi-file authoring</div>
+            <div class="chip chip-good">Long-term target: roughly 30x to 50x current volume</div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <h2>Metric semantics</h2>
+          <p class="callout">
+            Indicator color and ranking logic should follow reviewed metric direction, not the default idea that all
+            positive values are good and all negative values are bad.
+          </p>
+          <div class="stack">
+            <div class="chip chip-good">Safety integrity +8</div>
+            <div class="chip chip-good">Legal heat -6</div>
+            <div class="chip chip-good">Public anger -4</div>
+            <div class="chip chip-neutral">Workforce size -500 may be contextual</div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <h2>Consequence feed</h2>
+          <p class="callout">
+            The right rail should read like a recent chain of fallout, not a full archive. Show only the newest `10`
+            entries on the run screen.
+          </p>
+          <div class="feed">
+            <div class="feed-entry"><strong>R7 Board Revolt</strong>Directors are losing faith faster than counsel can calm them.</div>
+            <div class="feed-entry"><strong>R7 Quarter Close</strong>Operations bleed cash faster than the story can hide it.</div>
+            <div class="feed-entry"><strong>R6 Tabloid Profile</strong>The image campaign turns into a catalogue of executive rot.</div>
+          </div>
+          <span class="count">Visible rail cap: 10 entries</span>
+        </article>
+      </section>
+
+      <ul class="notes">
+        <li>Lower-is-better pressure metrics should no longer be treated as backwards danger signals.</li>
+        <li>Event authoring should be restructured before the content library grows into an unmaintainable single file.</li>
+        <li>The right rail should optimize for fast recap, not long-form historical storage.</li>
+      </ul>
+    </main>
+  </body>
+</html>

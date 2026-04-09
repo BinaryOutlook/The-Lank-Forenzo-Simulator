@@ -1,0 +1,142 @@
+[
+  {
+    "id": "quiet_labor_detente",
+    "kind": "ambient",
+    "title": "Quiet Labor Detente",
+    "body": "For one quarter, the unions decide glaring at you is more efficient than speaking publicly.",
+    "weight": 3,
+    "tags": ["labor", "positive"],
+    "requirements": {
+      "metricMin": {
+        "workforceMorale": 55
+      }
+    },
+    "impacts": {
+      "publicAnger": -3,
+      "marketConfidence": 2
+    }
+  },
+  {
+    "id": "insurer_relief_memo",
+    "kind": "ambient",
+    "title": "Insurer Relief Memo",
+    "body": "A cleaner safety quarter buys just enough underwriting confidence to matter.",
+    "weight": 3,
+    "tags": ["safety", "positive"],
+    "requirements": {
+      "metricMin": {
+        "safetyIntegrity": 70
+      }
+    },
+    "impacts": {
+      "creditorPatience": 3,
+      "airlineCash": 6
+    }
+  },
+  {
+    "id": "analyst_upgrade_note",
+    "kind": "ambient",
+    "title": "Analyst Upgrade Note",
+    "body": "A grateful analyst decides your latest quarter deserves the benefit of someone else's doubt.",
+    "weight": 3,
+    "tags": ["market", "positive"],
+    "requirements": {
+      "metricMin": {
+        "marketConfidence": 62
+      }
+    },
+    "impacts": {
+      "stockPrice": 4,
+      "marketConfidence": 3
+    }
+  },
+  {
+    "id": "debt_desk_sympathy_bid",
+    "kind": "ambient",
+    "title": "Debt Desk Sympathy Bid",
+    "body": "A trading desk buys your paper at a price that suggests survival might still be monetizable.",
+    "weight": 3,
+    "tags": ["finance", "positive"],
+    "requirements": {
+      "metricMin": {
+        "airlineCash": 200
+      }
+    },
+    "impacts": {
+      "creditorPatience": 3,
+      "debt": -8
+    }
+  },
+  {
+    "id": "weather_break_bonus",
+    "kind": "ambient",
+    "title": "Weather Break Bonus",
+    "body": "The skies behave, operations stay boring, and the quarter briefly resembles competence.",
+    "weight": 3,
+    "tags": ["operations", "positive"],
+    "requirements": {
+      "roundAtLeast": 2,
+      "metricMin": {
+        "safetyIntegrity": 60
+      }
+    },
+    "impacts": {
+      "airlineCash": 7,
+      "marketConfidence": 2
+    }
+  },
+  {
+    "id": "boardroom_breathing_room",
+    "kind": "ambient",
+    "title": "Boardroom Breathing Room",
+    "body": "A calmer packet and a cleaner quarter buy leadership a few minutes of undeserved serenity.",
+    "weight": 3,
+    "tags": ["board", "positive"],
+    "requirements": {
+      "metricMax": {
+        "legalHeat": 45
+      },
+      "metricMin": {
+        "marketConfidence": 52
+      }
+    },
+    "impacts": {
+      "creditorPatience": 3,
+      "marketConfidence": 2
+    }
+  },
+  {
+    "id": "frequent_flyer_stickiness",
+    "kind": "ambient",
+    "title": "Frequent Flyer Stickiness",
+    "body": "The loyalty base grumbles loudly and keeps flying anyway, which is more useful than respect.",
+    "weight": 3,
+    "tags": ["operations", "positive"],
+    "requirements": {
+      "metricMin": {
+        "marketConfidence": 40
+      }
+    },
+    "impacts": {
+      "airlineCash": 5,
+      "marketConfidence": 1
+    }
+  },
+  {
+    "id": "regulator_other_target",
+    "kind": "ambient",
+    "title": "Regulator Finds Another Target",
+    "body": "Another scandal briefly absorbs the room and your file gets shuffled one layer down the pile.",
+    "weight": 2,
+    "tags": ["legal", "positive"],
+    "requirements": {
+      "metricMax": {
+        "legalHeat": 55
+      }
+    },
+    "impacts": {
+      "legalHeat": -4,
+      "marketConfidence": 1
+    }
+  }
+]

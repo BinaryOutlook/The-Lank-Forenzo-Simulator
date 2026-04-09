@@ -1,0 +1,140 @@
+[
+  {
+    "id": "baggage_mountain_weekend",
+    "kind": "ambient",
+    "title": "Baggage Mountain Weekend",
+    "body": "A terminal fills with luggage, children, and the feeling that leadership made a spreadsheet out of weather.",
+    "weight": 5,
+    "tags": ["operations", "service"],
+    "requirements": {
+      "metricMax": {
+        "workforceSize": 7000
+      }
+    },
+    "impacts": {
+      "airlineCash": -10,
+      "publicAnger": 5,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "dispatcher_fatigue_warning",
+    "kind": "ambient",
+    "title": "Dispatcher Fatigue Warning",
+    "body": "An internal fatigue warning reads like someone trying to save the company from its own calendar.",
+    "weight": 6,
+    "tags": ["operations", "safety"],
+    "requirements": {
+      "metricMax": {
+        "safetyIntegrity": 58
+      }
+    },
+    "impacts": {
+      "legalHeat": 4,
+      "safetyIntegrity": -3,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "gate_system_brownout",
+    "kind": "ambient",
+    "title": "Gate System Brownout",
+    "body": "The dispatch stack briefly forgets what city each aircraft is in, which proves contagious.",
+    "weight": 4,
+    "tags": ["operations", "service"],
+    "requirements": {
+      "roundAtLeast": 3
+    },
+    "impacts": {
+      "airlineCash": -7,
+      "marketConfidence": -2,
+      "publicAnger": 3
+    }
+  },
+  {
+    "id": "winter_irrops_memory",
+    "kind": "ambient",
+    "title": "Winter IROPS Memory",
+    "body": "Consumers remember last season's collapse faster than your PR team remembers its own script.",
+    "weight": 4,
+    "tags": ["operations", "press"],
+    "requirements": {
+      "metricMin": {
+        "publicAnger": 30
+      }
+    },
+    "impacts": {
+      "publicAnger": 4,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "spare_parts_drought",
+    "kind": "ambient",
+    "title": "Spare Parts Drought",
+    "body": "Every maintenance shortcut eventually arrives as a parts search with legal implications.",
+    "weight": 5,
+    "tags": ["operations", "safety"],
+    "requirements": {
+      "metricMax": {
+        "safetyIntegrity": 64
+      }
+    },
+    "impacts": {
+      "airlineCash": -8,
+      "safetyIntegrity": -5,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "diverted_weekend",
+    "kind": "ambient",
+    "title": "Diverted Weekend",
+    "body": "A bad operating weekend convinces the public that your route map is now an abstract art project.",
+    "weight": 5,
+    "tags": ["operations", "service"],
+    "requirements": {
+      "metricMax": {
+        "workforceMorale": 50
+      }
+    },
+    "impacts": {
+      "airlineCash": -11,
+      "publicAnger": 4,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "catering_contract_slip",
+    "kind": "ambient",
+    "title": "Catering Contract Slip",
+    "body": "A cheap catering renewal saves pennies and loses the room by lunch.",
+    "weight": 3,
+    "tags": ["operations", "service"],
+    "requirements": {
+      "roundAtLeast": 2
+    },
+    "impacts": {
+      "airlineCash": -5,
+      "publicAnger": 2
+    }
+  },
+  {
+    "id": "runway_photo_cycle",
+    "kind": "ambient",
+    "title": "Runway Photo Cycle",
+    "body": "A rough landing still produces enough dramatic imagery to power three news cycles.",
+    "weight": 6,
+    "tags": ["operations", "press"],
+    "requirements": {
+      "metricMax": {
+        "safetyIntegrity": 55
+      }
+    },
+    "impacts": {
+      "legalHeat": 5,
+      "publicAnger": 5,
+      "marketConfidence": -4
+    }
+  }
+]

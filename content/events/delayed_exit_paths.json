@@ -1,0 +1,65 @@
+[
+  {
+    "id": "chauffeur_receipt_dump",
+    "kind": "delayed",
+    "title": "Chauffeur Receipt Dump",
+    "body": "Expense receipts reveal that your retention package includes more leather than strategy.",
+    "weight": 5,
+    "tags": ["personal", "press"],
+    "impacts": {
+      "publicAnger": 5,
+      "marketConfidence": -2,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "slot_value_diligence",
+    "kind": "delayed",
+    "title": "Slot Value Diligence",
+    "body": "A potential buyer decides the slots may be worth the cleanup if the story can survive another quarter.",
+    "weight": 4,
+    "tags": ["merger", "board"],
+    "impacts": {
+      "marketConfidence": 4,
+      "creditorPatience": 4
+    },
+    "setsFlags": ["mergerOffer"]
+  },
+  {
+    "id": "merger_term_sheet",
+    "kind": "delayed",
+    "title": "Merger Term Sheet",
+    "body": "A cautious term sheet arrives, written by people who dislike your balance sheet and adore your gates.",
+    "weight": 4,
+    "tags": ["merger", "board"],
+    "impacts": {
+      "marketConfidence": 6,
+      "creditorPatience": 3
+    },
+    "setsFlags": ["mergerOffer"]
+  },
+  {
+    "id": "nominee_director_jitters",
+    "kind": "delayed",
+    "title": "Nominee Director Jitters",
+    "body": "The offshore structure still works in theory, but one nominee director is suddenly difficult to reach.",
+    "weight": 6,
+    "tags": ["offshore", "legal"],
+    "impacts": {
+      "offshoreReadiness": -4,
+      "legalHeat": 5
+    }
+  },
+  {
+    "id": "correspondent_bank_query",
+    "kind": "delayed",
+    "title": "Correspondent Bank Query",
+    "body": "A bank asks a simple question about ownership and ruins everyone's afternoon.",
+    "weight": 6,
+    "tags": ["offshore", "legal"],
+    "impacts": {
+      "offshoreReadiness": -5,
+      "legalHeat": 6
+    }
+  }
+]

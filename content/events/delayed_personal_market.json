@@ -1,0 +1,105 @@
+[
+  {
+    "id": "analyst_model_walkback",
+    "kind": "delayed",
+    "title": "Analyst Model Walkback",
+    "body": "One optimistic spreadsheet gets replaced by another with more footnotes and less forgiveness.",
+    "weight": 5,
+    "tags": ["market", "press"],
+    "impacts": {
+      "marketConfidence": -5,
+      "stockPrice": -4
+    }
+  },
+  {
+    "id": "call_transcript_supercut",
+    "kind": "delayed",
+    "title": "Call Transcript Supercut",
+    "body": "A finance blog edits your quarter's bravado into a five-minute reel of contradictions.",
+    "weight": 5,
+    "tags": ["market", "press"],
+    "impacts": {
+      "publicAnger": 4,
+      "marketConfidence": -3,
+      "legalHeat": 3
+    }
+  },
+  {
+    "id": "earnings_guidance_correction",
+    "kind": "delayed",
+    "title": "Guidance Correction",
+    "body": "The heroic call earns a follow-up filing with the emotional range of a hostage note.",
+    "weight": 6,
+    "tags": ["market", "legal"],
+    "impacts": {
+      "marketConfidence": -4,
+      "stockPrice": -3,
+      "creditorPatience": -2
+    }
+  },
+  {
+    "id": "consulting_conflict_memo",
+    "kind": "delayed",
+    "title": "Consulting Conflict Memo",
+    "body": "An internal memo notes that the advisory contract seems remarkably well-tailored to you.",
+    "weight": 7,
+    "tags": ["personal", "legal"],
+    "impacts": {
+      "legalHeat": 8,
+      "marketConfidence": -3,
+      "publicAnger": 3
+    }
+  },
+  {
+    "id": "invoice_rounding_pattern",
+    "kind": "delayed",
+    "title": "Invoice Rounding Pattern",
+    "body": "A forensic accountant notices that random-looking invoices keep rounding in your favor.",
+    "weight": 7,
+    "tags": ["personal", "legal"],
+    "impacts": {
+      "legalHeat": 7,
+      "publicAnger": 4,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "suspicious_10b5_window",
+    "kind": "delayed",
+    "title": "Suspicious 10b5 Window",
+    "body": "The sale technically follows a plan, which only makes the timing look more cultivated.",
+    "weight": 7,
+    "tags": ["stock", "legal"],
+    "impacts": {
+      "legalHeat": 9,
+      "stockPrice": -4,
+      "marketConfidence": -4
+    }
+  },
+  {
+    "id": "broker_chat_subpoena",
+    "kind": "delayed",
+    "title": "Broker Chat Subpoena",
+    "body": "The regulator asks for trader messages with the tone of someone who already read them.",
+    "weight": 8,
+    "tags": ["stock", "legal"],
+    "impacts": {
+      "legalHeat": 10,
+      "stockPrice": -3,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "compensation_deck_leak",
+    "kind": "delayed",
+    "title": "Compensation Deck Leak",
+    "body": "A slide deck comparing executive incentives to labor concessions leaves the boardroom alive.",
+    "weight": 6,
+    "tags": ["personal", "press"],
+    "impacts": {
+      "publicAnger": 6,
+      "marketConfidence": -2,
+      "legalHeat": 3
+    }
+  }
+]

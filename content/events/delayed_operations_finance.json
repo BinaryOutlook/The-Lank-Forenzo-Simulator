@@ -1,0 +1,106 @@
+[
+  {
+    "id": "slot_auction_humiliation",
+    "kind": "delayed",
+    "title": "Slot Auction Humiliation",
+    "body": "The market assigns a brutally honest price to the pieces you claimed were strategic.",
+    "weight": 6,
+    "tags": ["operations", "assets"],
+    "impacts": {
+      "assetValue": -18,
+      "marketConfidence": -4,
+      "publicAnger": 3
+    }
+  },
+  {
+    "id": "regional_feed_unravels",
+    "kind": "delayed",
+    "title": "Regional Feed Unravels",
+    "body": "The hub closure leaves feeder traffic wandering the system like lost luggage with passengers attached.",
+    "weight": 6,
+    "tags": ["operations", "service"],
+    "impacts": {
+      "airlineCash": -13,
+      "marketConfidence": -4,
+      "publicAnger": 4
+    }
+  },
+  {
+    "id": "maintenance_paper_trail",
+    "kind": "delayed",
+    "title": "Maintenance Paper Trail",
+    "body": "Deferred line items become a chronological essay on intent.",
+    "weight": 8,
+    "tags": ["safety", "legal"],
+    "impacts": {
+      "legalHeat": 9,
+      "marketConfidence": -4,
+      "safetyIntegrity": -5
+    }
+  },
+  {
+    "id": "faa_ramp_audit",
+    "kind": "delayed",
+    "title": "FAA Ramp Audit",
+    "body": "Inspectors arrive with clipboards, patience, and a very poor sense of humor.",
+    "weight": 8,
+    "tags": ["safety", "legal"],
+    "impacts": {
+      "legalHeat": 8,
+      "safetyIntegrity": -4,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "lessor_step_in_clause",
+    "kind": "delayed",
+    "title": "Lessor Step-In Clause",
+    "body": "The aircraft buyer remembers the contract includes rights that become active when you start looking fragile.",
+    "weight": 7,
+    "tags": ["finance", "assets"],
+    "impacts": {
+      "airlineCash": -18,
+      "creditorPatience": -3,
+      "assetValue": -10
+    }
+  },
+  {
+    "id": "lease_reserve_trueup",
+    "kind": "delayed",
+    "title": "Lease Reserve True-Up",
+    "body": "Cash saved on presentation day comes back as a less photogenic reserve call.",
+    "weight": 6,
+    "tags": ["finance", "creditors"],
+    "impacts": {
+      "airlineCash": -16,
+      "marketConfidence": -2,
+      "creditorPatience": -2
+    }
+  },
+  {
+    "id": "covenant_leak",
+    "kind": "delayed",
+    "title": "Covenant Leak",
+    "body": "Someone passes the lender terms to the press and the missing adjectives are not flattering.",
+    "weight": 7,
+    "tags": ["creditors", "press"],
+    "impacts": {
+      "creditorPatience": -7,
+      "marketConfidence": -4,
+      "legalHeat": 3
+    }
+  },
+  {
+    "id": "distressed_debt_pack_hunt",
+    "kind": "delayed",
+    "title": "Distressed Debt Pack Hunt",
+    "body": "The friendliest creditors sell to the kind of fund that introduces itself with a deadline.",
+    "weight": 7,
+    "tags": ["creditors", "finance"],
+    "impacts": {
+      "creditorPatience": -6,
+      "debt": 12,
+      "marketConfidence": -3
+    }
+  }
+]

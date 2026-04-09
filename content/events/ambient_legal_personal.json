@@ -1,0 +1,144 @@
+[
+  {
+    "id": "ag_inquiry_letter",
+    "kind": "ambient",
+    "title": "Attorney General Inquiry",
+    "body": "A state attorney general sends a letter framed as curiosity and written like a warning shot.",
+    "weight": 6,
+    "tags": ["legal", "government"],
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 48
+      }
+    },
+    "impacts": {
+      "legalHeat": 6,
+      "marketConfidence": -4
+    }
+  },
+  {
+    "id": "ethics_hotline_spike",
+    "kind": "ambient",
+    "title": "Ethics Hotline Spike",
+    "body": "Internal complaints start clustering around the kind of conduct trainings usually skip.",
+    "weight": 5,
+    "tags": ["legal", "personal"],
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 34
+      }
+    },
+    "impacts": {
+      "legalHeat": 4,
+      "publicAnger": 3
+    }
+  },
+  {
+    "id": "compliance_resignation",
+    "kind": "ambient",
+    "title": "Compliance Resignation",
+    "body": "The compliance lead leaves with a carefully lawyered note that raises more questions than it answers.",
+    "weight": 6,
+    "tags": ["legal", "board"],
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 42
+      }
+    },
+    "impacts": {
+      "legalHeat": 5,
+      "marketConfidence": -3,
+      "creditorPatience": -2
+    }
+  },
+  {
+    "id": "plaintiffs_forum_clip",
+    "kind": "ambient",
+    "title": "Plaintiffs Forum Clip",
+    "body": "A local plaintiffs' lawyer discovers viral editing and a very compelling client roster.",
+    "weight": 4,
+    "tags": ["legal", "press"],
+    "requirements": {
+      "metricMin": {
+        "publicAnger": 40
+      }
+    },
+    "impacts": {
+      "publicAnger": 5,
+      "marketConfidence": -2,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "local_news_ambush",
+    "kind": "ambient",
+    "title": "Local News Ambush",
+    "body": "A microphone appears the moment you leave a car and the first question is already fatal.",
+    "weight": 4,
+    "tags": ["press", "personal"],
+    "requirements": {
+      "metricMin": {
+        "publicAnger": 36
+      }
+    },
+    "impacts": {
+      "publicAnger": 4,
+      "marketConfidence": -2,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "preservation_notice",
+    "kind": "ambient",
+    "title": "Preservation Notice",
+    "body": "Counsel advises everyone not to delete anything, which is never a morale event.",
+    "weight": 6,
+    "tags": ["legal", "board"],
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 60
+      }
+    },
+    "impacts": {
+      "legalHeat": 7,
+      "creditorPatience": -2,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "donor_gala_backlash",
+    "kind": "ambient",
+    "title": "Donor Gala Backlash",
+    "body": "A luxury photo from the wrong fundraiser becomes the unofficial mascot of executive excess.",
+    "weight": 4,
+    "tags": ["personal", "press"],
+    "requirements": {
+      "metricMin": {
+        "personalWealth": 18
+      }
+    },
+    "impacts": {
+      "publicAnger": 4,
+      "marketConfidence": -2,
+      "legalHeat": 1
+    }
+  },
+  {
+    "id": "senate_staff_call",
+    "kind": "ambient",
+    "title": "Senate Staff Call",
+    "body": "A legislative aide wants background for a hearing no one is officially planning yet.",
+    "weight": 5,
+    "tags": ["government", "legal"],
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 55
+      }
+    },
+    "impacts": {
+      "legalHeat": 5,
+      "marketConfidence": -3,
+      "publicAnger": 2
+    }
+  }
+]

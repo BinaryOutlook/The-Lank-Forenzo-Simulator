@@ -1,4 +1,6 @@
+import clsx from "clsx";
 import { formatMetricValue, metricLabels } from "../../lib/formatters";
+import { getMetricMeterTone, getMetricMeterValue } from "../../simulation/state/metricSemantics";
 import type { MetricKey, RunMetrics } from "../../simulation/state/types";
 import styles from "./MetricRail.module.css";
 
@@ -21,40 +23,6 @@ const railOrder: MetricKey[] = [
   "offshoreReadiness",
 ];
 
-function getMeterValue(metric: MetricKey, value: number): number | null {
-  if (metric === "workforceSize") {
-    return Math.min(100, value / 120);
-  }
-
-  if (metric === "stockPrice") {
-    return Math.min(100, value * 2);
-  }
-
-  if (metric === "debt") {
-    return Math.min(100, value / 12);
-  }
-
-  if (metric === "airlineCash" || metric === "personalWealth") {
-    return Math.min(100, Math.max(0, value / 3));
-  }
-
-  if (metric in metricsAsGauge) {
-    return value;
-  }
-
-  return null;
-}
-
-const metricsAsGauge: Record<string, true> = {
-  workforceMorale: true,
-  marketConfidence: true,
-  creditorPatience: true,
-  legalHeat: true,
-  safetyIntegrity: true,
-  publicAnger: true,
-  offshoreReadiness: true,
-};
-
 export function MetricRail({ metrics }: MetricRailProps) {
   return (
     <aside className={styles.rail}>
@@ -66,7 +34,8 @@ export function MetricRail({ metrics }: MetricRailProps) {
       <div className={styles.metrics}>
         {railOrder.map((metric) => {
           const value = metrics[metric];
-          const meterValue = getMeterValue(metric, value);
+          const meterValue = getMetricMeterValue(metric, value);
+          const meterTone = getMetricMeterTone(metric);
 
           return (
             <div key={metric} className={styles.metricRow}>
@@ -77,7 +46,11 @@ export function MetricRail({ metrics }: MetricRailProps) {
               {meterValue !== null ? (
                 <div className={styles.meter} aria-hidden="true">
                   <span
-                    className={metric === "legalHeat" || metric === "publicAnger" ? styles.meterDanger : styles.meterFill}
+                    className={clsx(
+                      meterTone === "positive" && styles.meterFill,
+                      meterTone === "negative" && styles.meterDanger,
+                      meterTone === "neutral" && styles.meterNeutral,
+                    )}
                     style={{ width: `${meterValue}%` }}
                   />
                 </div>

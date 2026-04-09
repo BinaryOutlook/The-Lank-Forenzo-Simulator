@@ -23,6 +23,7 @@ describe("resolveRound", () => {
     expect(next.selectedDecisionIds).toEqual([]);
     expect(next.metrics.workforceSize).toBeLessThan(run.metrics.workforceSize);
     expect(next.pendingEvents.length).toBeGreaterThan(0);
+    expect(["whistleblower_letter", "faa_exit_interviews", "severance_injunction"]).toContain(next.pendingEvents[0]?.eventId);
     expect(next.history[0]?.title).toBeTruthy();
   });
 

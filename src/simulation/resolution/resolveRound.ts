@@ -1,4 +1,5 @@
-import { pickWeighted, hashNumber } from "../../lib/random/seeded";
+import { hashNumber, hashString, pickWeighted, shuffleWithSeed } from "../../lib/random/seeded";
+import { getImpactSetScore } from "../state/metricSemantics";
 import { loadContent } from "../content";
 import {
   boundedMetricKeys,
@@ -83,13 +84,7 @@ function meetsEventRequirements(event: EventDefinition, run: RunState): boolean 
 }
 
 function toneFromImpact(impacts: ImpactSet): HistoryEntry["tone"] {
-  const score =
-    (impacts.personalWealth ?? 0) +
-    (impacts.airlineCash ?? 0) * 0.5 +
-    (impacts.marketConfidence ?? 0) * 1.2 +
-    (impacts.legalHeat ?? 0) * -1.4 +
-    (impacts.safetyIntegrity ?? 0) * 0.7 +
-    (impacts.creditorPatience ?? 0) * 0.8;
+  const score = getImpactSetScore(impacts);
 
   if (score > 5) {
     return "positive";
@@ -235,6 +230,25 @@ function getDecisionMap(content: ContentBundle): Map<string, DecisionDefinition>
   return new Map(content.decisions.map((decision) => [decision.id, decision]));
 }
 
+function pickDelayedEventId(decisionId: string, round: number, delayed: DecisionDefinition["delayedConsequences"][number]): string | null {
+  if (delayed.eventId) {
+    return delayed.eventId;
+  }
+
+  const eventIds = delayed.eventIds ?? [];
+
+  if (eventIds.length === 0) {
+    return null;
+  }
+
+  if (eventIds.length === 1) {
+    return eventIds[0] ?? null;
+  }
+
+  const seededChoices = shuffleWithSeed(eventIds, hashNumber(round, delayed.delay, hashString(decisionId)));
+  return seededChoices[0] ?? null;
+}
+
 export function resolveRound(run: RunState): RunState {
   const content = loadContent();
   const decisionMap = getDecisionMap(content);
@@ -256,8 +270,14 @@ export function resolveRound(run: RunState): RunState {
     historyEntries.push(buildHistoryEntry(round, "decision", decision.title, decision.summary, decision.impacts));
 
     for (const delayed of decision.delayedConsequences ?? []) {
+      const eventId = pickDelayedEventId(decision.id, round, delayed);
+
+      if (!eventId) {
+        continue;
+      }
+
       nextPendingEvents.push({
-        eventId: delayed.eventId,
+        eventId,
         triggerRound: round + delayed.delay,
       });
     }

@@ -1,4 +1,5 @@
 import type { ImpactSet, MetricKey, RunMetrics } from "../simulation/state/types";
+import { getImpactPriority } from "../simulation/state/metricSemantics";
 
 export const metricLabels: Record<MetricKey, string> = {
   airlineCash: "Airline cash",
@@ -70,7 +71,7 @@ export function getImpactPreview(impacts: ImpactSet): Array<{ metric: MetricKey;
       metric: metric as MetricKey,
       delta: delta as number,
     }))
-    .sort((left, right) => Math.abs(right.delta) - Math.abs(left.delta));
+    .sort((left, right) => getImpactPriority(right.metric, right.delta) - getImpactPriority(left.metric, left.delta));
 
   return entries.slice(0, 4);
 }

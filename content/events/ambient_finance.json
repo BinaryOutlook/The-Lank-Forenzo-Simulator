@@ -1,0 +1,139 @@
+[
+  {
+    "id": "fuel_hedge_embarrassment",
+    "kind": "ambient",
+    "title": "Fuel Hedge Embarrassment",
+    "body": "The fuel book turns out to be less of a shield and more of a televised misunderstanding.",
+    "weight": 5,
+    "tags": ["finance", "market"],
+    "requirements": {
+      "roundAtLeast": 3
+    },
+    "impacts": {
+      "airlineCash": -14,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "insurance_repricing_notice",
+    "kind": "ambient",
+    "title": "Insurance Repricing Notice",
+    "body": "The insurer has reviewed your recent operating texture and would like more money.",
+    "weight": 5,
+    "tags": ["finance", "safety"],
+    "requirements": {
+      "metricMax": {
+        "safetyIntegrity": 65
+      }
+    },
+    "impacts": {
+      "airlineCash": -10,
+      "creditorPatience": -2
+    }
+  },
+  {
+    "id": "vendor_prepay_demand",
+    "kind": "ambient",
+    "title": "Vendor Prepay Demand",
+    "body": "Suppliers decide that future promises are no longer an acceptable currency.",
+    "weight": 5,
+    "tags": ["finance", "operations"],
+    "requirements": {
+      "metricMax": {
+        "creditorPatience": 42
+      }
+    },
+    "impacts": {
+      "airlineCash": -12,
+      "marketConfidence": -2
+    }
+  },
+  {
+    "id": "airport_fee_standoff",
+    "kind": "ambient",
+    "title": "Airport Fee Standoff",
+    "body": "One airport quietly reminds you that gates are a privilege and invoices are a weapon.",
+    "weight": 4,
+    "tags": ["finance", "operations"],
+    "requirements": {
+      "metricMax": {
+        "creditorPatience": 50
+      }
+    },
+    "impacts": {
+      "airlineCash": -8,
+      "assetValue": -6,
+      "publicAnger": 2
+    }
+  },
+  {
+    "id": "bank_covenant_whitepaper",
+    "kind": "ambient",
+    "title": "Bank Covenant Whitepaper",
+    "body": "A research note explains your leverage profile in a tone normally reserved for unstable isotopes.",
+    "weight": 5,
+    "tags": ["finance", "creditors"],
+    "requirements": {
+      "metricMin": {
+        "debt": 760
+      }
+    },
+    "impacts": {
+      "creditorPatience": -4,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "receivables_sale_discount",
+    "kind": "ambient",
+    "title": "Receivables Sale Discount",
+    "body": "A receivables buyer offers fast cash at a price only a desperate management team could love.",
+    "weight": 4,
+    "tags": ["finance", "cash"],
+    "requirements": {
+      "metricMax": {
+        "airlineCash": 180
+      }
+    },
+    "impacts": {
+      "airlineCash": 8,
+      "assetValue": -10,
+      "marketConfidence": -2
+    }
+  },
+  {
+    "id": "tax_lien_rumor",
+    "kind": "ambient",
+    "title": "Tax Lien Rumor",
+    "body": "A local rumor about unpaid obligations proves accurate enough to move the tape.",
+    "weight": 4,
+    "tags": ["finance", "press"],
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 28
+      }
+    },
+    "impacts": {
+      "marketConfidence": -2,
+      "legalHeat": 2,
+      "publicAnger": 2
+    }
+  },
+  {
+    "id": "analyst_bid_speculation",
+    "kind": "ambient",
+    "title": "Analyst Bid Speculation",
+    "body": "A bank publishes takeover chatter and dares the market to imagine a cleaner owner.",
+    "weight": 3,
+    "tags": ["market", "positive"],
+    "requirements": {
+      "metricMin": {
+        "marketConfidence": 60
+      }
+    },
+    "impacts": {
+      "stockPrice": 3,
+      "marketConfidence": 2
+    }
+  }
+]

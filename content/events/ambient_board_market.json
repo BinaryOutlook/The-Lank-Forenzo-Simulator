@@ -1,0 +1,143 @@
+[
+  {
+    "id": "buy_side_downgrade_wave",
+    "kind": "ambient",
+    "title": "Buy-Side Downgrade Wave",
+    "body": "Portfolio managers decide the turnaround story belongs in someone else's quarter.",
+    "weight": 6,
+    "tags": ["market", "board"],
+    "requirements": {
+      "metricMax": {
+        "marketConfidence": 46
+      }
+    },
+    "impacts": {
+      "stockPrice": -5,
+      "marketConfidence": -6,
+      "creditorPatience": -2
+    }
+  },
+  {
+    "id": "short_seller_chartbook",
+    "kind": "ambient",
+    "title": "Short Seller Chartbook",
+    "body": "A slick deck explains your strategy in the language of fraud-adjacent enthusiasm.",
+    "weight": 6,
+    "tags": ["market", "press"],
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 45
+      }
+    },
+    "impacts": {
+      "stockPrice": -6,
+      "marketConfidence": -5,
+      "legalHeat": 3
+    }
+  },
+  {
+    "id": "activist_shadow_deck",
+    "kind": "ambient",
+    "title": "Activist Shadow Deck",
+    "body": "An activist fund circulates a plan that is somehow crueler than yours and still sounds more disciplined.",
+    "weight": 5,
+    "tags": ["board", "finance"],
+    "requirements": {
+      "metricMin": {
+        "debt": 720
+      }
+    },
+    "impacts": {
+      "creditorPatience": -3,
+      "marketConfidence": -4,
+      "stockPrice": -3
+    }
+  },
+  {
+    "id": "ratings_watch_negative",
+    "kind": "ambient",
+    "title": "Ratings Watch Negative",
+    "body": "The rating agencies stop hinting and start publishing.",
+    "weight": 6,
+    "tags": ["finance", "creditors"],
+    "requirements": {
+      "metricMax": {
+        "creditorPatience": 45
+      }
+    },
+    "impacts": {
+      "debt": 10,
+      "marketConfidence": -4,
+      "stockPrice": -2
+    }
+  },
+  {
+    "id": "turnaround_podcast_bump",
+    "kind": "ambient",
+    "title": "Turnaround Podcast Bump",
+    "body": "A host mistakes your cruelty for conviction and your cuts for genius.",
+    "weight": 3,
+    "tags": ["market", "positive"],
+    "requirements": {
+      "metricMin": {
+        "marketConfidence": 58
+      }
+    },
+    "impacts": {
+      "marketConfidence": 4,
+      "stockPrice": 3
+    }
+  },
+  {
+    "id": "proxy_adviser_sideeye",
+    "kind": "ambient",
+    "title": "Proxy Adviser Side-Eye",
+    "body": "Governance shops begin using the phrase \"unhelpful incentives\" about your compensation package.",
+    "weight": 4,
+    "tags": ["board", "legal"],
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 50
+      }
+    },
+    "impacts": {
+      "marketConfidence": -3,
+      "creditorPatience": -2
+    }
+  },
+  {
+    "id": "lender_listening_tour",
+    "kind": "ambient",
+    "title": "Lender Listening Tour",
+    "body": "A few major holders leave the briefing mildly reassured, which counts as affection in this industry.",
+    "weight": 3,
+    "tags": ["creditors", "board"],
+    "requirements": {
+      "metricMin": {
+        "creditorPatience": 46
+      }
+    },
+    "impacts": {
+      "creditorPatience": 4,
+      "marketConfidence": 2
+    }
+  },
+  {
+    "id": "private_equity_driveby",
+    "kind": "ambient",
+    "title": "Private Equity Drive-By",
+    "body": "A sponsor circles the carcass and tells the market there may still be optionality here.",
+    "weight": 3,
+    "tags": ["market", "finance"],
+    "requirements": {
+      "metricMin": {
+        "assetValue": 700,
+        "marketConfidence": 40
+      }
+    },
+    "impacts": {
+      "marketConfidence": 3,
+      "creditorPatience": 2
+    }
+  }
+]

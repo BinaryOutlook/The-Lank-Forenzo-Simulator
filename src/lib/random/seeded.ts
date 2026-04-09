@@ -5,6 +5,19 @@ export function hashNumber(...values: number[]): number {
   }, 2166136261);
 }
 
+export function hashString(...values: string[]): number {
+  return values.reduce((accumulator, value, index) => {
+    let next = accumulator ^ (index * 16777619);
+
+    for (const character of value) {
+      next ^= character.charCodeAt(0);
+      next = Math.imul(next, 16777619);
+    }
+
+    return next >>> 0;
+  }, 2166136261);
+}
+
 export function mulberry32(seed: number): () => number {
   let current = seed >>> 0;
   return () => {

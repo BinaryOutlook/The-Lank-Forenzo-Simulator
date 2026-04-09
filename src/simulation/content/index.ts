@@ -1,6 +1,6 @@
 import rawDecisions from "../../../content/decisions/core.json";
 import rawEndings from "../../../content/endings/core.json";
-import rawEvents from "../../../content/events/core.json";
+import { allEvents } from "../../../content/events";
 import { decisionsSchema, endingsSchema, eventsSchema } from "../../lib/schemas/contentSchemas";
 import type { ContentBundle } from "../state/types";
 
@@ -13,7 +13,7 @@ export function loadContent(): ContentBundle {
 
   cachedContent = {
     decisions: decisionsSchema.parse(rawDecisions),
-    events: eventsSchema.parse(rawEvents),
+    events: eventsSchema.parse(allEvents),
     endings: endingsSchema.parse(rawEndings),
   };
 

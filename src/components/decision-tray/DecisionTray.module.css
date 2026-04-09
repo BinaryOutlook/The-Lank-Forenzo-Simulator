@@ -133,7 +133,8 @@
 }
 
 .previewPositive,
-.previewNegative {
+.previewNegative,
+.previewNeutral {
   display: inline-flex;
   align-items: center;
   min-height: 1.95rem;
@@ -152,6 +153,12 @@
   border-color: var(--decision-preview-negative-border);
   background: var(--decision-preview-negative-bg);
   color: var(--decision-preview-negative-text);
+}
+
+.previewNeutral {
+  border-color: color-mix(in oklab, var(--border) 92%, var(--text) 8%);
+  background: color-mix(in oklab, var(--panel) 78%, var(--text) 6%);
+  color: var(--text-muted);
 }
 
 @media (max-width: 860px) {

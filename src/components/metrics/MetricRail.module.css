@@ -63,7 +63,8 @@
 }
 
 .meterFill,
-.meterDanger {
+.meterDanger,
+.meterNeutral {
   display: block;
   height: 100%;
   background: linear-gradient(90deg, var(--accent-soft), var(--accent-strong));
@@ -71,4 +72,8 @@
 
 .meterDanger {
   background: linear-gradient(90deg, var(--danger-soft), var(--danger));
+}
+
+.meterNeutral {
+  background: linear-gradient(90deg, color-mix(in oklab, var(--text-muted) 32%, transparent), var(--text-muted));
 }

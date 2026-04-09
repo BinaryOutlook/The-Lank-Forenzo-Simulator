@@ -6,6 +6,8 @@ interface EventFeedProps {
 }
 
 export function EventFeed({ history }: EventFeedProps) {
+  const recentHistory = history.slice(0, 10);
+
   return (
     <section className={styles.feed}>
       <div className={styles.header}>
@@ -14,7 +16,7 @@ export function EventFeed({ history }: EventFeedProps) {
       </div>
 
       <div className={styles.list}>
-        {history.map((entry) => (
+        {recentHistory.map((entry) => (
           <article key={entry.id} className={styles.entry}>
             <div className={styles.meta}>
               <span className={styles.round}>R{entry.round}</span>

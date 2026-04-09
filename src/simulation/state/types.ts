@@ -56,8 +56,9 @@ export interface RequirementSpec {
 }
 
 export interface DelayedConsequenceRef {
-  eventId: string;
   delay: number;
+  eventId?: string;
+  eventIds?: string[];
 }
 
 export interface DecisionDefinition {

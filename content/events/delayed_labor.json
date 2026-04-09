@@ -1,0 +1,80 @@
+[
+  {
+    "id": "faa_exit_interviews",
+    "kind": "delayed",
+    "title": "FAA Exit Interviews",
+    "body": "Dismissed supervisors speak with unusual clarity once they stop expecting severance.",
+    "weight": 7,
+    "tags": ["labor", "legal"],
+    "impacts": {
+      "legalHeat": 8,
+      "publicAnger": 5,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "severance_injunction",
+    "kind": "delayed",
+    "title": "Severance Injunction",
+    "body": "A judge decides the cleanup was not clean enough to proceed without oversight.",
+    "weight": 6,
+    "tags": ["labor", "legal"],
+    "impacts": {
+      "airlineCash": -12,
+      "legalHeat": 6,
+      "creditorPatience": -2
+    }
+  },
+  {
+    "id": "pension_freeze_probe",
+    "kind": "delayed",
+    "title": "Pension Freeze Probe",
+    "body": "A benefits review meant to be procedural starts sounding accusatory almost immediately.",
+    "weight": 7,
+    "tags": ["labor", "legal"],
+    "impacts": {
+      "legalHeat": 7,
+      "publicAnger": 6,
+      "creditorPatience": -3
+    }
+  },
+  {
+    "id": "retiree_tv_tour",
+    "kind": "delayed",
+    "title": "Retiree TV Tour",
+    "body": "Former employees discover that camera-ready outrage is one of the few benefits they still have.",
+    "weight": 5,
+    "tags": ["labor", "press"],
+    "impacts": {
+      "publicAnger": 7,
+      "marketConfidence": -3,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "badge_access_chaos",
+    "kind": "delayed",
+    "title": "Badge Access Chaos",
+    "body": "The outsourcing plan saves money until no one can tell who still has access to what.",
+    "weight": 5,
+    "tags": ["operations", "labor"],
+    "impacts": {
+      "airlineCash": -9,
+      "workforceMorale": -4,
+      "publicAnger": 3
+    }
+  },
+  {
+    "id": "vendor_safety_dispute",
+    "kind": "delayed",
+    "title": "Vendor Safety Dispute",
+    "body": "The cheap partner claims your standards packet arrived after the work did.",
+    "weight": 6,
+    "tags": ["operations", "safety"],
+    "impacts": {
+      "safetyIntegrity": -6,
+      "legalHeat": 5,
+      "marketConfidence": -3
+    }
+  }
+]

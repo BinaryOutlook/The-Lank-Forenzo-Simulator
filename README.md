@@ -11,8 +11,9 @@ Implemented in the current build:
 - React + TypeScript + Vite app shell
 - browser-native deterministic simulation loop
 - local save persistence
-- authored decision and event content
+- authored decision content plus a validated multi-pack event library with deterministic delayed-event pools
 - personal wealth, legal heat, creditor patience, safety, market confidence, and workforce systems
+- shared metric-semantics rules so inverse-pressure indicators such as `legalHeat`, `publicAnger`, and `debt` read correctly
 - multiple endings, including merger, extraction, prison, and Bahamas escape
 - two first-class themes: `Earth` and `Armonk Blue`
 - unit tests, content validation, build checks, and a Playwright smoke test
@@ -69,6 +70,8 @@ npm run dev
 
 Open the local Vite URL shown in the terminal.
 
+Event content is assembled from validated packs under `content/events/` through `content/events/index.ts`.
+
 ## Scripts
 
 ```bash
@@ -102,6 +105,8 @@ src/
 content/
   decisions/
   events/
+    index.ts
+    *.json
   endings/
 docs/
   PRD.md
@@ -110,6 +115,9 @@ PRDs/
   v0.1.1/
     v0.1.1.md
     v0.1.1-demo.html
+  v0.2/
+    v0.2.md
+    v0.2-demo.html
 tests/
   unit/
   e2e/
@@ -119,4 +127,4 @@ tests/
 
 - Product requirements: [docs/PRD.md](docs/PRD.md)
 - Systems and design brief: [docs/TECHNICAL_BRIEF.md](docs/TECHNICAL_BRIEF.md)
-- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md)
+- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md)

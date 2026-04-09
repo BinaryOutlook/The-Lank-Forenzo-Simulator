@@ -1,0 +1,147 @@
+[
+  {
+    "id": "flight_attendant_sickout",
+    "kind": "ambient",
+    "title": "Flight Attendant Sickout",
+    "body": "Enough crews discover the same sudden illness to make investors suspect the diagnosis is managerial.",
+    "weight": 6,
+    "tags": ["labor", "operations"],
+    "requirements": {
+      "metricMax": {
+        "workforceMorale": 48
+      }
+    },
+    "impacts": {
+      "airlineCash": -12,
+      "marketConfidence": -3,
+      "publicAnger": 4,
+      "workforceMorale": -4
+    }
+  },
+  {
+    "id": "mechanics_open_letter",
+    "kind": "ambient",
+    "title": "Mechanics Open Letter",
+    "body": "A signed letter from line mechanics turns technical concerns into public language.",
+    "weight": 6,
+    "tags": ["labor", "safety"],
+    "requirements": {
+      "metricMax": {
+        "safetyIntegrity": 60
+      }
+    },
+    "impacts": {
+      "legalHeat": 4,
+      "marketConfidence": -4,
+      "publicAnger": 5
+    }
+  },
+  {
+    "id": "grievance_avalanche",
+    "kind": "ambient",
+    "title": "Grievance Avalanche",
+    "body": "The labor inbox becomes a filing cabinet with feelings.",
+    "weight": 5,
+    "tags": ["labor", "legal"],
+    "requirements": {
+      "metricMax": {
+        "workforceMorale": 44
+      }
+    },
+    "impacts": {
+      "airlineCash": -8,
+      "legalHeat": 3,
+      "publicAnger": 4
+    }
+  },
+  {
+    "id": "crew_room_mutiny",
+    "kind": "ambient",
+    "title": "Crew Room Mutiny",
+    "body": "The conversations in the break rooms get organized enough to become a management problem.",
+    "weight": 5,
+    "tags": ["labor", "service"],
+    "requirements": {
+      "metricMax": {
+        "workforceMorale": 36
+      }
+    },
+    "impacts": {
+      "workforceMorale": -6,
+      "marketConfidence": -2,
+      "publicAnger": 3
+    }
+  },
+  {
+    "id": "station_manager_walkoff",
+    "kind": "ambient",
+    "title": "Station Manager Walkoff",
+    "body": "A few middle managers decide that being blamed professionally is no longer competitive compensation.",
+    "weight": 5,
+    "tags": ["labor", "operations"],
+    "requirements": {
+      "metricMax": {
+        "workforceMorale": 40
+      }
+    },
+    "impacts": {
+      "airlineCash": -9,
+      "marketConfidence": -3,
+      "workforceMorale": -4
+    }
+  },
+  {
+    "id": "holiday_picket_images",
+    "kind": "ambient",
+    "title": "Holiday Picket Images",
+    "body": "Families with signs outside terminals become the holiday photo package no one asked for.",
+    "weight": 4,
+    "tags": ["labor", "press"],
+    "requirements": {
+      "metricMin": {
+        "publicAnger": 35
+      }
+    },
+    "impacts": {
+      "publicAnger": 6,
+      "marketConfidence": -3,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "reserve_pilot_drought",
+    "kind": "ambient",
+    "title": "Reserve Pilot Drought",
+    "body": "The schedule looks lean until one weather hiccup reveals how little slack still exists.",
+    "weight": 5,
+    "tags": ["operations", "labor"],
+    "requirements": {
+      "metricMax": {
+        "workforceSize": 6200
+      }
+    },
+    "impacts": {
+      "airlineCash": -10,
+      "safetyIntegrity": -4,
+      "marketConfidence": -2
+    }
+  },
+  {
+    "id": "call_center_meltdown",
+    "kind": "ambient",
+    "title": "Call Center Meltdown",
+    "body": "Hold times become a civic experience and local radio starts taking requests.",
+    "weight": 4,
+    "tags": ["operations", "press"],
+    "requirements": {
+      "metricMax": {
+        "marketConfidence": 55
+      }
+    },
+    "impacts": {
+      "airlineCash": -6,
+      "marketConfidence": -4,
+      "publicAnger": 5
+    }
+  }
+]

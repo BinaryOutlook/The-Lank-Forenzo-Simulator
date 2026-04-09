@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import clsx from "clsx";
 import { formatDelta, getImpactPreview, metricLabels } from "../../lib/formatters";
+import { getImpactTone } from "../../simulation/state/metricSemantics";
 import type { DecisionDefinition } from "../../simulation/state/types";
 import styles from "./DecisionTray.module.css";
 
@@ -62,7 +63,11 @@ export function DecisionTray({
                 {preview.map((entry) => (
                   <span
                     key={`${decision.id}-${entry.metric}`}
-                    className={clsx(entry.delta > 0 ? styles.previewPositive : styles.previewNegative)}
+                    className={clsx(
+                      getImpactTone(entry.metric, entry.delta) === "positive" && styles.previewPositive,
+                      getImpactTone(entry.metric, entry.delta) === "negative" && styles.previewNegative,
+                      getImpactTone(entry.metric, entry.delta) === "neutral" && styles.previewNeutral,
+                    )}
                   >
                     {metricLabels[entry.metric]} {formatDelta(entry.metric, entry.delta)}
                   </span>

@@ -14,7 +14,7 @@
       "legalHeat": 4
     },
     "delayedConsequences": [
-      { "eventId": "whistleblower_letter", "delay": 2 }
+      { "eventIds": ["whistleblower_letter", "faa_exit_interviews", "severance_injunction"], "delay": 2 }
     ]
   },
   {
@@ -31,7 +31,7 @@
       "legalHeat": 7
     },
     "delayedConsequences": [
-      { "eventId": "pension_class_action", "delay": 3 }
+      { "eventIds": ["pension_class_action", "pension_freeze_probe", "retiree_tv_tour"], "delay": 3 }
     ]
   },
   {
@@ -50,7 +50,7 @@
       "legalHeat": 3
     },
     "delayedConsequences": [
-      { "eventId": "hub_delay_cascade", "delay": 2 }
+      { "eventIds": ["hub_delay_cascade", "slot_auction_humiliation", "regional_feed_unravels"], "delay": 2 }
     ]
   },
   {
@@ -67,7 +67,7 @@
       "stockPrice": 6
     },
     "delayedConsequences": [
-      { "eventId": "leaseback_bill_shock", "delay": 3 }
+      { "eventIds": ["leaseback_bill_shock", "lessor_step_in_clause", "lease_reserve_trueup"], "delay": 3 }
     ]
   },
   {
@@ -83,7 +83,7 @@
       "legalHeat": 8
     },
     "delayedConsequences": [
-      { "eventId": "maintenance_near_miss", "delay": 2 }
+      { "eventIds": ["maintenance_near_miss", "maintenance_paper_trail", "faa_ramp_audit"], "delay": 2 }
     ]
   },
   {
@@ -98,7 +98,7 @@
       "legalHeat": 4
     },
     "delayedConsequences": [
-      { "eventId": "tabloid_profile", "delay": 3 }
+      { "eventIds": ["analyst_model_walkback", "call_transcript_supercut", "earnings_guidance_correction"], "delay": 3 }
     ]
   },
   {
@@ -116,7 +116,7 @@
       "legalHeat": 5
     },
     "delayedConsequences": [
-      { "eventId": "contractor_walkout", "delay": 2 }
+      { "eventIds": ["contractor_walkout", "badge_access_chaos", "vendor_safety_dispute"], "delay": 2 }
     ]
   },
   {
@@ -133,7 +133,7 @@
       "marketConfidence": 2
     },
     "delayedConsequences": [
-      { "eventId": "creditor_revolt", "delay": 2 }
+      { "eventIds": ["creditor_revolt", "covenant_leak", "distressed_debt_pack_hunt"], "delay": 2 }
     ]
   },
   {
@@ -166,7 +166,7 @@
       "offshoreReadiness": 6
     },
     "delayedConsequences": [
-      { "eventId": "shell_invoice_exposed", "delay": 3 }
+      { "eventIds": ["shell_invoice_exposed", "consulting_conflict_memo", "invoice_rounding_pattern"], "delay": 3 }
     ]
   },
   {
@@ -188,7 +188,7 @@
       }
     },
     "delayedConsequences": [
-      { "eventId": "insider_trade_whispers", "delay": 2 }
+      { "eventIds": ["insider_trade_whispers", "suspicious_10b5_window", "broker_chat_subpoena"], "delay": 2 }
     ]
   },
   {
@@ -205,7 +205,7 @@
       "legalHeat": 4
     },
     "delayedConsequences": [
-      { "eventId": "executive_perk_backlash", "delay": 2 }
+      { "eventIds": ["executive_perk_backlash", "compensation_deck_leak", "chauffeur_receipt_dump"], "delay": 2 }
     ]
   },
   {
@@ -292,7 +292,7 @@
       "roundAtLeast": 4
     },
     "delayedConsequences": [
-      { "eventId": "merger_interest", "delay": 2 }
+      { "eventIds": ["merger_interest", "slot_value_diligence", "merger_term_sheet"], "delay": 2 }
     ]
   },
   {
@@ -326,7 +326,7 @@
       "roundAtLeast": 3
     },
     "delayedConsequences": [
-      { "eventId": "offshore_auditor_ping", "delay": 3 }
+      { "eventIds": ["offshore_auditor_ping", "nominee_director_jitters", "correspondent_bank_query"], "delay": 3 }
     ]
   },
   {
