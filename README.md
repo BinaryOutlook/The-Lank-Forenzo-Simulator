@@ -26,6 +26,28 @@ The game is built around one central split:
 
 Each round presents a board packet, a curated decision tray, and a consequence feed. The goal is not operational excellence. The goal is controlled demolition with enough plausible deniability to leave rich.
 
+## Winning, Losing, and End States
+
+This is not a conventional "save the airline" game. The practical win condition is reaching an intentional exit before the simulation hits an automatic failure state.
+
+Successful end states:
+
+- `Merger`: start `Merger Backchannel` from round 4 onward, survive long enough for the delayed merger interest to become a real offer, then take `Accept the Merger`.
+- `Extraction`: from round 7 onward, hit at least `65` market confidence, `28` stock price, and `35` personal wealth while keeping legal heat at `74` or lower, then choose `Cash Out and Resign`.
+- `Bahamas`: from round 6 onward, reach at least `60` offshore readiness and `55` personal wealth, then choose `Run for Nassau`.
+
+Automatic losing end states:
+
+- `Forced Removal`: triggered if creditor patience falls to `0`, airline cash falls to `-140`, or market confidence falls to `6`.
+- `Prison`: triggered if legal heat reaches `95`, or if legal heat reaches `86` while safety integrity is `35` or lower.
+
+Strategy framing:
+
+- If you want `Merger`, preserve enough board confidence and creditor patience to stay governable while you set up the offer.
+- If you want `Extraction`, keep the market story alive long enough to sell optimism into strength without letting legal heat spike into a collapse.
+- If you want `Bahamas`, convert corporate value into personal wealth and offshore readiness early, because the escape route is a race against accumulating heat.
+- If you ignore the end states, the game will usually choose one for you, and those are the bad ones.
+
 ## Stack
 
 - React
