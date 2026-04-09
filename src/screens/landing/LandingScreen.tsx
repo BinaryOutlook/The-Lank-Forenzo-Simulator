@@ -24,7 +24,7 @@ export function LandingScreen() {
       >
         <div className={styles.copy}>
           <p className={styles.eyebrow}>Browser reboot</p>
-          <h1 className={styles.title}>Run the airline badly on purpose. Do it elegantly enough to leave rich.</h1>
+          <h1 className={styles.title}>Run the airline badly on purpose. <br /> <br /> Do it elegantly enough to leave rich.</h1>
           <p className={styles.summary}>
             This is a turn-based extraction game about labor cuts, leverage, stock exits, legal heat, and the precise
             moment when saving the company becomes less interesting than escaping it.
