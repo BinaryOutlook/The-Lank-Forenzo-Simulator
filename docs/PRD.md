@@ -349,7 +349,7 @@ The MVP should be intentionally compact but unmistakably this game.
 - creditor patience tracking
 - workforce morale tracking
 - market confidence tracking
-- 20 to 30 authored decisions
+- an initial authored decision library of 20 to 30 decisions, with architecture that can scale well beyond that floor
 - 15 to 20 authored events and consequences
 - multiple endings
 
@@ -397,6 +397,8 @@ The player should not need secondary screens to understand the state of the run.
 - Decisions should preview the likely direction of impact before confirmation.
 - Some decisions should be locked behind prior conditions.
 - Some decisions should create future event hooks rather than immediate numeric rewards.
+- The decision library should be able to scale through maintainable authored packs rather than a single indefinitely growing file.
+- Tray curation should balance state relevance with visible variety so a round does not collapse into repetitive same-group cards.
 
 ### 13.4 Consequence system
 
@@ -444,6 +446,7 @@ The player should not need secondary screens to understand the state of the run.
 - The product must be organized so that simulation, content, and UI are clearly separated.
 - New features should strengthen boundaries rather than blur them.
 - The codebase should remain understandable after months away from the project.
+- Authored content libraries should support pack-based organization and validation as decisions and events scale.
 
 ### 14.2 Responsiveness
 
