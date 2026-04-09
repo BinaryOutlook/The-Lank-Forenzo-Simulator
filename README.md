@@ -113,6 +113,9 @@ content/
 docs/
   PRD.md
   TECHNICAL_BRIEF.md
+  reference/
+    decision-library.md
+    event-library.md
 PRDs/
   v0.1.1/
     v0.1.1.md
@@ -132,4 +135,6 @@ tests/
 
 - Product requirements: [docs/PRD.md](docs/PRD.md)
 - Systems and design brief: [docs/TECHNICAL_BRIEF.md](docs/TECHNICAL_BRIEF.md)
+- Decision library and historical parallels: [docs/reference/decision-library.md](docs/reference/decision-library.md)
+- Event library and historical parallels: [docs/reference/event-library.md](docs/reference/event-library.md)
 - Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md)
