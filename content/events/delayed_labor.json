@@ -76,5 +76,18 @@
       "legalHeat": 5,
       "marketConfidence": -3
     }
+  },
+  {
+    "id": "certificate_whipsaw_hearing",
+    "kind": "delayed",
+    "title": "Certificate Whipsaw Hearing",
+    "body": "Labor lawyers and regulators compare certificates, payroll maps, and timelines until the strategy stops sounding accidental.",
+    "weight": 6,
+    "tags": ["labor", "legal"],
+    "impacts": {
+      "workforceMorale": -6,
+      "publicAnger": 5,
+      "legalHeat": 6
+    }
   }
 ]

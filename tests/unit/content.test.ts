@@ -7,12 +7,13 @@ describe("content library", () => {
     const decisionPacks = new Set(content.decisions.map((decision) => decision.pack));
     const delayedDecisions = content.decisions.filter((decision) => decision.delayedConsequences?.length);
 
-    expect(content.decisions.length).toBeGreaterThanOrEqual(85);
-    expect(decisionPacks.size).toBeGreaterThanOrEqual(9);
+    expect(content.decisions.length).toBeGreaterThanOrEqual(100);
+    expect(decisionPacks.size).toBeGreaterThanOrEqual(10);
     expect(decisionPacks.has("mergerBait")).toBe(true);
     expect(decisionPacks.has("shadowSubsidiaries")).toBe(true);
+    expect(decisionPacks.has("regulatoryTheater")).toBe(true);
     expect(decisionPacks.has("executiveEscape")).toBe(true);
-    expect(delayedDecisions.length).toBeGreaterThanOrEqual(60);
+    expect(delayedDecisions.length).toBeGreaterThanOrEqual(70);
   });
 
   it("loads a materially expanded multi-pack event library", () => {
@@ -20,9 +21,9 @@ describe("content library", () => {
     const ambientEvents = content.events.filter((event) => event.kind === "ambient");
     const delayedEvents = content.events.filter((event) => event.kind === "delayed");
 
-    expect(content.events.length).toBeGreaterThanOrEqual(117);
+    expect(content.events.length).toBeGreaterThanOrEqual(132);
     expect(ambientEvents.length).toBeGreaterThanOrEqual(50);
-    expect(delayedEvents.length).toBeGreaterThanOrEqual(50);
+    expect(delayedEvents.length).toBeGreaterThanOrEqual(70);
   });
 
   it("keeps delayed consequence pools pointed at delayed events", () => {

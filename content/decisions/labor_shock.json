@@ -91,6 +91,26 @@
     ]
   },
   {
+    "id": "whipsaw_the_certificates",
+    "title": "Whipsaw the Certificates",
+    "summary": "Play one operating certificate against another until labor terms start competing for survival.",
+    "group": "labor",
+    "tags": ["labor", "certificates", "whipsaw"],
+    "impacts": {
+      "airlineCash": 18,
+      "workforceMorale": -10,
+      "marketConfidence": 2,
+      "publicAnger": 6,
+      "legalHeat": 5
+    },
+    "requirements": {
+      "flagsAll": ["scopeWarOpen"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["certificate_whipsaw_hearing", "scope_clause_arbitration", "seniority_map_fight"], "delay": 2 }
+    ]
+  },
+  {
     "id": "regionalize_the_feed",
     "title": "Regionalize the Feed",
     "summary": "Move flying to thinner contracts and call the shrinking mainline footprint strategic focus.",

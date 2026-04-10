@@ -102,5 +102,31 @@
       "debt": 12,
       "marketConfidence": -3
     }
+  },
+  {
+    "id": "reservation_cutover_stumble",
+    "kind": "delayed",
+    "title": "Reservation Cutover Stumble",
+    "body": "The newly monetized booking stack misses a beat and suddenly every airport screen is arguing with yesterday.",
+    "weight": 6,
+    "tags": ["operations", "service"],
+    "impacts": {
+      "airlineCash": -13,
+      "marketConfidence": -4,
+      "publicAnger": 4
+    }
+  },
+  {
+    "id": "card_processor_reserve_call",
+    "kind": "delayed",
+    "title": "Card Processor Reserve Call",
+    "body": "The acquiring bank decides forward bookings look less like revenue and more like collateral it should hold itself.",
+    "weight": 7,
+    "tags": ["finance", "creditors"],
+    "impacts": {
+      "airlineCash": -19,
+      "creditorPatience": -3,
+      "marketConfidence": -2
+    }
   }
 ]

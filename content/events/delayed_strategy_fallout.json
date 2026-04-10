@@ -205,5 +205,18 @@
       "offshoreReadiness": -4,
       "legalHeat": 4
     }
+  },
+  {
+    "id": "forum_shopping_challenge",
+    "kind": "delayed",
+    "title": "Forum Shopping Challenge",
+    "body": "Opposing counsel argues your chosen courtroom was selected for hospitality rather than justice, and the judge seems interested.",
+    "weight": 6,
+    "tags": ["creditors", "legal"],
+    "impacts": {
+      "airlineCash": -10,
+      "creditorPatience": -4,
+      "legalHeat": 5
+    }
   }
 ]

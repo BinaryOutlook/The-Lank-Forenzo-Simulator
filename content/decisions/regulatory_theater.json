@@ -1,0 +1,212 @@
+[
+  {
+    "id": "hire_the_former_regulator",
+    "title": "Hire the Former Regulator",
+    "summary": "Put a familiar face between you and oversight and call the invoice governance.",
+    "group": "legal",
+    "tags": ["regulators", "legal", "optics"],
+    "impacts": {
+      "airlineCash": -8,
+      "creditorPatience": 4,
+      "marketConfidence": 3,
+      "legalHeat": -2,
+      "publicAnger": 1
+    },
+    "setsFlags": ["regulatoryPlaybookLive"],
+    "delayedConsequences": [
+      { "eventIds": ["revolving_door_profile", "director_indemnity_alarm", "fairness_opinion_underfire"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "announce_the_independent_review",
+    "title": "Announce the Independent Review",
+    "summary": "Commission a sober-looking investigation with just enough scope control to stay useful.",
+    "group": "market",
+    "tags": ["regulators", "review", "spin"],
+    "impacts": {
+      "airlineCash": -6,
+      "marketConfidence": 6,
+      "creditorPatience": 3,
+      "publicAnger": -2,
+      "legalHeat": 1
+    },
+    "requirements": {
+      "roundAtLeast": 2
+    },
+    "setsFlags": ["reviewNarrativeLive"],
+    "delayedConsequences": [
+      { "eventIds": ["review_scope_leak", "turnaround_story_cracks", "call_transcript_supercut"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "district_jobs_press_conference",
+    "title": "District Jobs Press Conference",
+    "summary": "Wrap the restructure in jobs, connectivity, and civic gratitude before anyone opens the appendix.",
+    "group": "market",
+    "tags": ["regulators", "jobs", "press"],
+    "impacts": {
+      "marketConfidence": 4,
+      "creditorPatience": 2,
+      "publicAnger": -3,
+      "legalHeat": 1
+    },
+    "requirements": {
+      "roundAtLeast": 2
+    },
+    "delayedConsequences": [
+      { "eventIds": ["mayor_hot_mic", "route_overlap_chart", "hearing_transcript_pullquote"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "flood_the_docket_with_compliance",
+    "title": "Flood the Docket with Compliance",
+    "summary": "Drown the process in binders, plans, and partial fixes until delay starts looking like diligence.",
+    "group": "legal",
+    "tags": ["regulators", "compliance", "paperwork"],
+    "impacts": {
+      "airlineCash": -10,
+      "legalHeat": -6,
+      "creditorPatience": 2,
+      "marketConfidence": 1,
+      "publicAnger": 1
+    },
+    "requirements": {
+      "flagsAll": ["regulatoryPlaybookLive"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["compliance_binder_mockery", "hearing_transcript_pullquote", "fairness_opinion_underfire"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "friendly_hearing_prep",
+    "title": "Friendly Hearing Prep",
+    "summary": "Rehearse sincerity, calibrate regret, and make selective memory sound like institutional stability.",
+    "group": "legal",
+    "tags": ["regulators", "hearing", "optics"],
+    "impacts": {
+      "airlineCash": -5,
+      "marketConfidence": 4,
+      "legalHeat": -2,
+      "publicAnger": -1
+    },
+    "requirements": {
+      "flagsAll": ["regulatoryPlaybookLive"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["hearing_transcript_pullquote", "call_transcript_supercut", "review_scope_leak"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "trade_slots_for_goodwill",
+    "title": "Trade Slots for Goodwill",
+    "summary": "Offer a visible concession to the authorities and hope nobody notices how much uglier the rest of the deal is.",
+    "group": "operations",
+    "tags": ["regulators", "slots", "concessions"],
+    "impacts": {
+      "airlineCash": 12,
+      "assetValue": -14,
+      "marketConfidence": 5,
+      "creditorPatience": 3,
+      "legalHeat": -3
+    },
+    "requirements": {
+      "roundAtLeast": 4,
+      "flagsAll": ["reviewNarrativeLive"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["concession_monitor_report", "slot_auction_humiliation", "route_overlap_chart"], "delay": 3 }
+    ]
+  },
+  {
+    "id": "ground_the_oldest_tail_for_the_cameras",
+    "title": "Ground the Oldest Tail for the Cameras",
+    "summary": "Sacrifice one photogenic aircraft so the rest of the fleet can hide behind a morality play.",
+    "group": "operations",
+    "tags": ["regulators", "safety", "optics"],
+    "impacts": {
+      "airlineCash": -10,
+      "assetValue": -8,
+      "safetyIntegrity": 7,
+      "publicAnger": -3,
+      "marketConfidence": 2,
+      "legalHeat": -2
+    },
+    "requirements": {
+      "metricMax": {
+        "safetyIntegrity": 74
+      }
+    },
+    "delayedConsequences": [
+      { "eventIds": ["camera_tail_whistleblower", "inspection_memo_leak", "faa_ramp_audit"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "quiet_the_inspector_rotation",
+    "title": "Quiet the Inspector Rotation",
+    "summary": "Push for fresh oversight faces before the current ones finish connecting your timeline.",
+    "group": "legal",
+    "tags": ["regulators", "inspection", "pressure"],
+    "impacts": {
+      "airlineCash": -7,
+      "marketConfidence": 2,
+      "legalHeat": -4,
+      "safetyIntegrity": -3,
+      "publicAnger": 2
+    },
+    "requirements": {
+      "flagsAll": ["regulatoryPlaybookLive"],
+      "metricMin": {
+        "legalHeat": 34
+      }
+    },
+    "delayedConsequences": [
+      { "eventIds": ["inspector_general_letter", "faa_ramp_audit", "inspection_memo_leak"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "bury_it_in_the_consent_order",
+    "title": "Bury It in the Consent Order",
+    "summary": "Accept stern-looking oversight language that mostly buys calendar time and respectable cover.",
+    "group": "legal",
+    "tags": ["regulators", "consent", "delay"],
+    "impacts": {
+      "airlineCash": -9,
+      "creditorPatience": 4,
+      "marketConfidence": 3,
+      "legalHeat": -5,
+      "publicAnger": 2
+    },
+    "requirements": {
+      "flagsAll": ["regulatoryPlaybookLive"],
+      "roundAtLeast": 3,
+      "metricMin": {
+        "legalHeat": 28
+      }
+    },
+    "setsFlags": ["consentOrderLive"],
+    "delayedConsequences": [
+      { "eventIds": ["consent_order_breach_notice", "hearing_transcript_pullquote", "covenant_leak"], "delay": 3 }
+    ]
+  },
+  {
+    "id": "stand_up_the_reform_office",
+    "title": "Stand Up the Reform Office",
+    "summary": "Launch an internal reform machine whose most reliable output is investor comfort.",
+    "group": "legal",
+    "tags": ["regulators", "reform", "board"],
+    "impacts": {
+      "airlineCash": -11,
+      "marketConfidence": 5,
+      "creditorPatience": 4,
+      "legalHeat": -4,
+      "publicAnger": -1
+    },
+    "requirements": {
+      "flagsAll": ["reviewNarrativeLive"]
+    },
+    "setsFlags": ["reformOfficeLive"],
+    "delayedConsequences": [
+      { "eventIds": ["reform_office_whistleblower", "review_scope_leak", "compliance_binder_mockery"], "delay": 3 }
+    ]
+  }
+]

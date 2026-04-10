@@ -20,12 +20,11 @@ Implemented in the current build:
 
 ## Product Shape
 
-The game is built around one central split:
+There have been decades of airline and air-management games, but most define management through operational control: route planning, fleet allocation, scheduling, and granular efficiency. This game claims a different space. Its defining idea is the separation of personal wealth from corporate health.
 
-- the airline can be failing
-- you can still be winning
+You are not playing as a meticulous operator trying to build the best airline. You are playing from the macro level, managing the distance between two ledgers: the company and yourself. The airline can be failing while you are still winning, and that split is the product's core lens for every system, screen, and decision.
 
-Each round presents a board packet, a curated decision tray, and a consequence feed. The goal is not operational excellence. The goal is controlled demolition with enough plausible deniability to leave rich.
+Each round presents a board packet, a curated decision tray, and a consequence feed. The question is not how to optimize routes or tune fleet utilization. The question is how long you can keep the company just credible enough to keep extracting value before creditors, regulators, workers, and the market close in.
 
 ## Winning, Losing, and End States
 
@@ -126,6 +125,9 @@ PRDs/
   v0.3/
     v0.3.md
     v0.3-demo.html
+  v0.3.1/
+    v0.3.1.md
+    v0.3.1-demo.html
 tests/
   unit/
   e2e/
@@ -137,4 +139,4 @@ tests/
 - Systems and design brief: [docs/TECHNICAL_BRIEF.md](docs/TECHNICAL_BRIEF.md)
 - Decision library and historical parallels: [docs/reference/decision-library.md](docs/reference/decision-library.md)
 - Event library and historical parallels: [docs/reference/event-library.md](docs/reference/event-library.md)
-- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md)
+- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md)

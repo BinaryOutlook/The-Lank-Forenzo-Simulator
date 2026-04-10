@@ -2,10 +2,10 @@
 
 This is the documentation home for the full decision library and the public-history parallels that helped shape it.
 
-As of `2026-04-10`, the repo contains `85` authored decisions across `9` packs:
+As of `2026-04-10`, the repo contains `100` authored decisions across `10` packs:
 
 - `21` core decisions
-- `64` expansion decisions from `V0.3`
+- `79` expansion decisions from `V0.3`
 
 ## How to Read This
 
@@ -26,13 +26,14 @@ No decision in this file should be read as:
 | --- | --- | --- | --- |
 | `content/decisions/core.json` | No single person; broad airline raider / turnaround archetype | Layoffs, pension pressure, asset monetization, merger positioning, and personal extraction as the baseline fantasy | `Fictionalized composite` |
 | `content/decisions/merger_bait.json` | Stephen Wolf, Joe O'Gorman, Doug Parker | Dressing a troubled airline for sale, making slots and hubs look strategic, and selling a synergy story before the numbers are stable | `Historical tactic composite` |
-| `content/decisions/creditor_warfare.json` | Frank Lorenzo plus broader bankruptcy hardball playbooks | Amend-and-extend games, DIP pressure, cramdown threats, lessor politics, and default brinkmanship | `Historical tactic composite` |
-| `content/decisions/labor_shock.json` | Frank Lorenzo | Scope-clause warfare, pension freezes, regionalization, seniority conflict, and labor restructuring as a power tool | `Historical tactic composite` |
-| `content/decisions/asset_harvest.json` | No single person; broad airline restructuring and strip-mining playbooks | Selling gates, hangars, loyalty value, simulators, and spare assets to buy time in the present | `Historical tactic composite` |
+| `content/decisions/creditor_warfare.json` | Frank Lorenzo plus broader bankruptcy hardball playbooks | Amend-and-extend games, DIP pressure, venue shopping, ticket-float squeezes, cramdown threats, lessor politics, and default brinkmanship | `Historical tactic composite` |
+| `content/decisions/labor_shock.json` | Frank Lorenzo | Scope-clause warfare, certificate whipsaws, pension freezes, regionalization, seniority conflict, and labor restructuring as a power tool | `Historical tactic composite` |
+| `content/decisions/asset_harvest.json` | No single person; broad airline restructuring and strip-mining playbooks | Selling gates, hangars, loyalty value, reservation systems, simulators, and spare assets to buy time in the present | `Historical tactic composite` |
 | `content/decisions/safety_denial.json` | ValuJet-era maintenance scrutiny and outsourced-risk blowback | Maintenance deferrals, contractor sprawl, training cuts, QC collapse, and cosmetic audit-weekend cleanup | `Historical tactic composite` |
 | `content/decisions/shadow_subsidiaries.json` | Carsten Spohr-era lower-cost-unit and multi-brand labor-arbitrage logic | Moving flying into shells, shifting liability, rehiring on worse terms, and reintegrating when convenient | `Historical tactic composite` |
 | `content/decisions/market_theater.json` | No single person; broad investor-relations and executive-mythmaking behavior | Analyst choreography, strategic-review theater, fairness-opinion shopping, and earnings-story manipulation | `Fictionalized composite` |
-| `content/decisions/executive_escape.json` | Carl Icahn-style post-control extraction logic plus broader executive self-protection behavior | Indemnity walls, parachutes, suspicious sale timing, adviser paper trails, and offshore preparation before collapse | `Historical tactic composite` |
+| `content/decisions/regulatory_theater.json` | Frank Lorenzo plus broader airline oversight-management and hearing-optics playbooks | Revolving-door hires, independent-review theater, consent-order delay, civic jobs optics, and procedural reform as defensive camouflage | `Historical tactic composite` |
+| `content/decisions/executive_escape.json` | Carl Icahn-style post-control extraction logic plus broader executive self-protection behavior | Indemnity walls, parachutes, suspicious sale timing, adviser paper trails, intercompany fees, and offshore preparation before collapse | `Historical tactic composite` |
 
 ## Pack Inventory
 
@@ -90,8 +91,10 @@ Classification: `Historical tactic composite`
 - `warehouse_the_vendor_arrears` - Warehouse the Vendor Arrears (`finance`; tags: `vendors`, `finance`, `cash`)
 - `shop_for_dip_bully` - Shop for DIP Bullies (`finance`; tags: `dip`, `creditors`, `capital`)
 - `spin_the_restructuring_timeline` - Spin the Restructuring Timeline (`market`; tags: `creditors`, `market`, `spin`)
+- `venue_shop_the_filing` - Venue-Shop the Filing (`legal`; tags: `creditors`, `legal`, `venue`)
 - `cramdown_term_sheet` - Cramdown Term Sheet (`legal`; tags: `creditors`, `legal`, `restructuring`)
 - `cross_default_gamble` - Cross-Default Gamble (`finance`; tags: `debt`, `risk`, `creditors`)
+- `sweep_the_ticket_float` - Sweep the Ticket Float (`finance`; tags: `finance`, `cash`, `float`)
 - `friendly_lessor_favor` - Friendly Lessor Favor (`finance`; tags: `lessors`, `finance`, `fleet`)
 
 ### `content/decisions/labor_shock.json`
@@ -105,6 +108,7 @@ Classification: `Historical tactic composite`
 - `split_the_seniority_ladder` - Split the Seniority Ladder (`labor`; tags: `labor`, `seniority`, `conflict`)
 - `outsource_the_overhaul_night_shift` - Outsource the Overhaul Night Shift (`operations`; tags: `labor`, `contractors`, `safety`)
 - `replace_the_strike_map` - Replace the Strike Map (`labor`; tags: `labor`, `strike`, `cuts`)
+- `whipsaw_the_certificates` - Whipsaw the Certificates (`labor`; tags: `labor`, `certificates`, `whipsaw`)
 - `regionalize_the_feed` - Regionalize the Feed (`operations`; tags: `regional`, `operations`, `labor`)
 - `crush_the_grievance_backlog` - Crush the Grievance Backlog (`legal`; tags: `labor`, `legal`, `pressure`)
 - `retention_for_loyal_captains` - Retention for Loyal Captains (`operations`; tags: `labor`, `retention`, `operations`)
@@ -121,6 +125,7 @@ Classification: `Historical tactic composite`
 - `harvest_the_spare_engines` - Harvest the Spare Engines (`finance`; tags: `assets`, `fleet`, `risk`)
 - `close_the_crown_jewel_lounge` - Close the Crown Jewel Lounge (`operations`; tags: `assets`, `brand`, `cuts`)
 - `mortgage_the_loyalty_program` - Mortgage the Loyalty Program (`finance`; tags: `finance`, `loyalty`, `cash`)
+- `sell_the_reservation_spine` - Sell the Reservation Spine (`finance`; tags: `assets`, `systems`, `cash`)
 - `prepay_the_sale_leaseback_dividend` - Prepay the Sale-Leaseback Dividend (`extraction`; tags: `assets`, `extraction`, `leaseback`)
 - `sell_the_hangar_and_sublease_it` - Sell the Hangar and Sublease It (`operations`; tags: `assets`, `hangar`, `operations`)
 
@@ -169,6 +174,23 @@ Classification: `Fictionalized composite`
 - `commission_a_friendly_fairness_opinion` - Commission a Friendly Fairness Opinion (`legal`; tags: `market`, `legal`, `board`)
 - `seed_the_turnaround_podcast` - Seed the Turnaround Podcast (`market`; tags: `market`, `press`, `story`)
 
+### `content/decisions/regulatory_theater.json`
+
+Parallel lane: Frank Lorenzo plus the broader airline tradition of managing oversight through optics, access, and procedural drag.
+
+Classification: `Historical tactic composite`
+
+- `hire_the_former_regulator` - Hire the Former Regulator (`legal`; tags: `regulators`, `legal`, `optics`)
+- `announce_the_independent_review` - Announce the Independent Review (`market`; tags: `regulators`, `review`, `spin`)
+- `district_jobs_press_conference` - District Jobs Press Conference (`market`; tags: `regulators`, `jobs`, `press`)
+- `flood_the_docket_with_compliance` - Flood the Docket with Compliance (`legal`; tags: `regulators`, `compliance`, `paperwork`)
+- `friendly_hearing_prep` - Friendly Hearing Prep (`legal`; tags: `regulators`, `hearing`, `optics`)
+- `trade_slots_for_goodwill` - Trade Slots for Goodwill (`operations`; tags: `regulators`, `slots`, `concessions`)
+- `ground_the_oldest_tail_for_the_cameras` - Ground the Oldest Tail for the Cameras (`operations`; tags: `regulators`, `safety`, `optics`)
+- `quiet_the_inspector_rotation` - Quiet the Inspector Rotation (`legal`; tags: `regulators`, `inspection`, `pressure`)
+- `bury_it_in_the_consent_order` - Bury It in the Consent Order (`legal`; tags: `regulators`, `consent`, `delay`)
+- `stand_up_the_reform_office` - Stand Up the Reform Office (`legal`; tags: `regulators`, `reform`, `board`)
+
 ### `content/decisions/executive_escape.json`
 
 Parallel lane: Carl Icahn-style extraction logic, combined with the broader history of executive self-protection during decline.
@@ -179,6 +201,7 @@ Classification: `Historical tactic composite`
 - `harden_the_indemnity_wall` - Harden the Indemnity Wall (`legal`; tags: `personal`, `legal`, `protection`)
 - `sell_before_the_reprice` - Sell Before the Reprice (`extraction`; tags: `personal`, `stock`, `timing`)
 - `route_the_bonus_through_advisers` - Route the Bonus Through Advisers (`extraction`; tags: `personal`, `consulting`, `offshore`)
+- `invoice_the_opco_from_upstairs` - Invoice the OpCo from Upstairs (`finance`; tags: `personal`, `fees`, `finance`)
 - `sign_the_golden_parachute` - Sign the Golden Parachute (`legal`; tags: `personal`, `board`, `exit`)
 - `prearrange_the_resignation_memo` - Prearrange the Resignation Memo (`market`; tags: `personal`, `resignation`, `optics`)
 - `wire_the_island_retainer` - Wire the Island Retainer (`extraction`; tags: `offshore`, `personal`, `escape`)

@@ -100,6 +100,26 @@
     ]
   },
   {
+    "id": "sell_the_reservation_spine",
+    "title": "Sell the Reservation Spine",
+    "summary": "Monetize the booking brain, lease access back, and pray dependency does not look like surrender.",
+    "group": "finance",
+    "tags": ["assets", "systems", "cash"],
+    "impacts": {
+      "airlineCash": 32,
+      "assetValue": -24,
+      "marketConfidence": 5,
+      "creditorPatience": 4,
+      "publicAnger": 2
+    },
+    "requirements": {
+      "roundAtLeast": 3
+    },
+    "delayedConsequences": [
+      { "eventIds": ["reservation_cutover_stumble", "gate_covenant_trap", "turnaround_story_cracks"], "delay": 2 }
+    ]
+  },
+  {
     "id": "prepay_the_sale_leaseback_dividend",
     "title": "Prepay the Sale-Leaseback Dividend",
     "summary": "Take a personal skim off the asset unwind and call it alignment with shareholder outcomes.",

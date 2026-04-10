@@ -70,6 +70,26 @@
     ]
   },
   {
+    "id": "invoice_the_opco_from_upstairs",
+    "title": "Invoice the OpCo from Upstairs",
+    "summary": "Bill the airline from the holding company and call the tribute strategic services.",
+    "group": "finance",
+    "tags": ["personal", "fees", "finance"],
+    "impacts": {
+      "airlineCash": -14,
+      "personalWealth": 12,
+      "creditorPatience": -3,
+      "legalHeat": 8,
+      "publicAnger": 4
+    },
+    "requirements": {
+      "roundAtLeast": 4
+    },
+    "delayedConsequences": [
+      { "eventIds": ["intercompany_fee_memo", "consulting_conflict_memo", "invoice_rounding_pattern"], "delay": 2 }
+    ]
+  },
+  {
     "id": "sign_the_golden_parachute",
     "title": "Sign the Golden Parachute",
     "summary": "Make sure there is a premium exit plan for at least one person involved in this mess.",

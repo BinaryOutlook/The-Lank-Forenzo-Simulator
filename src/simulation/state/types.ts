@@ -35,6 +35,7 @@ export type DecisionPackId =
   | "safetyDenial"
   | "shadowSubsidiaries"
   | "marketTheater"
+  | "regulatoryTheater"
   | "executiveEscape";
 
 export type EventKind = "ambient" | "delayed";

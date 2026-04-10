@@ -2,10 +2,10 @@
 
 This is the documentation home for the full event library and the public-history parallels that helped shape its fallout.
 
-As of `2026-04-10`, the repo contains `117` authored events:
+As of `2026-04-10`, the repo contains `132` authored events:
 
 - `62` ambient events
-- `55` delayed events
+- `70` delayed events
 
 ## How to Read This
 
@@ -33,10 +33,11 @@ No event in this file should be read as:
 | `content/events/ambient_stabilizers.json` | None; these are deliberate pacing valves | Small positive beats that stop every round from becoming an uninterrupted avalanche | `Entirely fictional` |
 | `content/events/core.json` | No single person; foundational fallout layer for the whole game | The first-pass consequences of layoffs, leasebacks, offshore tricks, merger bait, and executive self-dealing | `Fictionalized composite` |
 | `content/events/delayed_exit_paths.json` | Stephen Wolf, Joe O'Gorman, Doug Parker, and Carl Icahn as broad exit-strategy anchors | Merger-term-sheet tension, extraction-after-control fallout, and offshore nerves as the endgame sharpens | `Historical tactic composite` |
-| `content/events/delayed_labor.json` | Frank Lorenzo | The legal and public aftershocks of aggressive labor restructuring, pension pressure, and access chaos | `Historical tactic composite` |
-| `content/events/delayed_operations_finance.json` | Broad airline restructuring playbooks with ValuJet-era scrutiny in the background | Lessor step-ins, covenant leaks, asset pain, maintenance paper trails, and distressed-debt opportunism | `Historical tactic composite` |
-| `content/events/delayed_personal_market.json` | No single person; generalized scandal, compensation, and suspicious-sale fallout with some Icahn-logic overlap | Analyst reversals, leak cycles, guidance corrections, and personal-paper-trail exposure | `Fictionalized composite` |
-| `content/events/delayed_strategy_fallout.json` | The full `V0.3` anchor set: Stephen Wolf, Joe O'Gorman, Frank Lorenzo, Carl Icahn, ValuJet-era scrutiny, Doug Parker, and Carsten Spohr | The most explicit fallout layer for merger grooming, creditor warfare, labor arbitrage, safety denial, shells, and executive protection | `Historical tactic composite` |
+| `content/events/delayed_labor.json` | Frank Lorenzo | The legal and public aftershocks of aggressive labor restructuring, certificate whipsaws, pension pressure, and access chaos | `Historical tactic composite` |
+| `content/events/delayed_operations_finance.json` | Broad airline restructuring playbooks with ValuJet-era scrutiny in the background | Lessor step-ins, covenant leaks, reservation-system dependence, ticket-float seizures, maintenance paper trails, and distressed-debt opportunism | `Historical tactic composite` |
+| `content/events/delayed_personal_market.json` | No single person; generalized scandal, compensation, suspicious-sale fallout, and intercompany-fee exposure with some Icahn-logic overlap | Analyst reversals, leak cycles, guidance corrections, and personal-paper-trail exposure | `Fictionalized composite` |
+| `content/events/delayed_regulatory.json` | Frank Lorenzo plus broader airline oversight-management and hearing fallout | Revolving-door scrutiny, scope leaks, hearing clips, consent-order breaches, and reform-office whistleblowers | `Historical tactic composite` |
+| `content/events/delayed_strategy_fallout.json` | The full `V0.3` anchor set: Stephen Wolf, Joe O'Gorman, Frank Lorenzo, Carl Icahn, ValuJet-era scrutiny, Doug Parker, and Carsten Spohr | The most explicit fallout layer for merger grooming, creditor warfare, venue shopping, labor arbitrage, safety denial, shells, and executive protection | `Historical tactic composite` |
 
 ## Pack Inventory
 
@@ -184,7 +185,7 @@ Classification: `Historical tactic composite`
 
 ### `content/events/delayed_labor.json`
 
-Parallel lane: Frank Lorenzo and the aftershocks of aggressive labor restructuring.
+Parallel lane: Frank Lorenzo and the aftershocks of aggressive labor restructuring and certificate games.
 
 Classification: `Historical tactic composite`
 
@@ -194,10 +195,11 @@ Classification: `Historical tactic composite`
 - `retiree_tv_tour` - Retiree TV Tour (`delayed`; tags: `labor`, `press`)
 - `badge_access_chaos` - Badge Access Chaos (`delayed`; tags: `operations`, `labor`)
 - `vendor_safety_dispute` - Vendor Safety Dispute (`delayed`; tags: `operations`, `safety`)
+- `certificate_whipsaw_hearing` - Certificate Whipsaw Hearing (`delayed`; tags: `labor`, `legal`)
 
 ### `content/events/delayed_operations_finance.json`
 
-Parallel lane: broad airline restructuring and asset-pressure history, with maintenance-scrutiny echoes in the background.
+Parallel lane: broad airline restructuring and asset-pressure history, with reservation-system fragility and maintenance-scrutiny echoes in the background.
 
 Classification: `Historical tactic composite`
 
@@ -209,10 +211,12 @@ Classification: `Historical tactic composite`
 - `lease_reserve_trueup` - Lease Reserve True-Up (`delayed`; tags: `finance`, `creditors`)
 - `covenant_leak` - Covenant Leak (`delayed`; tags: `creditors`, `press`)
 - `distressed_debt_pack_hunt` - Distressed Debt Pack Hunt (`delayed`; tags: `creditors`, `finance`)
+- `reservation_cutover_stumble` - Reservation Cutover Stumble (`delayed`; tags: `operations`, `service`)
+- `card_processor_reserve_call` - Card Processor Reserve Call (`delayed`; tags: `finance`, `creditors`)
 
 ### `content/events/delayed_personal_market.json`
 
-Parallel lane: no single executive; this is the generalized fallout of suspicious sales, compensation leaks, and story-management failure.
+Parallel lane: no single executive; this is the generalized fallout of suspicious sales, intercompany fees, compensation leaks, and story-management failure.
 
 Classification: `Fictionalized composite`
 
@@ -224,6 +228,24 @@ Classification: `Fictionalized composite`
 - `suspicious_10b5_window` - Suspicious 10b5 Window (`delayed`; tags: `stock`, `legal`)
 - `broker_chat_subpoena` - Broker Chat Subpoena (`delayed`; tags: `stock`, `legal`)
 - `compensation_deck_leak` - Compensation Deck Leak (`delayed`; tags: `personal`, `press`)
+- `intercompany_fee_memo` - Intercompany Fee Memo (`delayed`; tags: `personal`, `legal`)
+
+### `content/events/delayed_regulatory.json`
+
+Parallel lane: Frank Lorenzo plus the broader airline tradition of turning oversight into theater, delay, and eventually evidence.
+
+Classification: `Historical tactic composite`
+
+- `revolving_door_profile` - Revolving Door Profile (`delayed`; tags: `regulators`, `press`)
+- `review_scope_leak` - Review Scope Leak (`delayed`; tags: `regulators`, `legal`)
+- `hearing_transcript_pullquote` - Hearing Transcript Pullquote (`delayed`; tags: `regulators`, `press`)
+- `inspector_general_letter` - Inspector General Letter (`delayed`; tags: `regulators`, `legal`)
+- `consent_order_breach_notice` - Consent Order Breach Notice (`delayed`; tags: `regulators`, `legal`)
+- `reform_office_whistleblower` - Reform Office Whistleblower (`delayed`; tags: `regulators`, `legal`)
+- `compliance_binder_mockery` - Compliance Binder Mockery (`delayed`; tags: `regulators`, `legal`)
+- `concession_monitor_report` - Concession Monitor Report (`delayed`; tags: `regulators`, `operations`)
+- `camera_tail_whistleblower` - Camera Tail Whistleblower (`delayed`; tags: `regulators`, `safety`)
+- `mayor_hot_mic` - Mayor Hot Mic (`delayed`; tags: `regulators`, `press`)
 
 ### `content/events/delayed_strategy_fallout.json`
 
@@ -247,6 +269,7 @@ Classification: `Historical tactic composite`
 - `turnaround_story_cracks` - Turnaround Story Cracks (`delayed`; tags: `market`, `press`)
 - `director_indemnity_alarm` - Director Indemnity Alarm (`delayed`; tags: `board`, `legal`)
 - `customs_broker_ping` - Customs Broker Ping (`delayed`; tags: `offshore`, `legal`)
+- `forum_shopping_challenge` - Forum Shopping Challenge (`delayed`; tags: `creditors`, `legal`)
 
 ## Summary Judgment
 

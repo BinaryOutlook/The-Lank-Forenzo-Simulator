@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>V0.3.1 Demo Reference</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #06100c;
+        --panel: rgba(15, 27, 22, 0.94);
+        --panel-strong: rgba(18, 34, 27, 0.98);
+        --border: rgba(107, 145, 126, 0.24);
+        --text: #eef4ef;
+        --muted: #a8b8ae;
+        --accent: #65eca0;
+        --warning: #f4c86f;
+        --neutral: #89c9ff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(58, 102, 83, 0.24), transparent 28%),
+          linear-gradient(180deg, #05100b, #0a1510);
+        color: var(--text);
+      }
+
+      main {
+        width: min(1180px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 32px 0 48px;
+      }
+
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--accent);
+        font-size: 12px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0 0 12px;
+      }
+
+      h1 {
+        font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
+        font-size: clamp(28px, 3vw, 42px);
+        line-height: 1.04;
+      }
+
+      .lede,
+      .panel p,
+      .pack-card p {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .lede {
+        max-width: 820px;
+        margin: 0 0 24px;
+      }
+
+      .hero-grid,
+      .pack-grid,
+      .detail-grid {
+        display: grid;
+        gap: 20px;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1.1fr 0.9fr;
+        margin-bottom: 20px;
+      }
+
+      .detail-grid {
+        grid-template-columns: 0.95fr 1.05fr;
+      }
+
+      .panel,
+      .pack-card {
+        padding: 20px;
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, var(--panel-strong), var(--panel));
+      }
+
+      .metric-strip {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .metric-box {
+        padding: 14px;
+        border: 1px solid var(--border);
+        background: rgba(11, 21, 17, 0.8);
+      }
+
+      .metric-box strong {
+        display: block;
+        font-size: 30px;
+        line-height: 1;
+      }
+
+      .metric-box span {
+        display: block;
+        margin-top: 8px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .pack-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-bottom: 20px;
+      }
+
+      .chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border: 1px solid rgba(101, 236, 160, 0.22);
+        background: rgba(101, 236, 160, 0.08);
+        font-size: 13px;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .callout {
+        padding: 14px 16px;
+        border-left: 3px solid var(--warning);
+        background: rgba(244, 200, 111, 0.08);
+      }
+
+      .note {
+        padding: 14px 16px;
+        border-left: 3px solid var(--neutral);
+        background: rgba(137, 201, 255, 0.08);
+      }
+
+      @media (max-width: 960px) {
+        .hero-grid,
+        .detail-grid,
+        .pack-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .metric-strip {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">The Lank Forenzo Simulator / V0.3.1</p>
+      <h1>Decision-library patch with one new pack and no major rewrite</h1>
+      <p class="lede">
+        <code>V0.3.1</code> is a data expansion pass. It raises the library to <strong>100 decisions</strong> across
+        <strong>10 decision packs</strong>, adds <code>regulatory_theater</code> as a new authored lane, and keeps the
+        existing simulation and UI architecture intact.
+      </p>
+
+      <section class="hero-grid">
+        <article class="panel">
+          <h2>Patch Character</h2>
+          <p>
+            This packet is intentionally additive. The run screen, tray flow, and simulation loop remain the same. The
+            work is mostly authored content plus the minimal registry, validation, and test updates needed to treat the
+            new pack as first-class content.
+          </p>
+          <div class="chip-row">
+            <span class="chip">Data augmentation</span>
+            <span class="chip">No major rewrite</span>
+            <span class="chip">Pack-based authoring</span>
+            <span class="chip">Delayed fallout supported</span>
+          </div>
+        </article>
+
+        <article class="panel">
+          <h2>Totals</h2>
+          <div class="metric-strip">
+            <div class="metric-box">
+              <strong>100</strong>
+              <span>Total authored decisions</span>
+            </div>
+            <div class="metric-box">
+              <strong>10</strong>
+              <span>Decision packs</span>
+            </div>
+            <div class="metric-box">
+              <strong>1</strong>
+              <span>New first-class pack</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="pack-grid">
+        <article class="pack-card">
+          <h3>New Pack</h3>
+          <p>
+            <code>regulatory_theater</code> covers oversight-management tactics: revolving-door hires, independent-review
+            theater, hearing prep, inspector pressure, consent-order delay, and reform-office optics.
+          </p>
+        </article>
+
+        <article class="pack-card">
+          <h3>Why It Exists</h3>
+          <p>
+            The library was broad after <code>V0.3</code>, but still lacked a strong first-class lane for managing
+            regulators, civic optics, and procedural respectability as a defensive strategy.
+          </p>
+        </article>
+
+        <article class="pack-card">
+          <h3>What Stayed Stable</h3>
+          <p>
+            Decision loading, validation, tray curation, and round resolution all remain structurally the same. This
+            patch expands the authored surface instead of replacing the machinery underneath it.
+          </p>
+        </article>
+      </section>
+
+      <section class="detail-grid">
+        <article class="panel">
+          <h2>Representative Decisions</h2>
+          <ul>
+            <li>Hire the Former Regulator</li>
+            <li>Announce the Independent Review</li>
+            <li>District Jobs Press Conference</li>
+            <li>Flood the Docket with Compliance</li>
+            <li>Friendly Hearing Prep</li>
+            <li>Trade Slots for Goodwill</li>
+            <li>Ground the Oldest Tail for the Cameras</li>
+            <li>Quiet the Inspector Rotation</li>
+            <li>Bury It in the Consent Order</li>
+            <li>Stand Up the Reform Office</li>
+          </ul>
+        </article>
+
+        <article class="panel">
+          <h2>Implementation Notes</h2>
+          <p class="callout">
+            The core delivery goal is not new mechanics. It is sharper authored variety with minimal structural churn.
+          </p>
+          <p class="note">
+            Expected supporting changes are limited to content registration, schema typing, validation floors, delayed
+            fallout references, and documentation updates.
+          </p>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

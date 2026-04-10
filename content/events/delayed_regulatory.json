@@ -1,0 +1,132 @@
+[
+  {
+    "id": "revolving_door_profile",
+    "kind": "delayed",
+    "title": "Revolving Door Profile",
+    "body": "A weekend profile notices your new compliance sage used to regulate exactly the behaviors now described as misunderstandings.",
+    "weight": 6,
+    "tags": ["regulators", "press"],
+    "impacts": {
+      "publicAnger": 4,
+      "marketConfidence": -2,
+      "legalHeat": 3
+    }
+  },
+  {
+    "id": "review_scope_leak",
+    "kind": "delayed",
+    "title": "Review Scope Leak",
+    "body": "The supposedly independent review turns out to have terms narrow enough to qualify as decorative.",
+    "weight": 6,
+    "tags": ["regulators", "legal"],
+    "impacts": {
+      "marketConfidence": -4,
+      "publicAnger": 3,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "hearing_transcript_pullquote",
+    "kind": "delayed",
+    "title": "Hearing Transcript Pullquote",
+    "body": "One exchange from the hearing escapes into headlines and suddenly your prepared calm sounds rehearsed for a reason.",
+    "weight": 6,
+    "tags": ["regulators", "press"],
+    "impacts": {
+      "publicAnger": 5,
+      "marketConfidence": -3,
+      "legalHeat": 3
+    }
+  },
+  {
+    "id": "inspector_general_letter",
+    "kind": "delayed",
+    "title": "Inspector General Letter",
+    "body": "An internal oversight complaint suggests the inspection shuffle was less administrative than strategic.",
+    "weight": 7,
+    "tags": ["regulators", "legal"],
+    "impacts": {
+      "legalHeat": 6,
+      "safetyIntegrity": -3,
+      "marketConfidence": -2
+    }
+  },
+  {
+    "id": "consent_order_breach_notice",
+    "kind": "delayed",
+    "title": "Consent Order Breach Notice",
+    "body": "The regulator returns with a short memo explaining that the remedial timeline was not, in fact, a suggestion.",
+    "weight": 7,
+    "tags": ["regulators", "legal"],
+    "impacts": {
+      "airlineCash": -10,
+      "creditorPatience": -3,
+      "legalHeat": 5
+    }
+  },
+  {
+    "id": "reform_office_whistleblower",
+    "kind": "delayed",
+    "title": "Reform Office Whistleblower",
+    "body": "A staffer from the internal reform unit explains that the project mostly measured optics and catered lunches.",
+    "weight": 7,
+    "tags": ["regulators", "legal"],
+    "impacts": {
+      "legalHeat": 7,
+      "publicAnger": 5,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "compliance_binder_mockery",
+    "kind": "delayed",
+    "title": "Compliance Binder Mockery",
+    "body": "Oversight staff compliment the binders, then ask whether any of the pages are intended to change reality.",
+    "weight": 6,
+    "tags": ["regulators", "legal"],
+    "impacts": {
+      "marketConfidence": -3,
+      "creditorPatience": -2,
+      "legalHeat": 4
+    }
+  },
+  {
+    "id": "concession_monitor_report",
+    "kind": "delayed",
+    "title": "Concession Monitor Report",
+    "body": "The official monitor praises the visible slot concession and quietly notes it fixed almost nothing that mattered.",
+    "weight": 5,
+    "tags": ["regulators", "operations"],
+    "impacts": {
+      "marketConfidence": -3,
+      "creditorPatience": -2,
+      "publicAnger": 2
+    }
+  },
+  {
+    "id": "camera_tail_whistleblower",
+    "kind": "delayed",
+    "title": "Camera Tail Whistleblower",
+    "body": "A mechanic explains the grounded aircraft was chosen for optics, not risk, and the rest of the fleet does not appreciate the distinction.",
+    "weight": 6,
+    "tags": ["regulators", "safety"],
+    "impacts": {
+      "safetyIntegrity": -4,
+      "publicAnger": 4,
+      "legalHeat": 4
+    }
+  },
+  {
+    "id": "mayor_hot_mic",
+    "kind": "delayed",
+    "title": "Mayor Hot Mic",
+    "body": "A local official praises your civic partnership on stage and mocks the layoffs off it, unfortunately into a live microphone.",
+    "weight": 5,
+    "tags": ["regulators", "press"],
+    "impacts": {
+      "publicAnger": 4,
+      "marketConfidence": -2,
+      "creditorPatience": -1
+    }
+  }
+]

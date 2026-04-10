@@ -25,6 +25,7 @@ const decisionPackIds = [
   "safetyDenial",
   "shadowSubsidiaries",
   "marketTheater",
+  "regulatoryTheater",
   "executiveEscape",
 ] as const;
 

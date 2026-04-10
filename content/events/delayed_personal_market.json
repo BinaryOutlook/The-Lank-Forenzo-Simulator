@@ -101,5 +101,18 @@
       "marketConfidence": -2,
       "legalHeat": 3
     }
+  },
+  {
+    "id": "intercompany_fee_memo",
+    "kind": "delayed",
+    "title": "Intercompany Fee Memo",
+    "body": "A board memo explains why the airline is paying the holding company for wisdom that looks suspiciously like your salary twice.",
+    "weight": 7,
+    "tags": ["personal", "legal"],
+    "impacts": {
+      "legalHeat": 8,
+      "publicAnger": 4,
+      "marketConfidence": -3
+    }
   }
 ]

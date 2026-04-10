@@ -92,6 +92,26 @@
     ]
   },
   {
+    "id": "venue_shop_the_filing",
+    "title": "Venue-Shop the Filing",
+    "summary": "Choose the friendliest courtroom, call it efficiency, and let geography do the intimidation.",
+    "group": "legal",
+    "tags": ["creditors", "legal", "venue"],
+    "impacts": {
+      "airlineCash": 12,
+      "debt": -8,
+      "creditorPatience": -9,
+      "legalHeat": 7,
+      "marketConfidence": 2
+    },
+    "requirements": {
+      "flagsAll": ["bankruptcyPlaybookLive"]
+    },
+    "delayedConsequences": [
+      { "eventIds": ["forum_shopping_challenge", "covenant_default_clock", "lender_cooperation_cracks"], "delay": 2 }
+    ]
+  },
+  {
     "id": "cramdown_term_sheet",
     "title": "Cramdown Term Sheet",
     "summary": "Offer a take-it-or-take-it plan and let procedure impersonate consensus.",
@@ -128,6 +148,29 @@
     },
     "delayedConsequences": [
       { "eventIds": ["covenant_leak", "creditor_revolt", "gate_covenant_trap"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "sweep_the_ticket_float",
+    "title": "Sweep the Ticket Float",
+    "summary": "Spend tomorrow's passengers today and let the card processors discover the hole after departure.",
+    "group": "finance",
+    "tags": ["finance", "cash", "float"],
+    "impacts": {
+      "airlineCash": 24,
+      "creditorPatience": -5,
+      "marketConfidence": 2,
+      "publicAnger": 3,
+      "legalHeat": 4
+    },
+    "requirements": {
+      "roundAtLeast": 2,
+      "metricMin": {
+        "marketConfidence": 38
+      }
+    },
+    "delayedConsequences": [
+      { "eventIds": ["card_processor_reserve_call", "covenant_leak", "creditor_revolt"], "delay": 2 }
     ]
   },
   {
