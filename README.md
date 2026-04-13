@@ -83,7 +83,11 @@ npm run test
 npm run test:e2e
 npm run check
 npm run content:validate
+npm run simulate:runs
+npm run balance:report
 ```
+
+`npm run simulate:runs` and `npm run balance:report` run a deterministic seeded campaign report without opening the browser. The report summarizes ending distribution, average run length, surfaced decision coverage, triggered event coverage, and repeated-tray pressure using the documented greedy pressure-relief bot.
 
 ## Theme Direction
 
@@ -128,6 +132,9 @@ PRDs/
   v0.3.1/
     v0.3.1.md
     v0.3.1-demo.html
+  v0.4/
+    v0.4.md
+    v0.4-demo.html
 tests/
   unit/
   e2e/
@@ -139,4 +146,4 @@ tests/
 - Systems and design brief: [docs/TECHNICAL_BRIEF.md](docs/TECHNICAL_BRIEF.md)
 - Decision library and historical parallels: [docs/reference/decision-library.md](docs/reference/decision-library.md)
 - Event library and historical parallels: [docs/reference/event-library.md](docs/reference/event-library.md)
-- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md)
+- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md)
