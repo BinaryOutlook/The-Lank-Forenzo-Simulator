@@ -1,9 +1,22 @@
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist } from "zustand/middleware";
+import {
+  createGameSaveStorage,
+  GAME_SAVE_STORAGE_VERSION,
+  migrateGameSavePayload,
+} from "../../lib/storage/save";
 import { loadContent } from "../content";
 import { getAvailableDecisions } from "../systems/decisionEngine";
-import { createInitialRunState, resolveRound } from "../resolution/resolveRound";
-import type { DecisionDefinition, EndingDefinition, RunState, ThemeName } from "./types";
+import {
+  createInitialRunState,
+  resolveRound,
+} from "../resolution/resolveRound";
+import type {
+  DecisionDefinition,
+  EndingDefinition,
+  RunState,
+  ThemeName,
+} from "./types";
 
 interface GameStoreState {
   theme: ThemeName;
@@ -68,12 +81,17 @@ export const useGameStore = create<GameStoreState>()(
           return null;
         }
 
-        return loadContent().endings.find((ending) => ending.id === run.endingId) ?? null;
+        return (
+          loadContent().endings.find((ending) => ending.id === run.endingId) ??
+          null
+        );
       },
     }),
     {
       name: storageKey,
-      storage: createJSONStorage(() => localStorage),
+      storage: createGameSaveStorage(() => localStorage),
+      version: GAME_SAVE_STORAGE_VERSION,
+      migrate: migrateGameSavePayload,
       partialize: (state) => ({
         theme: state.theme,
         run: state.run,

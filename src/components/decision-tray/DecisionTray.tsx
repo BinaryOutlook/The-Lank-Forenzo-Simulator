@@ -1,6 +1,10 @@
 import { motion } from "framer-motion";
 import clsx from "clsx";
-import { formatDelta, getImpactPreview, metricLabels } from "../../lib/formatters";
+import {
+  formatDelta,
+  getImpactPreview,
+  metricLabels,
+} from "../../lib/formatters";
 import { getImpactTone } from "../../simulation/state/metricSemantics";
 import type { DecisionDefinition } from "../../simulation/state/types";
 import styles from "./DecisionTray.module.css";
@@ -27,9 +31,17 @@ export function DecisionTray({
         </div>
 
         <div className={styles.controls}>
-          <p className={styles.selectionCount}>{selectedDecisionIds.length}/2 selected</p>
-          <button type="button" className={styles.resolveButton} onClick={onEndTurn}>
-            {selectedDecisionIds.length > 0 ? "Resolve the quarter" : "Hold the line"}
+          <p className={styles.selectionCount}>
+            {selectedDecisionIds.length}/2 selected
+          </p>
+          <button
+            type="button"
+            className={styles.resolveButton}
+            onClick={onEndTurn}
+          >
+            {selectedDecisionIds.length > 0
+              ? "Resolve the quarter"
+              : "Hold the line"}
           </button>
         </div>
       </div>
@@ -44,6 +56,7 @@ export function DecisionTray({
               key={decision.id}
               type="button"
               className={clsx(styles.card, selected && styles.cardSelected)}
+              aria-pressed={selected}
               onClick={() => onToggle(decision.id)}
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
@@ -51,7 +64,9 @@ export function DecisionTray({
             >
               <div className={styles.cardHeader}>
                 <span className={styles.group}>{decision.group}</span>
-                <span className={styles.tags}>{decision.tags.slice(0, 2).join(" / ")}</span>
+                <span className={styles.tags}>
+                  {decision.tags.slice(0, 2).join(" / ")}
+                </span>
               </div>
 
               <div className={styles.cardBody}>
@@ -64,12 +79,16 @@ export function DecisionTray({
                   <span
                     key={`${decision.id}-${entry.metric}`}
                     className={clsx(
-                      getImpactTone(entry.metric, entry.delta) === "positive" && styles.previewPositive,
-                      getImpactTone(entry.metric, entry.delta) === "negative" && styles.previewNegative,
-                      getImpactTone(entry.metric, entry.delta) === "neutral" && styles.previewNeutral,
+                      getImpactTone(entry.metric, entry.delta) === "positive" &&
+                        styles.previewPositive,
+                      getImpactTone(entry.metric, entry.delta) === "negative" &&
+                        styles.previewNegative,
+                      getImpactTone(entry.metric, entry.delta) === "neutral" &&
+                        styles.previewNeutral,
                     )}
                   >
-                    {metricLabels[entry.metric]} {formatDelta(entry.metric, entry.delta)}
+                    {metricLabels[entry.metric]}{" "}
+                    {formatDelta(entry.metric, entry.delta)}
                   </span>
                 ))}
               </div>

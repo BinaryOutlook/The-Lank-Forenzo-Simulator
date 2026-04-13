@@ -1,42 +1,19 @@
 import { z } from "zod";
-
-const metricKeys = [
-  "airlineCash",
-  "personalWealth",
-  "debt",
-  "assetValue",
-  "workforceSize",
-  "workforceMorale",
-  "marketConfidence",
-  "creditorPatience",
-  "legalHeat",
-  "safetyIntegrity",
-  "publicAnger",
-  "stockPrice",
-  "offshoreReadiness",
-] as const;
-
-const decisionPackIds = [
-  "core",
-  "mergerBait",
-  "creditorWarfare",
-  "laborShock",
-  "assetHarvest",
-  "safetyDenial",
-  "shadowSubsidiaries",
-  "marketTheater",
-  "regulatoryTheater",
-  "executiveEscape",
-] as const;
+import {
+  decisionGroups,
+  decisionPackIds,
+  endingIds,
+  eventKinds,
+  metricKeys,
+} from "../../simulation/content/metadata";
 
 export const metricKeySchema = z.enum(metricKeys);
 export const decisionPackIdSchema = z.enum(decisionPackIds);
-export const endingIdSchema = z.enum(["prison", "forcedRemoval", "merger", "extraction", "bahamas"]);
+export const endingIdSchema = z.enum(endingIds);
 
-const metricShape = Object.fromEntries(metricKeys.map((metric) => [metric, z.number().optional()])) as Record<
-  (typeof metricKeys)[number],
-  z.ZodOptional<z.ZodNumber>
->;
+const metricShape = Object.fromEntries(
+  metricKeys.map((metric) => [metric, z.number().optional()]),
+) as Record<(typeof metricKeys)[number], z.ZodOptional<z.ZodNumber>>;
 
 const metricRecordSchema = z.object(metricShape).strict();
 
@@ -59,7 +36,8 @@ const delayedConsequenceSchema = z
   })
   .strict()
   .refine((value) => (value.eventId ? 1 : 0) + (value.eventIds ? 1 : 0) === 1, {
-    message: "Delayed consequence entries must provide exactly one of eventId or eventIds.",
+    message:
+      "Delayed consequence entries must provide exactly one of eventId or eventIds.",
   });
 
 export const decisionSchema = z
@@ -68,7 +46,7 @@ export const decisionSchema = z
     pack: decisionPackIdSchema,
     title: z.string(),
     summary: z.string(),
-    group: z.enum(["labor", "finance", "operations", "market", "legal", "extraction", "exit"]),
+    group: z.enum(decisionGroups),
     tags: z.array(z.string()).min(1),
     impacts: metricRecordSchema,
     requirements: requirementSchema.optional(),
@@ -81,7 +59,7 @@ export const decisionSchema = z
 export const eventSchema = z
   .object({
     id: z.string(),
-    kind: z.enum(["ambient", "delayed"]),
+    kind: z.enum(eventKinds),
     title: z.string(),
     body: z.string(),
     weight: z.number().int().positive(),

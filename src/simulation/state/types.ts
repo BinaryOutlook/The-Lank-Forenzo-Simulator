@@ -1,44 +1,22 @@
+import type {
+  decisionGroups,
+  decisionPackIds,
+  endingIds,
+  eventKinds,
+  metricKeys,
+} from "../content/metadata";
+
 export type ThemeName = "earth" | "armonk-blue";
 
-export type MetricKey =
-  | "airlineCash"
-  | "personalWealth"
-  | "debt"
-  | "assetValue"
-  | "workforceSize"
-  | "workforceMorale"
-  | "marketConfidence"
-  | "creditorPatience"
-  | "legalHeat"
-  | "safetyIntegrity"
-  | "publicAnger"
-  | "stockPrice"
-  | "offshoreReadiness";
+export type MetricKey = (typeof metricKeys)[number];
 
-export type EndingId = "prison" | "forcedRemoval" | "merger" | "extraction" | "bahamas";
+export type EndingId = (typeof endingIds)[number];
 
-export type DecisionGroup =
-  | "labor"
-  | "finance"
-  | "operations"
-  | "market"
-  | "legal"
-  | "extraction"
-  | "exit";
+export type DecisionGroup = (typeof decisionGroups)[number];
 
-export type DecisionPackId =
-  | "core"
-  | "mergerBait"
-  | "creditorWarfare"
-  | "laborShock"
-  | "assetHarvest"
-  | "safetyDenial"
-  | "shadowSubsidiaries"
-  | "marketTheater"
-  | "regulatoryTheater"
-  | "executiveEscape";
+export type DecisionPackId = (typeof decisionPackIds)[number];
 
-export type EventKind = "ambient" | "delayed";
+export type EventKind = (typeof eventKinds)[number];
 
 export interface RunMetrics {
   airlineCash: number;

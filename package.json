@@ -13,7 +13,9 @@
     "test:e2e": "playwright test",
     "format": "prettier --write .",
     "check": "npm run lint && npm run typecheck && npm run test",
-    "content:validate": "node --import tsx scripts/validate-content.ts"
+    "content:validate": "node --import tsx scripts/validate-content.ts",
+    "simulate:runs": "node --import tsx scripts/simulate-runs.ts",
+    "balance:report": "node --import tsx scripts/simulate-runs.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

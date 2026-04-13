@@ -1,88 +1,26 @@
-import { hashNumber, hashString, pickWeighted, shuffleWithSeed } from "../../lib/random/seeded";
+import {
+  hashNumber,
+  hashString,
+  pickWeighted,
+  shuffleWithSeed,
+} from "../../lib/random/seeded";
 import { getImpactSetScore } from "../state/metricSemantics";
 import { getAvailableDecisions } from "../systems/decisionEngine";
+import { applyImpactSet } from "../systems/metricEffects";
 import { loadContent } from "../content";
+import { getAutomaticEndingId } from "../systems/endingRules";
+import { meetsRequirements } from "../systems/requirements";
 import {
-  boundedMetricKeys,
   type ContentBundle,
   type DecisionDefinition,
   type EndingId,
   type EventDefinition,
   type HistoryEntry,
   type ImpactSet,
-  type MetricKey,
+  type PendingEvent,
   type RunMetrics,
   type RunState,
 } from "../state/types";
-
-function clamp(number: number, minimum: number, maximum: number): number {
-  return Math.min(maximum, Math.max(minimum, number));
-}
-
-function applyImpact(metrics: RunMetrics, impacts: ImpactSet): RunMetrics {
-  const next: RunMetrics = { ...metrics };
-
-  for (const [metric, delta] of Object.entries(impacts)) {
-    if (delta === undefined) {
-      continue;
-    }
-
-    const key = metric as MetricKey;
-    next[key] += delta;
-  }
-
-  for (const metric of boundedMetricKeys) {
-    next[metric] = clamp(next[metric], 0, 100);
-  }
-
-  next.stockPrice = clamp(next.stockPrice, 2, 120);
-  next.debt = clamp(next.debt, 0, 1200);
-  next.assetValue = clamp(next.assetValue, 120, 1500);
-  next.workforceSize = clamp(next.workforceSize, 1200, 12000);
-  next.personalWealth = clamp(next.personalWealth, 0, 240);
-  next.airlineCash = clamp(next.airlineCash, -280, 900);
-
-  return next;
-}
-
-function meetsEventRequirements(event: EventDefinition, run: RunState): boolean {
-  const requirements = event.requirements;
-  if (!requirements) {
-    return true;
-  }
-
-  if (requirements.roundAtLeast !== undefined && run.round < requirements.roundAtLeast) {
-    return false;
-  }
-
-  if (requirements.roundAtMost !== undefined && run.round > requirements.roundAtMost) {
-    return false;
-  }
-
-  for (const [metric, minimum] of Object.entries(requirements.metricMin ?? {})) {
-    const key = metric as keyof typeof run.metrics;
-    if (run.metrics[key] < minimum) {
-      return false;
-    }
-  }
-
-  for (const [metric, maximum] of Object.entries(requirements.metricMax ?? {})) {
-    const key = metric as keyof typeof run.metrics;
-    if (run.metrics[key] > maximum) {
-      return false;
-    }
-  }
-
-  if (requirements.flagsAll?.some((flag) => !run.flags.includes(flag))) {
-    return false;
-  }
-
-  if (requirements.flagsNone?.some((flag) => run.flags.includes(flag))) {
-    return false;
-  }
-
-  return true;
-}
 
 function toneFromImpact(impacts: ImpactSet): HistoryEntry["tone"] {
   const score = getImpactSetScore(impacts);
@@ -115,7 +53,10 @@ function buildHistoryEntry(
   };
 }
 
-function resolveOperatingDrift(metrics: RunMetrics): { impacts: ImpactSet; body: string } {
+function resolveOperatingDrift(metrics: RunMetrics): {
+  impacts: ImpactSet;
+  body: string;
+} {
   const operatingBalance =
     metrics.assetValue * 0.09 +
     metrics.marketConfidence * 1.1 +
@@ -127,14 +68,18 @@ function resolveOperatingDrift(metrics: RunMetrics): { impacts: ImpactSet; body:
     metrics.legalHeat * 0.35;
 
   const cashDelta = Math.round(operatingBalance / 4);
-  const confidenceDelta = Math.round(cashDelta / 10) - (metrics.publicAnger > 55 ? 2 : 0) - (metrics.legalHeat > 70 ? 2 : 0);
+  const confidenceDelta =
+    Math.round(cashDelta / 10) -
+    (metrics.publicAnger > 55 ? 2 : 0) -
+    (metrics.legalHeat > 70 ? 2 : 0);
   const creditorDelta = cashDelta >= 0 ? 1 : -2;
   const stockDelta =
     Math.round(cashDelta / 12) +
     (metrics.marketConfidence >= 60 ? 2 : 0) -
     (metrics.legalHeat >= 70 ? 3 : 0);
   const moraleDelta = metrics.safetyIntegrity >= 68 ? 1 : -1;
-  const heatDelta = metrics.safetyIntegrity < 45 ? 3 : metrics.safetyIntegrity > 75 ? -1 : 0;
+  const heatDelta =
+    metrics.safetyIntegrity < 45 ? 3 : metrics.safetyIntegrity > 75 ? -1 : 0;
   const angerDelta = metrics.workforceMorale < 40 ? 3 : -1;
 
   const impacts: ImpactSet = {
@@ -162,7 +107,7 @@ function processEvent(
   flags: Set<string>,
   eventCounts: Record<string, number>,
 ): { metrics: RunMetrics; flags: Set<string>; history: HistoryEntry } {
-  const nextMetrics = applyImpact(metrics, event.impacts);
+  const nextMetrics = applyImpactSet(metrics, event.impacts);
   const nextFlags = new Set(flags);
 
   for (const flag of event.setsFlags ?? []) {
@@ -174,20 +119,14 @@ function processEvent(
   return {
     metrics: nextMetrics,
     flags: nextFlags,
-    history: buildHistoryEntry(round, "event", event.title, event.body, event.impacts),
+    history: buildHistoryEntry(
+      round,
+      "event",
+      event.title,
+      event.body,
+      event.impacts,
+    ),
   };
-}
-
-function checkEnding(metrics: RunMetrics): EndingId | null {
-  if (metrics.legalHeat >= 95 || (metrics.legalHeat >= 86 && metrics.safetyIntegrity <= 35)) {
-    return "prison";
-  }
-
-  if (metrics.creditorPatience <= 0 || metrics.airlineCash <= -140 || metrics.marketConfidence <= 6) {
-    return "forcedRemoval";
-  }
-
-  return null;
 }
 
 export function createInitialRunState(): RunState {
@@ -228,7 +167,9 @@ export function createInitialRunState(): RunState {
   };
 }
 
-function getDecisionMap(content: ContentBundle): Map<string, DecisionDefinition> {
+function getDecisionMap(
+  content: ContentBundle,
+): Map<string, DecisionDefinition> {
   return new Map(content.decisions.map((decision) => [decision.id, decision]));
 }
 
@@ -251,21 +192,31 @@ function pickDelayedEventId(
     return eventIds[0] ?? null;
   }
 
-  const seededChoices = shuffleWithSeed(eventIds, hashNumber(round, delayed.delay, hashString(decisionId)));
+  const seededChoices = shuffleWithSeed(
+    eventIds,
+    hashNumber(round, delayed.delay, hashString(decisionId)),
+  );
   return seededChoices[0] ?? null;
 }
 
-export function resolveRound(run: RunState): RunState {
-  const content = loadContent();
-  const offeredThisRound = getAvailableDecisions(content.decisions, run).map((decision) => decision.id);
-  const decisionMap = getDecisionMap(content);
-  const round = run.round + 1;
+interface SelectedDecisionResult {
+  metrics: RunMetrics;
+  flags: Set<string>;
+  pendingEvents: PendingEvent[];
+  historyEntries: HistoryEntry[];
+  endingId: EndingId | null;
+}
+
+function applySelectedDecisions(
+  run: RunState,
+  round: number,
+  decisionMap: Map<string, DecisionDefinition>,
+): SelectedDecisionResult {
   let metrics = { ...run.metrics };
   let endingId: EndingId | null = null;
-  let flags = new Set(run.flags);
+  const flags = new Set(run.flags);
   const historyEntries: HistoryEntry[] = [];
-  const eventCounts = { ...run.eventCounts };
-  const nextPendingEvents = [...run.pendingEvents];
+  const pendingEvents = [...run.pendingEvents];
 
   for (const decisionId of run.selectedDecisionIds) {
     const decision = decisionMap.get(decisionId);
@@ -273,8 +224,16 @@ export function resolveRound(run: RunState): RunState {
       continue;
     }
 
-    metrics = applyImpact(metrics, decision.impacts);
-    historyEntries.push(buildHistoryEntry(round, "decision", decision.title, decision.summary, decision.impacts));
+    metrics = applyImpactSet(metrics, decision.impacts);
+    historyEntries.push(
+      buildHistoryEntry(
+        round,
+        "decision",
+        decision.title,
+        decision.summary,
+        decision.impacts,
+      ),
+    );
 
     for (const delayed of decision.delayedConsequences ?? []) {
       const eventId = pickDelayedEventId(decision.id, round, delayed);
@@ -283,7 +242,7 @@ export function resolveRound(run: RunState): RunState {
         continue;
       }
 
-      nextPendingEvents.push({
+      pendingEvents.push({
         eventId,
         triggerRound: round + delayed.delay,
       });
@@ -298,20 +257,63 @@ export function resolveRound(run: RunState): RunState {
     }
   }
 
+  return {
+    metrics,
+    flags,
+    pendingEvents,
+    historyEntries,
+    endingId,
+  };
+}
+
+function applyOperatingDriftStep(
+  round: number,
+  metrics: RunMetrics,
+): { metrics: RunMetrics; history: HistoryEntry } {
   const operatingDrift = resolveOperatingDrift(metrics);
-  metrics = applyImpact(metrics, operatingDrift.impacts);
-  historyEntries.push(buildHistoryEntry(round, "system", "Quarter Close", operatingDrift.body, operatingDrift.impacts));
 
-  const delayedEvents = content.events.filter((event) => event.kind === "delayed");
-  const remainingPendingEvents = [];
+  return {
+    metrics: applyImpactSet(metrics, operatingDrift.impacts),
+    history: buildHistoryEntry(
+      round,
+      "system",
+      "Quarter Close",
+      operatingDrift.body,
+      operatingDrift.impacts,
+    ),
+  };
+}
 
-  for (const pendingEvent of nextPendingEvents) {
+interface EventResolutionResult {
+  metrics: RunMetrics;
+  flags: Set<string>;
+  pendingEvents: PendingEvent[];
+  historyEntries: HistoryEntry[];
+}
+
+function resolveDueDelayedEvents(
+  run: RunState,
+  round: number,
+  metrics: RunMetrics,
+  flags: Set<string>,
+  eventCounts: Record<string, number>,
+  pendingEvents: PendingEvent[],
+  delayedEvents: EventDefinition[],
+): EventResolutionResult {
+  let nextMetrics = metrics;
+  let nextFlags = flags;
+  const historyEntries: HistoryEntry[] = [];
+  const remainingPendingEvents: PendingEvent[] = [];
+
+  for (const pendingEvent of pendingEvents) {
     if (pendingEvent.triggerRound > round) {
       remainingPendingEvents.push(pendingEvent);
       continue;
     }
 
-    const event = delayedEvents.find((entry) => entry.id === pendingEvent.eventId);
+    const event = delayedEvents.find(
+      (entry) => entry.id === pendingEvent.eventId,
+    );
     if (!event) {
       continue;
     }
@@ -319,48 +321,142 @@ export function resolveRound(run: RunState): RunState {
     const probeRun: RunState = {
       ...run,
       round,
-      metrics,
-      flags: [...flags],
+      metrics: nextMetrics,
+      flags: [...nextFlags],
     };
 
-    if (!meetsEventRequirements(event, probeRun)) {
+    if (!meetsRequirements(event.requirements, probeRun)) {
       continue;
     }
 
-    const processed = processEvent(event, round, metrics, flags, eventCounts);
-    metrics = processed.metrics;
-    flags = processed.flags;
+    const processed = processEvent(
+      event,
+      round,
+      nextMetrics,
+      nextFlags,
+      eventCounts,
+    );
+    nextMetrics = processed.metrics;
+    nextFlags = processed.flags;
     historyEntries.push(processed.history);
   }
 
+  return {
+    metrics: nextMetrics,
+    flags: nextFlags,
+    pendingEvents: remainingPendingEvents,
+    historyEntries,
+  };
+}
+
+function resolveAmbientEvent(
+  run: RunState,
+  round: number,
+  metrics: RunMetrics,
+  flags: Set<string>,
+  eventCounts: Record<string, number>,
+  events: EventDefinition[],
+): { metrics: RunMetrics; flags: Set<string>; history: HistoryEntry | null } {
+  const ambientEvents = events.filter((event) => event.kind === "ambient");
+  const ambientCandidates = ambientEvents.filter((event) =>
+    meetsRequirements(event.requirements, {
+      ...run,
+      round,
+      metrics,
+      flags: [...flags],
+    }),
+  );
+
+  const pickedAmbientEvent = pickWeighted(
+    ambientCandidates,
+    (event) => {
+      const seenPenalty = eventCounts[event.id]
+        ? Math.max(1, event.weight - eventCounts[event.id] * 2)
+        : event.weight;
+      return seenPenalty;
+    },
+    hashNumber(
+      round,
+      metrics.legalHeat,
+      metrics.publicAnger,
+      metrics.marketConfidence,
+    ),
+  );
+
+  if (!pickedAmbientEvent) {
+    return { metrics, flags, history: null };
+  }
+
+  const processed = processEvent(
+    pickedAmbientEvent,
+    round,
+    metrics,
+    flags,
+    eventCounts,
+  );
+
+  return {
+    metrics: processed.metrics,
+    flags: processed.flags,
+    history: processed.history,
+  };
+}
+
+export function resolveRound(run: RunState): RunState {
+  const content = loadContent();
+  const offeredThisRound = getAvailableDecisions(content.decisions, run).map(
+    (decision) => decision.id,
+  );
+  const decisionMap = getDecisionMap(content);
+  const round = run.round + 1;
+  const eventCounts = { ...run.eventCounts };
+
+  const selectedDecisionResult = applySelectedDecisions(
+    run,
+    round,
+    decisionMap,
+  );
+  let metrics = selectedDecisionResult.metrics;
+  let flags = selectedDecisionResult.flags;
+  let endingId = selectedDecisionResult.endingId;
+  const historyEntries = [...selectedDecisionResult.historyEntries];
+
+  const operatingDrift = applyOperatingDriftStep(round, metrics);
+  metrics = operatingDrift.metrics;
+  historyEntries.push(operatingDrift.history);
+
+  const delayedEvents = content.events.filter(
+    (event) => event.kind === "delayed",
+  );
+  const delayedResult = resolveDueDelayedEvents(
+    run,
+    round,
+    metrics,
+    flags,
+    eventCounts,
+    selectedDecisionResult.pendingEvents,
+    delayedEvents,
+  );
+  metrics = delayedResult.metrics;
+  flags = delayedResult.flags;
+  historyEntries.push(...delayedResult.historyEntries);
+
   if (!endingId) {
-    const ambientEvents = content.events.filter((event) => event.kind === "ambient");
-    const ambientCandidates = ambientEvents.filter((event) =>
-      meetsEventRequirements(event, {
-        ...run,
-        round,
-        metrics,
-        flags: [...flags],
-      }),
+    const ambientResult = resolveAmbientEvent(
+      run,
+      round,
+      metrics,
+      flags,
+      eventCounts,
+      content.events,
     );
-
-    const pickedAmbientEvent = pickWeighted(
-      ambientCandidates,
-      (event) => {
-        const seenPenalty = eventCounts[event.id] ? Math.max(1, event.weight - eventCounts[event.id] * 2) : event.weight;
-        return seenPenalty;
-      },
-      hashNumber(round, metrics.legalHeat, metrics.publicAnger, metrics.marketConfidence),
-    );
-
-    if (pickedAmbientEvent) {
-      const processed = processEvent(pickedAmbientEvent, round, metrics, flags, eventCounts);
-      metrics = processed.metrics;
-      flags = processed.flags;
-      historyEntries.push(processed.history);
+    metrics = ambientResult.metrics;
+    flags = ambientResult.flags;
+    if (ambientResult.history) {
+      historyEntries.push(ambientResult.history);
     }
 
-    endingId = checkEnding(metrics);
+    endingId = getAutomaticEndingId(metrics);
   }
 
   return {
@@ -369,7 +465,7 @@ export function resolveRound(run: RunState): RunState {
     metrics,
     selectedDecisionIds: [],
     lastOfferedDecisionIds: offeredThisRound,
-    pendingEvents: remainingPendingEvents,
+    pendingEvents: delayedResult.pendingEvents,
     flags: [...flags],
     endingId,
     eventCounts,
