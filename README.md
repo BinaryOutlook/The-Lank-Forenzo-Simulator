@@ -99,6 +99,7 @@ Theme references live in [`Themes/Earth.md`](Themes/Earth.md) and [`Themes/Armon
 ## Project Layout
 
 ```text
+idea.md
 src/
   app/
   components/
@@ -144,6 +145,7 @@ tests/
 
 - Product requirements: [docs/PRD.md](docs/PRD.md)
 - Systems and design brief: [docs/TECHNICAL_BRIEF.md](docs/TECHNICAL_BRIEF.md)
+- Expansion and systems roadmap: [idea.md](idea.md)
 - Decision library and historical parallels: [docs/reference/decision-library.md](docs/reference/decision-library.md)
 - Event library and historical parallels: [docs/reference/event-library.md](docs/reference/event-library.md)
 - Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md)
