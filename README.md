@@ -12,11 +12,15 @@ Implemented in the current build:
 - browser-native deterministic simulation loop
 - local save persistence
 - expanded multi-pack decision and event libraries with deterministic delayed-event pools
+- compiled content manifest with direct lookup maps, content hash, flag diagnostics, and pack/tag indexes
+- set-aware decision tray composition with diversity, follow-up, exit, and repeat-suppression rules
+- v0.5 scheduler, faction memory, operational network, and dossier primitives wired into active runs
+- post-run recap surfaces for faction pressure, operational damage, dossier trails, missed windows, and critical chains
 - personal wealth, legal heat, creditor patience, safety, market confidence, and workforce systems
 - shared metric-semantics rules so inverse-pressure indicators such as `legalHeat`, `publicAnger`, and `debt` read correctly
 - multiple endings, including merger, extraction, prison, and Bahamas escape
 - two first-class themes: `Earth` and `Armonk Blue`
-- unit tests, content validation, build checks, and a Playwright smoke test
+- unit tests, content validation, build checks, seeded balance tooling, reachability tooling, and a Playwright smoke test
 
 ## Product Shape
 
@@ -82,12 +86,17 @@ npm run typecheck
 npm run test
 npm run test:e2e
 npm run check
+npm run content:compile
 npm run content:validate
 npm run simulate:runs
 npm run balance:report
+npm run balance:matrix
+npm run reachability:report
 ```
 
 `npm run simulate:runs` and `npm run balance:report` run a deterministic seeded campaign report without opening the browser. The report summarizes ending distribution, average run length, surfaced decision coverage, triggered event coverage, and repeated-tray pressure using the documented greedy pressure-relief bot.
+
+`npm run content:compile` prints the compiled manifest summary and content hash. `npm run balance:matrix` runs the v0.5 archetype matrix across extraction, merger, offshore, and stabilizer bots. `npm run reachability:report` runs the bounded reachability explorer with state abstraction and low-confidence content reporting.
 
 ## Theme Direction
 
@@ -105,7 +114,21 @@ src/
   components/
   screens/
   simulation/
+    content/
+    dossiers/
+    factions/
+    operations/
+    scheduler/
+    systems/
+    resolution/
+    state/
   theme/
+scripts/
+  balance-matrix.ts
+  compile-content.ts
+  reachability-report.ts
+  simulate-runs.ts
+  validate-content.ts
 content/
   decisions/
     index.ts
@@ -119,7 +142,10 @@ docs/
   TECHNICAL_BRIEF.md
   reference/
     decision-library.md
+    dossier-system.md
     event-library.md
+    faction-system.md
+    operational-model.md
 PRDs/
   v0.1.1/
     v0.1.1.md
@@ -136,6 +162,8 @@ PRDs/
   v0.4/
     v0.4.md
     v0.4-demo.html
+  v0.5/
+    v0.5.md
 tests/
   unit/
   e2e/
@@ -148,4 +176,7 @@ tests/
 - Expansion and systems roadmap: [idea.md](idea.md)
 - Decision library and historical parallels: [docs/reference/decision-library.md](docs/reference/decision-library.md)
 - Event library and historical parallels: [docs/reference/event-library.md](docs/reference/event-library.md)
-- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md)
+- V0.5 faction hooks: [docs/reference/faction-system.md](docs/reference/faction-system.md)
+- V0.5 operational hooks: [docs/reference/operational-model.md](docs/reference/operational-model.md)
+- V0.5 dossier hooks: [docs/reference/dossier-system.md](docs/reference/dossier-system.md)
+- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md), [PRDs/v0.5/v0.5.md](PRDs/v0.5/v0.5.md)

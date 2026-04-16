@@ -5,6 +5,10 @@ import type {
   eventKinds,
   metricKeys,
 } from "../content/metadata";
+import type { DossierThread } from "../dossiers/dossierState";
+import type { FactionStates } from "../factions/factionState";
+import type { NetworkState } from "../operations/networkState";
+import type { EventSchedulerState } from "../scheduler/eventScheduler";
 
 export type ThemeName = "earth" | "armonk-blue";
 
@@ -92,19 +96,53 @@ export interface PendingEvent {
 export interface HistoryEntry {
   id: string;
   round: number;
-  source: "decision" | "event" | "system";
+  source: "decision" | "event" | "system" | "faction" | "operation" | "dossier";
   title: string;
   body: string;
   tone: "positive" | "negative" | "neutral";
+  sourceLabel?: string;
+  sourceKind?: string;
+  factionId?: string;
+  operationId?: string;
+  dossierTheme?: string;
+  scheduledEventId?: string;
+  cause?: string;
+}
+
+export interface BoardSignal {
+  title: string;
+  body: string;
+}
+
+export interface RecapItem {
+  title: string;
+  body: string;
+}
+
+export interface RunRecap {
+  headline: string;
+  factions: RecapItem[];
+  operations: RecapItem[];
+  dossiers: RecapItem[];
+  missedExitWindows: RecapItem[];
+  criticalChains: RecapItem[];
 }
 
 export interface RunState {
   status: "active" | "ended";
   round: number;
+  contentVersion?: string;
+  contentHash?: string;
   metrics: RunMetrics;
   selectedDecisionIds: string[];
   lastOfferedDecisionIds: string[];
   pendingEvents: PendingEvent[];
+  scheduler?: EventSchedulerState;
+  factions?: FactionStates;
+  operations?: NetworkState;
+  dossiers?: DossierThread[];
+  systemSignals?: BoardSignal[];
+  recap?: RunRecap | null;
   flags: string[];
   history: HistoryEntry[];
   endingId: EndingId | null;

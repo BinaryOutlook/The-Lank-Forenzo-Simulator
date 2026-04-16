@@ -28,7 +28,7 @@
   font-family: var(--font-display);
   font-size: clamp(1.2rem, 0.45vw + 1rem, 1.5rem);
   font-weight: 600;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   line-height: 1.02;
   text-wrap: balance;
 }
@@ -70,8 +70,39 @@
   font-weight: 600;
 }
 
+.pressureRead {
+  display: grid;
+  gap: 0.85rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.sectionTitle {
+  margin: 0.25rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0;
+}
+
+.pressureGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.pressureSignal {
+  min-width: 0;
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--panel-strong) 62%, transparent);
+}
+
 @media (max-width: 900px) {
   .columns {
+    grid-template-columns: 1fr;
+  }
+
+  .pressureGrid {
     grid-template-columns: 1fr;
   }
 

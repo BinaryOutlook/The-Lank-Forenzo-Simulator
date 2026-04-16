@@ -10,6 +10,56 @@ import { applyImpactSet } from "../../src/simulation/systems/metricEffects";
 import { meetsRequirements } from "../../src/simulation/systems/requirements";
 
 describe("resolveRound", () => {
+  it("initializes v0.5 systemic state for new runs", () => {
+    const run = createInitialRunState();
+
+    expect(run.contentVersion).toBe("v0.5");
+    expect(run.contentHash).toMatch(/^[a-f0-9]{8}$/);
+    expect(run.scheduler).toEqual({
+      queue: [],
+      cooldowns: {},
+      firedEventIds: {},
+    });
+    expect(Object.keys(run.factions ?? {})).toEqual([
+      "board",
+      "creditors",
+      "labor",
+      "regulators",
+      "press",
+    ]);
+    expect(run.operations?.hubs).toHaveLength(8);
+    expect(run.dossiers?.map((thread) => thread.theme)).toEqual([
+      "insider_trading",
+      "maintenance_fraud",
+      "labor_abuse",
+      "regulatory_capture",
+      "offshore_evasion",
+    ]);
+  });
+
+  it("updates scheduler, operations, dossiers, and board signals during resolution", () => {
+    const run = createInitialRunState();
+    run.selectedDecisionIds = ["downgrade_the_inspection_memo"];
+
+    const next = resolveRound(run);
+
+    expect(next.scheduler?.queue.length).toBeGreaterThan(0);
+    expect(next.pendingEvents).toEqual(
+      next.scheduler?.queue.map((event) => ({
+        eventId: event.eventId,
+        triggerRound: event.triggerRound,
+      })),
+    );
+    expect(next.operations?.maintenanceBacklog).toBeGreaterThan(
+      run.operations?.maintenanceBacklog ?? 0,
+    );
+    expect(
+      next.dossiers?.find((thread) => thread.theme === "maintenance_fraud")
+        ?.evidenceWeight,
+    ).toBeGreaterThan(0);
+    expect(next.systemSignals?.length).toBeGreaterThan(0);
+  });
+
   it("offers a curated decision tray for a fresh run", () => {
     const run = createInitialRunState();
     const decisions = getAvailableDecisions(loadContent().decisions, run);

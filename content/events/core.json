@@ -238,7 +238,8 @@
       },
       "metricMax": {
         "marketConfidence": 48
-      }
+      },
+      "flagsNone": ["scapegoatUsed"]
     },
     "impacts": {
       "marketConfidence": -5,

@@ -27,6 +27,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: clamp(2.4rem, 6vw, 4rem);
+  letter-spacing: 0;
   line-height: 0.95;
 }
 
@@ -60,6 +61,67 @@
   font-family: var(--font-mono);
 }
 
+.recap {
+  display: grid;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.sectionTitle {
+  margin: 0.25rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.recapGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.recapSection {
+  min-width: 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+
+.recapSection h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.recapSection ul {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0.65rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recapSection li {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.recapSection span {
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  text-transform: uppercase;
+}
+
+.recapSection p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -82,7 +144,8 @@
 }
 
 @media (max-width: 720px) {
-  .snapshot {
+  .snapshot,
+  .recapGrid {
     grid-template-columns: 1fr;
   }
 }

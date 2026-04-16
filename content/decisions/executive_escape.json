@@ -141,7 +141,7 @@
       "legalHeat": 6
     },
     "delayedConsequences": [
-      { "eventIds": ["offshore_auditor_ping", "nominee_director_jitters", "correspondent_bank_query"], "delay": 3 }
+      { "eventIds": ["offshore_auditor_ping", "nominee_director_jitters", "correspondent_bank_query", "customs_broker_ping"], "delay": 3 }
     ]
   },
   {

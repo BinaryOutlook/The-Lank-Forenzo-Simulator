@@ -62,6 +62,9 @@
       "airlineCash": -10,
       "creditorPatience": -3,
       "legalHeat": 5
+    },
+    "requirements": {
+      "flagsAll": ["consentOrderLive"]
     }
   },
   {
@@ -75,6 +78,9 @@
       "legalHeat": 7,
       "publicAnger": 5,
       "marketConfidence": -3
+    },
+    "requirements": {
+      "flagsAll": ["reformOfficeLive"]
     }
   },
   {

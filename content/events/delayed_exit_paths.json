@@ -36,6 +36,9 @@
       "marketConfidence": 6,
       "creditorPatience": 3
     },
+    "requirements": {
+      "flagsAll": ["suitorWhispers"]
+    },
     "setsFlags": ["mergerOffer"]
   },
   {

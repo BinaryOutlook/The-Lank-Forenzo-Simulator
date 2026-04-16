@@ -11,10 +11,11 @@ export interface GameSavePayload {
   run: RunState | null;
 }
 
-export const GAME_SAVE_STORAGE_VERSION = 1;
+export const GAME_SAVE_STORAGE_VERSION = 2;
 const LEGACY_SAVE_VERSION = 0;
 export const SAVE_MIGRATIONS: Record<number, (state: unknown) => unknown> = {
   [LEGACY_SAVE_VERSION]: (state) => state,
+  1: (state) => state,
 };
 
 const themeSchema = z.enum(["earth", "armonk-blue"]);
@@ -55,12 +56,19 @@ const historyEntrySchema = z
   .object({
     id: z.string(),
     round: z.number().int(),
-    source: z.enum(["decision", "event", "system"]),
+    source: z.enum([
+      "decision",
+      "event",
+      "system",
+      "faction",
+      "operation",
+      "dossier",
+    ]),
     title: z.string(),
     body: z.string(),
     tone: z.enum(["positive", "negative", "neutral"]),
   })
-  .strict();
+  .passthrough();
 
 const runStateSchema = z
   .object({
@@ -75,7 +83,7 @@ const runStateSchema = z
     endingId: endingIdSchema.nullable(),
     eventCounts: z.record(z.number()),
   })
-  .strict();
+  .passthrough();
 
 const gameSavePayloadSchema = z
   .object({

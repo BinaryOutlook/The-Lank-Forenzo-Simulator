@@ -2,7 +2,7 @@
 
 Status: Foundation reset
 Owner: BinaryOutlook
-Last updated: 2026-04-09
+Last updated: 2026-04-17
 Project phase: Clean-slate browser reboot
 
 ## 1. Purpose
@@ -109,6 +109,8 @@ For the first serious browser version, the product should:
 - make personal wealth and corporate health visibly diverge
 - turn each round into a meaningful set of ugly trade-offs
 - present legal pressure as a playable system, not just flavor text
+- let factions, operations, and dossier evidence remember the style of the player's misconduct
+- provide deterministic balance and reachability tooling so content coverage problems are visible
 - support two complete visual themes without fragmenting the product
 - remain local-first and easy to run during early development
 - be maintainable enough for re-entry after long breaks
@@ -118,7 +120,7 @@ For the first serious browser version, the product should:
 The current phase is not trying to become:
 
 - a simulation of real-world legal or financial advice
-- a sprawling airline operations simulator with detailed route planning
+- a sprawling airline operations simulator with player-controlled dispatch or detailed route planning
 - a multiplayer game
 - a server-dependent live-service product
 - a content-heavy narrative RPG
@@ -126,6 +128,8 @@ The current phase is not trying to become:
 - a hybrid legacy migration project
 
 If a feature does not clearly strengthen the player fantasy, the browser experience, or the maintainability of the codebase, it should not be default scope.
+
+Small operational substrates are allowed when they convert executive choices into board-level consequence. The player should still act like a corrupt executive, not a dispatcher.
 
 ## 7. Primary Users
 
@@ -198,7 +202,20 @@ For example:
 
 Complexity is welcome. Obscurity is not.
 
-### 8.4 The interface should feel like power under glass
+### 8.4 The world should remember the method
+
+The simulation should not only react to metric levels. It should remember the player's pattern of misconduct.
+
+Durable memory can appear through:
+
+- faction grievance and intent state
+- operational fragility caused by prior executive choices
+- dossier evidence that accumulates from decisions and events
+- post-run recaps that explain which pattern mattered most
+
+The world should feel strategic because institutions respond to repeated behavior, not because random punishment appears from nowhere.
+
+### 8.5 The interface should feel like power under glass
 
 The GUI should feel sharp, deliberate, and premium.
 

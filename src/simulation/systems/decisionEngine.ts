@@ -7,11 +7,11 @@ import type {
 } from "../state/types";
 import { hasRequirementConstraints, meetsRequirements } from "./requirements";
 
-const MAIN_TRAY_SIZE = 5;
-const MIN_DISTINCT_PACKS = 3;
-const MAX_GROUP_DUPLICATES = 2;
-
-const decisionScorePolicy = {
+export const TRAY_COMPOSER_POLICY = {
+  mainTraySize: 5,
+  minDistinctGroups: 3,
+  minDistinctPacks: 3,
+  maxGroupDuplicates: 2,
   cashReliefWhenLow: 26,
   heatReliefWhenHigh: 24,
   safetyRepairWhenLow: 20,
@@ -26,12 +26,38 @@ const decisionScorePolicy = {
   flaggedRequirementBonus: 12,
   setsFlagBonus: 4,
   tagWeight: 1,
+  newGroupBonus: 30,
+  neededGroupBonus: 42,
+  duplicateGroupPenalty: -18,
+  groupCapPenalty: -80,
+  newPackBonus: 8,
+  neededPackBonus: 12,
+  repeatTrayPenalty: -90,
+  noRepeatCandidateBonus: 10,
 } as const;
 
 interface RankedDecision {
   decision: DecisionDefinition;
   score: number;
   seededIndex: number;
+}
+
+interface TrayScoreContext {
+  previousRoundIds: Set<string>;
+  availableGroupCount: number;
+  availablePackCount: number;
+}
+
+export interface TrayCompositionResult {
+  decisions: DecisionDefinition[];
+  diagnostics: {
+    eligibleCount: number;
+    mainPoolCount: number;
+    previousRepeatCount: number;
+    distinctGroups: number;
+    distinctPacks: number;
+    exitPreserved: boolean;
+  };
 }
 
 export function isDecisionEligible(
@@ -55,58 +81,58 @@ function scoreDecision(
   const { impacts } = decision;
 
   if (metrics.airlineCash < 110 && (impacts.airlineCash ?? 0) > 0) {
-    score += decisionScorePolicy.cashReliefWhenLow;
+    score += TRAY_COMPOSER_POLICY.cashReliefWhenLow;
   }
 
   if (metrics.legalHeat > 58 && (impacts.legalHeat ?? 0) < 0) {
-    score += decisionScorePolicy.heatReliefWhenHigh;
+    score += TRAY_COMPOSER_POLICY.heatReliefWhenHigh;
   }
 
   if (metrics.safetyIntegrity < 55 && (impacts.safetyIntegrity ?? 0) > 0) {
-    score += decisionScorePolicy.safetyRepairWhenLow;
+    score += TRAY_COMPOSER_POLICY.safetyRepairWhenLow;
   }
 
   if (metrics.creditorPatience < 40 && (impacts.creditorPatience ?? 0) > 0) {
-    score += decisionScorePolicy.creditorReliefWhenLow;
+    score += TRAY_COMPOSER_POLICY.creditorReliefWhenLow;
   }
 
   if (metrics.marketConfidence < 45 && (impacts.marketConfidence ?? 0) > 0) {
-    score += decisionScorePolicy.confidenceLiftWhenLow;
+    score += TRAY_COMPOSER_POLICY.confidenceLiftWhenLow;
   }
 
   if (metrics.personalWealth < 42 && (impacts.personalWealth ?? 0) > 0) {
-    score += decisionScorePolicy.personalWealthWhenLow;
+    score += TRAY_COMPOSER_POLICY.personalWealthWhenLow;
   }
 
   if (decision.group === "exit") {
-    score += decisionScorePolicy.exitAvailability;
+    score += TRAY_COMPOSER_POLICY.exitAvailability;
   }
 
   if (decision.group === "extraction" && metrics.legalHeat < 70) {
-    score += decisionScorePolicy.extractionWhenHeatSafe;
+    score += TRAY_COMPOSER_POLICY.extractionWhenHeatSafe;
   }
 
   if ((impacts.legalHeat ?? 0) > 0 && metrics.legalHeat > 72) {
-    score += decisionScorePolicy.heatRiskPenaltyWhenHigh;
+    score += TRAY_COMPOSER_POLICY.heatRiskPenaltyWhenHigh;
   }
 
   if (previousRoundIds.has(decision.id)) {
-    score += decisionScorePolicy.previousRoundPenalty;
+    score += TRAY_COMPOSER_POLICY.previousRoundPenalty;
   }
 
   if (isFollowUpDecision(decision)) {
-    score += decisionScorePolicy.followUpBonus;
+    score += TRAY_COMPOSER_POLICY.followUpBonus;
   }
 
   if ((decision.requirements?.flagsAll?.length ?? 0) > 0) {
-    score += decisionScorePolicy.flaggedRequirementBonus;
+    score += TRAY_COMPOSER_POLICY.flaggedRequirementBonus;
   }
 
   if ((decision.setsFlags?.length ?? 0) > 0) {
-    score += decisionScorePolicy.setsFlagBonus;
+    score += TRAY_COMPOSER_POLICY.setsFlagBonus;
   }
 
-  score += decision.tags.length * decisionScorePolicy.tagWeight;
+  score += decision.tags.length * TRAY_COMPOSER_POLICY.tagWeight;
 
   return score;
 }
@@ -135,12 +161,73 @@ function appendDecision(
   groupCounts.set(decision.group, (groupCounts.get(decision.group) ?? 0) + 1);
 }
 
+function countDistinctGroups(decisions: DecisionDefinition[]): number {
+  return new Set(decisions.map((decision) => decision.group)).size;
+}
+
+function countDistinctPacks(decisions: DecisionDefinition[]): number {
+  return new Set(decisions.map((decision) => decision.pack)).size;
+}
+
+function scoreTrayCandidate(
+  entry: RankedDecision,
+  chosen: DecisionDefinition[],
+  groupCounts: Map<DecisionGroup, number>,
+  chosenPacks: Set<DecisionPackId>,
+  context: TrayScoreContext,
+): number {
+  const { decision } = entry;
+  const groupCount = groupCounts.get(decision.group) ?? 0;
+  const distinctGroups = countDistinctGroups(chosen);
+  const groupTarget = Math.min(
+    TRAY_COMPOSER_POLICY.minDistinctGroups,
+    TRAY_COMPOSER_POLICY.mainTraySize,
+    context.availableGroupCount,
+  );
+  const packTarget = Math.min(
+    TRAY_COMPOSER_POLICY.minDistinctPacks,
+    TRAY_COMPOSER_POLICY.mainTraySize,
+    context.availablePackCount,
+  );
+  let score = entry.score;
+
+  if (groupCount === 0) {
+    score +=
+      distinctGroups < groupTarget
+        ? TRAY_COMPOSER_POLICY.neededGroupBonus
+        : TRAY_COMPOSER_POLICY.newGroupBonus;
+  } else {
+    score += TRAY_COMPOSER_POLICY.duplicateGroupPenalty * groupCount;
+  }
+
+  if (groupCount >= TRAY_COMPOSER_POLICY.maxGroupDuplicates) {
+    score += TRAY_COMPOSER_POLICY.groupCapPenalty;
+  }
+
+  if (!chosenPacks.has(decision.pack)) {
+    score +=
+      chosenPacks.size < packTarget
+        ? TRAY_COMPOSER_POLICY.neededPackBonus
+        : TRAY_COMPOSER_POLICY.newPackBonus;
+  }
+
+  if (context.previousRoundIds.has(decision.id)) {
+    score += TRAY_COMPOSER_POLICY.repeatTrayPenalty;
+  } else {
+    score += TRAY_COMPOSER_POLICY.noRepeatCandidateBonus;
+  }
+
+  return score;
+}
+
 function pickCandidate(
   ranked: RankedDecision[],
+  chosen: DecisionDefinition[],
   chosenIds: Set<string>,
   previousRoundIds: Set<string>,
   chosenPacks: Set<DecisionPackId>,
   groupCounts: Map<DecisionGroup, number>,
+  context: TrayScoreContext,
   options: {
     allowRepeats: boolean;
     enforceGroupCap: boolean;
@@ -148,6 +235,12 @@ function pickCandidate(
     requireFollowUp?: boolean;
   },
 ): DecisionDefinition | null {
+  let best: {
+    decision: DecisionDefinition;
+    score: number;
+    seededIndex: number;
+  } | null = null;
+
   for (const entry of ranked) {
     const { decision } = entry;
 
@@ -169,21 +262,36 @@ function pickCandidate(
 
     if (
       options.enforceGroupCap &&
-      (groupCounts.get(decision.group) ?? 0) >= MAX_GROUP_DUPLICATES
+      (groupCounts.get(decision.group) ?? 0) >=
+        TRAY_COMPOSER_POLICY.maxGroupDuplicates
     ) {
       continue;
     }
 
-    return decision;
+    const setScore = scoreTrayCandidate(
+      entry,
+      chosen,
+      groupCounts,
+      chosenPacks,
+      context,
+    );
+
+    if (
+      !best ||
+      setScore > best.score ||
+      (setScore === best.score && entry.seededIndex < best.seededIndex)
+    ) {
+      best = { decision, score: setScore, seededIndex: entry.seededIndex };
+    }
   }
 
-  return null;
+  return best?.decision ?? null;
 }
 
-export function getAvailableDecisions(
+export function composeDecisionTray(
   decisions: DecisionDefinition[],
   run: RunState,
-): DecisionDefinition[] {
+): TrayCompositionResult {
   const eligible = decisions.filter((decision) =>
     isDecisionEligible(decision, run),
   );
@@ -213,9 +321,16 @@ export function getAvailableDecisions(
   const chosenIds = new Set<string>();
   const chosenPacks = new Set<DecisionPackId>();
   const groupCounts = new Map<DecisionGroup, number>();
+  const scoreContext: TrayScoreContext = {
+    previousRoundIds,
+    availableGroupCount: new Set(ranked.map((entry) => entry.decision.group))
+      .size,
+    availablePackCount: new Set(ranked.map((entry) => entry.decision.pack))
+      .size,
+  };
   const packTarget = Math.min(
-    MIN_DISTINCT_PACKS,
-    MAIN_TRAY_SIZE,
+    TRAY_COMPOSER_POLICY.minDistinctPacks,
+    TRAY_COMPOSER_POLICY.mainTraySize,
     new Set(ranked.map((entry) => entry.decision.pack)).size,
   );
 
@@ -223,10 +338,12 @@ export function getAvailableDecisions(
     const candidate =
       pickCandidate(
         ranked,
+        chosen,
         chosenIds,
         previousRoundIds,
         chosenPacks,
         groupCounts,
+        scoreContext,
         {
           allowRepeats: false,
           enforceGroupCap: true,
@@ -235,10 +352,12 @@ export function getAvailableDecisions(
       ) ??
       pickCandidate(
         ranked,
+        chosen,
         chosenIds,
         previousRoundIds,
         chosenPacks,
         groupCounts,
+        scoreContext,
         {
           allowRepeats: true,
           enforceGroupCap: true,
@@ -247,10 +366,12 @@ export function getAvailableDecisions(
       ) ??
       pickCandidate(
         ranked,
+        chosen,
         chosenIds,
         previousRoundIds,
         chosenPacks,
         groupCounts,
+        scoreContext,
         {
           allowRepeats: true,
           enforceGroupCap: false,
@@ -269,10 +390,12 @@ export function getAvailableDecisions(
     const followUpCandidate =
       pickCandidate(
         ranked,
+        chosen,
         chosenIds,
         previousRoundIds,
         chosenPacks,
         groupCounts,
+        scoreContext,
         {
           allowRepeats: false,
           enforceGroupCap: true,
@@ -281,10 +404,12 @@ export function getAvailableDecisions(
       ) ??
       pickCandidate(
         ranked,
+        chosen,
         chosenIds,
         previousRoundIds,
         chosenPacks,
         groupCounts,
+        scoreContext,
         {
           allowRepeats: true,
           enforceGroupCap: true,
@@ -303,14 +428,16 @@ export function getAvailableDecisions(
     }
   }
 
-  while (chosen.length < MAIN_TRAY_SIZE) {
+  while (chosen.length < TRAY_COMPOSER_POLICY.mainTraySize) {
     const candidate =
       pickCandidate(
         ranked,
+        chosen,
         chosenIds,
         previousRoundIds,
         chosenPacks,
         groupCounts,
+        scoreContext,
         {
           allowRepeats: false,
           enforceGroupCap: true,
@@ -318,10 +445,12 @@ export function getAvailableDecisions(
       ) ??
       pickCandidate(
         ranked,
+        chosen,
         chosenIds,
         previousRoundIds,
         chosenPacks,
         groupCounts,
+        scoreContext,
         {
           allowRepeats: true,
           enforceGroupCap: true,
@@ -329,10 +458,12 @@ export function getAvailableDecisions(
       ) ??
       pickCandidate(
         ranked,
+        chosen,
         chosenIds,
         previousRoundIds,
         chosenPacks,
         groupCounts,
+        scoreContext,
         {
           allowRepeats: true,
           enforceGroupCap: false,
@@ -346,6 +477,8 @@ export function getAvailableDecisions(
     appendDecision(chosen, candidate, chosenIds, chosenPacks, groupCounts);
   }
 
+  let exitPreserved = false;
+
   if (exits.length > 0) {
     const [bestExit] = [...exits].sort(
       (left, right) =>
@@ -354,8 +487,32 @@ export function getAvailableDecisions(
     );
     if (bestExit) {
       chosen.push(bestExit);
+      exitPreserved = true;
     }
   }
 
-  return chosen;
+  return {
+    decisions: chosen,
+    diagnostics: {
+      eligibleCount: eligible.length,
+      mainPoolCount: mainPool.length,
+      previousRepeatCount: chosen.filter((decision) =>
+        previousRoundIds.has(decision.id),
+      ).length,
+      distinctGroups: countDistinctGroups(
+        chosen.filter((decision) => decision.group !== "exit"),
+      ),
+      distinctPacks: countDistinctPacks(
+        chosen.filter((decision) => decision.group !== "exit"),
+      ),
+      exitPreserved,
+    },
+  };
+}
+
+export function getAvailableDecisions(
+  decisions: DecisionDefinition[],
+  run: RunState,
+): DecisionDefinition[] {
+  return composeDecisionTray(decisions, run).decisions;
 }

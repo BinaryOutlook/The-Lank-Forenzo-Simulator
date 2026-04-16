@@ -75,7 +75,7 @@ describe("content library", () => {
     expect(report.events.byKind.get("ambient")).toBeGreaterThan(0);
     expect(report.events.byKind.get("delayed")).toBeGreaterThan(0);
     expect(report.errors).toHaveLength(0);
-    expect(report.warnings.length).toBeGreaterThan(0);
+    expect(report.warnings).toHaveLength(0);
   });
 
   it("flags broken refs, orphaned delayed events, flag gaps, and impossible requirements", () => {
