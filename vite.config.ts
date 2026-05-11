@@ -7,7 +7,6 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
     css: true,
-    testTimeout: 60_000,
     include: ["tests/unit/**/*.test.ts", "src/**/*.test.ts", "src/**/*.test.tsx"],
     exclude: ["tests/e2e/**"],
     // Reachability diagnostics exercise broad simulation paths and can exceed

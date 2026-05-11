@@ -31,6 +31,7 @@ describe("reachability report helpers", () => {
       surfacedDecisionIds: new Set(["seen_surface"]),
       selectedDecisionIds: new Set(["seen_selected"]),
       triggeredEventIds: new Set(["seen_event"]),
+      triggeredHazardRuleIds: new Set(["seen_hazard_rule"]),
       endingIds: new Set(["prison"]),
       packIds: new Set(["core"]),
       flagIds: new Set(["flag_seen"]),
