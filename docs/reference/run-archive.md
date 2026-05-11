@@ -267,15 +267,15 @@ payload should stay small and quick to hydrate.
 
 ### Entry Points
 
-1. **Ending screen**  
+1. **Ending screen**
    When `run.status === "ended"`, offer a clear archive action:
    - primary next-run action stays "Start another run"
    - secondary archive action: "Save to archive" or "View archive"
    - if auto-save is enabled later, show "Saved to archive" with an undo/delete
      affordance rather than forcing a second decision
-2. **Landing screen**  
+2. **Landing screen**
    Add an "Archive" entry beside resume/new-run once the route exists.
-3. **App shell navigation**  
+3. **App shell navigation**
    Add a low-noise Archive link after the feature has real content. It should not
    displace the active run path.
 

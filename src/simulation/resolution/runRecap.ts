@@ -8,7 +8,7 @@ import type {
 } from "../state/types.js";
 import type { DossierThread } from "../dossiers/dossierState.js";
 import { summarizeDossiers } from "../dossiers/dossierState.js";
-import type { FactionStates } from "../factions/factionState.js";
+import type { FactionState, FactionStates } from "../factions/factionState.js";
 import type { NetworkState } from "../operations/networkState.js";
 import type { NetworkQuarterResult } from "../operations/networkResolution.js";
 
@@ -217,15 +217,28 @@ function buildFactionRecapItems(factions: FactionStates): RecapItem[] {
       const grievance =
         faction.recentGrievances[0] ??
         "No single grievance controlled the room, so accumulated suspicion did the work.";
-      const intent = faction.lastIntentId
-        ? ` Last intent: ${formatId(faction.lastIntentId)}.`
-        : "";
+      const intent = faction.currentIntent
+        ? `Intent ${formatId(faction.currentIntent.family)} at urgency ${faction.currentIntent.urgency}.`
+        : "Intent not active.";
 
       return {
         title: `${formatId(faction.id)} pressure`,
-        body: `Aggression ${faction.aggression}, leverage ${faction.leverage}. ${grievance}${intent}`,
+        body: `${intent} Aggression ${faction.aggression}, leverage ${faction.leverage}. ${formatFactionBehaviorMemory(faction)} ${grievance}`,
       };
     });
+}
+
+function formatFactionBehaviorMemory(faction: FactionState): string {
+  const [topPattern, count] =
+    Object.entries(faction.behaviorMemory).sort(
+      (left, right) => (right[1] ?? 0) - (left[1] ?? 0),
+    )[0] ?? [];
+
+  if (topPattern && typeof count === "number" && count > 0) {
+    return `Remembered pattern: ${formatId(topPattern)} x${count}.`;
+  }
+
+  return "No repeated behavior pattern dominated.";
 }
 
 function buildOperationRecapItems(

@@ -71,6 +71,44 @@ describe("resolveRound", () => {
     expect(next.systemSignals?.length).toBeGreaterThan(0);
   });
 
+  it("stores current faction intents and routes them into signals, hazards, and history", () => {
+    const run = createInitialRunState();
+    run.metrics.marketConfidence = 70;
+    run.metrics.stockPrice = 34;
+    run.metrics.legalHeat = 38;
+    run.factions = {
+      ...run.factions!,
+      board: {
+        ...run.factions!.board,
+        trust: 82,
+        leverage: 72,
+      },
+    };
+
+    const next = resolveRound(run);
+
+    expect(next.factions?.board.currentIntent).toEqual(
+      expect.objectContaining({
+        family: "shield",
+        score: expect.objectContaining({
+          urgency: expect.any(Number),
+          leverage: expect.any(Number),
+          evidence: expect.any(Number),
+          cooldown: expect.any(Number),
+        }),
+      }),
+    );
+    expect(
+      next.systemSignals?.some((signal) => signal.title === "Board Shield"),
+    ).toBe(true);
+    expect(
+      next.history.some((entry) => entry.sourceKind === "faction_intent"),
+    ).toBe(true);
+    expect(
+      next.history.some((entry) => entry.body.includes("Hazard pressure")),
+    ).toBe(true);
+  });
+
   it("records severe operational cascades as caused history and dossier evidence", () => {
     const run = createInitialRunState();
     const operations = createDefaultNetworkState();
@@ -285,6 +323,9 @@ describe("resolveRound", () => {
 
     expect(next.status).toBe("ended");
     expect(next.endingId).toBe("extraction");
+    expect(
+      next.recap?.factions.some((item) => item.body.includes("Intent ")),
+    ).toBe(true);
   });
 
   it("builds dossier-specific case theory recap entries for endings", () => {

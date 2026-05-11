@@ -1,9 +1,9 @@
 # Future Report Implementation Plan
 
-Status: Agent-ready roadmap breakdown  
-Owner: BinaryOutlook  
-Last updated: 2026-05-11  
-Parent issue: [#17](https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/17)  
+Status: Agent-ready roadmap breakdown
+Owner: BinaryOutlook
+Last updated: 2026-05-11
+Parent issue: [#17](https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/17)
 Source report: [`docs/FUTURE_REPORT.md`](FUTURE_REPORT.md)
 
 ## 1. Purpose

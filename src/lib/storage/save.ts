@@ -8,6 +8,7 @@ import {
   defaultGameSettings,
   normalizeGameSettings,
 } from "../../simulation/state/settings.js";
+import { coerceFactionStates } from "../../simulation/factions/factionState.js";
 import { coerceConsumableResources } from "../../simulation/systems/consumables.js";
 import type { GameSettings } from "../../simulation/state/settings.js";
 import type { RunState, ThemeName } from "../../simulation/state/types.js";
@@ -18,13 +19,14 @@ export interface GameSavePayload {
   run: RunState | null;
 }
 
-export const GAME_SAVE_STORAGE_VERSION = 4;
+export const GAME_SAVE_STORAGE_VERSION = 5;
 const LEGACY_SAVE_VERSION = 0;
 export const SAVE_MIGRATIONS: Record<number, (state: unknown) => unknown> = {
   [LEGACY_SAVE_VERSION]: (state) => state,
   1: (state) => state,
   2: (state) => state,
   3: (state) => state,
+  4: (state) => state,
 };
 
 const themeSchema = z.enum(["earth", "armonk-blue"]);
@@ -125,11 +127,12 @@ function parseRun(value: unknown): RunState | null {
     return null;
   }
 
-  const { resources, ...run } = parsed.data;
+  const { resources, factions, factionState, ...run } = parsed.data;
 
   return {
     ...run,
     resources: coerceConsumableResources(resources),
+    factions: coerceFactionStates(factions ?? factionState),
   };
 }
 

@@ -69,6 +69,13 @@ describe("dossier primitives", () => {
           family: "investigate",
           urgency: 78,
           rationale: "Dossier threshold crossed.",
+          score: {
+            urgency: 78,
+            leverage: 0,
+            evidence: 0,
+            cooldown: 0,
+            total: 78,
+          },
         },
         {
           id: "press-leak-6",
@@ -76,6 +83,13 @@ describe("dossier primitives", () => {
           family: "leak",
           urgency: 72,
           rationale: "Source quality improved.",
+          score: {
+            urgency: 72,
+            leverage: 0,
+            evidence: 0,
+            cooldown: 0,
+            total: 72,
+          },
         },
         {
           id: "labor-organize-6",
@@ -83,6 +97,13 @@ describe("dossier primitives", () => {
           family: "organize",
           urgency: 66,
           rationale: "The organizing file is thick enough.",
+          score: {
+            urgency: 66,
+            leverage: 0,
+            evidence: 0,
+            cooldown: 0,
+            total: 66,
+          },
         },
       ],
     });

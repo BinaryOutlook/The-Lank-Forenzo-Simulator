@@ -21,6 +21,7 @@ import {
   type DossierThread,
 } from "../dossiers/dossierState";
 import {
+  coerceFactionStates,
   createInitialFactionStates,
   type FactionEffectSource,
   type FactionIntent,
@@ -28,6 +29,7 @@ import {
 } from "../factions/factionState";
 import {
   planFactionIntents,
+  rememberFactionIntents,
   updateFactionStates,
 } from "../factions/factionPlanner";
 import {
@@ -564,7 +566,7 @@ function mirrorPendingEvents(scheduler: EventSchedulerState): PendingEvent[] {
 }
 
 function getRunFactions(run: RunState): FactionStates {
-  return run.factions ?? createInitialFactionStates();
+  return coerceFactionStates(run.factions);
 }
 
 function getRunOperations(run: RunState): NetworkState {
@@ -610,10 +612,13 @@ function collectEventFactionEffectSources(
 }
 
 function buildFactionSignals(intents: FactionIntent[]): BoardSignal[] {
-  return intents.slice(0, 2).map((intent) => ({
-    title: `${formatId(intent.factionId)} ${formatId(intent.family)}`,
-    body: `${intent.rationale} Urgency ${intent.urgency}.`,
-  }));
+  return [...intents]
+    .sort((left, right) => right.urgency - left.urgency)
+    .slice(0, 2)
+    .map((intent) => ({
+      title: `${formatId(intent.factionId)} ${formatId(intent.family)}`,
+      body: `${intent.rationale} Urgency ${intent.urgency}; score ${intent.score.urgency}/${intent.score.leverage}/${intent.score.evidence}/${intent.score.cooldown}.`,
+    }));
 }
 
 function buildOperationSignals(result: NetworkQuarterResult): BoardSignal[] {
@@ -649,9 +654,84 @@ function buildFactionHistoryEntry(
     sourceKind: "faction_intent",
     factionId: intent.factionId,
     title: `${formatId(intent.factionId)} ${formatId(intent.family)}`,
-    body: intent.rationale,
+    body: `${intent.rationale}${formatImpactSummary(scaleFactionIntentImpacts(intent.metricImpacts))}`,
     tone: intent.family === "shield" ? "positive" : "negative",
   };
+}
+
+function applyFactionIntentHazards(
+  metrics: RunMetrics,
+  intents: FactionIntent[],
+): RunMetrics {
+  const combinedImpacts = combineFactionIntentImpacts(intents);
+
+  if (Object.keys(combinedImpacts).length === 0) {
+    return metrics;
+  }
+
+  return applyImpactSet(metrics, combinedImpacts);
+}
+
+function combineFactionIntentImpacts(intents: FactionIntent[]): ImpactSet {
+  const combined: ImpactSet = {};
+  const activeIntents = [...intents]
+    .filter((intent) => intent.urgency >= 50)
+    .sort((left, right) => right.urgency - left.urgency)
+    .slice(0, 1);
+
+  for (const intent of activeIntents) {
+    const scaledImpacts = scaleFactionIntentImpacts(intent.metricImpacts);
+
+    if (!scaledImpacts) {
+      continue;
+    }
+
+    for (const key of Object.keys(scaledImpacts) as Array<keyof ImpactSet>) {
+      const value = scaledImpacts[key];
+
+      if (typeof value !== "number") {
+        continue;
+      }
+
+      combined[key] = (combined[key] ?? 0) + value;
+    }
+  }
+
+  return combined;
+}
+
+function scaleFactionIntentImpacts(
+  impacts: ImpactSet | undefined,
+): ImpactSet | undefined {
+  if (!impacts) {
+    return undefined;
+  }
+
+  const scaled: ImpactSet = {};
+
+  for (const key of Object.keys(impacts) as Array<keyof ImpactSet>) {
+    const value = impacts[key];
+
+    if (typeof value !== "number" || value === 0) {
+      continue;
+    }
+
+    scaled[key] = Math.sign(value);
+  }
+
+  return Object.keys(scaled).length > 0 ? scaled : undefined;
+}
+
+function formatImpactSummary(impacts: ImpactSet | undefined): string {
+  if (!impacts || Object.keys(impacts).length === 0) {
+    return "";
+  }
+
+  const summary = Object.entries(impacts)
+    .map(([key, value]) => `${formatId(key)} ${value > 0 ? "+" : ""}${value}`)
+    .join(", ");
+
+  return ` Hazard pressure: ${summary}.`;
 }
 
 function buildOperationHistoryEntry(
@@ -725,7 +805,9 @@ function buildDossierThresholdEntries(input: {
   for (const thread of input.current) {
     const previousBand =
       previousByTheme[thread.theme]?.severityBand ??
-      getDossierSeverityBand(previousByTheme[thread.theme]?.evidenceWeight ?? 0);
+      getDossierSeverityBand(
+        previousByTheme[thread.theme]?.evidenceWeight ?? 0,
+      );
     const currentBand = getDossierSeverityBand(thread.evidenceWeight);
 
     if (!isThresholdEscalation(previousBand, currentBand)) {
@@ -778,8 +860,10 @@ function isThresholdEscalation(
   previous: DossierSeverityBand,
   current: DossierSeverityBand,
 ): boolean {
-  return getSeverityRank(current) >= getSeverityRank("medium") &&
-    getSeverityRank(current) > getSeverityRank(previous);
+  return (
+    getSeverityRank(current) >= getSeverityRank("medium") &&
+    getSeverityRank(current) > getSeverityRank(previous)
+  );
 }
 
 function getSeverityRank(severityBand: DossierSeverityBand): number {
@@ -877,11 +961,17 @@ export function resolveRound(
     metrics,
     round,
   });
+  factions = rememberFactionIntents(factions, {
+    intents: factionIntents,
+    round,
+  });
   const factionHistory = buildFactionHistoryEntry(round, factionIntents);
 
   if (factionHistory) {
     historyEntries.push(factionHistory);
   }
+
+  metrics = applyFactionIntentHazards(metrics, factionIntents);
 
   const operatingDrift = applyOperatingDriftStep(round, metrics);
   metrics = operatingDrift.metrics;
