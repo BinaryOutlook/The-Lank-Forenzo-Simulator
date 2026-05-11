@@ -18,6 +18,7 @@ export interface GameSettings {
   soundEffectsEnabled: boolean;
   animationsEnabled: boolean;
   visualEffectsEnabled: boolean;
+  interactionEffectsEnabled: boolean;
   visualEffectIntensity: number;
   uiDensity: UiDensity;
 }
@@ -29,6 +30,7 @@ export const defaultGameSettings: GameSettings = {
   soundEffectsEnabled: true,
   animationsEnabled: true,
   visualEffectsEnabled: true,
+  interactionEffectsEnabled: true,
   visualEffectIntensity: 70,
   uiDensity: "standard",
 };
@@ -73,7 +75,10 @@ export function normalizeGameSettings(value: unknown): GameSettings {
       value.musicEnabled,
       defaultGameSettings.musicEnabled,
     ),
-    musicVolume: parsePercent(value.musicVolume, defaultGameSettings.musicVolume),
+    musicVolume: parsePercent(
+      value.musicVolume,
+      defaultGameSettings.musicVolume,
+    ),
     soundEffectsEnabled: parseBoolean(
       value.soundEffectsEnabled,
       defaultGameSettings.soundEffectsEnabled,
@@ -85,6 +90,10 @@ export function normalizeGameSettings(value: unknown): GameSettings {
     visualEffectsEnabled: parseBoolean(
       value.visualEffectsEnabled,
       defaultGameSettings.visualEffectsEnabled,
+    ),
+    interactionEffectsEnabled: parseBoolean(
+      value.interactionEffectsEnabled,
+      defaultGameSettings.interactionEffectsEnabled,
     ),
     visualEffectIntensity: parsePercent(
       value.visualEffectIntensity,

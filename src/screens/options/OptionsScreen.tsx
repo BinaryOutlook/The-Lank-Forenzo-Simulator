@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import clsx from "clsx";
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
+import { InteractionFeedbackButton } from "../../components/interaction/InteractionFeedbackButton.js";
 import { useGameStore } from "../../simulation/state/gameStore.js";
 import type {
   UiDensity,
@@ -44,7 +45,8 @@ const themeOptions: Array<ChoiceOption<ThemeName>> = [
   {
     id: "earth",
     label: "Earth",
-    description: "Dark, predatory surfaces with restrained green signal accents.",
+    description:
+      "Dark, predatory surfaces with restrained green signal accents.",
   },
   {
     id: "armonk-blue",
@@ -57,7 +59,8 @@ const wallpaperOptions: Array<ChoiceOption<WallpaperPreset>> = [
   {
     id: "executive-grid",
     label: "Executive Grid",
-    description: "The default command-room grid for maximum board-packet menace.",
+    description:
+      "The default command-room grid for maximum board-packet menace.",
   },
   {
     id: "runway-night",
@@ -67,7 +70,8 @@ const wallpaperOptions: Array<ChoiceOption<WallpaperPreset>> = [
   {
     id: "audit-room",
     label: "Audit Room",
-    description: "Paper trails, thin ruled lines, and the smell of bad discovery.",
+    description:
+      "Paper trails, thin ruled lines, and the smell of bad discovery.",
   },
   {
     id: "clean-boardroom",
@@ -85,7 +89,8 @@ const densityOptions: Array<ChoiceOption<UiDensity>> = [
   {
     id: "compact",
     label: "Compact",
-    description: "Tighter spacing for laptops, dense rounds, and small screens.",
+    description:
+      "Tighter spacing for laptops, dense rounds, and small screens.",
   },
 ];
 
@@ -139,7 +144,10 @@ function RangeRow({
   onChange,
 }: RangeRowProps) {
   return (
-    <label className={clsx(styles.rangeRow, disabled && styles.controlMuted)} htmlFor={id}>
+    <label
+      className={clsx(styles.rangeRow, disabled && styles.controlMuted)}
+      htmlFor={id}
+    >
       <span className={styles.rangeHeader}>
         <span>
           <span className={styles.controlTitle}>{label}</span>
@@ -181,11 +189,16 @@ export function OptionsScreen() {
   const setVisualEffectsEnabled = useGameStore(
     (state) => state.setVisualEffectsEnabled,
   );
+  const setInteractionEffectsEnabled = useGameStore(
+    (state) => state.setInteractionEffectsEnabled,
+  );
   const setVisualEffectIntensity = useGameStore(
     (state) => state.setVisualEffectIntensity,
   );
   const setUiDensity = useGameStore((state) => state.setUiDensity);
   const resetSettings = useGameStore((state) => state.resetSettings);
+  const interactionEffectsEnabled =
+    settings.visualEffectsEnabled && settings.interactionEffectsEnabled;
 
   return (
     <motion.section
@@ -197,7 +210,9 @@ export function OptionsScreen() {
       <header className={styles.hero}>
         <div>
           <p className={styles.eyebrow}>Options</p>
-          <h1 className={styles.title}>Tune the room before it turns on you.</h1>
+          <h1 className={styles.title}>
+            Tune the room before it turns on you.
+          </h1>
         </div>
         <p className={styles.summary}>
           Settings are saved locally. Start with preset wallpapers now; richer
@@ -215,9 +230,9 @@ export function OptionsScreen() {
           >
             <div className={styles.choiceGrid} aria-label="Theme selector">
               {themeOptions.map((option) => (
-                <button
+                <InteractionFeedbackButton
                   key={option.id}
-                  type="button"
+                  feedbackEnabled={interactionEffectsEnabled}
                   className={clsx(
                     styles.choiceCard,
                     option.id === theme && styles.choiceCardActive,
@@ -229,19 +244,18 @@ export function OptionsScreen() {
                   <span className={styles.choiceDescription}>
                     {option.description}
                   </span>
-                </button>
+                </InteractionFeedbackButton>
               ))}
             </div>
 
             <div className={styles.choiceGrid} aria-label="UI density selector">
               {densityOptions.map((option) => (
-                <button
+                <InteractionFeedbackButton
                   key={option.id}
-                  type="button"
+                  feedbackEnabled={interactionEffectsEnabled}
                   className={clsx(
                     styles.choiceCard,
-                    option.id === settings.uiDensity &&
-                      styles.choiceCardActive,
+                    option.id === settings.uiDensity && styles.choiceCardActive,
                   )}
                   aria-pressed={option.id === settings.uiDensity}
                   onClick={() => setUiDensity(option.id)}
@@ -250,7 +264,7 @@ export function OptionsScreen() {
                   <span className={styles.choiceDescription}>
                     {option.description}
                   </span>
-                </button>
+                </InteractionFeedbackButton>
               ))}
             </div>
 
@@ -270,9 +284,9 @@ export function OptionsScreen() {
           >
             <div className={styles.wallpaperGrid}>
               {wallpaperOptions.map((option) => (
-                <button
+                <InteractionFeedbackButton
                   key={option.id}
-                  type="button"
+                  feedbackEnabled={interactionEffectsEnabled}
                   className={clsx(
                     styles.wallpaperCard,
                     option.id === settings.wallpaper &&
@@ -290,7 +304,7 @@ export function OptionsScreen() {
                   <span className={styles.choiceDescription}>
                     {option.description}
                   </span>
-                </button>
+                </InteractionFeedbackButton>
               ))}
             </div>
           </SettingsSection>
@@ -336,6 +350,13 @@ export function OptionsScreen() {
               checked={settings.visualEffectsEnabled}
               onChange={setVisualEffectsEnabled}
             />
+            <ToggleRow
+              id="interaction-effects-enabled"
+              label="Interaction feedback"
+              description="Show quick card pulses and button flashes when decisions, options, or run controls are pressed."
+              checked={settings.interactionEffectsEnabled}
+              onChange={setInteractionEffectsEnabled}
+            />
             <RangeRow
               id="visual-effect-intensity"
               label="Effect intensity"
@@ -347,7 +368,10 @@ export function OptionsScreen() {
           </SettingsSection>
         </div>
 
-        <aside className={styles.preview} aria-labelledby="options-preview-title">
+        <aside
+          className={styles.preview}
+          aria-labelledby="options-preview-title"
+        >
           <p className={styles.eyebrow}>Live preview</p>
           <h2 id="options-preview-title" className={styles.previewTitle}>
             Current room tone
@@ -355,7 +379,9 @@ export function OptionsScreen() {
           <dl className={styles.previewList}>
             <div>
               <dt>Theme</dt>
-              <dd>{themeOptions.find((option) => option.id === theme)?.label}</dd>
+              <dd>
+                {themeOptions.find((option) => option.id === theme)?.label}
+              </dd>
             </div>
             <div>
               <dt>Wallpaper</dt>
@@ -387,23 +413,33 @@ export function OptionsScreen() {
                   : "Disabled"}
               </dd>
             </div>
+            <div>
+              <dt>Interaction feedback</dt>
+              <dd>
+                {settings.visualEffectsEnabled
+                  ? settings.interactionEffectsEnabled
+                    ? "Enabled"
+                    : "Disabled"
+                  : "Paused while visual effects are off"}
+              </dd>
+            </div>
           </dl>
 
           <div className={styles.previewActions}>
-            <button
-              type="button"
+            <InteractionFeedbackButton
+              feedbackEnabled={interactionEffectsEnabled}
               className={styles.primaryAction}
               onClick={() => navigate(run?.status === "active" ? "/run" : "/")}
             >
               {run?.status === "active" ? "Return to run" : "Return home"}
-            </button>
-            <button
-              type="button"
+            </InteractionFeedbackButton>
+            <InteractionFeedbackButton
+              feedbackEnabled={interactionEffectsEnabled}
               className={styles.secondaryAction}
               onClick={resetSettings}
             >
               Reset options
-            </button>
+            </InteractionFeedbackButton>
           </div>
         </aside>
       </div>

@@ -64,6 +64,11 @@ describe("OptionsScreen", () => {
         name: /sound effects/i,
       }),
     );
+    await user.click(
+      screen.getByRole("checkbox", {
+        name: /interaction feedback/i,
+      }),
+    );
 
     expect(useGameStore.getState().settings).toMatchObject({
       wallpaper: "runway-night",
@@ -72,9 +77,13 @@ describe("OptionsScreen", () => {
       musicVolume: 65,
       soundEffectsEnabled: false,
       visualEffectsEnabled: false,
+      interactionEffectsEnabled: false,
     });
     expect(screen.getByText("Enabled at 65%")).toBeInTheDocument();
     expect(screen.getAllByText("Disabled")).toHaveLength(2);
+    expect(
+      screen.getByText("Paused while visual effects are off"),
+    ).toBeInTheDocument();
   });
 
   it("resets options to the default room tone", async () => {

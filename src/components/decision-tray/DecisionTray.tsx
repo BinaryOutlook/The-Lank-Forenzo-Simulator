@@ -6,6 +6,8 @@ import {
   metricLabels,
 } from "../../lib/formatters.js";
 import { emitInteractionCue } from "../audio/interactionAudioEvents.js";
+import { useInteractionFeedback } from "../interaction/useInteractionFeedback.js";
+import type { InteractionCueName } from "../audio/interactionAudioEvents.js";
 import { getImpactTone } from "../../simulation/state/metricSemantics.js";
 import type { DecisionDefinition } from "../../simulation/state/types.js";
 import styles from "./DecisionTray.module.css";
@@ -15,6 +17,93 @@ interface DecisionTrayProps {
   selectedDecisionIds: string[];
   onToggle: (decisionId: string) => void;
   onEndTurn: () => void;
+  interactionEffectsEnabled?: boolean;
+}
+
+interface DecisionCardProps {
+  decision: DecisionDefinition;
+  index: number;
+  interactionEffectsEnabled: boolean;
+  selected: boolean;
+  selectedDecisionCount: number;
+  onToggle: (decisionId: string) => void;
+}
+
+function DecisionCard({
+  decision,
+  index,
+  interactionEffectsEnabled,
+  selected,
+  selectedDecisionCount,
+  onToggle,
+}: DecisionCardProps) {
+  const feedback = useInteractionFeedback<HTMLButtonElement>(
+    interactionEffectsEnabled,
+  );
+  const preview = getImpactPreview(decision.impacts);
+  const handleToggle = () => {
+    const cue: InteractionCueName | null = selected
+      ? "decision-deselect"
+      : selectedDecisionCount < 2
+        ? "decision-select"
+        : null;
+
+    if (cue) {
+      emitInteractionCue(cue);
+    }
+
+    onToggle(decision.id);
+  };
+
+  return (
+    <motion.button
+      type="button"
+      className={clsx(
+        "interaction-feedback-control",
+        styles.card,
+        selected && styles.cardSelected,
+      )}
+      data-interaction-feedback={feedback.feedbackState}
+      aria-pressed={selected}
+      onClick={handleToggle}
+      onKeyDown={feedback.onFeedbackKeyDown}
+      onPointerDown={feedback.onFeedbackPointerDown}
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.04, duration: 0.28 }}
+    >
+      <div className={styles.cardHeader}>
+        <span className={styles.group}>{decision.group}</span>
+        <span className={styles.tags}>
+          {decision.tags.slice(0, 2).join(" / ")}
+        </span>
+      </div>
+
+      <div className={styles.cardBody}>
+        <h3 className={styles.cardTitle}>{decision.title}</h3>
+        <p className={styles.cardSummary}>{decision.summary}</p>
+      </div>
+
+      <div className={styles.previewList}>
+        {preview.map((entry) => (
+          <span
+            key={`${decision.id}-${entry.metric}`}
+            className={clsx(
+              getImpactTone(entry.metric, entry.delta) === "positive" &&
+                styles.previewPositive,
+              getImpactTone(entry.metric, entry.delta) === "negative" &&
+                styles.previewNegative,
+              getImpactTone(entry.metric, entry.delta) === "neutral" &&
+                styles.previewNeutral,
+            )}
+          >
+            {metricLabels[entry.metric]}{" "}
+            {formatDelta(entry.metric, entry.delta)}
+          </span>
+        ))}
+      </div>
+    </motion.button>
+  );
 }
 
 export function DecisionTray({
@@ -22,7 +111,11 @@ export function DecisionTray({
   selectedDecisionIds,
   onToggle,
   onEndTurn,
+  interactionEffectsEnabled = true,
 }: DecisionTrayProps) {
+  const resolveFeedback = useInteractionFeedback<HTMLButtonElement>(
+    interactionEffectsEnabled,
+  );
   const resolveLabel =
     selectedDecisionIds.length > 0 ? "Resolve the quarter" : "Hold the line";
   const handleEndTurn = () => {
@@ -43,8 +136,11 @@ export function DecisionTray({
         </p>
         <button
           type="button"
-          className={styles.resolveButton}
+          className={clsx("interaction-feedback-control", styles.resolveButton)}
+          data-interaction-feedback={resolveFeedback.feedbackState}
           onClick={handleEndTurn}
+          onKeyDown={resolveFeedback.onFeedbackKeyDown}
+          onPointerDown={resolveFeedback.onFeedbackPointerDown}
         >
           {resolveLabel}
         </button>
@@ -53,61 +149,17 @@ export function DecisionTray({
       <div className={styles.list}>
         {decisions.map((decision, index) => {
           const selected = selectedDecisionIds.includes(decision.id);
-          const cue = selected
-            ? "decision-deselect"
-            : selectedDecisionIds.length < 2
-              ? "decision-select"
-              : null;
-          const preview = getImpactPreview(decision.impacts);
 
           return (
-            <motion.button
+            <DecisionCard
               key={decision.id}
-              type="button"
-              className={clsx(styles.card, selected && styles.cardSelected)}
-              aria-pressed={selected}
-              onClick={() => {
-                if (cue) {
-                  emitInteractionCue(cue);
-                }
-
-                onToggle(decision.id);
-              }}
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.04, duration: 0.28 }}
-            >
-              <div className={styles.cardHeader}>
-                <span className={styles.group}>{decision.group}</span>
-                <span className={styles.tags}>
-                  {decision.tags.slice(0, 2).join(" / ")}
-                </span>
-              </div>
-
-              <div className={styles.cardBody}>
-                <h3 className={styles.cardTitle}>{decision.title}</h3>
-                <p className={styles.cardSummary}>{decision.summary}</p>
-              </div>
-
-              <div className={styles.previewList}>
-                {preview.map((entry) => (
-                  <span
-                    key={`${decision.id}-${entry.metric}`}
-                    className={clsx(
-                      getImpactTone(entry.metric, entry.delta) === "positive" &&
-                        styles.previewPositive,
-                      getImpactTone(entry.metric, entry.delta) === "negative" &&
-                        styles.previewNegative,
-                      getImpactTone(entry.metric, entry.delta) === "neutral" &&
-                        styles.previewNeutral,
-                    )}
-                  >
-                    {metricLabels[entry.metric]}{" "}
-                    {formatDelta(entry.metric, entry.delta)}
-                  </span>
-                ))}
-              </div>
-            </motion.button>
+              decision={decision}
+              index={index}
+              interactionEffectsEnabled={interactionEffectsEnabled}
+              selected={selected}
+              selectedDecisionCount={selectedDecisionIds.length}
+              onToggle={onToggle}
+            />
           );
         })}
       </div>

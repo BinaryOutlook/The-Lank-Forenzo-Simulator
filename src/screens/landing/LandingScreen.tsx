@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useGameStore } from "../../simulation/state/gameStore";
+import { InteractionFeedbackButton } from "../../components/interaction/InteractionFeedbackButton.js";
+import { useGameStore } from "../../simulation/state/gameStore.js";
 import styles from "./LandingScreen.module.css";
 
 const pillars = [
@@ -13,6 +14,9 @@ export function LandingScreen() {
   const navigate = useNavigate();
   const startNewRun = useGameStore((state) => state.startNewRun);
   const run = useGameStore((state) => state.run);
+  const settings = useGameStore((state) => state.settings);
+  const interactionEffectsEnabled =
+    settings.visualEffectsEnabled && settings.interactionEffectsEnabled;
 
   return (
     <section className={styles.page}>
@@ -24,15 +28,19 @@ export function LandingScreen() {
       >
         <div className={styles.copy}>
           <p className={styles.eyebrow}>Browser reboot</p>
-          <h1 className={styles.title}>Run the airline badly on purpose. <br /> <br /> Do it elegantly enough to leave rich.</h1>
+          <h1 className={styles.title}>
+            Run the airline badly on purpose. <br /> <br /> Do it elegantly
+            enough to leave rich.
+          </h1>
           <p className={styles.summary}>
-            This is a turn-based extraction game about labor cuts, leverage, stock exits, legal heat, and the precise
-            moment when saving the company becomes less interesting than escaping it.
+            This is a turn-based extraction game about labor cuts, leverage,
+            stock exits, legal heat, and the precise moment when saving the
+            company becomes less interesting than escaping it.
           </p>
 
           <div className={styles.actions}>
-            <button
-              type="button"
+            <InteractionFeedbackButton
+              feedbackEnabled={interactionEffectsEnabled}
               className={styles.primaryAction}
               onClick={() => {
                 startNewRun();
@@ -40,16 +48,16 @@ export function LandingScreen() {
               }}
             >
               Start a new run
-            </button>
+            </InteractionFeedbackButton>
 
-            <button
-              type="button"
+            <InteractionFeedbackButton
+              feedbackEnabled={interactionEffectsEnabled}
               className={styles.secondaryAction}
               onClick={() => navigate("/run")}
               disabled={!run}
             >
               Resume local save
-            </button>
+            </InteractionFeedbackButton>
           </div>
         </div>
 

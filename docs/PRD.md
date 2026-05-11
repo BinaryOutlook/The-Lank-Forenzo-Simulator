@@ -329,7 +329,7 @@ It should contain:
 The Options page should:
 
 - be reachable from the game shell
-- expose theme, wallpaper, audio, general UI, and graphical-effect settings
+- expose theme, wallpaper, audio, general UI, graphical-effect, and interaction-feedback settings
 - persist preferences locally where browser storage is available
 - favor clean preset-based controls before advanced customization
 - keep the game readable when effects or animation are reduced
@@ -507,6 +507,7 @@ Portrait layouts may reorganize sections, but they must not become a separate mo
 - Turn resolution should feel immediate on normal hardware.
 - Common UI interactions should feel fast and deliberate.
 - Animations should support hierarchy and feedback, not slow the game down.
+- Direct interaction feedback should remain lightweight, respect reduced-motion preferences, and be dismissible through Options.
 
 ### 14.3 Determinism
 

@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { createInitialRunState } from "../../src/simulation/resolution/resolveRound";
+import { createInitialRunState } from "../../src/simulation/resolution/resolveRound.js";
 import {
   GAME_SAVE_STORAGE_VERSION,
   migrateGameSavePayload,
   readGameSaveStorageValue,
-} from "../../src/lib/storage/save";
+} from "../../src/lib/storage/save.js";
 import { defaultGameSettings } from "../../src/simulation/state/settings.js";
 
 const storageKey = "the-lank-forenzo-simulator/v1";
@@ -48,6 +48,7 @@ describe("save storage", () => {
           musicEnabled: true,
           musicVolume: 55,
           soundEffectsEnabled: false,
+          interactionEffectsEnabled: false,
           visualEffectIntensity: 40,
         },
         run,
@@ -97,6 +98,7 @@ describe("save storage", () => {
           musicEnabled: "yes",
           musicVolume: 250,
           visualEffectsEnabled: true,
+          interactionEffectsEnabled: "no",
           visualEffectIntensity: -20,
           uiDensity: "massive",
         },
