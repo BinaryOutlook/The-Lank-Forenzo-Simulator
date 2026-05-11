@@ -26,6 +26,8 @@ export interface EventSchedulerState {
   queue: ScheduledEvent[];
   cooldowns: Record<string, number>;
   firedEventIds: Record<string, number>;
+  recentEventTitles: string[];
+  recentEventFamilies: string[];
 }
 
 export type SchedulerDiagnostic =
@@ -75,11 +77,17 @@ const DEFAULT_BUDGET: EventSchedulerBudget = {
   hazardEvents: 1,
 };
 
+const NARRATIVE_MEMORY_LIMIT = 6;
+const RECENT_TITLE_PENALTY = 0.12;
+const RECENT_FAMILY_PENALTY = 0.35;
+
 export function createInitialEventSchedulerState(): EventSchedulerState {
   return {
     queue: [],
     cooldowns: {},
     firedEventIds: {},
+    recentEventTitles: [],
+    recentEventFamilies: [],
   };
 }
 
@@ -90,6 +98,57 @@ export function scheduleEvent(
   return {
     ...state,
     queue: [...state.queue, event].sort(compareScheduledEvents),
+  };
+}
+
+export function getEventNarrativeFamily(event: EventDefinition): string {
+  return event.tags[0] ?? event.kind;
+}
+
+export function getEventNarrativeWeight(
+  event: EventDefinition,
+  baseWeight: number,
+  state: EventSchedulerState,
+): number {
+  const normalizedWeight = Math.max(0, baseWeight);
+
+  if (normalizedWeight <= 0) {
+    return 0;
+  }
+
+  if ((state.recentEventTitles ?? []).includes(event.title)) {
+    return Math.max(1, normalizedWeight * RECENT_TITLE_PENALTY);
+  }
+
+  const family = getEventNarrativeFamily(event);
+  const recentFamilyCount = (state.recentEventFamilies ?? []).filter(
+    (recentFamily) => recentFamily === family,
+  ).length;
+
+  if (recentFamilyCount === 0) {
+    return normalizedWeight;
+  }
+
+  return Math.max(
+    1,
+    normalizedWeight * RECENT_FAMILY_PENALTY ** recentFamilyCount,
+  );
+}
+
+export function noteEventInSchedulerState(
+  state: EventSchedulerState,
+  event: EventDefinition,
+): EventSchedulerState {
+  return {
+    ...state,
+    recentEventTitles: [event.title, ...(state.recentEventTitles ?? [])].slice(
+      0,
+      NARRATIVE_MEMORY_LIMIT,
+    ),
+    recentEventFamilies: [
+      getEventNarrativeFamily(event),
+      ...(state.recentEventFamilies ?? []),
+    ].slice(0, NARRATIVE_MEMORY_LIMIT),
   };
 }
 
@@ -107,6 +166,7 @@ export function resolveEventScheduler({
   const nextQueue: ScheduledEvent[] = [];
   const firedEventIds = { ...state.firedEventIds };
   const cooldowns = { ...state.cooldowns };
+  let eventMemoryState = state;
   let guaranteedRemaining = resolvedBudget.guaranteedEvents;
 
   for (const scheduled of [...state.queue].sort(compareScheduledEvents)) {
@@ -160,6 +220,7 @@ export function resolveEventScheduler({
     guaranteedRemaining -= 1;
     events.push(event);
     firedEventIds[event.id] = (firedEventIds[event.id] ?? 0) + 1;
+    eventMemoryState = noteEventInSchedulerState(eventMemoryState, event);
   }
 
   let hazardRemaining = resolvedBudget.hazardEvents;
@@ -168,7 +229,13 @@ export function resolveEventScheduler({
     .map((rule) => ({
       rule,
       event: eventById[rule.eventId],
-      weight: Math.max(0, rule.baseWeight),
+      weight: eventById[rule.eventId]
+        ? getEventNarrativeWeight(
+            eventById[rule.eventId],
+            rule.baseWeight,
+            eventMemoryState,
+          )
+        : 0,
     }))
     .filter(
       (
@@ -196,6 +263,10 @@ export function resolveEventScheduler({
       (firedEventIds[pickedHazard.event.id] ?? 0) + 1;
     cooldowns[pickedHazard.rule.id] =
       run.round + pickedHazard.rule.cooldownRounds;
+    eventMemoryState = noteEventInSchedulerState(
+      eventMemoryState,
+      pickedHazard.event,
+    );
   }
 
   return {
@@ -205,6 +276,8 @@ export function resolveEventScheduler({
       queue: nextQueue.sort(compareScheduledEvents),
       cooldowns,
       firedEventIds,
+      recentEventTitles: eventMemoryState.recentEventTitles ?? [],
+      recentEventFamilies: eventMemoryState.recentEventFamilies ?? [],
     },
   };
 }

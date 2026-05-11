@@ -13,13 +13,14 @@ describe("content library", () => {
       (decision) => decision.delayedConsequences?.length,
     );
 
-    expect(content.decisions.length).toBeGreaterThanOrEqual(100);
-    expect(decisionPacks.size).toBeGreaterThanOrEqual(10);
+    expect(content.decisions.length).toBeGreaterThanOrEqual(112);
+    expect(decisionPacks.size).toBeGreaterThanOrEqual(11);
     expect(decisionPacks.has("mergerBait")).toBe(true);
     expect(decisionPacks.has("shadowSubsidiaries")).toBe(true);
     expect(decisionPacks.has("regulatoryTheater")).toBe(true);
     expect(decisionPacks.has("executiveEscape")).toBe(true);
-    expect(delayedDecisions.length).toBeGreaterThanOrEqual(70);
+    expect(decisionPacks.has("incidentVariants")).toBe(true);
+    expect(delayedDecisions.length).toBeGreaterThanOrEqual(82);
   });
 
   it("loads a materially expanded multi-pack event library", () => {
@@ -31,9 +32,47 @@ describe("content library", () => {
       (event) => event.kind === "delayed",
     );
 
-    expect(content.events.length).toBeGreaterThanOrEqual(132);
-    expect(ambientEvents.length).toBeGreaterThanOrEqual(50);
-    expect(delayedEvents.length).toBeGreaterThanOrEqual(70);
+    expect(content.events.length).toBeGreaterThanOrEqual(165);
+    expect(ambientEvents.length).toBeGreaterThanOrEqual(74);
+    expect(delayedEvents.length).toBeGreaterThanOrEqual(91);
+  });
+
+  it("covers fictionalized incident variants across distinct pressure families", () => {
+    const content = loadContent();
+    const incidentFamilies = [
+      "airports",
+      "board",
+      "creditors",
+      "labor",
+      "media",
+      "regulators",
+      "routes",
+      "safety",
+      "suppliers",
+      "technology",
+      "weather",
+      "whistleblower",
+    ];
+    const eventTags = new Set(content.events.flatMap((event) => event.tags));
+    const incidentDecisions = content.decisions.filter(
+      (decision) => decision.pack === "incidentVariants",
+    );
+
+    for (const family of incidentFamilies) {
+      expect(eventTags.has(family)).toBe(true);
+    }
+
+    expect(incidentDecisions.length).toBeGreaterThanOrEqual(12);
+    expect(new Set(incidentDecisions.map((decision) => decision.title)).size).toBe(
+      incidentDecisions.length,
+    );
+    expect(
+      incidentDecisions.filter((decision) =>
+        decision.delayedConsequences?.some(
+          (delayed) => (delayed.eventIds?.length ?? 0) >= 3,
+        ),
+      ).length,
+    ).toBeGreaterThanOrEqual(12);
   });
 
   it("keeps delayed consequence pools pointed at delayed events", () => {
@@ -68,10 +107,10 @@ describe("content library", () => {
   it("summarizes the current content library with concise diagnostics", () => {
     const report = validateContentBundle(loadContent());
 
-    expect(report.decisions.total).toBeGreaterThanOrEqual(100);
+    expect(report.decisions.total).toBeGreaterThanOrEqual(112);
     expect(report.decisions.byPack.get("core")).toBeGreaterThan(0);
     expect(report.decisions.byGroup.get("finance")).toBeGreaterThan(0);
-    expect(report.events.total).toBeGreaterThanOrEqual(132);
+    expect(report.events.total).toBeGreaterThanOrEqual(165);
     expect(report.events.byKind.get("ambient")).toBeGreaterThan(0);
     expect(report.events.byKind.get("delayed")).toBeGreaterThan(0);
     expect(report.errors).toHaveLength(0);

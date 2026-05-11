@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { createInitialRunState } from "../../src/simulation/resolution/resolveRound";
 import {
   createInitialEventSchedulerState,
+  getEventNarrativeWeight,
+  noteEventInSchedulerState,
   resolveEventScheduler,
   scheduleEvent,
   type EventById,
@@ -67,6 +69,40 @@ describe("event scheduler", () => {
     expect(result.events.map((event) => event.id)).toEqual(["hearing_notice"]);
     expect(result.state.queue).toEqual([]);
     expect(result.state.firedEventIds).toEqual({ hearing_notice: 1 });
+    expect(result.state.recentEventTitles).toEqual(["hearing_notice"]);
+    expect(result.state.recentEventFamilies).toEqual(["delayed"]);
+  });
+
+  it("tracks recent narrative titles and families for repeat suppression", () => {
+    const state = noteEventInSchedulerState(
+      createInitialEventSchedulerState(),
+      makeEvent("labor_stream", {
+        title: "Ramp Union Live Stream",
+        tags: ["labor", "press"],
+      }),
+    );
+    const sameTitle = makeEvent("labor_stream_variant", {
+      title: "Ramp Union Live Stream",
+      tags: ["labor", "operations"],
+    });
+    const sameFamily = makeEvent("crew_action", {
+      title: "Crew Action",
+      tags: ["labor", "operations"],
+    });
+    const differentFamily = makeEvent("creditor_call", {
+      title: "Creditor Call",
+      tags: ["creditors", "finance"],
+    });
+
+    expect(state.recentEventTitles).toEqual(["Ramp Union Live Stream"]);
+    expect(state.recentEventFamilies).toEqual(["labor"]);
+    expect(getEventNarrativeWeight(sameTitle, 8, state)).toBeGreaterThan(0);
+    expect(getEventNarrativeWeight(sameTitle, 8, state)).toBeLessThan(
+      getEventNarrativeWeight(sameFamily, 8, state),
+    );
+    expect(getEventNarrativeWeight(sameFamily, 8, state)).toBeLessThan(8);
+    expect(getEventNarrativeWeight(sameFamily, 8, state)).toBeGreaterThan(0);
+    expect(getEventNarrativeWeight(differentFamily, 8, state)).toBe(8);
   });
 
   it("expires stale scheduled events with diagnostics instead of firing them", () => {
