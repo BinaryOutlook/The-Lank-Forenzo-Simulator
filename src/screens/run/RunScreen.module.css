@@ -1,5 +1,5 @@
 .layout {
-  --run-layout-gap: clamp(0.55rem, 1vw, 0.9rem);
+  --run-layout-gap: clamp(0.5rem, 0.8vw, 0.8rem);
   display: grid;
   gap: var(--run-layout-gap);
   min-width: 0;
@@ -96,6 +96,19 @@
     minmax(0, 1.8fr)
     minmax(14rem, 0.78fr);
   grid-template-rows: minmax(0, 0.94fr) minmax(0, 1.06fr);
+}
+
+@media (min-width: 1600px) {
+  .layout[data-run-layout-mode="desktop-landscape"] {
+    grid-template-areas:
+      "metrics board feed"
+      "decisions decisions decisions";
+    grid-template-columns:
+      minmax(17rem, 0.92fr)
+      minmax(32rem, 1.7fr)
+      minmax(17rem, 0.92fr);
+    grid-template-rows: minmax(18.5rem, 0.46fr) minmax(0, 0.54fr);
+  }
 }
 
 .layout[data-run-layout-mode="tablet-landscape"] {

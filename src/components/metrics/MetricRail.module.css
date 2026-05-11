@@ -96,6 +96,31 @@
   padding: 0.95rem;
 }
 
+@media (min-width: 1600px) {
+  :global([data-run-layout-mode="desktop-landscape"]) .metrics {
+    grid-template-columns: repeat(2, minmax(7rem, 1fr));
+    gap: 0.55rem 0.7rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .metricRow {
+    gap: 0.28rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .metricMeta {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .metricLabel,
+  :global([data-run-layout-mode="desktop-landscape"]) .metricValue {
+    font-size: 0.76rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .meter {
+    height: 0.28rem;
+  }
+}
+
 @media (max-width: 1180px) {
   .rail {
     padding: 1rem;

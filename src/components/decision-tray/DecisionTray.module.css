@@ -307,6 +307,122 @@
   }
 }
 
+@media (min-width: 1600px) {
+  :global([data-run-layout-mode="desktop-landscape"]) .tray {
+    grid-template-areas:
+      "header resources controls"
+      "list list list";
+    grid-template-columns:
+      minmax(18rem, 0.72fr)
+      minmax(32rem, 1.45fr)
+      minmax(12rem, auto);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .header {
+    align-self: center;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .title {
+    max-width: 35rem;
+    font-size: clamp(1.3rem, 1.45vw, 1.75rem);
+    line-height: 1.05;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .controls {
+    align-self: stretch;
+    gap: 0.35rem;
+    min-width: 11rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .selectionCount,
+  :global([data-run-layout-mode="desktop-landscape"]) .selectionCost {
+    font-size: 0.78rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .resolveButton {
+    min-height: 2.85rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .resourceLedger {
+    grid-template-columns: minmax(11rem, 0.55fr) minmax(0, 1.45fr);
+    gap: 0.65rem;
+    padding: 0.65rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .resourceTitle {
+    font-size: 0.95rem;
+    line-height: 1.2;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .resourceGrid {
+    gap: 0.5rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .resourceItem {
+    min-height: 3.35rem;
+    padding: 0.55rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .resourceLabel {
+    font-size: 0.66rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .resourceValue {
+    font-size: 1rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(18rem, 1fr));
+    align-content: start;
+    gap: 0.65rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .card {
+    height: 100%;
+    gap: 0.6rem;
+    padding: 0.75rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .cardHeader {
+    gap: 0.75rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .group,
+  :global([data-run-layout-mode="desktop-landscape"]) .tags {
+    font-size: 0.68rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .cardTitle {
+    font-size: 1rem;
+    line-height: 1.18;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .cardSummary {
+    line-height: 1.36;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .previewList {
+    gap: 0.4rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .costList {
+    gap: 0.35rem;
+  }
+
+  :global([data-run-layout-mode="desktop-landscape"]) .costPill,
+  :global([data-run-layout-mode="desktop-landscape"]) .noCost,
+  :global([data-run-layout-mode="desktop-landscape"]) .previewPositive,
+  :global([data-run-layout-mode="desktop-landscape"]) .previewNegative,
+  :global([data-run-layout-mode="desktop-landscape"]) .previewNeutral {
+    min-height: 1.65rem;
+    padding-inline: 0.55rem;
+    font-size: 0.7rem;
+  }
+}
+
 @media (max-width: 860px) {
   .tray {
     grid-template-areas:

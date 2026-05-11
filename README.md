@@ -111,6 +111,7 @@ npm run reachability:report
 The run screen is designed as a fitted app surface across desktop landscape, tablet landscape, tablet portrait, and mobile portrait browser viewports.
 
 - Desktop and tablet landscape use dense command-center grids with internal panel scrolling instead of document scrolling.
+- Very wide desktop windows promote the decision tray into a full-width lower deck so the actionable choices use the extra horizontal space.
 - Tablet and phone portrait use explicit Brief, State, Decisions, and Feed panels with a segmented tab bar.
 - Portrait quarter controls live in a persistent bottom control surface, so resolving a quarter stays reachable while inspecting any panel.
 - Viewport safe-area and dynamic-height CSS are used so browser chrome and virtual keyboards are less likely to cover critical controls.
