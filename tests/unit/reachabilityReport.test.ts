@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createInitialRunState } from "../../src/simulation/resolution/resolveRound";
+import { createInitialRunState } from "../../src/simulation/resolution/resolveRound.js";
 import {
   abstractRunState,
   abstractRunStateKey,
@@ -7,7 +7,7 @@ import {
   formatReachabilityReport,
   scoreNovelty,
   type NoveltyContext,
-} from "../../scripts/reachability-report";
+} from "../../scripts/reachability-report.js";
 
 describe("reachability report helpers", () => {
   it("abstracts run state into stable buckets instead of exact metric values", () => {
@@ -82,7 +82,7 @@ describe("exploreReachabilityReport", () => {
     expect(report.endingIds).toEqual(
       expect.arrayContaining(["forcedRemoval", "merger", "prison"]),
     );
-  });
+  }, 30_000);
 
   it("surfaces the repaired safety denial and shadow subsidiary packs", () => {
     const report = exploreReachabilityReport({

@@ -4,18 +4,8 @@ import {
   createGameSaveStorage,
   GAME_SAVE_STORAGE_VERSION,
   migrateGameSavePayload,
-} from "../../lib/storage/save";
-import { loadContent, loadContentManifest } from "../content";
-import { getAvailableDecisions } from "../systems/decisionEngine";
-import {
-  canAffordResourceCosts,
-  getDecisionSelectionCost,
-  normalizeConsumableResources,
-} from "../systems/consumables.js";
-import {
-  createInitialRunState,
-  resolveRound,
-} from "../resolution/resolveRound";
+} from "../../lib/storage/save.js";
+import { simulationRuntime } from "../runtime.js";
 import { defaultGameSettings, normalizeGameSettings } from "./settings.js";
 import type { GameSettings, UiDensity, WallpaperPreset } from "./settings.js";
 import type {
@@ -24,15 +14,6 @@ import type {
   RunState,
   ThemeName,
 } from "./types.js";
-
-function getDecisionsById(
-  decisionIds: string[],
-  decisionById: Record<string, DecisionDefinition>,
-): DecisionDefinition[] {
-  return decisionIds
-    .map((decisionId) => decisionById[decisionId])
-    .filter((decision): decision is DecisionDefinition => Boolean(decision));
-}
 
 interface GameStoreState {
   theme: ThemeName;
@@ -134,69 +115,53 @@ export const useGameStore = create<GameStoreState>()(
           theme: "earth",
           settings: defaultGameSettings,
         }),
-      startNewRun: () => set({ run: createInitialRunState() }),
+      startNewRun: () => set({ run: simulationRuntime.createInitialRun() }),
       toggleDecision: (decisionId) =>
         set((state) => {
-          if (!state.run || state.run.status !== "active") {
+          if (!state.run) {
             return state;
           }
 
-          const selected = state.run.selectedDecisionIds.includes(decisionId)
-            ? state.run.selectedDecisionIds.filter((id) => id !== decisionId)
-            : [...state.run.selectedDecisionIds, decisionId].slice(0, 2);
-          const resources = normalizeConsumableResources(state.run.resources);
-          const selectedDecisions = getDecisionsById(
-            selected,
-            loadContentManifest().decisionById,
-          );
-          const selectionCost = getDecisionSelectionCost(selectedDecisions);
+          const run = simulationRuntime.toggleDecision(state.run, decisionId);
 
-          if (!canAffordResourceCosts(resources, selectionCost)) {
-            return {
-              run: {
-                ...state.run,
-                resources,
-              },
-            };
+          if (run === state.run) {
+            return state;
           }
 
           return {
-            run: {
-              ...state.run,
-              resources,
-              selectedDecisionIds: selected,
-            },
+            run,
           };
         }),
       endTurn: () =>
         set((state) => {
-          if (!state.run || state.run.status !== "active") {
+          if (!state.run) {
+            return state;
+          }
+
+          const run = simulationRuntime.resolveRound(state.run);
+
+          if (run === state.run) {
             return state;
           }
 
           return {
-            run: resolveRound(state.run),
+            run,
           };
         }),
       clearRun: () => set({ run: null }),
       availableDecisions: () => {
         const run = get().run;
-        if (!run || run.status !== "active") {
+
+        if (!run) {
           return [];
         }
 
-        return getAvailableDecisions(loadContent().decisions, run);
+        return simulationRuntime.getAvailableDecisions(run).decisions;
       },
       currentEnding: () => {
         const run = get().run;
-        if (!run?.endingId) {
-          return null;
-        }
 
-        return (
-          loadContent().endings.find((ending) => ending.id === run.endingId) ??
-          null
-        );
+        return run ? simulationRuntime.getEnding(run) : null;
       },
     }),
     {
