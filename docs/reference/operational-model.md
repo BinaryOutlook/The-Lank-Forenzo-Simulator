@@ -37,6 +37,33 @@ interface OperationalState {
 
 Operational changes should usually be indirect. Decisions and events can increase backlog, expose weather sensitivity, or make a route network brittle. Hazard events can then read the operational state and decide whether the problem becomes visible.
 
+V0.9 decisions can now carry explicit `operationEffects` metadata. These effects
+replace the earlier hardcoded decision-id lists in the network mutation layer, so
+future operational tuning should happen in content JSON rather than in
+`networkState.ts`.
+
+```ts
+interface OperationEffectSet {
+  maintenanceBacklog?: number;
+  contractorDependence?: number;
+  crewFatigue?: number;
+  serviceDisruption?: number;
+  hubFragility?: Record<string, number>;
+  routeFragility?: Record<string, number>;
+  weatherExposure?: number;
+}
+```
+
+Runtime application is deterministic:
+
+- scalar fields are summed across executed decisions
+- backlog, contractor dependence, crew fatigue, service disruption, weather
+  exposure, and fragility values are clamped to `0..100`
+- `hubFragility` and `routeFragility` use authored hub or route ids
+- `weatherExposure` raises or lowers the severity of active weather fronts
+- decisions with no `operationEffects` still run normally and simply add no
+  direct operational delta
+
 Good operational feedback:
 
 - names the executive cause
