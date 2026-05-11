@@ -4,7 +4,11 @@
     "title": "Hire the Former Regulator",
     "summary": "Put a familiar face between you and oversight and call the invoice governance.",
     "group": "legal",
-    "tags": ["regulators", "legal", "optics"],
+    "tags": [
+      "regulators",
+      "legal",
+      "optics"
+    ],
     "impacts": {
       "airlineCash": -8,
       "creditorPatience": 4,
@@ -12,14 +16,31 @@
       "legalHeat": -2,
       "publicAnger": 1
     },
+    "evidence": [
+      {
+        "theme": "regulatory_capture",
+        "weight": 10,
+        "witness": "compliance counsel",
+        "detail": "Revolving-door invoice puts access in the evidence file."
+      }
+    ],
     "resourceCosts": {
       "inGameMoney": 10,
       "personalAssets": 1,
       "publicRelationsCapital": 1
     },
-    "setsFlags": ["regulatoryPlaybookLive"],
+    "setsFlags": [
+      "regulatoryPlaybookLive"
+    ],
     "delayedConsequences": [
-      { "eventIds": ["revolving_door_profile", "director_indemnity_alarm", "fairness_opinion_underfire"], "delay": 2 }
+      {
+        "eventIds": [
+          "revolving_door_profile",
+          "director_indemnity_alarm",
+          "fairness_opinion_underfire"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -27,7 +48,11 @@
     "title": "Announce the Independent Review",
     "summary": "Commission a sober-looking investigation with just enough scope control to stay useful.",
     "group": "market",
-    "tags": ["regulators", "review", "spin"],
+    "tags": [
+      "regulators",
+      "review",
+      "spin"
+    ],
     "impacts": {
       "airlineCash": -6,
       "marketConfidence": 6,
@@ -42,9 +67,18 @@
     "requirements": {
       "roundAtLeast": 2
     },
-    "setsFlags": ["reviewNarrativeLive"],
+    "setsFlags": [
+      "reviewNarrativeLive"
+    ],
     "delayedConsequences": [
-      { "eventIds": ["review_scope_leak", "turnaround_story_cracks", "call_transcript_supercut"], "delay": 2 }
+      {
+        "eventIds": [
+          "review_scope_leak",
+          "turnaround_story_cracks",
+          "call_transcript_supercut"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -52,7 +86,11 @@
     "title": "District Jobs Press Conference",
     "summary": "Wrap the restructure in jobs, connectivity, and civic gratitude before anyone opens the appendix.",
     "group": "market",
-    "tags": ["regulators", "jobs", "press"],
+    "tags": [
+      "regulators",
+      "jobs",
+      "press"
+    ],
     "impacts": {
       "marketConfidence": 4,
       "creditorPatience": 2,
@@ -67,7 +105,14 @@
       "roundAtLeast": 2
     },
     "delayedConsequences": [
-      { "eventIds": ["mayor_hot_mic", "route_overlap_chart", "hearing_transcript_pullquote"], "delay": 2 }
+      {
+        "eventIds": [
+          "mayor_hot_mic",
+          "route_overlap_chart",
+          "hearing_transcript_pullquote"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -75,7 +120,11 @@
     "title": "Flood the Docket with Compliance",
     "summary": "Drown the process in binders, plans, and partial fixes until delay starts looking like diligence.",
     "group": "legal",
-    "tags": ["regulators", "compliance", "paperwork"],
+    "tags": [
+      "regulators",
+      "compliance",
+      "paperwork"
+    ],
     "impacts": {
       "airlineCash": -10,
       "legalHeat": -6,
@@ -87,10 +136,19 @@
       "inGameMoney": 8
     },
     "requirements": {
-      "flagsAll": ["regulatoryPlaybookLive"]
+      "flagsAll": [
+        "regulatoryPlaybookLive"
+      ]
     },
     "delayedConsequences": [
-      { "eventIds": ["compliance_binder_mockery", "hearing_transcript_pullquote", "fairness_opinion_underfire"], "delay": 2 }
+      {
+        "eventIds": [
+          "compliance_binder_mockery",
+          "hearing_transcript_pullquote",
+          "fairness_opinion_underfire"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -98,23 +156,44 @@
     "title": "Friendly Hearing Prep",
     "summary": "Rehearse sincerity, calibrate regret, and make selective memory sound like institutional stability.",
     "group": "legal",
-    "tags": ["regulators", "hearing", "optics"],
+    "tags": [
+      "regulators",
+      "hearing",
+      "optics"
+    ],
     "impacts": {
       "airlineCash": -5,
       "marketConfidence": 4,
       "legalHeat": -2,
       "publicAnger": -1
     },
+    "evidence": [
+      {
+        "theme": "regulatory_capture",
+        "weight": 12,
+        "witness": "hearing coach",
+        "detail": "Prepared sincerity leaves a script for investigators."
+      }
+    ],
     "resourceCosts": {
       "inGameMoney": 5,
       "personalAssets": 1,
       "publicRelationsCapital": 2
     },
     "requirements": {
-      "flagsAll": ["regulatoryPlaybookLive"]
+      "flagsAll": [
+        "regulatoryPlaybookLive"
+      ]
     },
     "delayedConsequences": [
-      { "eventIds": ["hearing_transcript_pullquote", "call_transcript_supercut", "review_scope_leak"], "delay": 2 }
+      {
+        "eventIds": [
+          "hearing_transcript_pullquote",
+          "call_transcript_supercut",
+          "review_scope_leak"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -122,7 +201,11 @@
     "title": "Trade Slots for Goodwill",
     "summary": "Offer a visible concession to the authorities and hope nobody notices how much uglier the rest of the deal is.",
     "group": "operations",
-    "tags": ["regulators", "slots", "concessions"],
+    "tags": [
+      "regulators",
+      "slots",
+      "concessions"
+    ],
     "impacts": {
       "airlineCash": 12,
       "assetValue": -14,
@@ -132,10 +215,19 @@
     },
     "requirements": {
       "roundAtLeast": 4,
-      "flagsAll": ["reviewNarrativeLive"]
+      "flagsAll": [
+        "reviewNarrativeLive"
+      ]
     },
     "delayedConsequences": [
-      { "eventIds": ["concession_monitor_report", "slot_auction_humiliation", "route_overlap_chart"], "delay": 3 }
+      {
+        "eventIds": [
+          "concession_monitor_report",
+          "slot_auction_humiliation",
+          "route_overlap_chart"
+        ],
+        "delay": 3
+      }
     ]
   },
   {
@@ -143,7 +235,11 @@
     "title": "Ground the Oldest Tail for the Cameras",
     "summary": "Sacrifice one photogenic aircraft so the rest of the fleet can hide behind a morality play.",
     "group": "operations",
-    "tags": ["regulators", "safety", "optics"],
+    "tags": [
+      "regulators",
+      "safety",
+      "optics"
+    ],
     "impacts": {
       "airlineCash": -10,
       "assetValue": -8,
@@ -158,7 +254,14 @@
       }
     },
     "delayedConsequences": [
-      { "eventIds": ["camera_tail_whistleblower", "inspection_memo_leak", "faa_ramp_audit"], "delay": 2 }
+      {
+        "eventIds": [
+          "camera_tail_whistleblower",
+          "inspection_memo_leak",
+          "faa_ramp_audit"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -166,7 +269,11 @@
     "title": "Quiet the Inspector Rotation",
     "summary": "Push for fresh oversight faces before the current ones finish connecting your timeline.",
     "group": "legal",
-    "tags": ["regulators", "inspection", "pressure"],
+    "tags": [
+      "regulators",
+      "inspection",
+      "pressure"
+    ],
     "impacts": {
       "airlineCash": -7,
       "marketConfidence": 2,
@@ -174,19 +281,36 @@
       "safetyIntegrity": -3,
       "publicAnger": 2
     },
+    "evidence": [
+      {
+        "theme": "regulatory_capture",
+        "weight": 16,
+        "witness": "inspection scheduler",
+        "detail": "Rotation pressure suggests oversight was steered, not answered."
+      }
+    ],
     "resourceCosts": {
       "inGameMoney": 7,
       "personalAssets": 2,
       "publicRelationsCapital": 1
     },
     "requirements": {
-      "flagsAll": ["regulatoryPlaybookLive"],
+      "flagsAll": [
+        "regulatoryPlaybookLive"
+      ],
       "metricMin": {
         "legalHeat": 34
       }
     },
     "delayedConsequences": [
-      { "eventIds": ["inspector_general_letter", "faa_ramp_audit", "inspection_memo_leak"], "delay": 2 }
+      {
+        "eventIds": [
+          "inspector_general_letter",
+          "faa_ramp_audit",
+          "inspection_memo_leak"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -194,7 +318,11 @@
     "title": "Bury It in the Consent Order",
     "summary": "Accept stern-looking oversight language that mostly buys calendar time and respectable cover.",
     "group": "legal",
-    "tags": ["regulators", "consent", "delay"],
+    "tags": [
+      "regulators",
+      "consent",
+      "delay"
+    ],
     "impacts": {
       "airlineCash": -9,
       "creditorPatience": 4,
@@ -202,20 +330,39 @@
       "legalHeat": -5,
       "publicAnger": 2
     },
+    "evidence": [
+      {
+        "theme": "regulatory_capture",
+        "weight": 14,
+        "witness": "agency staffer",
+        "detail": "Consent-order language turns delay into regulatory camouflage."
+      }
+    ],
     "resourceCosts": {
       "inGameMoney": 9,
       "personalAssets": 1
     },
     "requirements": {
-      "flagsAll": ["regulatoryPlaybookLive"],
+      "flagsAll": [
+        "regulatoryPlaybookLive"
+      ],
       "roundAtLeast": 3,
       "metricMin": {
         "legalHeat": 28
       }
     },
-    "setsFlags": ["consentOrderLive"],
+    "setsFlags": [
+      "consentOrderLive"
+    ],
     "delayedConsequences": [
-      { "eventIds": ["consent_order_breach_notice", "hearing_transcript_pullquote", "covenant_leak"], "delay": 3 }
+      {
+        "eventIds": [
+          "consent_order_breach_notice",
+          "hearing_transcript_pullquote",
+          "covenant_leak"
+        ],
+        "delay": 3
+      }
     ]
   },
   {
@@ -223,7 +370,11 @@
     "title": "Stand Up the Reform Office",
     "summary": "Launch an internal reform machine whose most reliable output is investor comfort.",
     "group": "legal",
-    "tags": ["regulators", "reform", "board"],
+    "tags": [
+      "regulators",
+      "reform",
+      "board"
+    ],
     "impacts": {
       "airlineCash": -11,
       "marketConfidence": 5,
@@ -231,12 +382,31 @@
       "legalHeat": -4,
       "publicAnger": -1
     },
+    "evidence": [
+      {
+        "theme": "regulatory_capture",
+        "weight": 10,
+        "witness": "reform office analyst",
+        "detail": "Reform office scope becomes a map of what was excluded."
+      }
+    ],
     "requirements": {
-      "flagsAll": ["reviewNarrativeLive"]
+      "flagsAll": [
+        "reviewNarrativeLive"
+      ]
     },
-    "setsFlags": ["reformOfficeLive"],
+    "setsFlags": [
+      "reformOfficeLive"
+    ],
     "delayedConsequences": [
-      { "eventIds": ["reform_office_whistleblower", "review_scope_leak", "compliance_binder_mockery"], "delay": 3 }
+      {
+        "eventIds": [
+          "reform_office_whistleblower",
+          "review_scope_leak",
+          "compliance_binder_mockery"
+        ],
+        "delay": 3
+      }
     ]
   }
 ]

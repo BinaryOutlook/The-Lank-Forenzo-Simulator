@@ -5,6 +5,8 @@ import {
   type FactionBehaviorMemory,
   type FactionBehaviorPattern,
   type FactionCurrentIntent,
+  type FactionEffect,
+  type FactionEffectSource,
   type FactionId,
   type FactionIntent,
   type FactionIntentFamily,
@@ -20,7 +22,11 @@ export interface FactionUpdateInput {
   emittedEventIds: string[];
   flags?: string[];
   evidenceHints?: Partial<Record<string, number>>;
+  factionEffectSources?: FactionEffectSource[];
 }
+
+const emptyExplicitSourceIds = new Set<string>();
+const explicitSourceIdsCache = new WeakMap<FactionUpdateInput, Set<string>>();
 
 export interface FactionPlanningInput {
   metrics: RunMetrics;
@@ -156,7 +162,7 @@ function updateBoard(
       ? 1
       : 0;
 
-  return clampFaction({
+  const updated: FactionState = {
     ...faction,
     patience: faction.patience - riskyExitSignals.length * 2,
     aggression: faction.aggression + riskyExitSignals.length * 3,
@@ -165,6 +171,7 @@ function updateBoard(
     dossierWeight:
       faction.dossierWeight +
       (input.evidenceHints?.insider_trading ?? 0) * 0.2 +
+      (input.evidenceHints?.board_self_dealing ?? 0) * 0.4 +
       offshoreEvidence * 0.25 +
       riskyExitSignals.length * 2,
     recentGrievances: mergeRecentGrievances(
@@ -175,7 +182,9 @@ function updateBoard(
       offshore_behavior: offshoreObserved,
       board_shielding: boardShieldingObserved,
     }),
-  });
+  };
+
+  return clampFaction(applyExplicitFactionEffects(updated, input));
 }
 
 function updateCreditors(
@@ -192,19 +201,31 @@ function updateCreditors(
     "vendor",
     "reserve",
   ]);
+  const creditorEvidence = input.evidenceHints?.creditor_deception ?? 0;
   const creditorStressObserved =
-    cashStress > 0 || debtStress > 0 || creditorSignals.length > 0 ? 1 : 0;
+    cashStress > 0 ||
+    debtStress > 0 ||
+    creditorSignals.length > 0 ||
+    creditorEvidence > 0
+      ? 1
+      : 0;
 
-  return clampFaction({
+  const updated: FactionState = {
     ...faction,
     patience:
       faction.patience - cashStress - debtStress - creditorSignals.length * 3,
     aggression:
-      faction.aggression + cashStress + debtStress + creditorSignals.length * 4,
+      faction.aggression +
+      cashStress +
+      debtStress +
+      creditorSignals.length * 4 +
+      Math.round(creditorEvidence / 2),
     leverage:
       faction.leverage +
       (input.metrics.creditorPatience < 35 ? 6 : 0) +
-      creditorSignals.length * 2,
+      creditorSignals.length * 2 +
+      Math.round(creditorEvidence / 3),
+    dossierWeight: faction.dossierWeight + creditorEvidence,
     recentGrievances: mergeRecentGrievances(
       faction.recentGrievances,
       creditorSignals,
@@ -212,7 +233,9 @@ function updateCreditors(
     behaviorMemory: incrementBehaviorMemory(faction.behaviorMemory, {
       creditor_stress: creditorStressObserved,
     }),
-  });
+  };
+
+  return clampFaction(applyExplicitFactionEffects(updated, input));
 }
 
 function updateLabor(
@@ -234,7 +257,7 @@ function updateLabor(
     input.metrics.workforceMorale < 42 ||
     laborEvidence > 0 ||
     laborSignals.length > 0
-      ? [...input.selectedDecisionIds, ...input.emittedEventIds]
+      ? collectLegacySourceIds(input)
       : [];
   const laborAbuseObserved =
     input.metrics.workforceMorale < 42 ||
@@ -243,7 +266,7 @@ function updateLabor(
       ? 1
       : 0;
 
-  return clampFaction({
+  const updated: FactionState = {
     ...faction,
     patience: faction.patience - (input.metrics.workforceMorale < 42 ? 8 : 0),
     aggression:
@@ -266,7 +289,9 @@ function updateLabor(
     behaviorMemory: incrementBehaviorMemory(faction.behaviorMemory, {
       labor_abuse: laborAbuseObserved,
     }),
-  });
+  };
+
+  return clampFaction(applyExplicitFactionEffects(updated, input));
 }
 
 function updateRegulators(
@@ -275,7 +300,8 @@ function updateRegulators(
 ): FactionState {
   const evidence =
     (input.evidenceHints?.maintenance_fraud ?? 0) +
-    (input.evidenceHints?.regulatory_capture ?? 0);
+    (input.evidenceHints?.regulatory_capture ?? 0) +
+    Math.round((input.evidenceHints?.creditor_deception ?? 0) / 2);
   const heatStress = input.metrics.legalHeat >= 58 ? 8 : 0;
   const regulatorSignals = collectMatchingSignals(input, [
     "inspection",
@@ -294,7 +320,7 @@ function updateRegulators(
       ? 1
       : 0;
 
-  return clampFaction({
+  const updated: FactionState = {
     ...faction,
     patience: faction.patience - regulatorSignals.length * 2,
     aggression:
@@ -315,7 +341,9 @@ function updateRegulators(
     behaviorMemory: incrementBehaviorMemory(faction.behaviorMemory, {
       safety_denial: safetyDenialObserved,
     }),
-  });
+  };
+
+  return clampFaction(applyExplicitFactionEffects(updated, input));
 }
 
 function updatePress(
@@ -325,7 +353,12 @@ function updatePress(
   const insiderEvidence = input.evidenceHints?.insider_trading ?? 0;
   const offshoreEvidence = input.evidenceHints?.offshore_evasion ?? 0;
   const laborEvidence = input.evidenceHints?.labor_abuse ?? 0;
-  const evidence = insiderEvidence + offshoreEvidence + laborEvidence;
+  const evidence =
+    insiderEvidence +
+    offshoreEvidence +
+    laborEvidence +
+    (input.evidenceHints?.board_self_dealing ?? 0) +
+    Math.round((input.evidenceHints?.creditor_deception ?? 0) / 2);
   const pressSignals = collectMatchingSignals(input, [
     "leak",
     "deck",
@@ -342,7 +375,7 @@ function updatePress(
     offshoreEvidence > 0 || pressSignals.length > 0 ? 1 : 0;
   const laborObserved = laborEvidence > 0 ? 1 : 0;
 
-  return clampFaction({
+  const updated: FactionState = {
     ...faction,
     aggression:
       faction.aggression +
@@ -359,7 +392,9 @@ function updatePress(
       offshore_behavior: offshoreObserved,
       labor_abuse: laborObserved,
     }),
-  });
+  };
+
+  return clampFaction(applyExplicitFactionEffects(updated, input));
 }
 
 function planFactionIntent(
@@ -830,11 +865,98 @@ function collectMatchingSignals(
   input: FactionUpdateInput,
   needles: string[],
 ): string[] {
+  const explicitSourceIds = collectExplicitSourceIds(input);
+  const hasExplicitSources = explicitSourceIds.size > 0;
+
   return [
     ...input.selectedDecisionIds,
     ...input.emittedEventIds,
     ...(input.flags ?? []),
-  ].filter((id) => needles.some((needle) => id.includes(needle)));
+  ].filter(
+    (id) =>
+      (!hasExplicitSources || !explicitSourceIds.has(id)) &&
+      needles.some((needle) => id.includes(needle)),
+  );
+}
+
+function collectLegacySourceIds(input: FactionUpdateInput): string[] {
+  const explicitSourceIds = collectExplicitSourceIds(input);
+  const sourceIds = [...input.selectedDecisionIds, ...input.emittedEventIds];
+
+  if (explicitSourceIds.size === 0) {
+    return sourceIds;
+  }
+
+  return sourceIds.filter((id) => !explicitSourceIds.has(id));
+}
+
+function collectExplicitSourceIds(input: FactionUpdateInput): Set<string> {
+  if (!input.factionEffectSources?.length) {
+    return emptyExplicitSourceIds;
+  }
+
+  const cached = explicitSourceIdsCache.get(input);
+
+  if (cached) {
+    return cached;
+  }
+
+  const sourceIds = new Set(
+    input.factionEffectSources.map((source) => source.sourceId),
+  );
+  explicitSourceIdsCache.set(input, sourceIds);
+
+  return sourceIds;
+}
+
+function applyExplicitFactionEffects(
+  faction: FactionState,
+  input: FactionUpdateInput,
+): FactionState {
+  if (!input.factionEffectSources?.length) {
+    return faction;
+  }
+
+  let next = faction;
+  const grievances: string[] = [];
+
+  for (const source of input.factionEffectSources) {
+    const effect = source.effects[faction.id];
+
+    if (!effect) {
+      continue;
+    }
+
+    next = applyFactionEffect(next, effect);
+
+    if (effect.grievance) {
+      grievances.push(`${source.sourceId}: ${effect.grievance}`);
+    }
+  }
+
+  if (grievances.length === 0) {
+    return next;
+  }
+
+  return {
+    ...next,
+    recentGrievances: mergeRecentGrievances(next.recentGrievances, grievances),
+  };
+}
+
+function applyFactionEffect(
+  faction: FactionState,
+  effect: FactionEffect,
+): FactionState {
+  return {
+    ...faction,
+    patience: faction.patience + (effect.patience ?? 0),
+    aggression: faction.aggression + (effect.aggression ?? 0),
+    trust: faction.trust + (effect.trust ?? 0),
+    cohesion: faction.cohesion + (effect.cohesion ?? 0),
+    leverage: faction.leverage + (effect.leverage ?? 0),
+    dossierWeight: faction.dossierWeight + (effect.dossierWeight ?? 0),
+  };
 }
 
 function clampFaction(faction: FactionState): FactionState {

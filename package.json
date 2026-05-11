@@ -18,7 +18,8 @@
     "simulate:runs": "node --import tsx scripts/simulate-runs.ts",
     "balance:report": "node --import tsx scripts/simulate-runs.ts",
     "balance:matrix": "node --import tsx scripts/balance-matrix.ts",
-    "reachability:report": "node --import tsx scripts/reachability-report.ts"
+    "reachability:report": "node --import tsx scripts/reachability-report.ts",
+    "report:nightly": "node --import tsx scripts/nightly-report.ts"
   },
   "dependencies": {
     "clsx": "^2.1.1",

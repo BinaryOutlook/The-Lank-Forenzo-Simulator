@@ -1,16 +1,14 @@
 import { pathToFileURL } from "node:url";
-import { loadContent } from "../src/simulation/content";
-import { getImpactSetScore } from "../src/simulation/state/metricSemantics";
-import { hashNumber, hashString } from "../src/lib/random/seeded";
+import { hashNumber, hashString } from "../src/lib/random/seeded.js";
+import { loadContent } from "../src/simulation/content/index.js";
+import { getImpactSetScore } from "../src/simulation/state/metricSemantics.js";
 import {
-  createInitialRunState,
+  createInitialRun,
+  getAvailableDecisions,
   resolveRound,
-} from "../src/simulation/resolution/resolveRound";
-import { getAvailableDecisions } from "../src/simulation/systems/decisionEngine";
-import type {
-  DecisionDefinition,
-  RunState,
-} from "../src/simulation/state/types";
+  type DecisionDefinition,
+  type RunState,
+} from "../src/simulation/index.js";
 
 const DEFAULT_RUNS = 100;
 const DEFAULT_MAX_ROUNDS = 24;
@@ -72,12 +70,7 @@ export function simulateCampaignReport(
   let totalRepeatedTraySlots = 0;
 
   for (let runIndex = 0; runIndex < options.runs; runIndex += 1) {
-    const summary = simulateSingleRun(
-      content.decisions,
-      seedValue,
-      runIndex,
-      options.maxRounds,
-    );
+    const summary = simulateSingleRun(seedValue, runIndex, options.maxRounds);
     endingCounts[summary.endingId] = (endingCounts[summary.endingId] ?? 0) + 1;
     totalRounds += summary.roundsPlayed;
     totalRepeatedTrayOverlap += summary.repeatedTrayOverlap;
@@ -147,12 +140,11 @@ export function formatCampaignReport(report: CampaignReport): string {
 }
 
 function simulateSingleRun(
-  decisions: DecisionDefinition[],
   seedValue: number,
   runIndex: number,
   maxRounds: number,
 ): RunSummary {
-  let run: RunState = createInitialRunState();
+  let run: RunState = createInitialRun();
   const surfacedDecisionIds = new Set<string>();
   let repeatedTrayOverlap = 0;
   let repeatedTraySlots = 0;
@@ -160,7 +152,7 @@ function simulateSingleRun(
   let roundsPlayed = 0;
 
   while (run.status === "active" && roundsPlayed < maxRounds) {
-    const tray = getAvailableDecisions(decisions, run);
+    const tray = getAvailableDecisions(run).decisions;
     const mainTray = tray.filter((decision) => decision.group !== "exit");
     const mainTrayIds = new Set(mainTray.map((decision) => decision.id));
 
@@ -183,10 +175,13 @@ function simulateSingleRun(
       seedValue,
       runIndex,
     );
-    run = resolveRound({
-      ...run,
-      selectedDecisionIds,
-    });
+    run = resolveRound(
+      {
+        ...run,
+        selectedDecisionIds,
+      },
+      { buildRecap: false },
+    );
     roundsPlayed += 1;
   }
 

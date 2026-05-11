@@ -124,6 +124,40 @@ Older history entries remain valid.
 
 Faction updates should derive from selected decisions, emitted events, metric thresholds, flags, operations, and dossier state. Avoid hidden arbitrary movement.
 
+### Explicit Content Metadata
+
+Authored decisions and events may now carry `factionEffects`. The planner applies these deltas before clamping state back into the `0..100` range:
+
+\[
+s' = \operatorname{clamp}(s + \Delta_{\text{metrics}} + \Delta_{\text{evidence}} + \Delta_{\text{authored}}, 0, 100)
+\]
+
+Supported authored delta fields are:
+
+- `patience`
+- `aggression`
+- `trust`
+- `cohesion`
+- `leverage`
+- `dossierWeight`
+
+Each delta must be an integer where \( -25 \le \Delta \le 25 \). The only valid faction IDs are `board`, `creditors`, `labor`, `regulators`, and `press`.
+
+Example:
+
+```json
+"factionEffects": {
+  "creditors": {
+    "patience": -8,
+    "aggression": 9,
+    "leverage": 5,
+    "grievance": "rushed amend-and-extend terms invited lender coordination"
+  }
+}
+```
+
+If a content item has explicit metadata, the planner prefers it and skips legacy ID-substring matching for that item. If content is still unannotated, the old fallback remains active so migration can proceed in small reviewable passes.
+
 Good player-facing explanations include:
 
 - why the faction escalated

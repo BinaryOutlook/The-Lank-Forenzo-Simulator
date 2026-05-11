@@ -9,12 +9,34 @@ export const factionIds = [
   "press",
 ] as const;
 
-export type FactionId =
-  | "board"
-  | "creditors"
-  | "labor"
-  | "regulators"
-  | "press";
+export type FactionId = (typeof factionIds)[number];
+
+export const factionEffectKeys = [
+  "patience",
+  "aggression",
+  "trust",
+  "cohesion",
+  "leverage",
+  "dossierWeight",
+] as const;
+
+export const factionEffectDeltaBounds = {
+  min: -25,
+  max: 25,
+} as const;
+
+export type FactionEffectKey = (typeof factionEffectKeys)[number];
+
+export type FactionEffect = Partial<Record<FactionEffectKey, number>> & {
+  grievance?: string;
+};
+
+export type FactionEffectSet = Partial<Record<FactionId, FactionEffect>>;
+
+export interface FactionEffectSource {
+  sourceId: string;
+  effects: FactionEffectSet;
+}
 
 export const factionIntentFamilies = [
   "pressure",

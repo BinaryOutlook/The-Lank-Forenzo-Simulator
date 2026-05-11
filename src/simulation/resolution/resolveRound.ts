@@ -4,18 +4,26 @@ import {
   pickWeighted,
   shuffleWithSeed,
 } from "../../lib/random/seeded";
-import { applyEvidenceFragments, collectEvidenceFragments, type EvidenceFragment } from "../dossiers/evidence";
+import {
+  applyEvidenceFragments,
+  collectEvidenceFragments,
+  type EvidenceFragment,
+} from "../dossiers/evidence";
 import {
   createInitialDossierState,
+  getDossierCaseTheory,
+  getDossierSeverityBand,
+  normalizeDossierState,
   summarizeDossiers,
   type DossierSummary,
+  type DossierSeverityBand,
   type DossierTheme,
   type DossierThread,
 } from "../dossiers/dossierState";
 import {
   coerceFactionStates,
   createInitialFactionStates,
-  type FactionId,
+  type FactionEffectSource,
   type FactionIntent,
   type FactionStates,
 } from "../factions/factionState";
@@ -33,6 +41,7 @@ import {
   resolveNetworkQuarter,
   type NetworkQuarterResult,
 } from "../operations/networkResolution";
+import { buildRunRecap } from "./runRecap.js";
 import {
   createInitialEventSchedulerState,
   getEventNarrativeWeight,
@@ -40,6 +49,7 @@ import {
   resolveEventScheduler,
   scheduleEvent,
   type EventSchedulerState,
+  type HazardRule,
 } from "../scheduler/eventScheduler";
 import { getImpactSetScore } from "../state/metricSemantics";
 import { getAvailableDecisions } from "../systems/decisionEngine";
@@ -63,8 +73,6 @@ import {
   type HistoryEntry,
   type ImpactSet,
   type PendingEvent,
-  type RecapItem,
-  type RunRecap,
   type RunMetrics,
   type RunState,
 } from "../state/types";
@@ -258,6 +266,8 @@ interface SelectedDecisionResult {
   scheduler: EventSchedulerState;
   historyEntries: HistoryEntry[];
   executedDecisionIds: string[];
+  factionEffectSources: FactionEffectSource[];
+  executedDecisions: DecisionDefinition[];
   endingId: EndingId | null;
 }
 
@@ -273,6 +283,8 @@ function applySelectedDecisions(
   const flags = new Set(run.flags);
   const historyEntries: HistoryEntry[] = [];
   const executedDecisionIds: string[] = [];
+  const factionEffectSources: FactionEffectSource[] = [];
+  const executedDecisions: DecisionDefinition[] = [];
   let nextScheduler = scheduler;
 
   for (const decisionId of run.selectedDecisionIds) {
@@ -296,6 +308,13 @@ function applySelectedDecisions(
     resources = deductResourceCosts(resources, decision.resourceCosts);
     metrics = applyImpactSet(metrics, decision.impacts);
     executedDecisionIds.push(decision.id);
+    if (decision.factionEffects) {
+      factionEffectSources.push({
+        sourceId: decision.id,
+        effects: decision.factionEffects,
+      });
+    }
+    executedDecisions.push(decision);
     historyEntries.push(
       buildHistoryEntry(
         round,
@@ -306,7 +325,9 @@ function applySelectedDecisions(
       ),
     );
 
-    for (const [index, delayed] of (decision.delayedConsequences ?? []).entries()) {
+    for (const [index, delayed] of (
+      decision.delayedConsequences ?? []
+    ).entries()) {
       const eventId = pickDelayedEventId(decision.id, round, delayed);
 
       if (!eventId) {
@@ -339,6 +360,8 @@ function applySelectedDecisions(
     scheduler: nextScheduler,
     historyEntries,
     executedDecisionIds,
+    factionEffectSources,
+    executedDecisions,
     endingId,
   };
 }
@@ -385,6 +408,7 @@ function resolveScheduledEventsStep(
   eventCounts: Record<string, number>,
   scheduler: EventSchedulerState,
   eventById: Record<string, EventDefinition>,
+  hazardRules: HazardRule[],
 ): EventResolutionResult {
   let nextMetrics = metrics;
   let nextFlags = flags;
@@ -399,15 +423,16 @@ function resolveScheduledEventsStep(
     },
     state: scheduler,
     eventById,
-    hazardRules: [],
+    hazardRules,
     seed: hashNumber(round, nextMetrics.legalHeat, nextMetrics.publicAnger),
     budget: {
       guaranteedEvents: 1,
-      hazardEvents: 0,
+      hazardEvents: 1,
     },
   });
 
-  for (const event of schedulerResult.events) {
+  for (const emitted of schedulerResult.emittedEvents) {
+    const { event } = emitted;
     const processed = processEvent(
       event,
       round,
@@ -419,8 +444,10 @@ function resolveScheduledEventsStep(
     nextFlags = processed.flags;
     historyEntries.push({
       ...processed.history,
-      sourceKind: "scheduled_event",
-      scheduledEventId: event.id,
+      sourceKind:
+        emitted.sourceKind === "hazard" ? "hazard_event" : "scheduled_event",
+      scheduledEventId: emitted.sourceId,
+      cause: emitted.hazardRule?.explanation,
     });
     emittedEventIds.push(event.id);
   }
@@ -539,9 +566,7 @@ function mirrorPendingEvents(scheduler: EventSchedulerState): PendingEvent[] {
 }
 
 function getRunFactions(run: RunState): FactionStates {
-  return run.factions
-    ? coerceFactionStates(run.factions)
-    : createInitialFactionStates();
+  return coerceFactionStates(run.factions);
 }
 
 function getRunOperations(run: RunState): NetworkState {
@@ -549,7 +574,7 @@ function getRunOperations(run: RunState): NetworkState {
 }
 
 function getRunDossiers(run: RunState): DossierThread[] {
-  return run.dossiers ?? createInitialDossierState();
+  return normalizeDossierState(run.dossiers);
 }
 
 function summarizeEvidenceHints(
@@ -564,6 +589,28 @@ function summarizeEvidenceHints(
   return hints;
 }
 
+function collectEventFactionEffectSources(
+  emittedEventIds: string[],
+  eventById: Record<string, EventDefinition>,
+): FactionEffectSource[] {
+  const sources: FactionEffectSource[] = [];
+
+  for (const eventId of emittedEventIds) {
+    const event = eventById[eventId];
+
+    if (!event?.factionEffects) {
+      continue;
+    }
+
+    sources.push({
+      sourceId: event.id,
+      effects: event.factionEffects,
+    });
+  }
+
+  return sources;
+}
+
 function buildFactionSignals(intents: FactionIntent[]): BoardSignal[] {
   return [...intents]
     .sort((left, right) => right.urgency - left.urgency)
@@ -575,7 +622,7 @@ function buildFactionSignals(intents: FactionIntent[]): BoardSignal[] {
 }
 
 function buildOperationSignals(result: NetworkQuarterResult): BoardSignal[] {
-  return result.briefingSignals.slice(0, 1).map((signal) => ({
+  return result.briefingSignals.slice(0, 2).map((signal) => ({
     title: signal.title,
     body: signal.body,
   }));
@@ -702,10 +749,16 @@ function buildOperationHistoryEntry(
     id: `operation-${round}-${cascade?.id ?? signal?.title ?? "read"}`,
     round,
     source: "operation",
-    sourceKind: "operational_read",
+    sourceKind: cascade ? "operational_cascade" : "operational_read",
     operationId: cascade?.id ?? "network-quarter",
-    title: cascade?.id ? formatId(cascade.id) : (signal?.title ?? "Operational read"),
-    body: cascade?.body ?? signal?.body ?? "The network absorbed the quarter without a named cascade.",
+    title: cascade?.id
+      ? formatId(cascade.id)
+      : (signal?.title ?? "Operational read"),
+    body: cascade
+      ? `${cascade.body} Cause: ${cascade.cause}`
+      : (signal?.body ??
+        "The network absorbed the quarter without a named cascade."),
+    cause: cascade?.cause,
     tone: cascade || signal?.tone === "negative" ? "negative" : "neutral",
   };
 }
@@ -732,93 +785,125 @@ function buildDossierHistoryEntry(
   };
 }
 
-function buildRunRecap(input: {
-  run: RunState;
-  endingId: EndingId;
-  factions: FactionStates;
-  operations: NetworkState;
-  dossiers: DossierThread[];
-  selectedDecisionIds: string[];
-  operationResult: NetworkQuarterResult;
-}): RunRecap {
-  const factionItems: RecapItem[] = Object.values(input.factions)
-    .sort(
-      (left, right) =>
-        Math.max(right.aggression, right.leverage) -
-        Math.max(left.aggression, left.leverage),
-    )
-    .slice(0, 2)
-    .map((faction) => ({
-      title: formatId(faction.id),
-      body: `${formatFactionRecapIntent(faction)} Aggression ${faction.aggression}, leverage ${faction.leverage}. ${formatFactionRecapMemory(faction)}`,
-    }));
-  const dossierItems = summarizeDossiers(input.dossiers, 2).map((summary) => ({
-    title: formatId(summary.theme),
-    body: `Evidence weight ${summary.evidenceWeight}; likely exposure ${formatId(summary.likelyExposure)}.`,
-  }));
-  const operationItems: RecapItem[] = [
-    {
-      title: "Network condition",
-      body:
-        input.operationResult.cascades[0]?.body ??
-        `Maintenance backlog ${input.operations.maintenanceBacklog}; service disruption ${input.operations.serviceDisruption}.`,
-    },
-  ];
+function buildDossierThresholdEntries(input: {
+  round: number;
+  previous: DossierThread[];
+  current: DossierThread[];
+}): {
+  impacts: ImpactSet;
+  flags: string[];
+  historyEntries: HistoryEntry[];
+} {
+  const previousByTheme = Object.fromEntries(
+    input.previous.map((thread) => [thread.theme, thread]),
+  ) as Partial<Record<DossierTheme, DossierThread>>;
+  const impacts: ImpactSet = {};
+  const flags: string[] = [];
+  const historyEntries: HistoryEntry[] = [];
+  let strongestLegalHeatImpact = 0;
 
-  return {
-    headline: `The ${formatId(input.endingId)} record is now legible.`,
-    factions: factionItems,
-    operations: operationItems,
-    dossiers: dossierItems,
-    missedExitWindows: getMissedExitWindows(input.run),
-    criticalChains: input.selectedDecisionIds.slice(0, 3).map((decisionId) => ({
-      title: formatId(decisionId),
-      body: "Selected in the final resolved quarter.",
-    })),
-  };
-}
+  for (const thread of input.current) {
+    const previousBand =
+      previousByTheme[thread.theme]?.severityBand ??
+      getDossierSeverityBand(
+        previousByTheme[thread.theme]?.evidenceWeight ?? 0,
+      );
+    const currentBand = getDossierSeverityBand(thread.evidenceWeight);
 
-function getMissedExitWindows(run: RunState): RecapItem[] {
-  const missed: RecapItem[] = [];
+    if (!isThresholdEscalation(previousBand, currentBand)) {
+      continue;
+    }
 
-  if (run.round >= 7 && run.metrics.marketConfidence >= 60 && run.metrics.legalHeat > 74) {
-    missed.push({
-      title: "Extraction window",
-      body: "Market belief was available, but personal exposure made the cash-out unsafe.",
+    const impact = getDossierThresholdImpact(currentBand);
+
+    if (impact.legalHeat) {
+      strongestLegalHeatImpact = Math.max(
+        strongestLegalHeatImpact,
+        impact.legalHeat,
+      );
+    }
+
+    flags.push(`dossier:${thread.theme}:${currentBand}`);
+    historyEntries.push({
+      id: `dossier-threshold-${thread.theme}-${currentBand}-${input.round}`,
+      round: input.round,
+      source: "dossier",
+      sourceKind: "dossier_threshold",
+      dossierTheme: thread.theme,
+      title: `${formatId(thread.theme)} dossier turns ${currentBand}`,
+      body: `${thread.nextStep} is now live. ${getDossierRecapBody({
+        theme: thread.theme,
+        severity: thread.severity,
+        evidenceWeight: thread.evidenceWeight,
+        severityBand: currentBand,
+        likelyExposure:
+          thread.linkedEventIds.at(-1) ??
+          thread.linkedDecisionIds.at(-1) ??
+          "unfiled evidence",
+        witnesses: thread.witnesses,
+        factionOwner: thread.factionOwner,
+        nextStep: thread.nextStep,
+        caseTheory: getDossierCaseTheory(thread.theme),
+      })}`,
+      tone: "negative",
     });
   }
 
-  if (run.round >= 6 && run.metrics.offshoreReadiness >= 35 && run.metrics.personalWealth < 45) {
-    missed.push({
-      title: "Nassau window",
-      body: "The offshore apparatus was nearly ready before personal liquidity caught up.",
-    });
+  if (strongestLegalHeatImpact > 0) {
+    impacts.legalHeat = strongestLegalHeatImpact;
   }
 
-  return missed;
+  return { impacts, flags, historyEntries };
 }
 
-function formatFactionRecapIntent(faction: FactionStates[FactionId]): string {
-  if (!faction.currentIntent) {
-    return "No active intent.";
-  }
-
-  return `Intent ${formatId(faction.currentIntent.family)} at urgency ${faction.currentIntent.urgency}.`;
-}
-
-function formatFactionRecapMemory(faction: FactionStates[FactionId]): string {
-  const [topPattern, count] =
-    Object.entries(faction.behaviorMemory).sort(
-      (left, right) => (right[1] ?? 0) - (left[1] ?? 0),
-    )[0] ?? [];
-
-  if (topPattern && typeof count === "number" && count > 0) {
-    return `Remembered pattern: ${formatId(topPattern)} x${count}.`;
-  }
-
+function isThresholdEscalation(
+  previous: DossierSeverityBand,
+  current: DossierSeverityBand,
+): boolean {
   return (
-    faction.recentGrievances[0] ?? "No single grievance controlled the room."
+    getSeverityRank(current) >= getSeverityRank("medium") &&
+    getSeverityRank(current) > getSeverityRank(previous)
   );
+}
+
+function getSeverityRank(severityBand: DossierSeverityBand): number {
+  switch (severityBand) {
+    case "dormant":
+      return 0;
+    case "light":
+      return 1;
+    case "medium":
+      return 2;
+    case "heavy":
+      return 3;
+    case "terminal":
+      return 4;
+  }
+}
+
+function getDossierThresholdImpact(
+  severityBand: DossierSeverityBand,
+): ImpactSet {
+  switch (severityBand) {
+    case "terminal":
+      return { legalHeat: 4 };
+    case "heavy":
+      return { legalHeat: 2 };
+    case "medium":
+      return { legalHeat: 1 };
+    case "light":
+    case "dormant":
+      return {};
+  }
+}
+
+function getDossierRecapBody(summary: DossierSummary): string {
+  const witnessText =
+    summary.witnesses.length > 0
+      ? ` Witnesses: ${summary.witnesses.slice(0, 3).join(", ")}.`
+      : "";
+
+  return `${summary.caseTheory} Evidence weight ${summary.evidenceWeight} (${summary.severityBand}); likely exposure ${formatId(summary.likelyExposure)}. ${formatId(summary.factionOwner)} is pushing the next step: ${summary.nextStep}.${witnessText}`;
 }
 
 function formatId(value: string): string {
@@ -827,7 +912,14 @@ function formatId(value: string): string {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-export function resolveRound(run: RunState): RunState {
+export interface ResolveRoundOptions {
+  buildRecap?: boolean;
+}
+
+export function resolveRound(
+  run: RunState,
+  options: ResolveRoundOptions = {},
+): RunState {
   const content = loadContentManifest();
   const offeredThisRound = getAvailableDecisions(content.decisions, run).map(
     (decision) => decision.id,
@@ -852,15 +944,18 @@ export function resolveRound(run: RunState): RunState {
     selectedDecisionIds,
     emittedEventIds: [],
     factionIntents: [],
+    decisionEvidenceById: content.decisionEvidenceById,
+    eventEvidenceById: content.eventEvidenceById,
   });
   let operations = applyNetworkDecisionEffects(getRunOperations(run), {
-    selectedDecisionIds,
+    selectedDecisions: selectedDecisionResult.executedDecisions,
   });
   let factions = updateFactionStates(getRunFactions(run), {
     metrics,
     selectedDecisionIds,
     emittedEventIds: [],
     evidenceHints: summarizeEvidenceHints(initialEvidence),
+    factionEffectSources: selectedDecisionResult.factionEffectSources,
   });
   const factionIntents = planFactionIntents(factions, {
     metrics,
@@ -902,6 +997,7 @@ export function resolveRound(run: RunState): RunState {
     eventCounts,
     selectedDecisionResult.scheduler,
     content.eventById,
+    content.hazards,
   );
   metrics = scheduledResult.metrics;
   flags = scheduledResult.flags;
@@ -936,14 +1032,22 @@ export function resolveRound(run: RunState): RunState {
     selectedDecisionIds: [],
     emittedEventIds,
     factionIntents,
+    operationCascades: operationResult.cascades,
+    decisionEvidenceById: content.decisionEvidenceById,
+    eventEvidenceById: content.eventEvidenceById,
   });
   factions = updateFactionStates(factions, {
     metrics,
     selectedDecisionIds: [],
     emittedEventIds,
     evidenceHints: summarizeEvidenceHints(followOnEvidence),
+    factionEffectSources: collectEventFactionEffectSources(
+      emittedEventIds,
+      content.eventById,
+    ),
   });
-  const dossiers = applyEvidenceFragments(getRunDossiers(run), [
+  const previousDossiers = getRunDossiers(run);
+  const dossiers = applyEvidenceFragments(previousDossiers, [
     ...initialEvidence,
     ...followOnEvidence,
   ]);
@@ -954,10 +1058,22 @@ export function resolveRound(run: RunState): RunState {
     historyEntries.push(dossierHistory);
   }
 
-  if (!endingId && dossierSummaries[0]?.evidenceWeight >= 48) {
-    metrics = applyImpactSet(metrics, {
-      legalHeat: 1,
-    });
+  const dossierThresholds = buildDossierThresholdEntries({
+    round,
+    previous: previousDossiers,
+    current: dossiers,
+  });
+
+  if (Object.keys(dossierThresholds.impacts).length > 0) {
+    metrics = applyImpactSet(metrics, dossierThresholds.impacts);
+  }
+
+  for (const flag of dossierThresholds.flags) {
+    flags.add(flag);
+  }
+
+  if (dossierThresholds.historyEntries.length > 0) {
+    historyEntries.push(...dossierThresholds.historyEntries);
   }
 
   if (!endingId) {
@@ -977,17 +1093,21 @@ export function resolveRound(run: RunState): RunState {
     flags: [...flags],
     endingId,
   };
-  const recap = endingId
-    ? buildRunRecap({
-        run: nextRunForRecap,
-        endingId,
-        factions,
-        operations,
-        dossiers,
-        selectedDecisionIds,
-        operationResult,
-      })
-    : null;
+  const recap =
+    endingId && (options.buildRecap ?? true)
+      ? buildRunRecap({
+          run: nextRunForRecap,
+          endingId,
+          factions,
+          operations,
+          dossiers,
+          selectedDecisionIds,
+          decisions: content.decisions,
+          decisionById: content.decisionById,
+          historyEntries: [...historyEntries, ...run.history],
+          operationResult,
+        })
+      : null;
 
   return {
     status: endingId ? "ended" : "active",
