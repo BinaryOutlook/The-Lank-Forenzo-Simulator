@@ -109,6 +109,7 @@ For the first serious browser version, the product should:
 - make personal wealth and corporate health visibly diverge
 - turn each round into a meaningful set of ugly trade-offs
 - present legal pressure as a playable system, not just flavor text
+- make major political, labor, regulatory, and networking plays consume limited strategic reserves instead of behaving like free menu choices
 - let factions, operations, and dossier evidence remember the style of the player's misconduct
 - provide deterministic balance and reachability tooling so content coverage problems are visible
 - support two complete visual themes without fragmenting the product
@@ -218,7 +219,19 @@ Durable memory can appear through:
 
 The world should feel strategic because institutions respond to repeated behavior, not because random punishment appears from nowhere.
 
-### 8.5 The interface should feel like power under glass
+### 8.5 Power moves should require ammunition
+
+The strongest strategic actions should not be free choices hidden inside a static card tray.
+
+High-impact moves may consume:
+
+- strategic cash
+- personal assets
+- public relations capital
+
+These reserves should make lobbying, regulator influence, union-conflict escalation, and executive networking feel planned and constrained. The player should see what an action costs before queuing it, understand whether the current reserve ledger can cover it, and feel the opportunity cost after it resolves.
+
+### 8.6 The interface should feel like power under glass
 
 The GUI should feel sharp, deliberate, and premium.
 

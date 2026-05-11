@@ -8,12 +8,13 @@ import {
 import userEvent from "@testing-library/user-event";
 import { afterEach } from "vitest";
 import { describe, expect, it, vi } from "vitest";
-import { DecisionTray } from "./DecisionTray.js";
+import { initialConsumableResources } from "../../simulation/systems/consumables.js";
+import type { DecisionDefinition } from "../../simulation/state/types.js";
 import {
   subscribeToInteractionCues,
   type InteractionCueName,
 } from "../audio/interactionAudioEvents.js";
-import type { DecisionDefinition } from "../../simulation/state/types.js";
+import { DecisionTray } from "./DecisionTray.js";
 
 const decisions: DecisionDefinition[] = [
   {
@@ -30,6 +31,25 @@ const decisions: DecisionDefinition[] = [
   },
 ];
 
+const costlyDecisions: DecisionDefinition[] = [
+  {
+    id: "committee-retainer",
+    pack: "regulatoryTheater",
+    title: "Committee Retainer",
+    summary: "Buy enough procedural intimacy to slow the hearing calendar.",
+    group: "legal",
+    tags: ["regulators", "lobbying"],
+    impacts: {
+      legalHeat: -4,
+    },
+    resourceCosts: {
+      inGameMoney: 7,
+      personalAssets: 1,
+      publicRelationsCapital: 2,
+    },
+  },
+];
+
 afterEach(() => {
   cleanup();
 });
@@ -42,6 +62,7 @@ describe("DecisionTray", () => {
     const { rerender } = render(
       <DecisionTray
         decisions={decisions}
+        resources={initialConsumableResources}
         selectedDecisionIds={[]}
         onToggle={onToggle}
         onEndTurn={onEndTurn}
@@ -59,6 +80,7 @@ describe("DecisionTray", () => {
     rerender(
       <DecisionTray
         decisions={decisions}
+        resources={initialConsumableResources}
         selectedDecisionIds={["tighten-screws"]}
         onToggle={onToggle}
         onEndTurn={onEndTurn}
@@ -83,6 +105,7 @@ describe("DecisionTray", () => {
       const { rerender } = render(
         <DecisionTray
           decisions={decisions}
+          resources={initialConsumableResources}
           selectedDecisionIds={[]}
           onToggle={onToggle}
           onEndTurn={onEndTurn}
@@ -98,6 +121,7 @@ describe("DecisionTray", () => {
       rerender(
         <DecisionTray
           decisions={decisions}
+          resources={initialConsumableResources}
           selectedDecisionIds={["tighten-screws"]}
           onToggle={onToggle}
           onEndTurn={onEndTurn}
@@ -132,6 +156,7 @@ describe("DecisionTray", () => {
     render(
       <DecisionTray
         decisions={decisions}
+        resources={initialConsumableResources}
         selectedDecisionIds={[]}
         onToggle={onToggle}
         onEndTurn={onEndTurn}
@@ -171,6 +196,7 @@ describe("DecisionTray", () => {
     render(
       <DecisionTray
         decisions={decisions}
+        resources={initialConsumableResources}
         selectedDecisionIds={[]}
         onToggle={onToggle}
         onEndTurn={onEndTurn}
@@ -184,5 +210,34 @@ describe("DecisionTray", () => {
     fireEvent.pointerDown(decisionButton);
 
     expect(decisionButton).not.toHaveAttribute("data-interaction-feedback");
+  });
+
+  it("shows resources and disables actions the reserve ledger cannot cover", async () => {
+    const user = userEvent.setup();
+    const onToggle = vi.fn();
+
+    render(
+      <DecisionTray
+        decisions={costlyDecisions}
+        resources={{
+          inGameMoney: 2,
+          personalAssets: 0,
+          publicRelationsCapital: 1,
+        }}
+        selectedDecisionIds={[]}
+        onToggle={onToggle}
+        onEndTurn={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByLabelText("Strategic resources")).toBeInTheDocument();
+    expect(screen.getByText("Strategic cash -$7M")).toBeInTheDocument();
+    expect(screen.getByText(/Reserve shortfall/)).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", { name: /committee retainer/i }),
+    );
+
+    expect(onToggle).not.toHaveBeenCalled();
   });
 });

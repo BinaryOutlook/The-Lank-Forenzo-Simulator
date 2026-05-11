@@ -5,15 +5,34 @@ import {
   getImpactPreview,
   metricLabels,
 } from "../../lib/formatters.js";
-import { emitInteractionCue } from "../audio/interactionAudioEvents.js";
-import { useInteractionFeedback } from "../interaction/useInteractionFeedback.js";
-import type { InteractionCueName } from "../audio/interactionAudioEvents.js";
+import { consumableResourceKeys } from "../../simulation/content/metadata.js";
 import { getImpactTone } from "../../simulation/state/metricSemantics.js";
-import type { DecisionDefinition } from "../../simulation/state/types.js";
+import {
+  canAffordResourceCosts,
+  consumableResourceLabels,
+  formatResourceCost,
+  formatResourceCostSummary,
+  formatResourceValue,
+  getDecisionResourceCosts,
+  getDecisionSelectionCost,
+  getInsufficientResourceKeys,
+  hasResourceCosts,
+  projectResourceSpend,
+} from "../../simulation/systems/consumables.js";
+import type {
+  ConsumableResourceKey,
+  ConsumableResources,
+  DecisionDefinition,
+  ResourceCostSet,
+} from "../../simulation/state/types.js";
+import { emitInteractionCue } from "../audio/interactionAudioEvents.js";
+import type { InteractionCueName } from "../audio/interactionAudioEvents.js";
+import { useInteractionFeedback } from "../interaction/useInteractionFeedback.js";
 import styles from "./DecisionTray.module.css";
 
 interface DecisionTrayProps {
   decisions: DecisionDefinition[];
+  resources: ConsumableResources;
   selectedDecisionIds: string[];
   onToggle: (decisionId: string) => void;
   onEndTurn: () => void;
@@ -22,6 +41,8 @@ interface DecisionTrayProps {
 
 interface DecisionCardProps {
   decision: DecisionDefinition;
+  disabled: boolean;
+  disabledReason: string | null;
   index: number;
   interactionEffectsEnabled: boolean;
   selected: boolean;
@@ -31,6 +52,8 @@ interface DecisionCardProps {
 
 function DecisionCard({
   decision,
+  disabled,
+  disabledReason,
   index,
   interactionEffectsEnabled,
   selected,
@@ -65,6 +88,7 @@ function DecisionCard({
       )}
       data-interaction-feedback={feedback.feedbackState}
       aria-pressed={selected}
+      disabled={disabled}
       onClick={handleToggle}
       onKeyDown={feedback.onFeedbackKeyDown}
       onPointerDown={feedback.onFeedbackPointerDown}
@@ -84,6 +108,8 @@ function DecisionCard({
         <p className={styles.cardSummary}>{decision.summary}</p>
       </div>
 
+      <CostPreview costs={getDecisionResourceCosts(decision)} />
+
       <div className={styles.previewList}>
         {preview.map((entry) => (
           <span
@@ -97,17 +123,21 @@ function DecisionCard({
                 styles.previewNeutral,
             )}
           >
-            {metricLabels[entry.metric]}{" "}
-            {formatDelta(entry.metric, entry.delta)}
+            {metricLabels[entry.metric]} {formatDelta(entry.metric, entry.delta)}
           </span>
         ))}
       </div>
+
+      {disabledReason ? (
+        <p className={styles.disabledReason}>{disabledReason}</p>
+      ) : null}
     </motion.button>
   );
 }
 
 export function DecisionTray({
   decisions,
+  resources,
   selectedDecisionIds,
   onToggle,
   onEndTurn,
@@ -118,6 +148,11 @@ export function DecisionTray({
   );
   const resolveLabel =
     selectedDecisionIds.length > 0 ? "Resolve the quarter" : "Hold the line";
+  const selectedDecisions = decisions.filter((decision) =>
+    selectedDecisionIds.includes(decision.id),
+  );
+  const selectedCost = getDecisionSelectionCost(selectedDecisions);
+  const projectedResources = projectResourceSpend(resources, selectedCost);
   const handleEndTurn = () => {
     emitInteractionCue("quarter-resolve");
     onEndTurn();
@@ -130,9 +165,18 @@ export function DecisionTray({
         <h2 className={styles.title}>Choose where the pain goes next.</h2>
       </div>
 
+      <ResourceLedger
+        resources={resources}
+        projectedResources={projectedResources}
+        selectedCost={selectedCost}
+      />
+
       <div className={styles.controls} data-testid="quarter-controls">
         <p className={styles.selectionCount}>
           {selectedDecisionIds.length}/2 selected
+        </p>
+        <p className={styles.selectionCost}>
+          {formatResourceCostSummary(selectedCost)}
         </p>
         <button
           type="button"
@@ -149,11 +193,30 @@ export function DecisionTray({
       <div className={styles.list}>
         {decisions.map((decision, index) => {
           const selected = selectedDecisionIds.includes(decision.id);
+          const candidateSelection = selected
+            ? selectedDecisions
+            : [...selectedDecisions, decision];
+          const candidateCost = getDecisionSelectionCost(candidateSelection);
+          const insufficientResources = getInsufficientResourceKeys(
+            resources,
+            candidateCost,
+          );
+          const selectionLimitReached =
+            !selected && selectedDecisionIds.length >= 2;
+          const disabled =
+            selectionLimitReached ||
+            (!selected && !canAffordResourceCosts(resources, candidateCost));
+          const disabledReason = getDisabledReason(
+            selectionLimitReached,
+            insufficientResources,
+          );
 
           return (
             <DecisionCard
               key={decision.id}
               decision={decision}
+              disabled={disabled}
+              disabledReason={disabledReason}
               index={index}
               interactionEffectsEnabled={interactionEffectsEnabled}
               selected={selected}
@@ -165,4 +228,106 @@ export function DecisionTray({
       </div>
     </section>
   );
+}
+
+function ResourceLedger({
+  resources,
+  projectedResources,
+  selectedCost,
+}: {
+  resources: ConsumableResources;
+  projectedResources: ConsumableResources;
+  selectedCost: ResourceCostSet;
+}) {
+  return (
+    <section className={styles.resourceLedger} aria-label="Strategic resources">
+      <div>
+        <p className={styles.eyebrow}>Strategic reserves</p>
+        <h3 className={styles.resourceTitle}>
+          Limited resources for heavy plays.
+        </h3>
+      </div>
+
+      <div className={styles.resourceGrid}>
+        {consumableResourceKeys.map((resource) => (
+          <ResourceMeter
+            key={resource}
+            resource={resource}
+            value={resources[resource]}
+            projectedValue={projectedResources[resource]}
+            hasSelectedSpend={(selectedCost[resource] ?? 0) > 0}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ResourceMeter({
+  resource,
+  value,
+  projectedValue,
+  hasSelectedSpend,
+}: {
+  resource: ConsumableResourceKey;
+  value: number;
+  projectedValue: number;
+  hasSelectedSpend: boolean;
+}) {
+  return (
+    <div className={styles.resourceItem}>
+      <span className={styles.resourceLabel}>
+        {consumableResourceLabels[resource]}
+      </span>
+      <strong className={styles.resourceValue}>
+        {formatResourceValue(resource, value)}
+      </strong>
+      {hasSelectedSpend ? (
+        <span className={styles.resourceProjected}>
+          after {formatResourceValue(resource, projectedValue)}
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
+function CostPreview({ costs }: { costs: ResourceCostSet }) {
+  if (!hasResourceCosts(costs)) {
+    return <p className={styles.noCost}>No strategic reserve cost</p>;
+  }
+
+  return (
+    <div
+      className={styles.costList}
+      aria-label={`Action cost: ${formatResourceCostSummary(costs)}`}
+    >
+      {consumableResourceKeys.map((resource) => {
+        const value = costs[resource] ?? 0;
+
+        return value > 0 ? (
+          <span key={resource} className={styles.costPill}>
+            {consumableResourceLabels[resource]}{" "}
+            {formatResourceCost(resource, value)}
+          </span>
+        ) : null;
+      })}
+    </div>
+  );
+}
+
+function getDisabledReason(
+  selectionLimitReached: boolean,
+  insufficientResources: ConsumableResourceKey[],
+): string | null {
+  if (selectionLimitReached) {
+    return "Two decisions are already queued.";
+  }
+
+  if (insufficientResources.length === 0) {
+    return null;
+  }
+
+  return `Reserve shortfall: ${insufficientResources
+    .map((resource) => consumableResourceLabels[resource])
+    .join(", ")}.`;
 }

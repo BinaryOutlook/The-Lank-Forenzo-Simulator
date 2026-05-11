@@ -97,6 +97,7 @@ export function RunScreen() {
       <div id="decision-tray" className={styles.decisionArea}>
         <DecisionTray
           decisions={availableDecisions()}
+          resources={run.resources}
           selectedDecisionIds={run.selectedDecisionIds}
           onToggle={toggleDecision}
           onEndTurn={endTurn}

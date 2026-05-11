@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { initialConsumableResources } from "../../simulation/systems/consumables.js";
 import type { RunState } from "../../simulation/state/types";
 import { BoardPacket } from "./BoardPacket";
 
@@ -21,6 +22,7 @@ const baseRun: RunState = {
     stockPrice: 18,
     offshoreReadiness: 22,
   },
+  resources: initialConsumableResources,
   selectedDecisionIds: [],
   lastOfferedDecisionIds: [],
   pendingEvents: [],

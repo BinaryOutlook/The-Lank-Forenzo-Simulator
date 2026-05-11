@@ -12,6 +12,11 @@
       "legalHeat": -2,
       "publicAnger": 1
     },
+    "resourceCosts": {
+      "inGameMoney": 10,
+      "personalAssets": 1,
+      "publicRelationsCapital": 1
+    },
     "setsFlags": ["regulatoryPlaybookLive"],
     "delayedConsequences": [
       { "eventIds": ["revolving_door_profile", "director_indemnity_alarm", "fairness_opinion_underfire"], "delay": 2 }
@@ -29,6 +34,10 @@
       "creditorPatience": 3,
       "publicAnger": -2,
       "legalHeat": 1
+    },
+    "resourceCosts": {
+      "inGameMoney": 6,
+      "publicRelationsCapital": 2
     },
     "requirements": {
       "roundAtLeast": 2
@@ -50,6 +59,10 @@
       "publicAnger": -3,
       "legalHeat": 1
     },
+    "resourceCosts": {
+      "inGameMoney": 4,
+      "publicRelationsCapital": 3
+    },
     "requirements": {
       "roundAtLeast": 2
     },
@@ -70,6 +83,9 @@
       "marketConfidence": 1,
       "publicAnger": 1
     },
+    "resourceCosts": {
+      "inGameMoney": 8
+    },
     "requirements": {
       "flagsAll": ["regulatoryPlaybookLive"]
     },
@@ -88,6 +104,11 @@
       "marketConfidence": 4,
       "legalHeat": -2,
       "publicAnger": -1
+    },
+    "resourceCosts": {
+      "inGameMoney": 5,
+      "personalAssets": 1,
+      "publicRelationsCapital": 2
     },
     "requirements": {
       "flagsAll": ["regulatoryPlaybookLive"]
@@ -153,6 +174,11 @@
       "safetyIntegrity": -3,
       "publicAnger": 2
     },
+    "resourceCosts": {
+      "inGameMoney": 7,
+      "personalAssets": 2,
+      "publicRelationsCapital": 1
+    },
     "requirements": {
       "flagsAll": ["regulatoryPlaybookLive"],
       "metricMin": {
@@ -175,6 +201,10 @@
       "marketConfidence": 3,
       "legalHeat": -5,
       "publicAnger": 2
+    },
+    "resourceCosts": {
+      "inGameMoney": 9,
+      "personalAssets": 1
     },
     "requirements": {
       "flagsAll": ["regulatoryPlaybookLive"],

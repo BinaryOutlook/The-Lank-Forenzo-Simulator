@@ -288,6 +288,10 @@
       "creditorPatience": 4,
       "legalHeat": 2
     },
+    "resourceCosts": {
+      "personalAssets": 1,
+      "publicRelationsCapital": 2
+    },
     "requirements": {
       "roundAtLeast": 4
     },
@@ -321,6 +325,10 @@
       "personalWealth": 6,
       "offshoreReadiness": 15,
       "legalHeat": 5
+    },
+    "resourceCosts": {
+      "inGameMoney": 6,
+      "personalAssets": 2
     },
     "requirements": {
       "roundAtLeast": 3

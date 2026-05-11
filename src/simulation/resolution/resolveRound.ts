@@ -40,12 +40,20 @@ import {
 } from "../scheduler/eventScheduler";
 import { getImpactSetScore } from "../state/metricSemantics";
 import { getAvailableDecisions } from "../systems/decisionEngine";
+import {
+  canAffordResourceCosts,
+  deductResourceCosts,
+  formatResourceCostSummary,
+  initialConsumableResources,
+  normalizeConsumableResources,
+} from "../systems/consumables.js";
 import { applyImpactSet } from "../systems/metricEffects";
 import { loadContentManifest } from "../content";
 import { getAutomaticEndingId } from "../systems/endingRules";
 import { meetsRequirements } from "../systems/requirements";
 import {
   type BoardSignal,
+  type ConsumableResources,
   type DecisionDefinition,
   type EndingId,
   type EventDefinition,
@@ -188,6 +196,7 @@ export function createInitialRunState(): RunState {
       stockPrice: 18,
       offshoreReadiness: 8,
     },
+    resources: initialConsumableResources,
     selectedDecisionIds: [],
     lastOfferedDecisionIds: [],
     pendingEvents: [],
@@ -241,9 +250,11 @@ function pickDelayedEventId(
 
 interface SelectedDecisionResult {
   metrics: RunMetrics;
+  resources: ConsumableResources;
   flags: Set<string>;
   scheduler: EventSchedulerState;
   historyEntries: HistoryEntry[];
+  executedDecisionIds: string[];
   endingId: EndingId | null;
 }
 
@@ -254,9 +265,11 @@ function applySelectedDecisions(
   scheduler: EventSchedulerState,
 ): SelectedDecisionResult {
   let metrics = { ...run.metrics };
+  let resources = normalizeConsumableResources(run.resources);
   let endingId: EndingId | null = null;
   const flags = new Set(run.flags);
   const historyEntries: HistoryEntry[] = [];
+  const executedDecisionIds: string[] = [];
   let nextScheduler = scheduler;
 
   for (const decisionId of run.selectedDecisionIds) {
@@ -265,13 +278,27 @@ function applySelectedDecisions(
       continue;
     }
 
+    if (!canAffordResourceCosts(resources, decision.resourceCosts)) {
+      historyEntries.push({
+        id: `system-resource-shortfall-${decision.id}-${round}`,
+        round,
+        source: "system",
+        title: "Strategic Reserve Shortfall",
+        body: `${decision.title} stayed on the pad because the reserve ledger could not cover ${formatResourceCostSummary(decision.resourceCosts)}.`,
+        tone: "neutral",
+      });
+      continue;
+    }
+
+    resources = deductResourceCosts(resources, decision.resourceCosts);
     metrics = applyImpactSet(metrics, decision.impacts);
+    executedDecisionIds.push(decision.id);
     historyEntries.push(
       buildHistoryEntry(
         round,
         "decision",
         decision.title,
-        decision.summary,
+        formatDecisionHistoryBody(decision),
         decision.impacts,
       ),
     );
@@ -304,11 +331,21 @@ function applySelectedDecisions(
 
   return {
     metrics,
+    resources,
     flags,
     scheduler: nextScheduler,
     historyEntries,
+    executedDecisionIds,
     endingId,
   };
+}
+
+function formatDecisionHistoryBody(decision: DecisionDefinition): string {
+  if (!decision.resourceCosts) {
+    return decision.summary;
+  }
+
+  return `${decision.summary} Reserve spend: ${formatResourceCostSummary(decision.resourceCosts)}.`;
 }
 
 function applyOperatingDriftStep(
@@ -690,7 +727,6 @@ export function resolveRound(run: RunState): RunState {
   const round = run.round + 1;
   const eventCounts = { ...run.eventCounts };
   const previousScheduler = getRunScheduler(run);
-  const selectedDecisionIds = [...run.selectedDecisionIds];
 
   const selectedDecisionResult = applySelectedDecisions(
     run,
@@ -699,9 +735,11 @@ export function resolveRound(run: RunState): RunState {
     previousScheduler,
   );
   let metrics = selectedDecisionResult.metrics;
+  const resources = selectedDecisionResult.resources;
   let flags = selectedDecisionResult.flags;
   let endingId = selectedDecisionResult.endingId;
   const historyEntries = [...selectedDecisionResult.historyEntries];
+  const selectedDecisionIds = selectedDecisionResult.executedDecisionIds;
   const initialEvidence = collectEvidenceFragments({
     selectedDecisionIds,
     emittedEventIds: [],
@@ -821,6 +859,7 @@ export function resolveRound(run: RunState): RunState {
     ...run,
     round,
     metrics,
+    resources,
     flags: [...flags],
     endingId,
   };
@@ -842,6 +881,7 @@ export function resolveRound(run: RunState): RunState {
     contentVersion: content.version,
     contentHash: content.contentHash,
     metrics,
+    resources,
     selectedDecisionIds: [],
     lastOfferedDecisionIds: offeredThisRound,
     pendingEvents: mirrorPendingEvents(scheduler),

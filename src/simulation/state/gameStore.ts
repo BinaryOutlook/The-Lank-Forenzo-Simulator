@@ -5,8 +5,13 @@ import {
   GAME_SAVE_STORAGE_VERSION,
   migrateGameSavePayload,
 } from "../../lib/storage/save";
-import { loadContent } from "../content";
+import { loadContent, loadContentManifest } from "../content";
 import { getAvailableDecisions } from "../systems/decisionEngine";
+import {
+  canAffordResourceCosts,
+  getDecisionSelectionCost,
+  normalizeConsumableResources,
+} from "../systems/consumables.js";
 import {
   createInitialRunState,
   resolveRound,
@@ -19,6 +24,15 @@ import type {
   RunState,
   ThemeName,
 } from "./types.js";
+
+function getDecisionsById(
+  decisionIds: string[],
+  decisionById: Record<string, DecisionDefinition>,
+): DecisionDefinition[] {
+  return decisionIds
+    .map((decisionId) => decisionById[decisionId])
+    .filter((decision): decision is DecisionDefinition => Boolean(decision));
+}
 
 interface GameStoreState {
   theme: ThemeName;
@@ -130,10 +144,26 @@ export const useGameStore = create<GameStoreState>()(
           const selected = state.run.selectedDecisionIds.includes(decisionId)
             ? state.run.selectedDecisionIds.filter((id) => id !== decisionId)
             : [...state.run.selectedDecisionIds, decisionId].slice(0, 2);
+          const resources = normalizeConsumableResources(state.run.resources);
+          const selectedDecisions = getDecisionsById(
+            selected,
+            loadContentManifest().decisionById,
+          );
+          const selectionCost = getDecisionSelectionCost(selectedDecisions);
+
+          if (!canAffordResourceCosts(resources, selectionCost)) {
+            return {
+              run: {
+                ...state.run,
+                resources,
+              },
+            };
+          }
 
           return {
             run: {
               ...state.run,
+              resources,
               selectedDecisionIds: selected,
             },
           };

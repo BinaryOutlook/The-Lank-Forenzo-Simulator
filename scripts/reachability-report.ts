@@ -6,6 +6,10 @@ import {
   resolveRound,
 } from "../src/simulation/resolution/resolveRound";
 import { getAvailableDecisions } from "../src/simulation/systems/decisionEngine";
+import {
+  canAffordResourceCosts,
+  getDecisionSelectionCost,
+} from "../src/simulation/systems/consumables.js";
 import type {
   ContentBundle,
   DecisionDefinition,
@@ -378,7 +382,9 @@ function buildDecisionBranches(
   const branches: string[][] = [[]];
 
   for (const decision of ranked) {
-    branches.push([decision.id]);
+    if (canAffordDecisionBranch(run, [decision])) {
+      branches.push([decision.id]);
+    }
   }
 
   for (let left = 0; left < ranked.length; left += 1) {
@@ -387,11 +393,27 @@ function buildDecisionBranches(
         continue;
       }
 
-      branches.push([ranked[left]?.id, ranked[right]?.id].filter(Boolean));
+      const decisions = [ranked[left], ranked[right]].filter(
+        (decision): decision is DecisionDefinition => Boolean(decision),
+      );
+
+      if (canAffordDecisionBranch(run, decisions)) {
+        branches.push(decisions.map((decision) => decision.id));
+      }
     }
   }
 
   return branches.slice(0, MAX_BRANCHING_TRAY * 2);
+}
+
+function canAffordDecisionBranch(
+  run: RunState,
+  decisions: DecisionDefinition[],
+): boolean {
+  return canAffordResourceCosts(
+    run.resources,
+    getDecisionSelectionCost(decisions),
+  );
 }
 
 function scoreBranchDecision(decision: DecisionDefinition): number {

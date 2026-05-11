@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  consumableResourceKeys,
   decisionGroups,
   decisionPackIds,
   endingIds,
@@ -16,6 +17,18 @@ const metricShape = Object.fromEntries(
 ) as Record<(typeof metricKeys)[number], z.ZodOptional<z.ZodNumber>>;
 
 const metricRecordSchema = z.object(metricShape).strict();
+
+const resourceShape = Object.fromEntries(
+  consumableResourceKeys.map((resource) => [
+    resource,
+    z.number().int().nonnegative().optional(),
+  ]),
+) as Record<
+  (typeof consumableResourceKeys)[number],
+  z.ZodOptional<z.ZodNumber>
+>;
+
+const resourceCostSchema = z.object(resourceShape).strict();
 
 const requirementSchema = z
   .object({
@@ -49,6 +62,7 @@ export const decisionSchema = z
     group: z.enum(decisionGroups),
     tags: z.array(z.string()).min(1),
     impacts: metricRecordSchema,
+    resourceCosts: resourceCostSchema.optional(),
     requirements: requirementSchema.optional(),
     delayedConsequences: z.array(delayedConsequenceSchema).optional(),
     setsFlags: z.array(z.string()).optional(),

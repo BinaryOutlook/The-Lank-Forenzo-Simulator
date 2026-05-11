@@ -81,6 +81,10 @@
       "publicAnger": 6,
       "legalHeat": 5
     },
+    "resourceCosts": {
+      "inGameMoney": 7,
+      "publicRelationsCapital": 2
+    },
     "requirements": {
       "metricMax": {
         "workforceMorale": 52
@@ -139,6 +143,10 @@
       "publicAnger": 4,
       "legalHeat": 5
     },
+    "resourceCosts": {
+      "inGameMoney": 6,
+      "personalAssets": 1
+    },
     "requirements": {
       "metricMin": {
         "publicAnger": 34
@@ -161,11 +169,44 @@
       "publicAnger": -3,
       "legalHeat": -1
     },
+    "resourceCosts": {
+      "inGameMoney": 5,
+      "personalAssets": 2
+    },
     "requirements": {
       "flagsAll": ["scopeWarOpen"]
     },
     "delayedConsequences": [
       { "eventIds": ["scope_clause_arbitration", "regional_feed_unravels", "severance_injunction"], "delay": 2 }
+    ]
+  },
+  {
+    "id": "lobby_the_union_preemption_bill",
+    "title": "Lobby the Union Preemption Bill",
+    "summary": "Turn the strike narrative into connectivity legislation and ask friendly lawmakers to call it essential service protection.",
+    "group": "legal",
+    "tags": ["labor", "politics", "lobbying"],
+    "impacts": {
+      "airlineCash": -6,
+      "workforceMorale": -7,
+      "marketConfidence": 3,
+      "creditorPatience": 5,
+      "publicAnger": 8,
+      "legalHeat": 3
+    },
+    "resourceCosts": {
+      "inGameMoney": 12,
+      "personalAssets": 1,
+      "publicRelationsCapital": 4
+    },
+    "requirements": {
+      "roundAtLeast": 3,
+      "metricMin": {
+        "publicAnger": 34
+      }
+    },
+    "delayedConsequences": [
+      { "eventIds": ["certificate_whipsaw_hearing", "hearing_transcript_pullquote", "mayor_hot_mic"], "delay": 3 }
     ]
   }
 ]

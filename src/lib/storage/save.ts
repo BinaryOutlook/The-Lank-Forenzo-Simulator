@@ -8,6 +8,7 @@ import {
   defaultGameSettings,
   normalizeGameSettings,
 } from "../../simulation/state/settings.js";
+import { coerceConsumableResources } from "../../simulation/systems/consumables.js";
 import type { GameSettings } from "../../simulation/state/settings.js";
 import type { RunState, ThemeName } from "../../simulation/state/types.js";
 
@@ -17,12 +18,13 @@ export interface GameSavePayload {
   run: RunState | null;
 }
 
-export const GAME_SAVE_STORAGE_VERSION = 3;
+export const GAME_SAVE_STORAGE_VERSION = 4;
 const LEGACY_SAVE_VERSION = 0;
 export const SAVE_MIGRATIONS: Record<number, (state: unknown) => unknown> = {
   [LEGACY_SAVE_VERSION]: (state) => state,
   1: (state) => state,
   2: (state) => state,
+  3: (state) => state,
 };
 
 const themeSchema = z.enum(["earth", "armonk-blue"]);
@@ -82,6 +84,7 @@ const runStateSchema = z
     status: z.enum(["active", "ended"]),
     round: z.number().int(),
     metrics: runMetricsSchema,
+    resources: z.unknown().optional(),
     selectedDecisionIds: z.array(z.string()),
     lastOfferedDecisionIds: z.array(z.string()),
     pendingEvents: z.array(pendingEventSchema),
@@ -118,7 +121,16 @@ function parseTheme(value: unknown): ThemeName {
 
 function parseRun(value: unknown): RunState | null {
   const parsed = runStateSchema.safeParse(value);
-  return parsed.success ? parsed.data : null;
+  if (!parsed.success) {
+    return null;
+  }
+
+  const { resources, ...run } = parsed.data;
+
+  return {
+    ...run,
+    resources: coerceConsumableResources(resources),
+  };
 }
 
 export function coerceGameSavePayload(value: unknown): GameSavePayload {
@@ -127,7 +139,7 @@ export function coerceGameSavePayload(value: unknown): GameSavePayload {
     return {
       theme: parsed.data.theme,
       settings: normalizeGameSettings(parsed.data.settings),
-      run: parsed.data.run,
+      run: parseRun(parsed.data.run),
     };
   }
 

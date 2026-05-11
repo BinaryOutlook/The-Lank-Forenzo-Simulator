@@ -2,6 +2,7 @@
   display: grid;
   grid-template-areas:
     "header controls"
+    "resources resources"
     "list list";
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 1rem;
@@ -35,10 +36,16 @@
   justify-items: end;
 }
 
-.selectionCount {
+.selectionCount,
+.selectionCost {
   margin: 0;
   color: var(--text-muted);
   font-size: 0.85rem;
+}
+
+.selectionCost {
+  max-width: 20rem;
+  text-align: right;
 }
 
 .resolveButton {
@@ -58,6 +65,56 @@
 .resolveButton:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 26%, transparent);
+}
+
+.resourceLedger {
+  grid-area: resources;
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: 0.85rem;
+  align-items: stretch;
+  padding: 0.85rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 24%, var(--border));
+  background: color-mix(in oklab, var(--panel) 86%, var(--accent-soft));
+}
+
+.resourceTitle {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.resourceGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.resourceItem {
+  display: grid;
+  gap: 0.28rem;
+  min-height: 4.2rem;
+  padding: 0.7rem;
+  border: 1px solid color-mix(in oklab, var(--border) 86%, var(--accent) 14%);
+  background: color-mix(in oklab, var(--panel-strong) 86%, transparent);
+}
+
+.resourceLabel {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.resourceValue {
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+}
+
+.resourceProjected {
+  color: var(--accent-strong);
+  font-size: 0.76rem;
+  font-weight: 700;
 }
 
 .list {
@@ -90,6 +147,11 @@
 .cardSelected {
   border-color: var(--accent);
   background: color-mix(in oklab, var(--panel) 82%, var(--accent-soft));
+}
+
+.card:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
 }
 
 .cardHeader {
@@ -129,6 +191,35 @@
   gap: 0.55rem;
 }
 
+.costList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.costPill,
+.noCost {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 1.8rem;
+  padding: 0 0.65rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 38%, var(--border));
+  background: color-mix(in oklab, var(--accent-soft) 64%, transparent);
+  color: var(--accent-strong);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.noCost {
+  margin: 0;
+  border-color: color-mix(in oklab, var(--border) 88%, var(--text) 12%);
+  background: color-mix(in oklab, var(--panel) 80%, var(--text) 5%);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
 .previewPositive,
 .previewNegative,
 .previewNeutral {
@@ -158,12 +249,19 @@
   color: var(--text-muted);
 }
 
+.disabledReason {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
 @media (hover: hover) {
   .resolveButton:hover {
     transform: translateY(-1px);
   }
 
-  .card:hover {
+  .card:not(:disabled):hover {
     transform: translateY(-2px);
     border-color: color-mix(in oklab, var(--accent) 35%, var(--border));
   }
@@ -173,6 +271,7 @@
   .tray {
     grid-template-areas:
       "header"
+      "resources"
       "controls"
       "list";
     grid-template-columns: 1fr;
@@ -195,9 +294,18 @@
     text-align: center;
   }
 
+  .controls .selectionCost {
+    max-width: none;
+    text-align: center;
+  }
+
   .controls .resolveButton {
     width: 100%;
     min-height: 3.25rem;
+  }
+
+  .resourceLedger {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -214,6 +322,10 @@
   .card {
     gap: 0.7rem;
     padding: 0.9rem;
+  }
+
+  .resourceGrid {
+    grid-template-columns: 1fr;
   }
 
   .cardHeader {

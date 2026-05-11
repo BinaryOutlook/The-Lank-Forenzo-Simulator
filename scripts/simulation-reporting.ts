@@ -6,6 +6,10 @@ import {
   resolveRound,
 } from "../src/simulation/resolution/resolveRound";
 import { getAvailableDecisions } from "../src/simulation/systems/decisionEngine";
+import {
+  canAffordResourceCosts,
+  getDecisionSelectionCost,
+} from "../src/simulation/systems/consumables.js";
 import type {
   ContentBundle,
   DecisionDefinition,
@@ -377,19 +381,38 @@ export function chooseArchetypeDecisions(
     return [];
   }
 
-  const chosen: DecisionDefinition[] = [scored[0].decision];
-  const primaryGroup = scored[0].decision.group;
+  const primary = scored.find((entry) =>
+    canAffordResourceCosts(
+      run.resources,
+      getDecisionSelectionCost([entry.decision]),
+    ),
+  );
 
-  for (const entry of scored.slice(1)) {
+  if (!primary) {
+    return [];
+  }
+
+  const chosen: DecisionDefinition[] = [primary.decision];
+  const primaryGroup = primary.decision.group;
+
+  for (const entry of scored) {
     if (chosen.length >= 2) {
       break;
+    }
+
+    if (entry.decision.id === primary.decision.id) {
+      continue;
     }
 
     const differentGroup = entry.decision.group !== primaryGroup;
     const isExit = entry.decision.group === "exit" || Boolean(entry.decision.ending);
     const worthwhile = entry.score >= 10 || (isExit && entry.score > 0);
+    const affordable = canAffordResourceCosts(
+      run.resources,
+      getDecisionSelectionCost([...chosen, entry.decision]),
+    );
 
-    if (differentGroup && worthwhile) {
+    if (differentGroup && worthwhile && affordable) {
       chosen.push(entry.decision);
       break;
     }
