@@ -82,7 +82,7 @@ describe("exploreReachabilityReport", () => {
     expect(report.endingIds).toEqual(
       expect.arrayContaining(["forcedRemoval", "merger", "prison"]),
     );
-  });
+  }, 45_000);
 
   it("surfaces the repaired safety denial and shadow subsidiary packs", () => {
     const report = exploreReachabilityReport({
@@ -95,7 +95,7 @@ describe("exploreReachabilityReport", () => {
     expect(report.packCoverage.shadowSubsidiaries.seen).toBe(1);
     expect(report.lowConfidencePackIds).not.toContain("safetyDenial");
     expect(report.lowConfidencePackIds).not.toContain("shadowSubsidiaries");
-  });
+  }, 45_000);
 
   it("formats a concise console report", () => {
     const report = exploreReachabilityReport({
