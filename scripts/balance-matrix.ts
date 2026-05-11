@@ -132,7 +132,7 @@ export function buildBalanceMatrixReport(
   const totalRuns = options.runs * archetypes.length;
 
   return {
-    reportName: "V0.5 archetype balance matrix",
+    reportName: "V0.6 archetype balance matrix",
     contentHash,
     seed: options.seed,
     runsPerArchetype: options.runs,

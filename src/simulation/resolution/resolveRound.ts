@@ -703,7 +703,7 @@ function getMissedExitWindows(run: RunState): RecapItem[] {
     });
   }
 
-  if (run.round >= 6 && run.metrics.offshoreReadiness >= 50 && run.metrics.personalWealth < 55) {
+  if (run.round >= 6 && run.metrics.offshoreReadiness >= 35 && run.metrics.personalWealth < 45) {
     missed.push({
       title: "Nassau window",
       body: "The offshore apparatus was nearly ready before personal liquidity caught up.",

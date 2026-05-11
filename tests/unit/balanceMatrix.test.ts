@@ -24,13 +24,33 @@ describe("buildBalanceMatrixReport", () => {
       "merger",
       "offshore",
       "stabilizer",
+      "safety-denial",
+      "shadow-subsidiary",
     ]);
-    expect(first.aggregate.runs).toBe(12);
+    expect(first.aggregate.runs).toBe(18);
     expect(first.aggregate.surfacedDecisionCoverage.total).toBeGreaterThan(0);
     expect(first.aggregate.selectedDecisionCoverage.seen).toBeGreaterThan(0);
     expect(first.aggregate.triggeredEventCoverage.total).toBeGreaterThan(0);
     expect(first.aggregate.repeatedTrayPressure.percentage).toBeGreaterThanOrEqual(0);
     expect(first.aggregate.repeatedTrayPressure.percentage).toBeLessThanOrEqual(1);
+  });
+
+  it("reaches multiple successful exits in the default balance matrix", () => {
+    const report = buildBalanceMatrixReport({
+      runs: 5,
+      maxRounds: 24,
+      seed: "v0.5-matrix",
+    });
+    const successfulEndings = ["bahamas", "extraction", "merger"].filter(
+      (endingId) => (report.aggregate.endingCounts[endingId] ?? 0) > 0,
+    );
+
+    expect(successfulEndings.length).toBeGreaterThanOrEqual(2);
+    expect(report.aggregate.endingCounts.extraction).toBeGreaterThan(0);
+    expect(
+      (report.aggregate.endingCounts.bahamas ?? 0) +
+        (report.aggregate.endingCounts.merger ?? 0),
+    ).toBeGreaterThan(0);
   });
 
   it("formats a concise console report", () => {
@@ -43,7 +63,7 @@ describe("buildBalanceMatrixReport", () => {
 
     const output = formatBalanceMatrixReport(report);
 
-    expect(output).toContain("V0.5 archetype balance matrix");
+    expect(output).toContain("V0.6 archetype balance matrix");
     expect(output).toContain("Content hash:");
     expect(output).toContain("Aggregate:");
     expect(output).toContain("Extraction bot");

@@ -35,7 +35,13 @@ export interface RepeatedTrayPressure {
   percentage: number;
 }
 
-export type ArchetypeId = "extraction" | "merger" | "offshore" | "stabilizer";
+export type ArchetypeId =
+  | "extraction"
+  | "merger"
+  | "offshore"
+  | "stabilizer"
+  | "safety-denial"
+  | "shadow-subsidiary";
 
 export interface ArchetypePolicy {
   id: ArchetypeId;
@@ -151,17 +157,22 @@ export const archetypePolicies: ArchetypePolicy[] = [
       exit: 32,
     },
     tagWeights: {
+      bahamas: 40,
+      escape: 24,
       offshore: 28,
       legal: 10,
       secrecy: 12,
       extraction: 10,
+      merger: -36,
+      shell: -32,
+      subsidiary: -24,
     },
     impactWeights: {
-      offshoreReadiness: 3.4,
-      legalHeat: -1.3,
+      offshoreReadiness: 5,
+      legalHeat: -1.6,
       publicAnger: -0.9,
-      personalWealth: 1.5,
-      marketConfidence: 0.4,
+      personalWealth: 2.2,
+      marketConfidence: 0.2,
     },
     pressureRelief: {
       legalHeat: -1.4,
@@ -209,6 +220,77 @@ export const archetypePolicies: ArchetypePolicy[] = [
       publicAnger: -1.0,
     },
     exitBias: -12,
+  },
+  {
+    id: "safety-denial",
+    label: "Safety-denial bot",
+    description:
+      "Monetizes maintenance shortcuts and papered-over inspections until legal and operational pressure answer back.",
+    groupWeights: {
+      operations: 34,
+      legal: 8,
+      finance: 6,
+      exit: -18,
+    },
+    tagWeights: {
+      safety: 30,
+      maintenance: 18,
+      contractors: 14,
+      paperwork: 12,
+      cuts: 10,
+      deferments: 12,
+    },
+    impactWeights: {
+      airlineCash: 1.5,
+      safetyIntegrity: -2.5,
+      workforceMorale: -0.8,
+      legalHeat: -0.25,
+      marketConfidence: 0.5,
+    },
+    pressureRelief: {
+      airlineCash: 1.1,
+      legalHeat: -0.4,
+      creditorPatience: 0.2,
+    },
+    exitBias: -18,
+  },
+  {
+    id: "shadow-subsidiary",
+    label: "Shadow-subsidiary bot",
+    description:
+      "Pushes labor, liabilities, and growth into shell entities to expose the low-reachability subsidiary lane.",
+    groupWeights: {
+      operations: 22,
+      labor: 22,
+      finance: 18,
+      market: 12,
+      exit: 8,
+    },
+    tagWeights: {
+      shell: 34,
+      subsidiary: 20,
+      labor: 12,
+      finance: 10,
+      integration: 10,
+      liability: 10,
+    },
+    impactWeights: {
+      airlineCash: 1.4,
+      marketConfidence: 1.1,
+      creditorPatience: 0.8,
+      workforceMorale: -1.2,
+      publicAnger: -0.5,
+      legalHeat: -0.35,
+      stockPrice: 0.8,
+    },
+    pressureRelief: {
+      airlineCash: 0.8,
+      marketConfidence: 0.6,
+      creditorPatience: 0.5,
+      legalHeat: -0.4,
+      publicAnger: -0.3,
+    },
+    exitBias: 8,
   },
 ];
 

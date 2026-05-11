@@ -228,7 +228,7 @@ export function exploreReachabilityReport(
   const packCoverage = buildPackCoverage(context.packIds, content);
 
   return {
-    reportName: "V0.5 reachability explorer",
+    reportName: "V0.6 reachability explorer",
     contentHash,
     seed: options.seed,
     width: options.width,
@@ -517,7 +517,39 @@ function bucketRound(round: number): string {
 }
 
 function bucketMetric(metric: MetricKey, value: number): string {
-  if (metric === "airlineCash" || metric === "personalWealth") {
+  if (metric === "personalWealth") {
+    if (value < 35) {
+      return "scarce";
+    }
+
+    if (value < 55) {
+      return "liquid";
+    }
+
+    if (value < 80) {
+      return "exit-ready";
+    }
+
+    return "flush";
+  }
+
+  if (metric === "offshoreReadiness") {
+    if (value < 30) {
+      return "low";
+    }
+
+    if (value < 50) {
+      return "staged";
+    }
+
+    if (value < 70) {
+      return "escape-ready";
+    }
+
+    return "extreme";
+  }
+
+  if (metric === "airlineCash") {
     if (value < 80) {
       return "scarce";
     }
