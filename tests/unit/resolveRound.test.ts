@@ -5,6 +5,7 @@ import {
   createInitialRunState,
   resolveRound,
 } from "../../src/simulation/resolution/resolveRound";
+import { createInitialDossierState } from "../../src/simulation/dossiers/dossierState";
 import { createDefaultNetworkState } from "../../src/simulation/operations/networkState";
 import { getAvailableDecisions } from "../../src/simulation/systems/decisionEngine";
 import { applyImpactSet } from "../../src/simulation/systems/metricEffects";
@@ -42,6 +43,8 @@ describe("resolveRound", () => {
       "labor_abuse",
       "regulatory_capture",
       "offshore_evasion",
+      "creditor_deception",
+      "board_self_dealing",
     ]);
   });
 
@@ -103,6 +106,63 @@ describe("resolveRound", () => {
         signal.body.includes("Deferred maintenance"),
       ),
     ).toBe(true);
+  });
+
+  it("applies a pre-ending legal consequence when a dossier crosses heavy severity", () => {
+    const seededDossiers = createInitialDossierState().map((thread) =>
+      thread.theme === "maintenance_fraud"
+        ? {
+            ...thread,
+            evidenceWeight: 46,
+            severity: 58,
+            severityBand: "medium" as const,
+            dormant: false,
+            witnesses: ["line mechanic"],
+            linkedDecisionIds: ["stretch_the_mel_clock"],
+            factionOwner: "regulators" as const,
+            nextStep: "formal investigative demand",
+          }
+        : thread,
+    );
+    const heavyRun = createInitialRunState();
+    heavyRun.dossiers = seededDossiers;
+    heavyRun.selectedDecisionIds = ["downgrade_the_inspection_memo"];
+
+    const controlRun = createInitialRunState();
+    controlRun.selectedDecisionIds = ["downgrade_the_inspection_memo"];
+
+    const heavyNext = resolveRound(heavyRun);
+    const controlNext = resolveRound(controlRun);
+
+    expect(heavyNext.metrics.legalHeat).toBeGreaterThanOrEqual(
+      controlNext.metrics.legalHeat + 2,
+    );
+    expect(heavyNext.flags).toContain("dossier:maintenance_fraud:heavy");
+    expect(
+      heavyNext.history.some(
+        (entry) =>
+          entry.source === "dossier" &&
+          entry.sourceKind === "dossier_threshold" &&
+          entry.dossierTheme === "maintenance_fraud",
+      ),
+    ).toBe(true);
+  });
+
+  it("feeds authored hazards into the active scheduler", () => {
+    const run = createInitialRunState();
+    run.round = 4;
+    run.metrics.legalHeat = 82;
+
+    const next = resolveRound(run);
+    const hazardEntry = next.history.find(
+      (entry) =>
+        entry.sourceKind === "hazard_event" &&
+        entry.scheduledEventId === "hazard_legal_heat_ig_letter",
+    );
+
+    expect(hazardEntry?.title).toBe("Inspector General Letter");
+    expect(hazardEntry?.cause).toMatch(/Legal heat/);
+    expect(next.scheduler?.cooldowns.hazard_legal_heat_ig_letter).toBe(9);
   });
 
   it("offers a curated decision tray for a fresh run", () => {
@@ -187,9 +247,7 @@ describe("resolveRound", () => {
       personalAssets: 8,
       publicRelationsCapital: 15,
     });
-    expect(
-      next.history.some((entry) => entry.body.includes("Reserve spend")),
-    ).toBe(true);
+    expect(next.history.some((entry) => entry.body.includes("Reserve spend"))).toBe(true);
   });
 
   it("blocks selected strategic actions when reserves are insufficient", () => {
@@ -205,11 +263,7 @@ describe("resolveRound", () => {
 
     expect(next.resources).toEqual(run.resources);
     expect(next.pendingEvents).toHaveLength(0);
-    expect(
-      next.history.some(
-        (entry) => entry.title === "Strategic Reserve Shortfall",
-      ),
-    ).toBe(true);
+    expect(next.history.some((entry) => entry.title === "Strategic Reserve Shortfall")).toBe(true);
   });
 
   it("supports authored exit endings", () => {
@@ -225,6 +279,45 @@ describe("resolveRound", () => {
 
     expect(next.status).toBe("ended");
     expect(next.endingId).toBe("extraction");
+  });
+
+  it("builds dossier-specific case theory recap entries for endings", () => {
+    const run = createInitialRunState();
+    run.round = 7;
+    run.metrics.marketConfidence = 72;
+    run.metrics.stockPrice = 32;
+    run.metrics.personalWealth = 48;
+    run.metrics.legalHeat = 48;
+    run.dossiers = createInitialDossierState().map((thread) =>
+      thread.theme === "insider_trading"
+        ? {
+            ...thread,
+            evidenceWeight: 42,
+            severity: 53,
+            severityBand: "medium" as const,
+            dormant: false,
+            witnesses: ["brokerage compliance analyst"],
+            linkedDecisionIds: ["stock_sale_window"],
+            linkedEventIds: ["broker_chat_subpoena"],
+            factionOwner: "press" as const,
+            nextStep: "subpoenaed trading chronology",
+          }
+        : thread,
+    );
+    run.selectedDecisionIds = ["cash_out_and_resign"];
+
+    const next = resolveRound(run);
+
+    expect(next.status).toBe("ended");
+    expect(next.recap?.dossiers[0]).toEqual(
+      expect.objectContaining({
+        title: "Insider Trading",
+        body: expect.stringContaining("market optimism and stock-sale timing"),
+      }),
+    );
+    expect(next.recap?.dossiers[0]?.body).toContain(
+      "brokerage compliance analyst",
+    );
   });
 
   it("uses the shared requirement evaluator for both decisions and events", () => {

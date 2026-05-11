@@ -1,7 +1,19 @@
 import type { FactionIntent } from "../factions/factionState";
 import type { DossierTheme, DossierThread } from "./dossierState";
+import {
+  getDossierFactionOwner,
+  getDossierNextStep,
+  getDossierSeverityBand,
+} from "./dossierState";
 
 export type EvidenceSourceType = "decision" | "event" | "faction" | "operation";
+
+export interface DossierEvidenceDefinition {
+  theme: DossierTheme;
+  weight: number;
+  witness?: string;
+  detail?: string;
+}
 
 export interface EvidenceFragment {
   id: string;
@@ -10,19 +22,21 @@ export interface EvidenceFragment {
   sourceId: string;
   weight: number;
   witness?: string;
+  detail?: string;
 }
 
 export interface EvidenceCollectionInput {
   selectedDecisionIds: string[];
   emittedEventIds: string[];
   factionIntents: FactionIntent[];
-  operationalCascadeIds?: string[];
+  operationCascades?: Array<{ id: string; severity: number }>;
+  decisionEvidenceById?: EvidenceSourceCatalog;
+  eventEvidenceById?: EvidenceSourceCatalog;
 }
 
-const DECISION_EVIDENCE: Record<
-  string,
-  Array<Omit<EvidenceFragment, "id" | "sourceType" | "sourceId">>
-> = {
+export type EvidenceSourceCatalog = Record<string, DossierEvidenceDefinition[]>;
+
+const DECISION_EVIDENCE: EvidenceSourceCatalog = {
   downgrade_the_inspection_memo: [
     { theme: "maintenance_fraud", weight: 14, witness: "line mechanic" },
   ],
@@ -49,10 +63,7 @@ const DECISION_EVIDENCE: Record<
   ],
 };
 
-const EVENT_EVIDENCE: Record<
-  string,
-  Array<Omit<EvidenceFragment, "id" | "sourceType" | "sourceId">>
-> = {
+const EVENT_EVIDENCE: EvidenceSourceCatalog = {
   inspection_memo_leak: [
     { theme: "maintenance_fraud", weight: 12, witness: "line mechanic" },
   ],
@@ -69,24 +80,45 @@ const EVENT_EVIDENCE: Record<
 
 const OPERATION_EVIDENCE: Record<
   string,
-  Array<Omit<EvidenceFragment, "id" | "sourceType" | "sourceId">>
+  (cascade: { id: string; severity: number }) => DossierEvidenceDefinition[]
 > = {
-  "maintenance-weather-cascade": [
+  "maintenance-weather-cascade": (cascade) => [
     {
       theme: "maintenance_fraud",
-      weight: 10,
-      witness: "station recovery manager",
+      weight: Math.max(10, Math.round(cascade.severity / 3)),
+      witness: "irregular operations desk",
+      detail: "Operational cascade tied deferred maintenance to a visible network failure.",
     },
   ],
-  "contractor-control-cascade": [
-    { theme: "maintenance_fraud", weight: 11, witness: "contractor auditor" },
-    { theme: "regulatory_capture", weight: 7, witness: "FAA liaison" },
+  "contractor-control-cascade": (cascade) => [
+    {
+      theme: "maintenance_fraud",
+      weight: Math.max(10, Math.round(cascade.severity / 4)),
+      witness: "contractor auditor",
+      detail: "Contractor dependence made outsourced maintenance a control failure.",
+    },
+    {
+      theme: "regulatory_capture",
+      weight: Math.max(7, Math.round(cascade.severity / 8)),
+      witness: "FAA liaison",
+      detail: "Vendor bottlenecks exposed regulator-facing maintenance gaps.",
+    },
   ],
-  "crew-availability-cascade": [
-    { theme: "labor_abuse", weight: 10, witness: "crew scheduler" },
+  "crew-availability-cascade": (cascade) => [
+    {
+      theme: "labor_abuse",
+      weight: Math.max(10, Math.round(cascade.severity / 4)),
+      witness: "crew scheduler",
+      detail: "Crew cuts and fatigue made recovery staffing visibly brittle.",
+    },
   ],
-  "route-stranding-cascade": [
-    { theme: "regulatory_capture", weight: 8, witness: "airport authority" },
+  "route-stranding-cascade": (cascade) => [
+    {
+      theme: "regulatory_capture",
+      weight: Math.max(8, Math.round(cascade.severity / 5)),
+      witness: "airport authority",
+      detail: "Route cuts concentrated public disruption into stranded-spoke evidence.",
+    },
   ],
 };
 
@@ -97,19 +129,31 @@ export function collectEvidenceFragments(
 
   for (const decisionId of input.selectedDecisionIds) {
     fragments.push(
-      ...buildFragments("decision", decisionId, DECISION_EVIDENCE[decisionId]),
+      ...buildFragments(
+        "decision",
+        decisionId,
+        input.decisionEvidenceById?.[decisionId] ?? DECISION_EVIDENCE[decisionId],
+      ),
     );
   }
 
   for (const eventId of input.emittedEventIds) {
     fragments.push(
-      ...buildFragments("event", eventId, EVENT_EVIDENCE[eventId]),
+      ...buildFragments(
+        "event",
+        eventId,
+        input.eventEvidenceById?.[eventId] ?? EVENT_EVIDENCE[eventId],
+      ),
     );
   }
 
-  for (const cascadeId of input.operationalCascadeIds ?? []) {
+  for (const cascade of input.operationCascades ?? []) {
     fragments.push(
-      ...buildFragments("operation", cascadeId, OPERATION_EVIDENCE[cascadeId]),
+      ...buildFragments(
+        "operation",
+        cascade.id,
+        OPERATION_EVIDENCE[cascade.id]?.(cascade),
+      ),
     );
   }
 
@@ -121,6 +165,7 @@ export function collectEvidenceFragments(
         sourceType: "faction",
         sourceId: intent.id,
         weight: Math.max(8, Math.round(intent.urgency / 5)),
+        witness: "agency staffer",
       });
     }
 
@@ -131,6 +176,29 @@ export function collectEvidenceFragments(
         sourceType: "faction",
         sourceId: intent.id,
         weight: Math.max(8, Math.round(intent.urgency / 6)),
+        witness: "press source",
+      });
+    }
+
+    if (intent.family === "organize") {
+      fragments.push({
+        id: `faction-${intent.id}-labor_abuse`,
+        theme: "labor_abuse",
+        sourceType: "faction",
+        sourceId: intent.id,
+        weight: Math.max(8, Math.round(intent.urgency / 6)),
+        witness: "union researcher",
+      });
+    }
+
+    if (intent.family === "pressure" && intent.factionId === "creditors") {
+      fragments.push({
+        id: `faction-${intent.id}-creditor_deception`,
+        theme: "creditor_deception",
+        sourceType: "faction",
+        sourceId: intent.id,
+        weight: Math.max(8, Math.round(intent.urgency / 6)),
+        witness: "creditor committee analyst",
       });
     }
   }
@@ -144,7 +212,8 @@ export function applyEvidenceFragments(
 ): DossierThread[] {
   return dossiers.map((thread) => {
     const relevant = fragments.filter(
-      (fragment) => fragment.theme === thread.theme,
+      (fragment) =>
+        fragment.theme === thread.theme && !hasSeenEvidenceSource(thread, fragment),
     );
     if (relevant.length === 0) {
       return thread;
@@ -153,12 +222,16 @@ export function applyEvidenceFragments(
     const evidenceWeight =
       thread.evidenceWeight +
       relevant.reduce((sum, fragment) => sum + fragment.weight, 0);
+    const severityBand = getDossierSeverityBand(evidenceWeight);
 
     return {
       ...thread,
       evidenceWeight,
       severity: Math.min(100, Math.round(evidenceWeight * 1.25)),
-      dormant: evidenceWeight < 8,
+      severityBand,
+      dormant: severityBand === "dormant",
+      factionOwner: getDossierFactionOwner(thread.theme),
+      nextStep: getDossierNextStep(thread.theme, severityBand),
       witnesses: mergeUnique(
         thread.witnesses,
         relevant
@@ -181,10 +254,21 @@ export function applyEvidenceFragments(
   });
 }
 
+function hasSeenEvidenceSource(
+  thread: DossierThread,
+  fragment: EvidenceFragment,
+): boolean {
+  if (fragment.sourceType === "decision") {
+    return thread.linkedDecisionIds.includes(fragment.sourceId);
+  }
+
+  return thread.linkedEventIds.includes(fragment.sourceId);
+}
+
 function buildFragments(
   sourceType: EvidenceSourceType,
   sourceId: string,
-  entries: Array<Omit<EvidenceFragment, "id" | "sourceType" | "sourceId">> = [],
+  entries: DossierEvidenceDefinition[] = [],
 ): EvidenceFragment[] {
   return entries.map((entry) => ({
     ...entry,

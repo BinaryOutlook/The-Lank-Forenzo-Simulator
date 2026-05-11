@@ -1,15 +1,17 @@
 import { pathToFileURL } from "node:url";
-import {
-  hashNumber,
-  hashString,
-  shuffleWithSeed,
-} from "../src/lib/random/seeded";
+import { hashNumber, hashString, shuffleWithSeed } from "../src/lib/random/seeded";
 import { loadContent } from "../src/simulation/content";
+import { dossierThemes } from "../src/simulation/content/metadata";
 import {
   createInitialRunState,
   resolveRound,
 } from "../src/simulation/resolution/resolveRound";
-import { getAvailableDecisions } from "../src/simulation/systems/decisionEngine";
+import {
+  TRAY_PICK_REASONS,
+  composeDecisionTray,
+  createEmptyTrayPickReasonCounts,
+  type TrayPickReasonCounts,
+} from "../src/simulation/systems/decisionEngine";
 import {
   canAffordResourceCosts,
   getDecisionSelectionCost,
@@ -23,6 +25,7 @@ import type {
   RunState,
 } from "../src/simulation/state/types";
 import {
+  addTrayPickReasonCounts,
   buildCoverageStat,
   buildRepeatedTrayPressure,
   formatPercentage,
@@ -33,7 +36,7 @@ import {
   type RepeatedTrayPressure,
 } from "./simulation-reporting";
 
-const DEFAULT_WIDTH = 32;
+const DEFAULT_WIDTH = 48;
 const DEFAULT_DEPTH = 24;
 const DEFAULT_SEED = "v0.5-default";
 const MAX_BRANCHING_TRAY = 7;
@@ -58,6 +61,7 @@ export interface NoveltyContext {
   surfacedDecisionIds: Set<string>;
   selectedDecisionIds: Set<string>;
   triggeredEventIds: Set<string>;
+  triggeredHazardRuleIds: Set<string>;
   endingIds: Set<string>;
   packIds: Set<string>;
   flagIds: Set<string>;
@@ -91,6 +95,7 @@ export interface ReachabilityReport {
   packCoverage: Record<DecisionPackId, CoverageStat>;
   flagCoverage: CoverageStat;
   repeatedTrayPressure: RepeatedTrayPressure;
+  trayPickReasonCounts: TrayPickReasonCounts;
   lowConfidenceDecisionIds: string[];
   lowConfidenceEventIds: string[];
   lowConfidencePackIds: DecisionPackId[];
@@ -111,24 +116,25 @@ export function exploreReachabilityReport(
   const content = options.content ?? loadContent();
   const contentHash = getContentHash(content);
   const context = createNoveltyContext();
-  const decisionById = new Map(
-    content.decisions.map((decision) => [decision.id, decision] as const),
-  );
   const eventKindById = new Map(
     content.events.map((event) => [event.id, event.kind] as const),
   );
-  const initialRun = createInitialRunState();
+  const decisionById = new Map(
+    content.decisions.map((decision) => [decision.id, decision] as const),
+  );
+  const hazardRuleIds = new Set(content.hazards.map((hazard) => hazard.id));
   let frontier: SearchNode[] = [
     {
-      run: initialRun,
+      run: createInitialRunState(),
       score: 0,
       path: [],
-      stateKey: abstractRunStateKey(initialRun),
+      stateKey: abstractRunStateKey(createInitialRunState()),
     },
   ];
   let exploredStates = 0;
   let repeatedTrayOverlap = 0;
   let repeatedTraySlots = 0;
+  const trayPickReasonCounts = createEmptyTrayPickReasonCounts();
 
   context.knownStateKeys.add(frontier[0]?.stateKey ?? "");
 
@@ -141,9 +147,15 @@ export function exploreReachabilityReport(
         continue;
       }
 
-      const tray = getAvailableDecisions(content.decisions, node.run);
+      const trayComposition = composeDecisionTray(content.decisions, node.run);
+      const tray = trayComposition.decisions;
       const mainTray = tray.filter((decision) => decision.group !== "exit");
       const previousTrayIds = new Set(node.run.lastOfferedDecisionIds);
+
+      addTrayPickReasonCounts(
+        trayPickReasonCounts,
+        trayComposition.diagnostics.reasonCounts,
+      );
 
       for (const decision of tray) {
         context.surfacedDecisionIds.add(decision.id);
@@ -170,11 +182,13 @@ export function exploreReachabilityReport(
         });
         const selectedDecisions = selectedDecisionIds
           .map((decisionId) => decisionById.get(decisionId))
-          .filter((decision): decision is DecisionDefinition =>
-            Boolean(decision),
-          );
+          .filter((decision): decision is DecisionDefinition => Boolean(decision));
         const stateKey = abstractRunStateKey(nextRun);
         const triggeredEventIds = getTriggeredEventIds(nextRun);
+        const triggeredHazardRuleIds = getTriggeredHazardRuleIds(
+          nextRun,
+          hazardRuleIds,
+        );
         const packIds = selectedDecisions.map((decision) => decision.pack);
         const novelty = scoreNovelty(context, {
           stateKey,
@@ -194,6 +208,10 @@ export function exploreReachabilityReport(
           context.triggeredEventIds.add(eventId);
         }
 
+        for (const hazardRuleId of triggeredHazardRuleIds) {
+          context.triggeredHazardRuleIds.add(hazardRuleId);
+        }
+
         for (const flag of nextRun.flags) {
           context.flagIds.add(flag);
         }
@@ -205,7 +223,7 @@ export function exploreReachabilityReport(
         context.knownStateKeys.add(stateKey);
         candidates.push({
           run: nextRun,
-          score: node.score + novelty,
+          score: node.score + novelty + scoreExitReadiness(nextRun),
           path: [...node.path, selectedDecisionIds.join("+") || "pass"],
           stateKey,
         });
@@ -260,11 +278,11 @@ export function exploreReachabilityReport(
       delayedEvents.size,
       content.events.filter((event) => event.kind === "delayed").length,
     ),
-    hazardEventCoverage: buildCoverageStat(0, 0),
-    endingCoverage: buildCoverageStat(
-      context.endingIds.size,
-      content.endings.length,
+    hazardEventCoverage: buildCoverageStat(
+      context.triggeredHazardRuleIds.size,
+      content.hazards.length,
     ),
+    endingCoverage: buildCoverageStat(context.endingIds.size, content.endings.length),
     packCoverage,
     flagCoverage: buildCoverageStat(
       context.flagIds.size,
@@ -274,6 +292,7 @@ export function exploreReachabilityReport(
       repeatedTrayOverlap,
       repeatedTraySlots,
     ),
+    trayPickReasonCounts,
     lowConfidenceDecisionIds: content.decisions
       .filter((decision) => !context.surfacedDecisionIds.has(decision.id))
       .map((decision) => decision.id)
@@ -327,10 +346,8 @@ export function scoreNovelty(
   candidate: CandidateNoveltyInput,
 ): number {
   let score = context.knownStateKeys.has(candidate.stateKey) ? 0 : 18;
-  score +=
-    countNew(candidate.surfacedDecisionIds, context.surfacedDecisionIds) * 2;
-  score +=
-    countNew(candidate.selectedDecisionIds, context.selectedDecisionIds) * 7;
+  score += countNew(candidate.surfacedDecisionIds, context.surfacedDecisionIds) * 2;
+  score += countNew(candidate.selectedDecisionIds, context.selectedDecisionIds) * 7;
   score += countNew(candidate.triggeredEventIds, context.triggeredEventIds) * 9;
   score += countNew(candidate.packIds, context.packIds) * 5;
   score += countNew(candidate.flagIds, context.flagIds) * 3;
@@ -357,6 +374,7 @@ export function formatReachabilityReport(report: ReachabilityReport): string {
     `Endings reached: ${formatCoverage(report.endingCoverage)} (${formatIdList(report.endingIds)})`,
     `Flags reached: ${formatCoverage(report.flagCoverage)}`,
     `Repeated-tray pressure: ${report.repeatedTrayPressure.overlapSlots}/${report.repeatedTrayPressure.totalSlots} (${formatPercentage(report.repeatedTrayPressure.percentage)})`,
+    formatTrayPickReasonCounts(report.trayPickReasonCounts),
     `Low-confidence decision ids: ${formatIdList(report.lowConfidenceDecisionIds.slice(0, 24))}`,
     `Low-confidence event ids: ${formatIdList(report.lowConfidenceEventIds.slice(0, 24))}`,
     `Low-confidence packs: ${formatIdList(report.lowConfidencePackIds)}`,
@@ -374,6 +392,7 @@ function createNoveltyContext(): NoveltyContext {
     surfacedDecisionIds: new Set(),
     selectedDecisionIds: new Set(),
     triggeredEventIds: new Set(),
+    triggeredHazardRuleIds: new Set(),
     endingIds: new Set(),
     packIds: new Set(),
     flagIds: new Set(),
@@ -391,9 +410,7 @@ function buildDecisionBranches(
     hashNumber(hashString(seed), run.round, depthIndex, tray.length),
   )
     .slice(0, MAX_BRANCHING_TRAY)
-    .sort(
-      (left, right) => scoreBranchDecision(right) - scoreBranchDecision(left),
-    );
+    .sort((left, right) => scoreBranchDecision(right) - scoreBranchDecision(left));
   const branches: string[][] = [[]];
 
   for (const decision of ranked) {
@@ -442,10 +459,51 @@ function scoreBranchDecision(decision: DecisionDefinition): number {
   );
 }
 
+function scoreExitReadiness(run: RunState): number {
+  if (run.status === "ended") {
+    return 0;
+  }
+
+  const { metrics } = run;
+  const extractionScore =
+    scoreMetricFloor(metrics.marketConfidence, 65, 7) +
+    scoreMetricFloor(metrics.stockPrice, 28, 7) +
+    scoreMetricFloor(metrics.personalWealth, 35, 8) +
+    scoreMetricCeiling(metrics.legalHeat, 74, 6) +
+    (run.round >= 7 ? 4 : 0);
+  const bahamasScore =
+    scoreMetricFloor(metrics.offshoreReadiness, 35, 11) +
+    scoreMetricFloor(metrics.personalWealth, 45, 10) +
+    (run.round >= 6 ? 4 : 0);
+
+  return Math.max(extractionScore, bahamasScore);
+}
+
+function scoreMetricFloor(value: number, target: number, maxScore: number): number {
+  return Math.max(0, Math.min(maxScore, (value / target) * maxScore));
+}
+
+function scoreMetricCeiling(value: number, ceiling: number, maxScore: number): number {
+  if (value > ceiling) {
+    return 0;
+  }
+
+  return Math.max(0, Math.min(maxScore, ((ceiling - value) / ceiling) * maxScore));
+}
+
 function getTriggeredEventIds(run: RunState): string[] {
   return Object.entries(run.eventCounts)
     .filter(([, count]) => count > 0)
     .map(([eventId]) => eventId);
+}
+
+function getTriggeredHazardRuleIds(
+  run: RunState,
+  hazardRuleIds: Set<string>,
+): string[] {
+  return Object.keys(run.scheduler?.cooldowns ?? {}).filter((hazardId) =>
+    hazardRuleIds.has(hazardId),
+  );
 }
 
 function filterEventsByKind(
@@ -462,15 +520,10 @@ function buildPackCoverage(
   seenPacks: Set<string>,
   content: ContentBundle,
 ): Record<DecisionPackId, CoverageStat> {
-  const packs = [
-    ...new Set(content.decisions.map((decision) => decision.pack)),
-  ];
+  const packs = [...new Set(content.decisions.map((decision) => decision.pack))];
 
   return Object.fromEntries(
-    packs.map((pack) => [
-      pack,
-      buildCoverageStat(seenPacks.has(pack) ? 1 : 0, 1),
-    ]),
+    packs.map((pack) => [pack, buildCoverageStat(seenPacks.has(pack) ? 1 : 0, 1)]),
   ) as Record<DecisionPackId, CoverageStat>;
 }
 
@@ -502,6 +555,22 @@ function getKnownFlagIds(content: ContentBundle): Set<string> {
 
     for (const flag of event.requirements?.flagsNone ?? []) {
       flags.add(flag);
+    }
+  }
+
+  for (const hazard of content.hazards) {
+    for (const flag of hazard.requirements.flagsAll ?? []) {
+      flags.add(flag);
+    }
+
+    for (const flag of hazard.requirements.flagsNone ?? []) {
+      flags.add(flag);
+    }
+  }
+
+  for (const theme of dossierThemes) {
+    for (const band of ["light", "medium", "heavy", "terminal"] as const) {
+      flags.add(`dossier:${theme}:${band}`);
     }
   }
 
@@ -581,11 +650,7 @@ function bucketMetric(metric: MetricKey, value: number): string {
     return "flush";
   }
 
-  if (
-    metric === "debt" ||
-    metric === "assetValue" ||
-    metric === "workforceSize"
-  ) {
+  if (metric === "debt" || metric === "assetValue" || metric === "workforceSize") {
     if (value < 300) {
       return "low";
     }
@@ -629,6 +694,15 @@ function getConfidence(
 
 function formatCoverage(stat: CoverageStat): string {
   return `${stat.seen}/${stat.total} (${formatPercentage(stat.percentage)})`;
+}
+
+function formatTrayPickReasonCounts(counts: TrayPickReasonCounts): string {
+  const entries = TRAY_PICK_REASONS.filter((reason) => counts[reason] > 0).map(
+    (reason) => `${reason} ${counts[reason]}`,
+  );
+  const formatted = entries.length === 0 ? "none" : entries.join(", ");
+
+  return `Tray pick reasons: ${formatted}`;
 }
 
 function formatIdList(ids: string[]): string {

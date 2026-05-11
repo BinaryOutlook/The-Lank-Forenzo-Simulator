@@ -5,6 +5,21 @@ import {
 } from "../../src/simulation/operations/networkState";
 import { resolveNetworkQuarter } from "../../src/simulation/operations/networkResolution";
 import { createInitialRunState } from "../../src/simulation/resolution/resolveRound";
+import type { DecisionDefinition } from "../../src/simulation/state/types";
+
+const decisionWithOperationEffects = (
+  id: string,
+  operationEffects: DecisionDefinition["operationEffects"],
+): DecisionDefinition => ({
+  id,
+  pack: "core",
+  title: id,
+  summary: "Fixture decision",
+  group: "operations",
+  tags: ["fixture"],
+  impacts: {},
+  operationEffects,
+});
 
 describe("network resolution primitives", () => {
   it("creates a compact default network with stable authored topology", () => {
@@ -21,10 +36,18 @@ describe("network resolution primitives", () => {
   it("converts maintenance deferral and crew stress into macro impacts", () => {
     const run = createInitialRunState();
     const stressed = applyNetworkDecisionEffects(createDefaultNetworkState(), {
-      selectedDecisionIds: [
-        "downgrade_the_inspection_memo",
-        "vendor_swap_the_heavy_checks",
-        "replace_the_strike_map",
+      selectedDecisions: [
+        decisionWithOperationEffects("downgrade_the_inspection_memo", {
+          maintenanceBacklog: 16,
+          contractorDependence: 6,
+        }),
+        decisionWithOperationEffects("vendor_swap_the_heavy_checks", {
+          maintenanceBacklog: 16,
+          contractorDependence: 14,
+        }),
+        decisionWithOperationEffects("replace_the_strike_map", {
+          crewFatigue: 12,
+        }),
       ],
     });
 
@@ -46,9 +69,15 @@ describe("network resolution primitives", () => {
   it("traces a weather cascade when prior deferrals hit a fragile hub", () => {
     const run = createInitialRunState();
     const network = applyNetworkDecisionEffects(createDefaultNetworkState(), {
-      selectedDecisionIds: [
-        "downgrade_the_inspection_memo",
-        "stretch_the_mel_clock",
+      selectedDecisions: [
+        decisionWithOperationEffects("downgrade_the_inspection_memo", {
+          maintenanceBacklog: 16,
+          contractorDependence: 6,
+        }),
+        decisionWithOperationEffects("stretch_the_mel_clock", {
+          maintenanceBacklog: 16,
+          contractorDependence: 6,
+        }),
       ],
     });
     network.weatherFronts = [
@@ -82,13 +111,25 @@ describe("network resolution primitives", () => {
     );
   });
 
-  it("traces a contractor-control cascade from outsourced maintenance exposure", () => {
+  it("traces a contractor-control cascade from authored outsourced-maintenance exposure", () => {
     const run = createInitialRunState();
     const network = applyNetworkDecisionEffects(createDefaultNetworkState(), {
-      selectedDecisionIds: [
-        "outsourcing_blitz",
-        "vendor_swap_the_heavy_checks",
-        "outsource_the_overhaul_night_shift",
+      selectedDecisions: [
+        decisionWithOperationEffects("metadata_contractor_shift", {
+          contractorDependence: 16,
+          crewFatigue: 6,
+          serviceDisruption: 5,
+        }),
+        decisionWithOperationEffects("metadata_vendor_swap", {
+          maintenanceBacklog: 16,
+          contractorDependence: 14,
+        }),
+        decisionWithOperationEffects("metadata_overhaul_outsource", {
+          maintenanceBacklog: 12,
+          contractorDependence: 18,
+          crewFatigue: 5,
+          serviceDisruption: 4,
+        }),
       ],
     });
 
@@ -114,14 +155,18 @@ describe("network resolution primitives", () => {
     ).toBe(true);
   });
 
-  it("traces a crew-availability cascade when cuts leave recovery crews brittle", () => {
+  it("traces a crew-availability cascade when metadata leaves recovery crews brittle", () => {
     const run = createInitialRunState();
     const network = applyNetworkDecisionEffects(createDefaultNetworkState(), {
-      selectedDecisionIds: [
-        "headcount_bloodletting",
-        "replace_the_strike_map",
-        "weaponize_the_scope_clause",
-        "patch_the_crew_app_live",
+      selectedDecisions: [
+        decisionWithOperationEffects("metadata_crew_cut", {
+          crewFatigue: 32,
+          serviceDisruption: 18,
+          routeFragility: {
+            "ewr-ord": 12,
+            "ord-lax": 10,
+          },
+        }),
       ],
     });
 
@@ -137,21 +182,29 @@ describe("network resolution primitives", () => {
     expect(result.cascades).toContainEqual(
       expect.objectContaining({
         id: "crew-availability-cascade",
-        cause: expect.stringContaining("crew"),
+        cause: expect.stringContaining("Crew"),
       }),
     );
     expect(result.impacts.publicAnger).toBeGreaterThan(0);
     expect(result.impacts.marketConfidence).toBeLessThan(0);
   });
 
-  it("traces a route-stranding cascade when network cuts concentrate failures", () => {
+  it("traces a route-stranding cascade when metadata concentrates route failures", () => {
     const run = createInitialRunState();
     const network = applyNetworkDecisionEffects(createDefaultNetworkState(), {
-      selectedDecisionIds: [
-        "close_the_hub",
-        "route_purge",
-        "cancel_the_spoke_bank",
-        "carve_out_the_prize_slots",
+      selectedDecisions: [
+        decisionWithOperationEffects("metadata_route_retreat", {
+          serviceDisruption: 22,
+          hubFragility: {
+            cle: 12,
+            ewr: 8,
+          },
+          routeFragility: {
+            "cle-ewr": 25,
+            "iah-mco": 25,
+            "ewr-den": 25,
+          },
+        }),
       ],
     });
 
@@ -167,20 +220,25 @@ describe("network resolution primitives", () => {
     expect(result.cascades).toContainEqual(
       expect.objectContaining({
         id: "route-stranding-cascade",
-        cause: expect.stringContaining("Route purges"),
+        cause: expect.stringContaining("Route"),
       }),
     );
     expect(result.impacts.publicAnger).toBeGreaterThan(0);
     expect(result.impacts.marketConfidence).toBeLessThan(0);
   });
 
-  it("lets stabilizing choices reduce cascade pressure before weather lands", () => {
+  it("lets stabilizing metadata reduce cascade pressure before weather lands", () => {
     const run = createInitialRunState();
     const deferred = applyNetworkDecisionEffects(createDefaultNetworkState(), {
-      selectedDecisionIds: [
-        "downgrade_the_inspection_memo",
-        "vendor_swap_the_heavy_checks",
-        "stretch_the_mel_clock",
+      selectedDecisions: [
+        decisionWithOperationEffects("metadata_deferral_one", {
+          maintenanceBacklog: 16,
+          contractorDependence: 6,
+        }),
+        decisionWithOperationEffects("metadata_deferral_two", {
+          maintenanceBacklog: 16,
+          contractorDependence: 6,
+        }),
       ],
     });
     deferred.weatherFronts = [
@@ -193,9 +251,12 @@ describe("network resolution primitives", () => {
     ];
 
     const stabilized = applyNetworkDecisionEffects(deferred, {
-      selectedDecisionIds: [
-        "safety_spending_surge",
-        "retention_for_loyal_captains",
+      selectedDecisions: [
+        decisionWithOperationEffects("metadata_safety_repair", {
+          maintenanceBacklog: -24,
+          crewFatigue: -5,
+          serviceDisruption: -6,
+        }),
       ],
     });
 
@@ -230,5 +291,45 @@ describe("network resolution primitives", () => {
     expect(stabilizedResult.network.serviceDisruption).toBeLessThan(
       deferredResult.network.serviceDisruption,
     );
+  });
+
+  it("applies authored maintenance backlog effects without decision-id fallbacks", () => {
+    const network = applyNetworkDecisionEffects(createDefaultNetworkState(), {
+      selectedDecisions: [
+        decisionWithOperationEffects("metadata_only_deferral", {
+          maintenanceBacklog: 11,
+          contractorDependence: 4,
+        }),
+      ],
+    });
+
+    expect(network.maintenanceBacklog).toBe(29);
+    expect(network.contractorDependence).toBe(26);
+    expect(network.hubs[0]?.fragility).toBeGreaterThan(
+      createDefaultNetworkState().hubs[0]?.fragility ?? 0,
+    );
+  });
+
+  it("does not apply legacy operational effects when metadata is absent", () => {
+    const network = applyNetworkDecisionEffects(createDefaultNetworkState(), {
+      selectedDecisions: [
+        decisionWithOperationEffects("downgrade_the_inspection_memo", undefined),
+      ],
+    });
+
+    expect(network.maintenanceBacklog).toBe(18);
+    expect(network.contractorDependence).toBe(22);
+  });
+
+  it("applies authored crew fatigue effects from labor metadata", () => {
+    const network = applyNetworkDecisionEffects(createDefaultNetworkState(), {
+      selectedDecisions: [
+        decisionWithOperationEffects("metadata_only_labor_cut", {
+          crewFatigue: 9,
+        }),
+      ],
+    });
+
+    expect(network.crewPools.map((pool) => pool.fatigue)).toEqual([37, 45, 51]);
   });
 });
