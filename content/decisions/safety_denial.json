@@ -10,6 +10,13 @@
       "safetyIntegrity": -8,
       "legalHeat": 6
     },
+    "requirements": {
+      "metricMin": {
+        "safetyIntegrity": 60
+      },
+      "flagsNone": ["safetyDenialPattern"]
+    },
+    "setsFlags": ["safetyDenialPattern"],
     "delayedConsequences": [
       { "eventIds": ["faa_ramp_audit", "maintenance_paper_trail", "inspection_memo_leak"], "delay": 2 }
     ]
@@ -25,6 +32,9 @@
       "safetyIntegrity": -10,
       "workforceMorale": -5,
       "legalHeat": 6
+    },
+    "requirements": {
+      "flagsAll": ["safetyDenialPattern"]
     },
     "delayedConsequences": [
       { "eventIds": ["vendor_safety_dispute", "contractor_walkout", "maintenance_near_miss"], "delay": 2 }
@@ -42,6 +52,13 @@
       "safetyIntegrity": -7,
       "legalHeat": 4
     },
+    "requirements": {
+      "metricMin": {
+        "safetyIntegrity": 60
+      },
+      "flagsNone": ["safetyDenialPattern"]
+    },
+    "setsFlags": ["safetyDenialPattern"],
     "delayedConsequences": [
       { "eventIds": ["inspection_memo_leak", "parts_cannibalization", "maintenance_near_miss"], "delay": 2 }
     ]
@@ -57,6 +74,9 @@
       "safetyIntegrity": -6,
       "workforceMorale": -4,
       "publicAnger": 2
+    },
+    "requirements": {
+      "flagsAll": ["safetyDenialPattern"]
     },
     "delayedConsequences": [
       { "eventIds": ["maintenance_near_miss", "inspection_memo_leak", "vendor_safety_dispute"], "delay": 2 }
@@ -74,6 +94,9 @@
       "legalHeat": 7,
       "marketConfidence": 1
     },
+    "requirements": {
+      "flagsAll": ["safetyDenialPattern"]
+    },
     "delayedConsequences": [
       { "eventIds": ["faa_ramp_audit", "inspection_memo_leak", "maintenance_near_miss"], "delay": 2 }
     ]
@@ -89,6 +112,9 @@
       "safetyIntegrity": -11,
       "workforceMorale": -6,
       "legalHeat": 5
+    },
+    "requirements": {
+      "flagsAll": ["safetyDenialPattern"]
     },
     "delayedConsequences": [
       { "eventIds": ["vendor_safety_dispute", "inspection_memo_leak", "contractor_walkout"], "delay": 2 }

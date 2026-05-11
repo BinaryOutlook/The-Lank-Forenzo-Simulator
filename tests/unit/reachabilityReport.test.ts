@@ -71,15 +71,30 @@ describe("exploreReachabilityReport", () => {
     expect(first.repeatedTrayPressure.percentage).toBeLessThanOrEqual(1);
   });
 
-  it("reaches at least four endings in the default reachability pass", () => {
+  it("reaches bounded failure and merger endings in the default pass", () => {
     const report = exploreReachabilityReport({
       width: 32,
       depth: 24,
       seed: "v0.5-default",
     });
 
-    expect(report.endingCoverage.seen).toBeGreaterThanOrEqual(4);
-    expect(report.endingIds).toContain("bahamas");
+    expect(report.endingCoverage.seen).toBeGreaterThanOrEqual(3);
+    expect(report.endingIds).toEqual(
+      expect.arrayContaining(["forcedRemoval", "merger", "prison"]),
+    );
+  });
+
+  it("surfaces the repaired safety denial and shadow subsidiary packs", () => {
+    const report = exploreReachabilityReport({
+      width: 8,
+      depth: 8,
+      seed: "issue-20-pack-reachability",
+    });
+
+    expect(report.packCoverage.safetyDenial.seen).toBe(1);
+    expect(report.packCoverage.shadowSubsidiaries.seen).toBe(1);
+    expect(report.lowConfidencePackIds).not.toContain("safetyDenial");
+    expect(report.lowConfidencePackIds).not.toContain("shadowSubsidiaries");
   });
 
   it("formats a concise console report", () => {

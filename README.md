@@ -44,7 +44,7 @@ Successful end states:
 
 - `Merger`: start `Merger Backchannel` from round 4 onward, survive long enough for the delayed merger interest to become a real offer, then take `Accept the Merger`.
 - `Extraction`: from round 7 onward, hit at least `65` market confidence, `28` stock price, and `35` personal wealth while keeping legal heat at `74` or lower, then choose `Cash Out and Resign`.
-- `Bahamas`: from round 6 onward, reach at least `60` offshore readiness and `55` personal wealth, then choose `Run for Nassau`.
+- `Bahamas`: from round 6 onward, reach at least `35` offshore readiness and `45` personal wealth, then choose `Run for Nassau`.
 
 Automatic losing end states:
 
@@ -104,7 +104,7 @@ npm run reachability:report
 
 `npm run simulate:runs` and `npm run balance:report` run a deterministic seeded campaign report without opening the browser. The report summarizes ending distribution, average run length, surfaced decision coverage, triggered event coverage, and repeated-tray pressure using the documented greedy pressure-relief bot.
 
-`npm run content:compile` prints the compiled manifest summary and content hash. `npm run balance:matrix` runs the v0.5 archetype matrix across extraction, merger, offshore, and stabilizer bots. `npm run reachability:report` runs the bounded reachability explorer with state abstraction and low-confidence content reporting.
+`npm run content:compile` prints the compiled manifest summary and content hash. `npm run balance:matrix` runs the archetype matrix across extraction, merger, offshore, stabilizer, safety-denial, shadow-subsidiary, creditor-trench, and regulatory-theatre bots; each archetype section includes surfaced and selected decision IDs for lane diagnostics. `npm run reachability:report` runs the bounded reachability explorer with state abstraction and low-confidence content reporting.
 
 ## Responsive Browser Play
 
@@ -186,6 +186,8 @@ PRDs/
     v0.4-demo.html
   v0.5/
     v0.5.md
+  v0.6/
+    v0.6.md
 tests/
   unit/
   e2e/
@@ -202,4 +204,4 @@ tests/
 - V0.5 faction hooks: [docs/reference/faction-system.md](docs/reference/faction-system.md)
 - V0.5 operational hooks: [docs/reference/operational-model.md](docs/reference/operational-model.md)
 - V0.5 dossier hooks: [docs/reference/dossier-system.md](docs/reference/dossier-system.md)
-- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md), [PRDs/v0.5/v0.5.md](PRDs/v0.5/v0.5.md)
+- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md), [PRDs/v0.5/v0.5.md](PRDs/v0.5/v0.5.md), [PRDs/v0.6/v0.6.md](PRDs/v0.6/v0.6.md)

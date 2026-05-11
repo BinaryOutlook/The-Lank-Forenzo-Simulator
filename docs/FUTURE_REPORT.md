@@ -68,28 +68,33 @@ This is enough content for meaningful replay variety. The problem is not raw vol
 `npm run balance:matrix` currently reports:
 
 - Ending distribution:
-  - `active`: `605/800` runs, or `75.6%`
-  - `extraction`: `195/800` runs, or `24.4%`
-  - `bahamas`: `0%`
-  - `merger`: `0%`
-  - `forcedRemoval`: `0%`
-  - `prison`: `0%`
-- Surfaced decisions: `39/113`, or `34.5%`
-- Selected decisions: `27/113`, or `23.9%`
-- Triggered events: `73/165`, or `44.2%`
-- Delayed events: `28/91`, or `30.8%`
-- Low-reachability packs: `safetyDenial`, `shadowSubsidiaries`
+  - `active`: `0/1600` runs, or `0.0%`
+  - `bahamas`: `200/1600` runs, or `12.5%`
+  - `extraction`: `200/1600` runs, or `12.5%`
+  - `forcedRemoval`: `200/1600` runs, or `12.5%`
+  - `merger`: `200/1600` runs, or `12.5%`
+  - `prison`: `800/1600` runs, or `50.0%`
+- Surfaced decisions: `61/113`, or `54.0%`
+- Selected decisions: `43/113`, or `38.1%`
+- Triggered events: `75/165`, or `45.5%`
+- Delayed events: `34/91`, or `37.4%`
+- Low-reachability packs: `marketTheater`
 
 `npm run reachability:report` currently reports:
 
-- Surfaced decisions: `52/113`, or `46.0%`
-- Selected decisions: `52/113`, or `46.0%`
-- Triggered events: `88/165`, or `53.3%`
-- Delayed events: `27/91`, or `29.7%`
-- Endings reached: `3/5`, or `60.0%`
-- Low-confidence packs: `safetyDenial`, `shadowSubsidiaries`
+- Surfaced decisions: `64/113`, or `56.6%`
+- Selected decisions: `64/113`, or `56.6%`
+- Triggered events: `96/165`, or `58.2%`
+- Delayed events: `31/91`, or `34.1%`
+- Endings reached: `3/5`, or `60.0%` (`forcedRemoval`, `merger`, `prison`)
+- Low-confidence packs: none
 
-This is a healthier baseline than the earlier extraction-dominated state, but it still shows the central work ahead: several strategic paths are not yet robust under scripted play, and too much authored content remains low-confidence.
+This is a healthier baseline than the earlier extraction-dominated state. The
+default matrix now verifies all five endings, and the previously
+low-reachability `safetyDenial` and `shadowSubsidiaries` packs now surface in
+the primary diagnostics. The central work ahead remains making the
+`marketTheater` lane more robust under scripted play while continuing to raise
+authored decision and delayed-event coverage.
 
 ### 2.4 Verification Baseline
 

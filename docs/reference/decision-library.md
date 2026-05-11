@@ -137,6 +137,12 @@ Parallel lane: ValuJet-era maintenance scrutiny and the larger history of outsou
 
 Classification: `Historical tactic composite`
 
+Reachability note: `downgrade_the_inspection_memo` and `declare_the_parts_shortage_temporary`
+now open a `safetyDenialPattern` chain while safety integrity still has room to
+exploit. Contractor swaps, training-hour borrowing, MEL stretching, and QC
+collapse are follow-ups that require that flag instead of competing as flat
+always-on operations cards.
+
 - `downgrade_the_inspection_memo` - Downgrade the Inspection Memo (`operations`; tags: `safety`, `maintenance`, `paperwork`)
 - `vendor_swap_the_heavy_checks` - Vendor-Swap the Heavy Checks (`operations`; tags: `safety`, `contractors`, `fleet`)
 - `declare_the_parts_shortage_temporary` - Declare the Parts Shortage Temporary (`operations`; tags: `safety`, `parts`, `spin`)
@@ -151,6 +157,10 @@ Classification: `Historical tactic composite`
 Parallel lane: Carsten Spohr-era lower-cost-unit and multi-brand labor-arbitrage logic.
 
 Classification: `Historical tactic composite`
+
+Reachability note: `launch_a_leisure_shell` is a one-time setup card gated by
+credible market confidence and `flagsNone: shellCarrierLive`; the rest of the
+pack remains chained behind `shellCarrierLive`.
 
 - `launch_a_leisure_shell` - Launch a Leisure Shell (`operations`; tags: `shell`, `subsidiary`, `growth`)
 - `move_the_flying_off_book` - Move the Flying Off-Book (`labor`; tags: `shell`, `labor`, `flying`)
