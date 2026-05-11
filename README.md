@@ -21,7 +21,7 @@ Implemented in the current build:
 - shared metric-semantics rules so inverse-pressure indicators such as `legalHeat`, `publicAnger`, and `debt` read correctly
 - multiple endings, including merger, extraction, prison, and Bahamas escape
 - two first-class themes: `Earth` and `Armonk Blue`
-- responsive desktop, tablet, and phone browser layouts with touch-friendly run controls
+- scroll-less fitted run layouts for desktop landscape, tablet landscape, tablet portrait, and phone portrait browser play
 - a standalone About page that frames the aviation satire, motivation, and design intent without interrupting play
 - an accessible Options page with locally persisted wallpaper presets, audio controls, UI density, animation, graphical-effect, interaction-feedback, and interaction sound-cue settings
 - unit tests, content validation, build checks, seeded balance tooling, reachability tooling, and a Playwright smoke test
@@ -108,13 +108,13 @@ npm run reachability:report
 
 ## Responsive Browser Play
 
-The run screen is designed to stay playable across desktop landscape, tablet landscape, tablet portrait, and mobile portrait browser viewports.
+The run screen is designed as a fitted app surface across desktop landscape, tablet landscape, tablet portrait, and mobile portrait browser viewports.
 
-- The primary run layout reflows from a three-column board packet into tablet and portrait-friendly sections.
-- Tablet and phone players get section jump links for the brief, state rail, decision tray, and consequence feed.
-- Mobile portrait players get a sticky touch quarter-control bar in the decision tray so resolving a round does not require awkward scrolling after selecting decisions.
+- Desktop and tablet landscape use dense command-center grids with internal panel scrolling instead of document scrolling.
+- Tablet and phone portrait use explicit Brief, State, Decisions, and Feed panels with a segmented tab bar.
+- Portrait quarter controls live in a persistent bottom control surface, so resolving a quarter stays reachable while inspecting any panel.
 - Viewport safe-area and dynamic-height CSS are used so browser chrome and virtual keyboards are less likely to cover critical controls.
-- `npm run test:e2e` runs the smoke flow across desktop landscape, tablet landscape, tablet portrait, and mobile portrait Chromium projects.
+- `npm run test:e2e` runs the smoke flow and document-overflow assertions across desktop landscape, tablet landscape, tablet portrait, and mobile portrait Chromium projects.
 
 ## Theme Direction
 

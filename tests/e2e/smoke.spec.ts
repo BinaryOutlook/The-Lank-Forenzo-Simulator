@@ -1,4 +1,38 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function expectNoDocumentVerticalOverflow(page: Page) {
+  const overflow = await page.evaluate(() => {
+    const documentElement = document.documentElement;
+    const body = document.body;
+    const scrollHeight = Math.max(
+      documentElement.scrollHeight,
+      body.scrollHeight,
+    );
+
+    return {
+      overflowPixels: scrollHeight - window.innerHeight,
+      scrollY: window.scrollY,
+    };
+  });
+
+  expect(overflow.overflowPixels).toBeLessThanOrEqual(1);
+  expect(overflow.scrollY).toBe(0);
+}
+
+function usesPortraitPanels(page: Page): boolean {
+  const viewport = page.viewportSize();
+
+  return Boolean(
+    viewport && (viewport.height > viewport.width || viewport.width <= 860),
+  );
+}
+
+async function showRunPanel(page: Page, panelName: string) {
+  if (usesPortraitPanels(page)) {
+    await page.getByRole("tab", { name: panelName }).click();
+    await expect(page.getByRole("tabpanel", { name: panelName })).toBeVisible();
+  }
+}
 
 test("landing screen starts a run and advances a quarter", async ({ page }) => {
   await page.goto("/");
@@ -93,6 +127,7 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
   );
   await page.getByRole("button", { name: /return to run/i }).click();
 
+  await showRunPanel(page, "Feed");
   const decisionTray = page
     .getByRole("heading", { name: /choose where the pain goes next/i })
     .locator("xpath=ancestor::section[1]");
@@ -103,6 +138,7 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
   const historyCountBefore = await consequenceFeed.locator("article").count();
   expect(historyCountBefore).toBeGreaterThan(0);
 
+  await showRunPanel(page, "Decisions");
   const firstDecision = decisionTray.locator("button[aria-pressed]").first();
   await firstDecision.dispatchEvent("pointerdown");
   await expect(firstDecision).toHaveAttribute(
@@ -112,52 +148,130 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
   await firstDecision.click();
   await expect(firstDecision).toHaveAttribute("aria-pressed", "true");
 
-  await decisionTray
+  await page
+    .getByTestId("quarter-controls")
     .getByRole("button", { name: /resolve the quarter/i })
     .click();
 
+  await showRunPanel(page, "Feed");
   await expect(consequenceFeed.getByText(/^R2$/).first()).toBeVisible();
   await expect
     .poll(async () => consequenceFeed.locator("article").count())
     .toBeGreaterThan(historyCountBefore);
 });
 
-test("responsive run layout keeps touch controls and section jumps reachable", async ({
+test("responsive run layout keeps touch controls and portrait panels reachable", async ({
   page,
 }) => {
   await page.goto("/");
   await page.getByRole("button", { name: /start a new run/i }).click();
 
   const viewport = page.viewportSize();
-  const runSections = page.getByRole("navigation", { name: /run sections/i });
+  const isPortrait = Boolean(
+    viewport && (viewport.height > viewport.width || viewport.width <= 860),
+  );
+  const runPanels = page.getByRole("tablist", { name: /run panels/i });
 
-  if (viewport && viewport.width <= 1180) {
-    await expect(runSections).toBeVisible();
+  if (isPortrait) {
+    await expect(runPanels).toBeVisible();
     await expect(
-      runSections.getByRole("link", { name: /decisions/i }),
+      runPanels.getByRole("tab", { name: /decisions/i }),
     ).toBeVisible();
     await expect(
-      runSections.getByRole("link", { name: /state/i }),
+      runPanels.getByRole("tab", { name: /state/i }),
     ).toBeVisible();
   } else {
-    await expect(runSections).toBeHidden();
+    await expect(runPanels).toBeHidden();
   }
 
-  if (viewport && viewport.width <= 860) {
-    const decisionTray = page
-      .getByRole("heading", { name: /choose where the pain goes next/i })
-      .locator("xpath=ancestor::section[1]");
-    const controls = page.getByTestId("quarter-controls");
-
-    await decisionTray.scrollIntoViewIfNeeded();
-    await expect(controls).toBeVisible();
-    await expect(controls.getByText("0/2 selected")).toBeVisible();
-    await decisionTray.locator("button[aria-pressed]").first().click();
-
-    await expect(controls.getByText("1/2 selected")).toBeVisible();
-    await controls
-      .getByRole("button", { name: /resolve the quarter/i })
-      .click();
-    await expect(page.getByText(/^R2$/).first()).toBeVisible();
+  if (isPortrait) {
+    await runPanels.getByRole("tab", { name: /decisions/i }).click();
+    await expect(
+      page.getByRole("tabpanel", { name: /decisions/i }),
+    ).toBeVisible();
   }
+
+  const controls = page.getByTestId("quarter-controls");
+
+  await expect(controls).toBeVisible();
+  await expect(controls.getByText("0/2 selected")).toBeVisible();
+  await page.locator("button[aria-pressed]").first().click();
+
+  await expect(controls.getByText("1/2 selected")).toBeVisible();
+  await controls.getByRole("button", { name: /resolve the quarter/i }).click();
+  await expect(page.getByText(/^R2$/).first()).toBeVisible();
+});
+
+test("run screen is a fitted app surface across supported viewport projects", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /start a new run/i }).click();
+  await expect(
+    page.getByRole("heading", {
+      name: /temporary credibility is still the most valuable asset/i,
+    }),
+  ).toBeVisible();
+  await expectNoDocumentVerticalOverflow(page);
+
+  const viewport = page.viewportSize();
+  const isPortrait = Boolean(
+    viewport && (viewport.height > viewport.width || viewport.width <= 860),
+  );
+
+  if (isPortrait) {
+    const tabs = page.getByRole("tablist", { name: /run panels/i });
+    await expect(tabs).toBeVisible();
+
+    for (const panelName of ["Brief", "State", "Decisions", "Feed"]) {
+      await tabs.getByRole("tab", { name: panelName }).click();
+      await expect(
+        page.getByRole("tabpanel", { name: panelName }),
+      ).toBeVisible();
+      await expectNoDocumentVerticalOverflow(page);
+    }
+  } else {
+    await expect(
+      page.getByRole("heading", {
+        name: /temporary credibility is still the most valuable asset/i,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /two ledgers/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /choose where the pain goes next/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /the world answers back/i }),
+    ).toBeVisible();
+  }
+
+  if (isPortrait) {
+    await page.getByRole("tab", { name: "Decisions" }).click();
+  }
+
+  const controls = page.getByTestId("quarter-controls");
+  await expect(controls).toBeVisible();
+  await expect(controls.getByText("0/2 selected")).toBeVisible();
+
+  await page.locator("button[aria-pressed]").first().click();
+  await expect(controls.getByText("1/2 selected")).toBeVisible();
+  await expectNoDocumentVerticalOverflow(page);
+
+  await controls.getByRole("button", { name: /resolve the quarter/i }).click();
+  await expect(page.getByText(/^R2$/).first()).toBeVisible();
+  await expectNoDocumentVerticalOverflow(page);
+
+  if (isPortrait) {
+    await page.getByRole("tab", { name: "Feed" }).click();
+    await expect(page.getByRole("tabpanel", { name: "Feed" })).toBeVisible();
+    await page.getByRole("tab", { name: "Decisions" }).click();
+  }
+
+  await page.locator("button[aria-pressed]").first().click();
+  await expect(controls.getByText("1/2 selected")).toBeVisible();
+  await controls.getByRole("button", { name: /resolve the quarter/i }).click();
+  await expect(page.getByText(/^R3$/).first()).toBeVisible();
+  await expectNoDocumentVerticalOverflow(page);
 });
