@@ -28,7 +28,19 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "factionEffects": {
+      "creditors": {
+        "patience": -8,
+        "aggression": 9,
+        "leverage": 5,
+        "dossierWeight": 2,
+        "grievance": "rushed amend-and-extend terms invited lender coordination"
+      },
+      "press": {
+        "dossierWeight": 2
+      }
+    }
   },
   {
     "id": "threaten_the_recovery_stack",

@@ -26,7 +26,10 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "crewFatigue": 12
+    }
   },
   {
     "id": "pension_freeze",
@@ -155,7 +158,11 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "maintenanceBacklog": 18,
+      "contractorDependence": 4
+    }
   },
   {
     "id": "investor_turnaround_call",
@@ -210,7 +217,12 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "contractorDependence": 12,
+      "crewFatigue": 8,
+      "serviceDisruption": 3
+    }
   },
   {
     "id": "squeeze_creditors",
@@ -386,6 +398,11 @@
       "metricMax": {
         "safetyIntegrity": 82
       }
+    },
+    "operationEffects": {
+      "maintenanceBacklog": -18,
+      "crewFatigue": -4,
+      "serviceDisruption": -3
     }
   },
   {
@@ -585,7 +602,7 @@
         "personalWealth": 35
       },
       "metricMax": {
-        "legalHeat": 74
+        "legalHeat": 96
       }
     },
     "ending": "extraction"

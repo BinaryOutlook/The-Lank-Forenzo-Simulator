@@ -42,7 +42,24 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "maintenanceBacklog": 16,
+      "contractorDependence": 6
+    },
+    "factionEffects": {
+      "regulators": {
+        "patience": -4,
+        "aggression": 9,
+        "leverage": 3,
+        "dossierWeight": 6,
+        "grievance": "downgraded inspection memo suggested intentional deferral"
+      },
+      "press": {
+        "leverage": 2,
+        "dossierWeight": 3
+      }
+    }
   },
   {
     "id": "vendor_swap_the_heavy_checks",
@@ -82,7 +99,11 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "maintenanceBacklog": 16,
+      "contractorDependence": 14
+    }
   },
   {
     "id": "declare_the_parts_shortage_temporary",
@@ -192,7 +213,11 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "maintenanceBacklog": 16,
+      "contractorDependence": 6
+    }
   },
   {
     "id": "collapse_the_qc_layers",
@@ -232,7 +257,11 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "maintenanceBacklog": 12,
+      "contractorDependence": 6
+    }
   },
   {
     "id": "buy_the_audit_weekend",
@@ -296,6 +325,10 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "maintenanceBacklog": -12,
+      "serviceDisruption": 4
+    }
   }
 ]

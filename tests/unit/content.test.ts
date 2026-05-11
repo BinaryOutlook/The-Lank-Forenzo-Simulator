@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { ZodError } from "zod";
+import { hazardsSchema } from "../../src/lib/schemas/contentSchemas";
 import { loadContent } from "../../src/simulation/content";
 import { validateContentBundle } from "../../src/simulation/content/validation";
 import { runMetricBounds } from "../../src/simulation/systems/metricEffects";
+import type { DecisionDefinition } from "../../src/simulation/state/types";
 
 describe("content library", () => {
   it("loads a materially expanded multi-pack decision library", () => {
@@ -15,6 +18,9 @@ describe("content library", () => {
     const strategicCostDecisions = content.decisions.filter(
       (decision) => decision.resourceCosts,
     );
+    const operationalEffectDecisions = content.decisions.filter(
+      (decision) => decision.operationEffects,
+    );
 
     expect(content.decisions.length).toBeGreaterThanOrEqual(112);
     expect(decisionPacks.size).toBeGreaterThanOrEqual(11);
@@ -25,6 +31,27 @@ describe("content library", () => {
     expect(decisionPacks.has("incidentVariants")).toBe(true);
     expect(delayedDecisions.length).toBeGreaterThanOrEqual(82);
     expect(strategicCostDecisions.length).toBeGreaterThanOrEqual(12);
+    expect(operationalEffectDecisions.length).toBeGreaterThanOrEqual(8);
+  });
+
+  it("loads representative authored operation effects from content metadata", () => {
+    const content = loadContent();
+
+    expect(
+      content.decisions.find(
+        (decision) => decision.id === "vendor_swap_the_heavy_checks",
+      )?.operationEffects,
+    ).toEqual({
+      maintenanceBacklog: 16,
+      contractorDependence: 14,
+    });
+    expect(
+      content.decisions.find(
+        (decision) => decision.id === "replace_the_strike_map",
+      )?.operationEffects,
+    ).toEqual({
+      crewFatigue: 12,
+    });
   });
 
   it("loads a materially expanded multi-pack event library", () => {
@@ -39,6 +66,72 @@ describe("content library", () => {
     expect(content.events.length).toBeGreaterThanOrEqual(165);
     expect(ambientEvents.length).toBeGreaterThanOrEqual(74);
     expect(delayedEvents.length).toBeGreaterThanOrEqual(91);
+  });
+
+  it("loads representative first-pass faction effects across pressure lanes", () => {
+    const content = loadContent();
+    const decisionById = new Map(
+      content.decisions.map((decision) => [decision.id, decision]),
+    );
+    const eventById = new Map(content.events.map((event) => [event.id, event]));
+
+    expect(
+      decisionById.get("weaponize_the_scope_clause")?.factionEffects?.labor
+        ?.aggression,
+    ).toBeGreaterThan(0);
+    expect(
+      decisionById.get("downgrade_the_inspection_memo")?.factionEffects
+        ?.regulators?.dossierWeight,
+    ).toBeGreaterThan(0);
+    expect(
+      decisionById.get("wire_the_island_retainer")?.factionEffects?.press
+        ?.leverage,
+    ).toBeGreaterThan(0);
+    expect(
+      decisionById.get("preload_the_earnings_deck")?.factionEffects?.press
+        ?.dossierWeight,
+    ).toBeGreaterThan(0);
+    expect(
+      decisionById.get("amend_and_extend_ambush")?.factionEffects?.creditors
+        ?.aggression,
+    ).toBeGreaterThan(0);
+
+    expect(
+      eventById.get("ramp_union_live_stream")?.factionEffects?.labor?.cohesion,
+    ).toBeGreaterThan(0);
+    expect(
+      eventById.get("safety_audit_redlines")?.factionEffects?.regulators
+        ?.aggression,
+    ).toBeGreaterThan(0);
+    expect(
+      eventById.get("customs_attention_ping")?.factionEffects?.regulators
+        ?.dossierWeight,
+    ).toBeGreaterThan(0);
+    expect(
+      eventById.get("short_seller_chartbook")?.factionEffects?.press?.leverage,
+    ).toBeGreaterThan(0);
+    expect(
+      eventById.get("liquidity_whisper_chain")?.factionEffects?.creditors
+        ?.leverage,
+    ).toBeGreaterThan(0);
+  });
+
+  it("loads starter hazard families for state-driven pressure", () => {
+    const content = loadContent();
+    const hazardFamilies = new Set(
+      content.hazards.map((hazard) => hazard.sourceFamily),
+    );
+
+    expect(content.hazards.length).toBeGreaterThanOrEqual(5);
+    expect(hazardFamilies).toEqual(
+      new Set([
+        "legalHeat",
+        "safetyDecay",
+        "publicAnger",
+        "creditorPressure",
+        "dossierExposure",
+      ]),
+    );
   });
 
   it("covers fictionalized incident variants across distinct pressure families", () => {
@@ -117,11 +210,13 @@ describe("content library", () => {
     expect(report.events.total).toBeGreaterThanOrEqual(165);
     expect(report.events.byKind.get("ambient")).toBeGreaterThan(0);
     expect(report.events.byKind.get("delayed")).toBeGreaterThan(0);
+    expect(report.hazards.total).toBeGreaterThanOrEqual(5);
+    expect(report.hazards.byFamily.get("legalHeat")).toBeGreaterThan(0);
     expect(report.errors).toHaveLength(0);
     expect(report.warnings).toHaveLength(0);
   });
 
-  it("flags broken refs, orphaned delayed events, flag gaps, and impossible requirements", () => {
+  it("flags broken refs, orphaned delayed events, hazard refs, flag gaps, and impossible requirements", () => {
     const report = validateContentBundle({
       decisions: [
         {
@@ -173,6 +268,21 @@ describe("content library", () => {
           impacts: {},
         },
       ],
+      hazards: [
+        {
+          id: "broken-hazard",
+          eventId: "missing_hazard_event",
+          baseWeight: 4,
+          cooldownRounds: 2,
+          sourceFamily: "legalHeat",
+          explanation: "Fixture broken hazard.",
+          requirements: {
+            metricMin: {
+              legalHeat: 50,
+            },
+          },
+        },
+      ],
       endings: [
         {
           id: "prison",
@@ -195,6 +305,11 @@ describe("content library", () => {
     ).toBe(true);
     expect(
       report.errors.some((entry) =>
+        entry.message.includes('hazard "broken-hazard" references unknown event'),
+      ),
+    ).toBe(true);
+    expect(
+      report.errors.some((entry) =>
         entry.message.includes("Flags required but never set"),
       ),
     ).toBe(true);
@@ -213,5 +328,70 @@ describe("content library", () => {
         entry.message.includes("Likely impossible requirements"),
       ),
     ).toBe(true);
+  });
+
+  it("flags invalid faction-effect IDs and out-of-bounds deltas", () => {
+    const invalidDecision = {
+      id: "invalid-faction-effect",
+      pack: "core",
+      title: "Invalid Faction Effect",
+      summary: "Fixture decision with intentionally invalid faction metadata.",
+      group: "finance",
+      tags: ["fixture"],
+      impacts: {},
+      factionEffects: {
+        investors: {
+          aggression: 4,
+        },
+        labor: {
+          aggression: 26,
+        },
+      },
+    } as unknown as DecisionDefinition;
+    const report = validateContentBundle({
+      decisions: [invalidDecision],
+      events: [],
+      hazards: [],
+      endings: [
+        {
+          id: "prison",
+          title: "Prison",
+          subtitle: "Fixture",
+          summary: "Fixture ending.",
+        },
+      ],
+    });
+
+    expect(
+      report.errors.some((entry) =>
+        entry.message.includes('unknown faction "investors"'),
+      ),
+    ).toBe(true);
+    expect(
+      report.errors.some((entry) =>
+        entry.message.includes("aggression=26") &&
+        entry.message.includes("outside -25..25"),
+      ),
+    ).toBe(true);
+  });
+
+  it("rejects malformed hazard requirement shapes at schema load time", () => {
+    expect(() =>
+      hazardsSchema.parse([
+        {
+          id: "bad-hazard",
+          eventId: "known_event",
+          baseWeight: 4,
+          cooldownRounds: 2,
+          sourceFamily: "legalHeat",
+          explanation: "Bad requirement shape.",
+          requirements: {
+            metricFloor: {
+              legalHeat: 50,
+            },
+          },
+        },
+      ]),
+    ).toThrow(ZodError);
   });
 });

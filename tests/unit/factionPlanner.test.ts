@@ -71,6 +71,46 @@ describe("faction planner primitives", () => {
     );
   });
 
+  it("prefers explicit faction metadata while preserving ID fallback", () => {
+    const run = createInitialRunState();
+    const explicit = updateFactionStates(createInitialFactionStates(), {
+      metrics: run.metrics,
+      selectedDecisionIds: ["creditor_metadata_override"],
+      emittedEventIds: [],
+      factionEffectSources: [
+        {
+          sourceId: "creditor_metadata_override",
+          effects: {
+            creditors: {
+              patience: -5,
+              aggression: 8,
+              leverage: 3,
+              grievance: "authored lender response",
+            },
+          },
+        },
+      ],
+    });
+    const fallback = updateFactionStates(createInitialFactionStates(), {
+      metrics: run.metrics,
+      selectedDecisionIds: ["creditor_unannotated_signal"],
+      emittedEventIds: [],
+    });
+
+    expect(explicit.creditors.patience).toBe(51);
+    expect(explicit.creditors.aggression).toBe(40);
+    expect(explicit.creditors.leverage).toBe(61);
+    expect(explicit.creditors.recentGrievances).toEqual([
+      "creditor_metadata_override: authored lender response",
+    ]);
+    expect(fallback.creditors.patience).toBe(53);
+    expect(fallback.creditors.aggression).toBe(36);
+    expect(fallback.creditors.leverage).toBe(60);
+    expect(fallback.creditors.recentGrievances).toEqual([
+      "creditor_unannotated_signal",
+    ]);
+  });
+
   it("selects pressure, leak, investigate, organize, and shield families when state supports them", () => {
     const run = createInitialRunState();
     const factions = createInitialFactionStates({

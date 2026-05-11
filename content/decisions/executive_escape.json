@@ -297,7 +297,24 @@
         ],
         "delay": 3
       }
-    ]
+    ],
+    "factionEffects": {
+      "board": {
+        "patience": -4,
+        "aggression": 4,
+        "trust": -5,
+        "dossierWeight": 3,
+        "grievance": "offshore retainer made the exit plan look personal"
+      },
+      "regulators": {
+        "aggression": 5,
+        "dossierWeight": 5
+      },
+      "press": {
+        "leverage": 4,
+        "dossierWeight": 5
+      }
+    }
   },
   {
     "id": "borrow_against_the_parachute",

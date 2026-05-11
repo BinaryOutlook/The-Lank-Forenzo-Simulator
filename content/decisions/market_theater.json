@@ -109,7 +109,22 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "factionEffects": {
+      "board": {
+        "trust": 2,
+        "leverage": 2
+      },
+      "press": {
+        "aggression": 4,
+        "leverage": 3,
+        "dossierWeight": 4,
+        "grievance": "earnings deck looked written for the headline first"
+      },
+      "regulators": {
+        "dossierWeight": 2
+      }
+    }
   },
   {
     "id": "bury_the_cuts_in_synergy_language",

@@ -35,7 +35,24 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "crewFatigue": 12
+    },
+    "factionEffects": {
+      "labor": {
+        "patience": -6,
+        "aggression": 10,
+        "cohesion": 5,
+        "leverage": 3,
+        "dossierWeight": 2,
+        "grievance": "scope clause strategy hardened the grievance map"
+      },
+      "regulators": {
+        "aggression": 2,
+        "dossierWeight": 2
+      }
+    }
   },
   {
     "id": "freeze_the_promise_book",
@@ -138,7 +155,12 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "maintenanceBacklog": 10,
+      "contractorDependence": 12,
+      "crewFatigue": 4
+    }
   },
   {
     "id": "replace_the_strike_map",
@@ -175,7 +197,10 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "crewFatigue": 12
+    }
   },
   {
     "id": "whipsaw_the_certificates",

@@ -63,3 +63,11 @@ export const dossierThemes = [
   "creditor_deception",
   "board_self_dealing",
 ] as const;
+
+export const hazardSourceFamilies = [
+  "legalHeat",
+  "safetyDecay",
+  "publicAnger",
+  "creditorPressure",
+  "dossierExposure",
+] as const;

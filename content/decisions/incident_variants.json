@@ -112,7 +112,11 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "maintenanceBacklog": 14,
+      "contractorDependence": 4
+    }
   },
   {
     "id": "blame_weather_then_trim_crews",
@@ -143,7 +147,12 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "crewFatigue": 8,
+      "serviceDisruption": 2,
+      "weatherExposure": 10
+    }
   },
   {
     "id": "script_the_liquidity_call",

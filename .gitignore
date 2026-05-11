@@ -10,3 +10,4 @@ __pycache__/
 *.tsbuildinfo
 .ao/
 agent-orchestrator.yaml
+artifacts/

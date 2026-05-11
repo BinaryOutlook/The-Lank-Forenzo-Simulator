@@ -4,6 +4,7 @@ import type {
   DossierEvidenceDefinition,
   EndingDefinition,
   EventDefinition,
+  HazardDefinition,
   MetricKey,
   RequirementSpec,
 } from "../state/types";
@@ -12,6 +13,7 @@ import { runMetricBounds } from "../systems/metricEffects";
 export type ContentDiagnosticKind =
   | "duplicate-id"
   | "broken-delayed-reference"
+  | "broken-hazard-reference"
   | "unreferenced-delayed-event"
   | "producer-only-flag"
   | "consumer-only-flag"
@@ -26,7 +28,7 @@ export interface ContentDiagnostic {
   id: string;
   message: string;
   sourceId?: string;
-  sourceKind?: "decision" | "event" | "ending";
+  sourceKind?: "decision" | "event" | "ending" | "hazard";
   count?: number;
   sources?: string[];
 }
@@ -39,9 +41,11 @@ export interface CompiledContentManifest extends ContentBundle {
   endingById: Record<string, EndingDefinition>;
   decisionEvidenceById: Record<string, DossierEvidenceDefinition[]>;
   eventEvidenceById: Record<string, DossierEvidenceDefinition[]>;
+  hazardById: Record<string, HazardDefinition>;
   decisionsByPack: Record<string, string[]>;
   decisionsByTag: Record<string, string[]>;
   eventsByTag: Record<string, string[]>;
+  hazardsByFamily: Record<string, string[]>;
   flags: string[];
   flagProducers: Record<string, string[]>;
   flagConsumers: Record<string, string[]>;
@@ -57,6 +61,7 @@ export function compileContentManifest(
   const endingById = indexById(content.endings);
   const decisionEvidenceById = indexEvidence(content.decisions);
   const eventEvidenceById = indexEvidence(content.events);
+  const hazardById = indexById(content.hazards);
   const decisionsByPack = groupIds(content.decisions, (decision) => [
     decision.pack,
   ]);
@@ -65,6 +70,9 @@ export function compileContentManifest(
     (decision) => decision.tags,
   );
   const eventsByTag = groupIds(content.events, (event) => event.tags);
+  const hazardsByFamily = groupIds(content.hazards, (hazard) => [
+    hazard.sourceFamily,
+  ]);
   const diagnostics: ContentDiagnostic[] = [
     ...findDuplicateDiagnostics(content),
     ...findDelayedEventDiagnostics(content, eventById),
@@ -82,15 +90,18 @@ export function compileContentManifest(
     contentHash: createContentHash(content),
     decisions: content.decisions,
     events: content.events,
+    hazards: content.hazards,
     endings: content.endings,
     decisionById,
     eventById,
     endingById,
     decisionEvidenceById,
     eventEvidenceById,
+    hazardById,
     decisionsByPack,
     decisionsByTag,
     eventsByTag,
+    hazardsByFamily,
     flags,
     flagProducers,
     flagConsumers,
@@ -159,6 +170,7 @@ function findDuplicateDiagnostics(content: ContentBundle): ContentDiagnostic[] {
     ...findDuplicates(content.decisions, "decision"),
     ...findDuplicates(content.events, "event"),
     ...findDuplicates(content.endings, "ending"),
+    ...findDuplicates(content.hazards, "hazard"),
   ];
 }
 
@@ -234,6 +246,26 @@ function findDelayedEventDiagnostics(
     }
   }
 
+  for (const hazard of content.hazards) {
+    const event = eventById[hazard.eventId];
+
+    if (!event) {
+      diagnostics.push({
+        kind: "broken-hazard-reference",
+        severity: "error",
+        id: hazard.eventId,
+        sourceId: hazard.id,
+        sourceKind: "hazard",
+        message: `Hazard "${hazard.id}" references unknown event "${hazard.eventId}".`,
+      });
+      continue;
+    }
+
+    if (event.kind === "delayed") {
+      referencedDelayedEventIds.add(event.id);
+    }
+  }
+
   for (const event of content.events) {
     if (event.kind === "delayed" && !referencedDelayedEventIds.has(event.id)) {
       diagnostics.push({
@@ -242,7 +274,7 @@ function findDelayedEventDiagnostics(
         id: event.id,
         sourceId: event.id,
         sourceKind: "event",
-        message: `Delayed event "${event.id}" is not referenced by a decision consequence.`,
+        message: `Delayed event "${event.id}" is not referenced by a decision consequence or hazard rule.`,
       });
     }
   }
@@ -279,6 +311,19 @@ function findRequirementDiagnostics(
         sourceId: event.id,
         sourceKind: "event" as const,
         message: `Likely impossible requirements on event "${event.id}": ${reason}.`,
+      })),
+    );
+  }
+
+  for (const hazard of content.hazards) {
+    diagnostics.push(
+      ...getImpossibleRequirementReasons(hazard.requirements).map((reason) => ({
+        kind: "likely-impossible-requirement" as const,
+        severity: "warning" as const,
+        id: hazard.id,
+        sourceId: hazard.id,
+        sourceKind: "hazard" as const,
+        message: `Likely impossible requirements on hazard "${hazard.id}": ${reason}.`,
       })),
     );
   }
@@ -325,6 +370,14 @@ function indexFlags(content: ContentBundle): {
     collectConsumedFlags(
       `event:${event.id}`,
       event.requirements,
+      flagConsumers,
+    );
+  }
+
+  for (const hazard of content.hazards) {
+    collectConsumedFlags(
+      `hazard:${hazard.id}`,
+      hazard.requirements,
       flagConsumers,
     );
   }

@@ -7,6 +7,44 @@ As of `2026-05-11`, the repo contains `165` authored events:
 - `74` ambient events
 - `91` delayed events
 
+The repo also contains `5` authored hazard rules under `content/hazards/`.
+Hazards are not a third event kind; they are deterministic scheduler rules that
+point at existing event IDs when accumulated run state makes that fallout
+legible.
+
+## Hazard Authoring
+
+Hazards turn state pressure into inspectable event pressure. Author them in
+`content/hazards/*.json`, export them from `content/hazards/index.ts`, and let
+the content manifest compile them into `hazardById` and `hazardsByFamily`.
+
+Each hazard rule must include:
+
+- `id`: stable rule ID, preferably prefixed with `hazard_`.
+- `eventId`: existing authored event to emit when the rule wins scheduler
+  selection.
+- `baseWeight`: positive deterministic selection weight.
+- `cooldownRounds`: positive per-rule cooldown after firing.
+- `sourceFamily`: one of `legalHeat`, `safetyDecay`, `publicAnger`,
+  `creditorPressure`, or `dossierExposure`.
+- `explanation`: player- and diagnostic-facing reason this pressure exists.
+- `requirements`: at least one `roundAtLeast`, `roundAtMost`, `metricMin`,
+  `metricMax`, `flagsAll`, or `flagsNone` gate.
+
+Validation fails if a hazard references a missing event, uses a malformed
+requirement shape, duplicates another hazard ID, or consumes a flag that no
+content produces. Hazard references to delayed events also count as legitimate
+delayed-event references, so systemic pressure can reuse authored fallout
+without creating orphan diagnostics.
+
+Starter families:
+
+- `hazard_legal_heat_ig_letter` -> `inspector_general_letter`
+- `hazard_safety_decay_paper_trail` -> `maintenance_paper_trail`
+- `hazard_public_anger_documentary` -> `documentary_teaser_drop`
+- `hazard_creditor_default_clock` -> `covenant_default_clock`
+- `hazard_dossier_metadata_snag` -> `subpoena_metadata_snag`
+
 ## How to Read This
 
 - `Parallel` means a broad historical rhyme, not a documentary retelling.
@@ -48,6 +86,29 @@ Event-authored evidence currently strengthens these scandal trails:
 - nominee, customs, and offshore-audit events feed `offshore_evasion`
 - covenant, forum-shopping, and processor-reserve events feed `creditor_deception`
 - compensation, indemnity, conflict, and board-vote events feed `board_self_dealing`
+
+## Faction Metadata Rules
+
+Events may include optional `factionEffects` metadata. Authored effects make the faction planner read event fallout directly instead of guessing from an event ID substring.
+
+```json
+"factionEffects": {
+  "regulators": {
+    "patience": -4,
+    "aggression": 8,
+    "dossierWeight": 6,
+    "grievance": "audit redlines turned the binder into evidence"
+  }
+}
+```
+
+Rules:
+
+- Valid faction IDs are `board`, `creditors`, `labor`, `regulators`, and `press`.
+- Numeric deltas may target `patience`, `aggression`, `trust`, `cohesion`, `leverage`, or `dossierWeight`.
+- Each numeric delta must be an integer in $-25 \le \Delta \le 25$.
+- `grievance` is optional and should capture the remembered narrative hook, not duplicate the event body.
+- During migration, unannotated events still use the legacy fallback. Annotated events opt into explicit reactions.
 
 ## Historical Parallel Matrix
 

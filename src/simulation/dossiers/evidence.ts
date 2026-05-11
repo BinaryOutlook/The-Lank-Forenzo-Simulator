@@ -181,7 +181,10 @@ export function applyEvidenceFragments(
   fragments: EvidenceFragment[],
 ): DossierThread[] {
   return dossiers.map((thread) => {
-    const relevant = fragments.filter((fragment) => fragment.theme === thread.theme);
+    const relevant = fragments.filter(
+      (fragment) =>
+        fragment.theme === thread.theme && !hasSeenEvidenceSource(thread, fragment),
+    );
     if (relevant.length === 0) {
       return thread;
     }
@@ -219,6 +222,17 @@ export function applyEvidenceFragments(
       ),
     };
   });
+}
+
+function hasSeenEvidenceSource(
+  thread: DossierThread,
+  fragment: EvidenceFragment,
+): boolean {
+  if (fragment.sourceType === "decision") {
+    return thread.linkedDecisionIds.includes(fragment.sourceId);
+  }
+
+  return thread.linkedEventIds.includes(fragment.sourceId);
 }
 
 function buildFragments(

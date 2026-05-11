@@ -20,6 +20,19 @@
       "publicAnger": 5,
       "marketConfidence": -3,
       "legalHeat": 2
+    },
+    "factionEffects": {
+      "labor": {
+        "patience": -5,
+        "aggression": 7,
+        "cohesion": 4,
+        "leverage": 2,
+        "grievance": "ramp live stream made coordination public"
+      },
+      "press": {
+        "leverage": 2,
+        "dossierWeight": 2
+      }
     }
   },
   {
@@ -50,7 +63,20 @@
         "witness": "ramp inspector",
         "detail": "Audit redlines corroborate deferred safety issues."
       }
-    ]
+    ],
+    "factionEffects": {
+      "regulators": {
+        "patience": -4,
+        "aggression": 8,
+        "leverage": 4,
+        "dossierWeight": 6,
+        "grievance": "audit redlines turned the binder into evidence"
+      },
+      "press": {
+        "leverage": 3,
+        "dossierWeight": 3
+      }
+    }
   },
   {
     "id": "hail_holdover_gridlock",
@@ -92,6 +118,18 @@
       "creditorPatience": -5,
       "marketConfidence": -4,
       "stockPrice": -3
+    },
+    "factionEffects": {
+      "creditors": {
+        "patience": -6,
+        "aggression": 7,
+        "leverage": 4,
+        "grievance": "liquidity whisper chain pulled lenders into formation"
+      },
+      "press": {
+        "leverage": 2,
+        "dossierWeight": 2
+      }
     }
   },
   {
