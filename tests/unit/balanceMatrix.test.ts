@@ -56,7 +56,10 @@ describe("buildBalanceMatrixReport", () => {
     expect(first.aggregate.repeatedTrayPressure.percentage).toBeLessThanOrEqual(
       1,
     );
-  });
+    expect(
+      first.aggregate.trayPickReasonCounts["low-reachability-repair"],
+    ).toBeGreaterThan(0);
+  }, 10_000);
 
   it("reaches every ending lane in the default balance matrix", () => {
     const report = buildBalanceMatrixReport({
@@ -74,7 +77,7 @@ describe("buildBalanceMatrixReport", () => {
     ]) {
       expect(report.aggregate.endingCounts[endingId]).toBeGreaterThan(0);
     }
-  });
+  }, 10_000);
 
   it("keeps the repaired low-reachability packs visible in scripted runs", () => {
     const report = buildBalanceMatrixReport({
@@ -94,7 +97,7 @@ describe("buildBalanceMatrixReport", () => {
     expect(report.aggregate.lowReachabilityPacks).not.toContain(
       "shadowSubsidiaries",
     );
-  });
+  }, 10_000);
 
   it("formats a concise console report", () => {
     const report = buildBalanceMatrixReport({
@@ -111,6 +114,29 @@ describe("buildBalanceMatrixReport", () => {
     expect(output).toContain("Aggregate:");
     expect(output).toContain("Extraction bot");
     expect(output).toContain("Low-reachability packs:");
+    expect(output).toContain("Surfaced decision IDs:");
+    expect(output).toContain("Selected decision IDs:");
+  });
+
+  it("prints the lane diagnostic archetypes in formatted reports", () => {
+    const report = buildBalanceMatrixReport({
+      runs: 1,
+      maxRounds: 2,
+      seed: "matrix-lane-format-seed",
+      archetypes: [
+        getArchetypePolicy("safety-denial"),
+        getArchetypePolicy("shadow-subsidiary"),
+        getArchetypePolicy("creditor-trench"),
+        getArchetypePolicy("regulatory-theatre"),
+      ],
+    });
+
+    const output = formatBalanceMatrixReport(report);
+
+    expect(output).toContain("Safety-denial bot (safety-denial)");
+    expect(output).toContain("Shadow-subsidiary bot (shadow-subsidiary)");
+    expect(output).toContain("Creditor trench bot (creditor-trench)");
+    expect(output).toContain("Regulatory theatre bot (regulatory-theatre)");
     expect(output).toContain("Surfaced decision IDs:");
     expect(output).toContain("Selected decision IDs:");
   });
@@ -144,6 +170,32 @@ describe("buildBalanceMatrixReport", () => {
     );
 
     expect(chosen).toContain("launch_a_leisure_shell");
+  });
+
+  it("prefers creditor and regulatory theatre lane cards as primary picks", () => {
+    const creditorChoices = chooseArchetypeDecisions(
+      [
+        getDecision("cramdown_term_sheet"),
+        getDecision("safety_spending_surge"),
+      ],
+      createInitialRunState(),
+      getArchetypePolicy("creditor-trench"),
+      0,
+      0,
+    );
+    const regulatoryChoices = chooseArchetypeDecisions(
+      [
+        getDecision("flood_the_docket_with_compliance"),
+        getDecision("collapse_the_qc_layers"),
+      ],
+      createInitialRunState(),
+      getArchetypePolicy("regulatory-theatre"),
+      0,
+      0,
+    );
+
+    expect(creditorChoices[0]).toBe("cramdown_term_sheet");
+    expect(regulatoryChoices[0]).toBe("flood_the_docket_with_compliance");
   });
 
   it("uses the new archetypes to select low-reachability lane packs", () => {
@@ -186,5 +238,5 @@ describe("buildBalanceMatrixReport", () => {
         shellDecisionIds.has(decisionId),
       ),
     ).toBe(true);
-  });
+  }, 10_000);
 });

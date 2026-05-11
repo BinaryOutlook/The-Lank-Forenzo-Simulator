@@ -1,5 +1,9 @@
 import { pickWeighted } from "../../lib/random/seeded";
-import type { EventDefinition, RunState } from "../state/types";
+import type {
+  EventDefinition,
+  HazardDefinition,
+  RunState,
+} from "../state/types";
 import { meetsRequirements } from "../systems/requirements";
 
 export type EventById = Record<string, EventDefinition>;
@@ -14,12 +18,13 @@ export interface ScheduledEvent {
   sourceRefs: string[];
 }
 
-export interface HazardRule {
-  id: string;
-  eventId: string;
-  baseWeight: number;
-  cooldownRounds: number;
-  tags: string[];
+export type HazardRule = HazardDefinition;
+
+export interface ResolvedSchedulerEvent {
+  event: EventDefinition;
+  sourceKind: "guaranteed" | "hazard";
+  sourceId: string;
+  hazardRule?: HazardRule;
 }
 
 export interface EventSchedulerState {
@@ -69,6 +74,7 @@ export interface ResolveEventSchedulerInput {
 export interface ResolveEventSchedulerResult {
   state: EventSchedulerState;
   events: EventDefinition[];
+  emittedEvents: ResolvedSchedulerEvent[];
   diagnostics: SchedulerDiagnostic[];
 }
 
@@ -163,6 +169,7 @@ export function resolveEventScheduler({
   const resolvedBudget = { ...DEFAULT_BUDGET, ...budget };
   const diagnostics: SchedulerDiagnostic[] = [];
   const events: EventDefinition[] = [];
+  const emittedEvents: ResolvedSchedulerEvent[] = [];
   const nextQueue: ScheduledEvent[] = [];
   const firedEventIds = { ...state.firedEventIds };
   const cooldowns = { ...state.cooldowns };
@@ -219,6 +226,11 @@ export function resolveEventScheduler({
 
     guaranteedRemaining -= 1;
     events.push(event);
+    emittedEvents.push({
+      event,
+      sourceKind: scheduled.kind,
+      sourceId: scheduled.id,
+    });
     firedEventIds[event.id] = (firedEventIds[event.id] ?? 0) + 1;
     eventMemoryState = noteEventInSchedulerState(eventMemoryState, event);
   }
@@ -247,6 +259,7 @@ export function resolveEventScheduler({
       } =>
         Boolean(candidate.event) &&
         candidate.weight > 0 &&
+        meetsRequirements(candidate.rule.requirements, run) &&
         meetsRequirements(candidate.event.requirements, run),
     );
 
@@ -259,6 +272,12 @@ export function resolveEventScheduler({
   if (pickedHazard && hazardRemaining > 0) {
     hazardRemaining -= 1;
     events.push(pickedHazard.event);
+    emittedEvents.push({
+      event: pickedHazard.event,
+      sourceKind: "hazard",
+      sourceId: pickedHazard.rule.id,
+      hazardRule: pickedHazard.rule,
+    });
     firedEventIds[pickedHazard.event.id] =
       (firedEventIds[pickedHazard.event.id] ?? 0) + 1;
     cooldowns[pickedHazard.rule.id] =
@@ -271,6 +290,7 @@ export function resolveEventScheduler({
 
   return {
     events,
+    emittedEvents,
     diagnostics,
     state: {
       queue: nextQueue.sort(compareScheduledEvents),
