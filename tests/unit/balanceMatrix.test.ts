@@ -33,6 +33,26 @@ describe("buildBalanceMatrixReport", () => {
     expect(first.aggregate.repeatedTrayPressure.percentage).toBeLessThanOrEqual(1);
   });
 
+  it("keeps the repaired low-reachability packs visible in scripted runs", () => {
+    const report = buildBalanceMatrixReport({
+      runs: 8,
+      maxRounds: 8,
+      seed: "issue-20-pack-matrix",
+      archetypes: archetypePolicies,
+    });
+
+    expect(report.aggregate.packCoverage.safetyDenial.seen).toBeGreaterThanOrEqual(
+      2,
+    );
+    expect(
+      report.aggregate.packCoverage.shadowSubsidiaries.seen,
+    ).toBeGreaterThanOrEqual(2);
+    expect(report.aggregate.lowReachabilityPacks).not.toContain("safetyDenial");
+    expect(report.aggregate.lowReachabilityPacks).not.toContain(
+      "shadowSubsidiaries",
+    );
+  });
+
   it("formats a concise console report", () => {
     const report = buildBalanceMatrixReport({
       runs: 1,

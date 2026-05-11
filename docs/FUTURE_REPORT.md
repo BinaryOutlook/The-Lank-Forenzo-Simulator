@@ -68,28 +68,32 @@ This is enough content for meaningful replay variety. The problem is not raw vol
 `npm run balance:matrix` currently reports:
 
 - Ending distribution:
-  - `active`: `605/800` runs, or `75.6%`
-  - `extraction`: `195/800` runs, or `24.4%`
-  - `bahamas`: `0%`
-  - `merger`: `0%`
+  - `active`: `313/800` runs, or `39.1%`
+  - `bahamas`: `200/800` runs, or `25.0%`
+  - `extraction`: `89/800` runs, or `11.1%`
+  - `merger`: `198/800` runs, or `24.8%`
   - `forcedRemoval`: `0%`
   - `prison`: `0%`
-- Surfaced decisions: `39/113`, or `34.5%`
-- Selected decisions: `27/113`, or `23.9%`
-- Triggered events: `73/165`, or `44.2%`
-- Delayed events: `28/91`, or `30.8%`
-- Low-reachability packs: `safetyDenial`, `shadowSubsidiaries`
+- Surfaced decisions: `43/113`, or `38.1%`
+- Selected decisions: `29/113`, or `25.7%`
+- Triggered events: `78/165`, or `47.3%`
+- Delayed events: `30/91`, or `33.0%`
+- Low-reachability packs: none
 
 `npm run reachability:report` currently reports:
 
-- Surfaced decisions: `52/113`, or `46.0%`
-- Selected decisions: `52/113`, or `46.0%`
-- Triggered events: `88/165`, or `53.3%`
-- Delayed events: `27/91`, or `29.7%`
+- Surfaced decisions: `65/113`, or `57.5%`
+- Selected decisions: `65/113`, or `57.5%`
+- Triggered events: `93/165`, or `56.4%`
+- Delayed events: `24/91`, or `26.4%`
 - Endings reached: `3/5`, or `60.0%`
-- Low-confidence packs: `safetyDenial`, `shadowSubsidiaries`
+- Low-confidence packs: none
 
-This is a healthier baseline than the earlier extraction-dominated state, but it still shows the central work ahead: several strategic paths are not yet robust under scripted play, and too much authored content remains low-confidence.
+This is a healthier baseline than the earlier extraction-dominated state, and
+the previously low-reachability `safetyDenial` and `shadowSubsidiaries` packs
+now surface in the primary diagnostics. The central work ahead remains making
+the remaining strategic paths robust under scripted play while continuing to
+raise authored decision and delayed-event coverage.
 
 ### 2.4 Verification Baseline
 

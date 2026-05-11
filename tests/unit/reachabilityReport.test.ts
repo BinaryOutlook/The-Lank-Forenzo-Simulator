@@ -71,6 +71,19 @@ describe("exploreReachabilityReport", () => {
     expect(first.repeatedTrayPressure.percentage).toBeLessThanOrEqual(1);
   });
 
+  it("surfaces the repaired safety denial and shadow subsidiary packs", () => {
+    const report = exploreReachabilityReport({
+      width: 8,
+      depth: 8,
+      seed: "issue-20-pack-reachability",
+    });
+
+    expect(report.packCoverage.safetyDenial.seen).toBe(1);
+    expect(report.packCoverage.shadowSubsidiaries.seen).toBe(1);
+    expect(report.lowConfidencePackIds).not.toContain("safetyDenial");
+    expect(report.lowConfidencePackIds).not.toContain("shadowSubsidiaries");
+  });
+
   it("formats a concise console report", () => {
     const report = exploreReachabilityReport({
       width: 4,
