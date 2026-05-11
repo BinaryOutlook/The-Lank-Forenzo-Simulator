@@ -60,6 +60,7 @@ export interface NoveltyContext {
   surfacedDecisionIds: Set<string>;
   selectedDecisionIds: Set<string>;
   triggeredEventIds: Set<string>;
+  triggeredHazardRuleIds: Set<string>;
   endingIds: Set<string>;
   packIds: Set<string>;
   flagIds: Set<string>;
@@ -117,6 +118,10 @@ export function exploreReachabilityReport(
   const eventKindById = new Map(
     content.events.map((event) => [event.id, event.kind] as const),
   );
+  const decisionById = new Map(
+    content.decisions.map((decision) => [decision.id, decision] as const),
+  );
+  const hazardRuleIds = new Set(content.hazards.map((hazard) => hazard.id));
   let frontier: SearchNode[] = [
     {
       run: createInitialRunState(),
@@ -175,12 +180,14 @@ export function exploreReachabilityReport(
           selectedDecisionIds,
         });
         const selectedDecisions = selectedDecisionIds
-          .map((decisionId) =>
-            content.decisions.find((decision) => decision.id === decisionId),
-          )
+          .map((decisionId) => decisionById.get(decisionId))
           .filter((decision): decision is DecisionDefinition => Boolean(decision));
         const stateKey = abstractRunStateKey(nextRun);
         const triggeredEventIds = getTriggeredEventIds(nextRun);
+        const triggeredHazardRuleIds = getTriggeredHazardRuleIds(
+          nextRun,
+          hazardRuleIds,
+        );
         const packIds = selectedDecisions.map((decision) => decision.pack);
         const novelty = scoreNovelty(context, {
           stateKey,
@@ -198,6 +205,10 @@ export function exploreReachabilityReport(
 
         for (const eventId of triggeredEventIds) {
           context.triggeredEventIds.add(eventId);
+        }
+
+        for (const hazardRuleId of triggeredHazardRuleIds) {
+          context.triggeredHazardRuleIds.add(hazardRuleId);
         }
 
         for (const flag of nextRun.flags) {
@@ -266,7 +277,10 @@ export function exploreReachabilityReport(
       delayedEvents.size,
       content.events.filter((event) => event.kind === "delayed").length,
     ),
-    hazardEventCoverage: buildCoverageStat(0, 0),
+    hazardEventCoverage: buildCoverageStat(
+      context.triggeredHazardRuleIds.size,
+      content.hazards.length,
+    ),
     endingCoverage: buildCoverageStat(context.endingIds.size, content.endings.length),
     packCoverage,
     flagCoverage: buildCoverageStat(
@@ -377,6 +391,7 @@ function createNoveltyContext(): NoveltyContext {
     surfacedDecisionIds: new Set(),
     selectedDecisionIds: new Set(),
     triggeredEventIds: new Set(),
+    triggeredHazardRuleIds: new Set(),
     endingIds: new Set(),
     packIds: new Set(),
     flagIds: new Set(),
@@ -449,6 +464,15 @@ function getTriggeredEventIds(run: RunState): string[] {
     .map(([eventId]) => eventId);
 }
 
+function getTriggeredHazardRuleIds(
+  run: RunState,
+  hazardRuleIds: Set<string>,
+): string[] {
+  return Object.keys(run.scheduler?.cooldowns ?? {}).filter((hazardId) =>
+    hazardRuleIds.has(hazardId),
+  );
+}
+
 function filterEventsByKind(
   eventIds: Set<string>,
   eventKindById: Map<string, EventDefinition["kind"]>,
@@ -497,6 +521,16 @@ function getKnownFlagIds(content: ContentBundle): Set<string> {
     }
 
     for (const flag of event.requirements?.flagsNone ?? []) {
+      flags.add(flag);
+    }
+  }
+
+  for (const hazard of content.hazards) {
+    for (const flag of hazard.requirements.flagsAll ?? []) {
+      flags.add(flag);
+    }
+
+    for (const flag of hazard.requirements.flagsNone ?? []) {
       flags.add(flag);
     }
   }

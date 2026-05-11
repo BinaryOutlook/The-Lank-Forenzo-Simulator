@@ -4,6 +4,7 @@ import type {
   decisionPackIds,
   endingIds,
   eventKinds,
+  hazardSourceFamilies,
   metricKeys,
 } from "../content/metadata";
 import type { DossierThread } from "../dossiers/dossierState";
@@ -24,6 +25,8 @@ export type DecisionGroup = (typeof decisionGroups)[number];
 export type DecisionPackId = (typeof decisionPackIds)[number];
 
 export type EventKind = (typeof eventKinds)[number];
+
+export type HazardSourceFamily = (typeof hazardSourceFamilies)[number];
 
 export interface RunMetrics {
   airlineCash: number;
@@ -46,6 +49,16 @@ export type ConsumableResources = Record<ConsumableResourceKey, number>;
 export type ImpactSet = Partial<Record<MetricKey, number>>;
 
 export type ResourceCostSet = Partial<Record<ConsumableResourceKey, number>>;
+
+export interface OperationEffectSet {
+  maintenanceBacklog?: number;
+  contractorDependence?: number;
+  crewFatigue?: number;
+  serviceDisruption?: number;
+  hubFragility?: Record<string, number>;
+  routeFragility?: Record<string, number>;
+  weatherExposure?: number;
+}
 
 export interface RequirementSpec {
   roundAtLeast?: number;
@@ -71,6 +84,7 @@ export interface DecisionDefinition {
   tags: string[];
   impacts: ImpactSet;
   resourceCosts?: ResourceCostSet;
+  operationEffects?: OperationEffectSet;
   requirements?: RequirementSpec;
   delayedConsequences?: DelayedConsequenceRef[];
   setsFlags?: string[];
@@ -94,6 +108,16 @@ export interface EndingDefinition {
   title: string;
   subtitle: string;
   summary: string;
+}
+
+export interface HazardDefinition {
+  id: string;
+  eventId: string;
+  baseWeight: number;
+  cooldownRounds: number;
+  requirements: RequirementSpec;
+  sourceFamily: HazardSourceFamily;
+  explanation: string;
 }
 
 export interface PendingEvent {
@@ -161,6 +185,7 @@ export interface RunState {
 export interface ContentBundle {
   decisions: DecisionDefinition[];
   events: EventDefinition[];
+  hazards: HazardDefinition[];
   endings: EndingDefinition[];
 }
 

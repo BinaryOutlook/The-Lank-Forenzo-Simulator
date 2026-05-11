@@ -4,6 +4,7 @@ Status: Forward-looking technical and product report
 Owner: BinaryOutlook  
 Last updated: 2026-05-11  
 Audience: future maintainers, designers, simulation engineers, and agents re-entering the project
+Implementation plan: [`docs/FUTURE_REPORT_IMPLEMENTATION_PLAN.md`](FUTURE_REPORT_IMPLEMENTATION_PLAN.md)
 
 ## 1. Executive Thesis
 
@@ -265,25 +266,18 @@ Where:
    - `temptation`
    - `exit-window`
    - `chain-continuation`
-   - `coverage-repair`
-   - `repeat-avoidance`
-   - `fallback-fill`
+   - `risk-penalty`
+   - `repeat-suppression`
+   - `group-diversity`
+   - `pack-diversity`
+   - `low-reachability-repair`
 
-The current v0.7 diagnostics scaffold uses this taxonomy:
+The diagnostics scaffold also keeps aggregate reason counts in balance and
+reachability reports. These counts are design signals, not pass/fail gates: they
+show whether the tray composer is mostly repairing urgent pressure, preserving
+strategic windows, diversifying groups/packs, suppressing repetition, or
+surfacing low-reachability content.
 
-- `relief`: the card repairs an urgent public-company pressure such as cash,
-  legal heat, safety integrity, creditor patience, or market confidence.
-- `temptation`: the card advances private extraction pressure, especially
-  personal wealth or extraction-lane plays.
-- `chain-continuation`: the card is gated by live requirements or opens a
-  flagged follow-up chain.
-- `exit-window`: the card is an eligible exit or ending window.
-- `coverage-repair`: the composer or diagnostic tooling surfaced the card to
-  keep pack/group coverage legible.
-- `repeat-avoidance`: the composer preferred the card while avoiding exact
-  previous-tray repetition.
-- `fallback-fill`: no stronger category applied; the card filled remaining tray
-  capacity deterministically.
 5. Add tests that prove:
    - exit cards are preserved when eligible
    - exact previous trays do not repeat when alternatives exist
@@ -791,17 +785,26 @@ Recommended CI stages:
 
 ### 8.3 Nightly Simulation Job
 
-Add a nightly job later for deeper balance work:
+An initial nightly reporting path now exists through `npm run report:nightly`
+and `.github/workflows/nightly-simulation-report.yml`. The default profile runs
+`750` seeded simulations per archetype, or `6,000` total runs across the current
+eight scripted bots, with a `30` round cap. It uploads artifacts instead of
+failing on soft balance warnings, keeping deep diagnostics separate from fast PR
+checks.
 
-- `5,000` to `20,000` scripted runs
-- all archetype bots
-- seeded random bot
-- high-risk bot
-- stabilizer bot
-- underused-pack bot
+The current artifact set includes:
+
 - ending distribution report
 - low-confidence content report
+- low-confidence trend point
 - dominant sequence report
+
+Future extensions can still add:
+
+- seeded random bot
+- high-risk bot
+- underused-pack bot
+- larger `10,000` to `20,000` run profiles when runtime is known
 
 Dominant sequences can be scored as:
 
@@ -817,6 +820,8 @@ $$
 Where \(q\) is a decision sequence prefix.
 
 ## 9. Versioned Implementation Plan
+
+The issue-by-issue execution map for this section lives in [`FUTURE_REPORT_IMPLEMENTATION_PLAN.md`](FUTURE_REPORT_IMPLEMENTATION_PLAN.md). Use that plan for current tracker boundaries, dependencies, and per-milestone exit gates; use this report for product and technical rationale.
 
 ### 9.1 V0.6: Balance And Reachability Repair
 

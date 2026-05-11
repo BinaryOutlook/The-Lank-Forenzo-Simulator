@@ -70,6 +70,7 @@ export interface SimulatedRunSummary {
   roundsPlayed: number;
   surfacedDecisionIds: Set<string>;
   selectedDecisionIds: Set<string>;
+  selectedDecisionSequence: string[];
   triggeredEventIds: Set<string>;
   triggeredDelayedEventIds: Set<string>;
   triggeredHazardEventIds: Set<string>;
@@ -522,10 +523,12 @@ export function simulateBotRun(
   const eventKindById = new Map(
     content.events.map((event) => [event.id, event.kind] as const),
   );
+  const hazardRuleIds = new Set(content.hazards.map((hazard) => hazard.id));
   const seedValue = hashString(options.seed, options.archetype.id);
   let run: RunState = createInitialRunState();
   const surfacedDecisionIds = new Set<string>();
   const selectedDecisionIds = new Set<string>();
+  const selectedDecisionSequence: string[] = [];
   const triggeredEventIds = new Set<string>();
   const surfacedPacks = new Set<DecisionPackId>();
   const trayPickReasonCounts = createEmptyTrayPickReasonCounts();
@@ -555,7 +558,7 @@ export function simulateBotRun(
     );
 
     if (diagnosticInjectionCount > 0) {
-      trayPickReasonCounts["coverage-repair"] += diagnosticInjectionCount;
+      trayPickReasonCounts["low-reachability-repair"] += diagnosticInjectionCount;
     }
 
     for (const decision of tray) {
@@ -583,6 +586,7 @@ export function simulateBotRun(
     for (const decisionId of chosenIds) {
       selectedDecisionIds.add(decisionId);
     }
+    selectedDecisionSequence.push(...chosenIds);
 
     run = resolveRound({
       ...run,
@@ -602,13 +606,18 @@ export function simulateBotRun(
     roundsPlayed,
     surfacedDecisionIds,
     selectedDecisionIds,
+    selectedDecisionSequence,
     triggeredEventIds,
     triggeredDelayedEventIds: filterEventsByKind(
       triggeredEventIds,
       eventKindById,
       "delayed",
     ),
-    triggeredHazardEventIds: new Set(),
+    triggeredHazardEventIds: new Set(
+      Object.keys(run.scheduler?.cooldowns ?? {}).filter((hazardId) =>
+        hazardRuleIds.has(hazardId),
+      ),
+    ),
     surfacedPacks,
     finalFlags: new Set(run.flags),
     trayPickReasonCounts,

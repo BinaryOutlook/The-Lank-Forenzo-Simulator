@@ -1,0 +1,56 @@
+name: Nightly Simulation Report
+
+on:
+  schedule:
+    - cron: "17 9 * * *"
+  workflow_dispatch:
+    inputs:
+      runs-per-archetype:
+        description: "Scripted runs to execute for each archetype bot"
+        required: true
+        default: "750"
+      max-rounds:
+        description: "Maximum rounds per simulated run"
+        required: true
+        default: "30"
+      seed:
+        description: "Deterministic report seed"
+        required: true
+        default: "nightly-v1"
+
+jobs:
+  report:
+    name: Generate nightly simulation artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate report artifacts
+        run: >-
+          npm run report:nightly --
+          --runs-per-archetype "${{ github.event.inputs['runs-per-archetype'] || '750' }}"
+          --max-rounds "${{ github.event.inputs['max-rounds'] || '30' }}"
+          --seed "${{ github.event.inputs.seed || 'nightly-v1' }}"
+          --output-dir artifacts/nightly-simulation-report
+
+      - name: Upload report artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-simulation-report-${{ github.run_number }}
+          path: artifacts/nightly-simulation-report/
+          if-no-files-found: warn
+          retention-days: 30

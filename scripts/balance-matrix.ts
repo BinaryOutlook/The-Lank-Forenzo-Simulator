@@ -171,7 +171,10 @@ export function buildBalanceMatrixReport(
         aggregateDelayedEvents.size,
         content.events.filter((event) => event.kind === "delayed").length,
       ),
-      hazardEventCoverage: buildCoverageStat(aggregateHazardEvents.size, 0),
+      hazardEventCoverage: buildCoverageStat(
+        aggregateHazardEvents.size,
+        content.hazards.length,
+      ),
       repeatedTrayPressure: buildRepeatedTrayPressure(
         aggregateOverlap,
         aggregateSlots,
@@ -303,7 +306,10 @@ function simulateArchetypeRow(
       delayedEvents.size,
       content.events.filter((event) => event.kind === "delayed").length,
     ),
-    hazardEventCoverage: buildCoverageStat(hazardEvents.size, 0),
+    hazardEventCoverage: buildCoverageStat(
+      hazardEvents.size,
+      content.hazards.length,
+    ),
     repeatedTrayPressure: buildRepeatedTrayPressure(overlap, slots),
     trayPickReasonCounts,
     packCoverage,
