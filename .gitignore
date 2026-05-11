@@ -8,3 +8,5 @@ test-results/
 .idea/
 __pycache__/
 *.tsbuildinfo
+.ao/
+agent-orchestrator.yaml
