@@ -35,7 +35,7 @@ import {
   type RepeatedTrayPressure,
 } from "./simulation-reporting";
 
-const DEFAULT_WIDTH = 32;
+const DEFAULT_WIDTH = 48;
 const DEFAULT_DEPTH = 24;
 const DEFAULT_SEED = "v0.5-default";
 const MAX_BRANCHING_TRAY = 7;
@@ -222,7 +222,7 @@ export function exploreReachabilityReport(
         context.knownStateKeys.add(stateKey);
         candidates.push({
           run: nextRun,
-          score: node.score + novelty,
+          score: node.score + novelty + scoreExitReadiness(nextRun),
           path: [...node.path, selectedDecisionIds.join("+") || "pass"],
           stateKey,
         });
@@ -456,6 +456,38 @@ function scoreBranchDecision(decision: DecisionDefinition): number {
     decision.tags.length * 3 +
     (decision.ending ? 40 : 0)
   );
+}
+
+function scoreExitReadiness(run: RunState): number {
+  if (run.status === "ended") {
+    return 0;
+  }
+
+  const { metrics } = run;
+  const extractionScore =
+    scoreMetricFloor(metrics.marketConfidence, 65, 7) +
+    scoreMetricFloor(metrics.stockPrice, 28, 7) +
+    scoreMetricFloor(metrics.personalWealth, 35, 8) +
+    scoreMetricCeiling(metrics.legalHeat, 74, 6) +
+    (run.round >= 7 ? 4 : 0);
+  const bahamasScore =
+    scoreMetricFloor(metrics.offshoreReadiness, 35, 11) +
+    scoreMetricFloor(metrics.personalWealth, 45, 10) +
+    (run.round >= 6 ? 4 : 0);
+
+  return Math.max(extractionScore, bahamasScore);
+}
+
+function scoreMetricFloor(value: number, target: number, maxScore: number): number {
+  return Math.max(0, Math.min(maxScore, (value / target) * maxScore));
+}
+
+function scoreMetricCeiling(value: number, ceiling: number, maxScore: number): number {
+  if (value > ceiling) {
+    return 0;
+  }
+
+  return Math.max(0, Math.min(maxScore, ((ceiling - value) / ceiling) * maxScore));
 }
 
 function getTriggeredEventIds(run: RunState): string[] {

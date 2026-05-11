@@ -61,22 +61,22 @@ describe("buildBalanceMatrixReport", () => {
     ).toBeGreaterThan(0);
   }, 10_000);
 
-  it("reaches multiple successful exits in the default balance matrix", () => {
+  it("reaches every ending lane in the default balance matrix", () => {
     const report = buildBalanceMatrixReport({
       runs: 5,
       maxRounds: 24,
       seed: "v0.5-matrix",
     });
-    const successfulEndings = ["bahamas", "extraction", "merger"].filter(
-      (endingId) => (report.aggregate.endingCounts[endingId] ?? 0) > 0,
-    );
 
-    expect(successfulEndings.length).toBeGreaterThanOrEqual(2);
-    expect(report.aggregate.endingCounts.extraction).toBeGreaterThan(0);
-    expect(
-      (report.aggregate.endingCounts.bahamas ?? 0) +
-        (report.aggregate.endingCounts.merger ?? 0),
-    ).toBeGreaterThan(0);
+    for (const endingId of [
+      "bahamas",
+      "extraction",
+      "forcedRemoval",
+      "merger",
+      "prison",
+    ]) {
+      expect(report.aggregate.endingCounts[endingId]).toBeGreaterThan(0);
+    }
   }, 10_000);
 
   it("keeps the repaired low-reachability packs visible in scripted runs", () => {

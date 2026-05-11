@@ -76,18 +76,26 @@ describe("exploreReachabilityReport", () => {
   }, 10_000);
 
   it(
-    "reaches bounded failure and merger endings in the default pass",
+    "reaches all endings in the default pass",
     () => {
       const report = exploreReachabilityReport({
-        width: 32,
+        width: 48,
         depth: 24,
         seed: "v0.5-default",
       });
 
-      expect(report.endingCoverage.seen).toBeGreaterThanOrEqual(3);
+      expect(report.endingCoverage.seen).toBe(5);
       expect(report.endingIds).toEqual(
-        expect.arrayContaining(["forcedRemoval", "merger", "prison"]),
+        expect.arrayContaining([
+          "bahamas",
+          "extraction",
+          "forcedRemoval",
+          "merger",
+          "prison",
+        ]),
       );
+      expect(report.lowConfidenceDecisionIds).not.toContain("cash_out_and_resign");
+      expect(report.lowConfidenceDecisionIds).not.toContain("run_for_nassau");
     },
     60_000,
   );

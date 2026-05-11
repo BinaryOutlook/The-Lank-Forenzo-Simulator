@@ -71,31 +71,31 @@ This is enough content for meaningful replay variety. The problem is not raw vol
 - Ending distribution:
   - `active`: `0/1600` runs, or `0.0%`
   - `bahamas`: `200/1600` runs, or `12.5%`
-  - `extraction`: `200/1600` runs, or `12.5%`
-  - `forcedRemoval`: `200/1600` runs, or `12.5%`
+  - `extraction`: `117/1600` runs, or `7.3%`
+  - `forcedRemoval`: `242/1600` runs, or `15.1%`
   - `merger`: `200/1600` runs, or `12.5%`
-  - `prison`: `800/1600` runs, or `50.0%`
-- Surfaced decisions: `61/113`, or `54.0%`
-- Selected decisions: `43/113`, or `38.1%`
-- Triggered events: `75/165`, or `45.5%`
-- Delayed events: `34/91`, or `37.4%`
-- Low-reachability packs: `marketTheater`
+  - `prison`: `841/1600` runs, or `52.6%`
+- Surfaced decisions: `55/113`, or `48.7%`
+- Selected decisions: `46/113`, or `40.7%`
+- Triggered events: `76/165`, or `46.1%`
+- Delayed events: `30/91`, or `33.0%`
+- Low-reachability packs: none
 
 `npm run reachability:report` currently reports:
 
-- Surfaced decisions: `64/113`, or `56.6%`
-- Selected decisions: `64/113`, or `56.6%`
-- Triggered events: `96/165`, or `58.2%`
-- Delayed events: `31/91`, or `34.1%`
-- Endings reached: `3/5`, or `60.0%` (`forcedRemoval`, `merger`, `prison`)
+- Surfaced decisions: `55/113`, or `48.7%`
+- Selected decisions: `55/113`, or `48.7%`
+- Triggered events: `115/165`, or `69.7%`
+- Delayed events: `45/91`, or `49.5%`
+- Endings reached: `5/5`, or `100.0%` (`bahamas`, `extraction`, `forcedRemoval`, `merger`, `prison`)
 - Low-confidence packs: none
 
 This is a healthier baseline than the earlier extraction-dominated state. The
-default matrix now verifies all five endings, and the previously
-low-reachability `safetyDenial` and `shadowSubsidiaries` packs now surface in
-the primary diagnostics. The central work ahead remains making the
-`marketTheater` lane more robust under scripted play while continuing to raise
-authored decision and delayed-event coverage.
+default matrix and bounded reachability explorer now both verify all five
+endings, and no pack is low-reachability in the aggregate matrix or bounded
+reachability explorer. The central work ahead remains raising authored decision
+coverage and delayed-event coverage in the default matrix without weakening the
+ending spread.
 
 ### 2.4 Verification Baseline
 
