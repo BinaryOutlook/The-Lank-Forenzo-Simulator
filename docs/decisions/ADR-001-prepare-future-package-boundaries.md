@@ -8,7 +8,7 @@ Accepted
 
 ## Context
 
-`docs/FUTURE_REPORT.md` recommends eventual boundaries for `sim-core`, `content-schema`, `content-compiler`, `sim-analysis`, `sim-worker`, and `apps/web`. Those names describe real seams already forming in the codebase: React presents the game, `src/simulation/` resolves deterministic rules, `content/` holds authored data, and `scripts/` run diagnostics.
+`docs/FUTURE_REPORT.md` recommends eventual boundaries for the web client, `sim-core`, `content-schema`, `content-compiler`, `sim-analysis`, optional `sim-worker`, and an `apps/web` destination for the browser app. Those names describe real seams already forming in the codebase: React presents the game, `src/simulation/` resolves deterministic rules, `content/` holds authored data, and `scripts/` run diagnostics.
 
 The project is not ready for a monorepo migration yet. The current single-package layout is still productive, CI-friendly, and easy for agents to enter. A premature package split would create churn in imports, npm scripts, build wiring, and review focus before the simulation public API and content compiler contract have earned that structure.
 
@@ -23,6 +23,11 @@ Keep the repository as one npm package for now, but treat the future package map
 - Content schemas and metadata should become the shared contract between authored content, runtime simulation, validation, and compiler diagnostics.
 - Analysis scripts should consume simulation and content APIs; they should not become the place where game rules quietly diverge.
 - Migration should be behavior-neutral and should happen only after the API seams are stable enough to test before and after the move.
+
+Package vocabulary in this ADR:
+
+- **web-client** means the future browser application package, represented in the file tree as `apps/web`.
+- **sim-worker** remains an optional extension package, not part of the minimum package split.
 
 ## Current Folders To Future Packages
 
@@ -64,7 +69,7 @@ Keep the repository as one npm package for now, but treat the future package map
 The future import graph should remain acyclic and point inward toward stable contracts:
 
 ```text
-apps/web -> sim-core -> content-schema
+web-client/apps/web -> sim-core -> content-schema
 content-compiler -> content-schema
 sim-analysis -> sim-core + content-compiler
 sim-worker -> sim-core + sim-analysis
