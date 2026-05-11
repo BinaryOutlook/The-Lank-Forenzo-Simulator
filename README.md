@@ -44,7 +44,7 @@ Successful end states:
 
 - `Merger`: start `Merger Backchannel` from round 4 onward, survive long enough for the delayed merger interest to become a real offer, then take `Accept the Merger`.
 - `Extraction`: from round 7 onward, hit at least `65` market confidence, `28` stock price, and `35` personal wealth while keeping legal heat at `74` or lower, then choose `Cash Out and Resign`.
-- `Bahamas`: from round 6 onward, reach at least `60` offshore readiness and `55` personal wealth, then choose `Run for Nassau`.
+- `Bahamas`: from round 6 onward, reach at least `35` offshore readiness and `45` personal wealth, then choose `Run for Nassau`.
 
 Automatic losing end states:
 

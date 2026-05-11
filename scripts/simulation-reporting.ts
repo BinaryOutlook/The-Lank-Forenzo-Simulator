@@ -97,23 +97,40 @@ export const archetypePolicies: ArchetypePolicy[] = [
       legal: 6,
       exit: 34,
     },
+    packWeights: {
+      executiveEscape: 24,
+      assetHarvest: 12,
+      marketTheater: 8,
+    },
+    diagnosticPacks: ["executiveEscape", "marketTheater"],
     tagWeights: {
       extraction: 16,
-      asset_sale: 12,
+      stock: -8,
+      market: 14,
+      personal: 18,
+      asset_sale: 8,
       executive: 8,
-      offshore: 6,
+      offshore: 4,
+      timing: -60,
+      merger: -30,
+      shell: -16,
+      subsidiary: -12,
     },
     impactWeights: {
-      personalWealth: 3.8,
+      personalWealth: 4.2,
       airlineCash: 0.6,
-      offshoreReadiness: 0.7,
-      legalHeat: -0.6,
-      publicAnger: -0.4,
+      offshoreReadiness: 0.4,
+      marketConfidence: 2.4,
+      stockPrice: 2.6,
+      legalHeat: -2.2,
+      publicAnger: -0.6,
     },
     pressureRelief: {
       airlineCash: 0.4,
+      marketConfidence: 1.2,
+      stockPrice: 1.2,
       creditorPatience: 0.2,
-      legalHeat: -0.3,
+      legalHeat: -1.5,
     },
     exitBias: 46,
     preferredEnding: "extraction",
@@ -203,6 +220,14 @@ export const archetypePolicies: ArchetypePolicy[] = [
     },
     tagWeights: {
       safety: 18,
+      paperwork: -20,
+      spin: -18,
+      cuts: -14,
+      deferments: -14,
+      quality: -12,
+      contractors: -8,
+      parts: -8,
+      training: -8,
       labor: 12,
       operations: 12,
       creditor: 8,
@@ -718,6 +743,7 @@ export function scoreArchetypeDecision(
   const tagScore = scoreTagAffinity(decision, archetype);
   const packScore = scorePackAffinity(decision, archetype);
   const impactScore = scoreImpacts(decision.impacts, archetype.impactWeights);
+  const setupScore = scorePreferredExitSetup(decision, run, archetype);
   const pressureScore = scorePressureRelief(
     decision.impacts,
     run.metrics,
@@ -733,6 +759,7 @@ export function scoreArchetypeDecision(
     tagScore +
     packScore +
     impactScore +
+    setupScore +
     pressureScore +
     exitScore +
     jitter / 1000
@@ -761,6 +788,37 @@ function scorePackAffinity(
   archetype: ArchetypePolicy,
 ): number {
   return archetype.packWeights?.[decision.pack] ?? 0;
+}
+
+function scorePreferredExitSetup(
+  decision: DecisionDefinition,
+  run: RunState,
+  archetype: ArchetypePolicy,
+): number {
+  if (archetype.preferredEnding !== "extraction") {
+    return 0;
+  }
+
+  const marketAfter =
+    run.metrics.marketConfidence + (decision.impacts.marketConfidence ?? 0);
+  const stockAfter = run.metrics.stockPrice + (decision.impacts.stockPrice ?? 0);
+  const heatAfter = run.metrics.legalHeat + (decision.impacts.legalHeat ?? 0);
+
+  if (
+    decision.tags.includes("timing") &&
+    decision.tags.includes("stock") &&
+    marketAfter >= 65 &&
+    stockAfter >= 28 &&
+    heatAfter <= 74
+  ) {
+    return 72;
+  }
+
+  const confidenceDamage = Math.min(0, marketAfter - 65);
+  const stockDamage = Math.min(0, stockAfter - 28);
+  const heatOverage = Math.max(0, heatAfter - 74);
+
+  return confidenceDamage * 2 + stockDamage * 2.4 - heatOverage * 4;
 }
 
 function getExitScore(

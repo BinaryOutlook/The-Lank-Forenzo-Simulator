@@ -12,6 +12,12 @@
       "legalHeat": 4
     },
     "setsFlags": ["shellCarrierLive"],
+    "requirements": {
+      "metricMin": {
+        "marketConfidence": 45
+      },
+      "flagsNone": ["shellCarrierLive"]
+    },
     "delayedConsequences": [
       { "eventIds": ["shell_route_map_leak", "scope_clause_arbitration", "route_overlap_chart"], "delay": 2 }
     ]
