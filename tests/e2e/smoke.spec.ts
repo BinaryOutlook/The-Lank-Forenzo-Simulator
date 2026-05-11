@@ -5,6 +5,18 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: /run the airline badly on purpose/i }),
   ).toBeVisible();
+
+  await page.getByRole("link", { name: /about/i }).click();
+  await expect(
+    page.getByRole("heading", {
+      name: /aviation management, viewed from the executive escape hatch/i,
+    }),
+  ).toBeVisible();
+  await expect(page.getByText(/why this game exists/i)).toBeVisible();
+  await page.getByRole("link", { name: /return to main game/i }).click();
+  await expect(
+    page.getByRole("heading", { name: /run the airline badly on purpose/i }),
+  ).toBeVisible();
   await page.getByRole("button", { name: /start a new run/i }).click();
   await expect(
     page.getByRole("heading", {

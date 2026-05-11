@@ -13,18 +13,24 @@ const themes: Array<{ id: ThemeName; label: string }> = [
   { id: "armonk-blue", label: "Armonk Blue" },
 ];
 
-interface OptionsNavLinkProps {
+interface HeaderNavLinkProps {
   interactionEffectsEnabled: boolean;
+  label: string;
+  to: string;
 }
 
-function OptionsNavLink({ interactionEffectsEnabled }: OptionsNavLinkProps) {
+function HeaderNavLink({
+  interactionEffectsEnabled,
+  label,
+  to,
+}: HeaderNavLinkProps) {
   const feedback = useInteractionFeedback<HTMLAnchorElement>(
     interactionEffectsEnabled,
   );
 
   return (
     <NavLink
-      to="/options"
+      to={to}
       className={({ isActive }) =>
         clsx(
           "interaction-feedback-control",
@@ -35,7 +41,7 @@ function OptionsNavLink({ interactionEffectsEnabled }: OptionsNavLinkProps) {
       onKeyDown={feedback.onFeedbackKeyDown}
       onPointerDown={feedback.onFeedbackPointerDown}
     >
-      Options
+      {label}
     </NavLink>
   );
 }
@@ -76,7 +82,14 @@ export function AppShell() {
           ) : null}
 
           <nav className={styles.nav} aria-label="Primary">
-            <OptionsNavLink
+            <HeaderNavLink
+              to="/about"
+              label="About"
+              interactionEffectsEnabled={interactionEffectsEnabled}
+            />
+            <HeaderNavLink
+              to="/options"
+              label="Options"
               interactionEffectsEnabled={interactionEffectsEnabled}
             />
           </nav>
