@@ -39,10 +39,34 @@
 
 .headerControls {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.9rem;
   flex-wrap: wrap;
   justify-content: flex-end;
+}
+
+.nav {
+  display: inline-flex;
+}
+
+.navLink,
+.navLinkActive {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.4rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--panel);
+}
+
+.navLinkActive {
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+  color: var(--text);
 }
 
 .roundBadge {

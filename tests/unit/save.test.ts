@@ -1,10 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createInitialRunState } from "../../src/simulation/resolution/resolveRound";
 import {
   GAME_SAVE_STORAGE_VERSION,
   migrateGameSavePayload,
   readGameSaveStorageValue,
 } from "../../src/lib/storage/save";
+import { defaultGameSettings } from "../../src/simulation/state/settings.js";
 
 const storageKey = "the-lank-forenzo-simulator/v1";
 const createMockStorage = () => {
@@ -31,12 +32,23 @@ beforeEach(() => {
   vi.resetModules();
 });
 
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
 describe("save storage", () => {
   it("parses a valid current save payload", () => {
     const run = createInitialRunState();
     const snapshot = {
       state: {
         theme: "armonk-blue" as const,
+        settings: {
+          ...defaultGameSettings,
+          wallpaper: "runway-night" as const,
+          musicEnabled: true,
+          musicVolume: 55,
+          visualEffectIntensity: 40,
+        },
         run,
       },
       version: GAME_SAVE_STORAGE_VERSION,
@@ -61,12 +73,46 @@ describe("save storage", () => {
 
     expect(storedValue).not.toBeNull();
     expect(storedValue).toEqual({
-      state: legacyPayload,
+      state: {
+        ...legacyPayload,
+        settings: defaultGameSettings,
+      },
       version: 0,
     });
     expect(
       migrateGameSavePayload(storedValue!.state, storedValue!.version ?? 0),
-    ).toEqual(legacyPayload);
+    ).toEqual({
+      ...legacyPayload,
+      settings: defaultGameSettings,
+    });
+  });
+
+  it("coerces invalid option values back to safe defaults", () => {
+    const payload = migrateGameSavePayload(
+      {
+        theme: "armonk-blue",
+        settings: {
+          wallpaper: "unknown",
+          musicEnabled: "yes",
+          musicVolume: 250,
+          visualEffectsEnabled: true,
+          visualEffectIntensity: -20,
+          uiDensity: "massive",
+        },
+        run: null,
+      },
+      GAME_SAVE_STORAGE_VERSION,
+    );
+
+    expect(payload).toEqual({
+      theme: "armonk-blue",
+      settings: {
+        ...defaultGameSettings,
+        musicVolume: 100,
+        visualEffectIntensity: 0,
+      },
+      run: null,
+    });
   });
 
   it("falls back safely when hydration meets corrupt storage", async () => {

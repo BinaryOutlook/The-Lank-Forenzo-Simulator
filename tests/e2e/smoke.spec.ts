@@ -23,6 +23,34 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
     "armonk-blue",
   );
 
+  await page.getByRole("link", { name: /options/i }).click();
+  await expect(
+    page.getByRole("heading", { name: /tune the room before it turns on you/i }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: /runway night/i }).click();
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-wallpaper",
+    "runway-night",
+  );
+  await page.getByRole("checkbox", { name: /music/i }).check();
+  await expect(page.locator("html")).toHaveAttribute("data-music", "on");
+  await page.getByRole("checkbox", { name: /visual effects/i }).uncheck();
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-visual-effects",
+    "off",
+  );
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-wallpaper",
+    "runway-night",
+  );
+  await expect(page.locator("html")).toHaveAttribute("data-music", "on");
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-visual-effects",
+    "off",
+  );
+  await page.getByRole("button", { name: /return to run/i }).click();
+
   const decisionTray = page
     .getByRole("heading", { name: /choose where the pain goes next/i })
     .locator("xpath=ancestor::section[1]");

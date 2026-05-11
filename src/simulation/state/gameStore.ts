@@ -11,17 +11,36 @@ import {
   createInitialRunState,
   resolveRound,
 } from "../resolution/resolveRound";
+import {
+  defaultGameSettings,
+  normalizeGameSettings,
+} from "./settings.js";
+import type {
+  GameSettings,
+  UiDensity,
+  WallpaperPreset,
+} from "./settings.js";
 import type {
   DecisionDefinition,
   EndingDefinition,
   RunState,
   ThemeName,
-} from "./types";
+} from "./types.js";
 
 interface GameStoreState {
   theme: ThemeName;
+  settings: GameSettings;
   run: RunState | null;
   setTheme: (theme: ThemeName) => void;
+  setWallpaper: (wallpaper: WallpaperPreset) => void;
+  setMusicEnabled: (enabled: boolean) => void;
+  setMusicVolume: (volume: number) => void;
+  setSoundEffectsEnabled: (enabled: boolean) => void;
+  setAnimationsEnabled: (enabled: boolean) => void;
+  setVisualEffectsEnabled: (enabled: boolean) => void;
+  setVisualEffectIntensity: (intensity: number) => void;
+  setUiDensity: (density: UiDensity) => void;
+  resetSettings: () => void;
   startNewRun: () => void;
   toggleDecision: (decisionId: string) => void;
   endTurn: () => void;
@@ -36,8 +55,70 @@ export const useGameStore = create<GameStoreState>()(
   persist(
     (set, get) => ({
       theme: "earth",
+      settings: defaultGameSettings,
       run: null,
       setTheme: (theme) => set({ theme }),
+      setWallpaper: (wallpaper) =>
+        set((state) => ({
+          settings: normalizeGameSettings({
+            ...state.settings,
+            wallpaper,
+          }),
+        })),
+      setMusicEnabled: (enabled) =>
+        set((state) => ({
+          settings: normalizeGameSettings({
+            ...state.settings,
+            musicEnabled: enabled,
+          }),
+        })),
+      setMusicVolume: (volume) =>
+        set((state) => ({
+          settings: normalizeGameSettings({
+            ...state.settings,
+            musicVolume: volume,
+          }),
+        })),
+      setSoundEffectsEnabled: (enabled) =>
+        set((state) => ({
+          settings: normalizeGameSettings({
+            ...state.settings,
+            soundEffectsEnabled: enabled,
+          }),
+        })),
+      setAnimationsEnabled: (enabled) =>
+        set((state) => ({
+          settings: normalizeGameSettings({
+            ...state.settings,
+            animationsEnabled: enabled,
+          }),
+        })),
+      setVisualEffectsEnabled: (enabled) =>
+        set((state) => ({
+          settings: normalizeGameSettings({
+            ...state.settings,
+            visualEffectsEnabled: enabled,
+          }),
+        })),
+      setVisualEffectIntensity: (intensity) =>
+        set((state) => ({
+          settings: normalizeGameSettings({
+            ...state.settings,
+            visualEffectIntensity: intensity,
+          }),
+        })),
+      setUiDensity: (density) =>
+        set((state) => ({
+          settings: normalizeGameSettings({
+            ...state.settings,
+            uiDensity: density,
+          }),
+        })),
+      resetSettings: () =>
+        set({
+          theme: "earth",
+          settings: defaultGameSettings,
+        }),
       startNewRun: () => set({ run: createInitialRunState() }),
       toggleDecision: (decisionId) =>
         set((state) => {
@@ -94,6 +175,7 @@ export const useGameStore = create<GameStoreState>()(
       migrate: migrateGameSavePayload,
       partialize: (state) => ({
         theme: state.theme,
+        settings: state.settings,
         run: state.run,
       }),
     },

@@ -38,6 +38,17 @@ export function AppShell() {
         <div className={styles.headerControls}>
           {run?.status === "active" ? <span className={styles.roundBadge}>Round {run.round}</span> : null}
 
+          <nav className={styles.nav} aria-label="Primary">
+            <NavLink
+              to="/options"
+              className={({ isActive }) =>
+                isActive ? styles.navLinkActive : styles.navLink
+              }
+            >
+              Options
+            </NavLink>
+          </nav>
+
           <div className={styles.themeSwitch} aria-label="Theme selector">
             {themes.map((entry) => (
               <button
