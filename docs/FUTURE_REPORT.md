@@ -82,19 +82,20 @@ This is enough content for meaningful replay variety. The problem is not raw vol
 
 `npm run reachability:report` currently reports:
 
-- Surfaced decisions: `64/113`, or `56.6%`
-- Selected decisions: `64/113`, or `56.6%`
-- Triggered events: `96/165`, or `58.2%`
-- Delayed events: `31/91`, or `34.1%`
-- Endings reached: `3/5`, or `60.0%` (`forcedRemoval`, `merger`, `prison`)
+- Surfaced decisions: `70/113`, or `61.9%`
+- Selected decisions: `70/113`, or `61.9%`
+- Triggered events: `110/165`, or `66.7%`
+- Delayed events: `39/91`, or `42.9%`
+- Endings reached: `5/5`, or `100.0%` (`bahamas`, `extraction`, `forcedRemoval`, `merger`, `prison`)
 - Low-confidence packs: none
 
 This is a healthier baseline than the earlier extraction-dominated state. The
-default matrix now verifies all five endings, and the previously
-low-reachability `safetyDenial` and `shadowSubsidiaries` packs now surface in
-the primary diagnostics. The central work ahead remains making the
-`marketTheater` lane more robust under scripted play while continuing to raise
-authored decision and delayed-event coverage.
+default matrix and bounded reachability explorer now both verify all five
+endings, and the previously low-reachability `safetyDenial` and
+`shadowSubsidiaries` packs now surface in the primary diagnostics. The central
+work ahead remains making the `marketTheater` lane more robust under scripted
+play while continuing to raise authored decision coverage in the default
+matrix.
 
 ### 2.4 Verification Baseline
 
