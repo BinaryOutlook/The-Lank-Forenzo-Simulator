@@ -5,7 +5,10 @@ import {
   createInitialRunState,
   resolveRound,
 } from "../src/simulation/resolution/resolveRound";
-import { getAvailableDecisions } from "../src/simulation/systems/decisionEngine";
+import {
+  getAvailableDecisions,
+  isDecisionEligible,
+} from "../src/simulation/systems/decisionEngine";
 import {
   canAffordResourceCosts,
   getDecisionSelectionCost,
@@ -35,13 +38,23 @@ export interface RepeatedTrayPressure {
   percentage: number;
 }
 
-export type ArchetypeId = "extraction" | "merger" | "offshore" | "stabilizer";
+export type ArchetypeId =
+  | "extraction"
+  | "merger"
+  | "offshore"
+  | "stabilizer"
+  | "safety-denial"
+  | "shadow-subsidiary"
+  | "creditor-trench"
+  | "regulatory-theatre";
 
 export interface ArchetypePolicy {
   id: ArchetypeId;
   label: string;
   description: string;
   groupWeights: Partial<Record<DecisionGroup, number>>;
+  packWeights?: Partial<Record<DecisionPackId, number>>;
+  diagnosticPacks?: DecisionPackId[];
   tagWeights: Record<string, number>;
   impactWeights: Partial<Record<MetricKey, number>>;
   pressureRelief: Partial<Record<MetricKey, number>>;
@@ -210,6 +223,205 @@ export const archetypePolicies: ArchetypePolicy[] = [
     },
     exitBias: -12,
   },
+  {
+    id: "safety-denial",
+    label: "Safety-denial bot",
+    description:
+      "Converts maintenance drift into cash while preferring paperwork, deferments, and contractor blame over real safety repair.",
+    groupWeights: {
+      operations: 30,
+      legal: 12,
+      market: 4,
+      finance: 4,
+      exit: -18,
+    },
+    packWeights: {
+      safetyDenial: 42,
+      regulatoryTheater: 8,
+    },
+    diagnosticPacks: ["safetyDenial"],
+    tagWeights: {
+      safety: 18,
+      maintenance: 12,
+      paperwork: 10,
+      contractors: 8,
+      fleet: 6,
+      parts: 7,
+      training: 7,
+      cuts: 12,
+      deferments: 12,
+      quality: 8,
+      spin: 5,
+    },
+    impactWeights: {
+      airlineCash: 1.2,
+      safetyIntegrity: -3.5,
+      workforceMorale: -0.6,
+      legalHeat: 0.4,
+      publicAnger: -0.2,
+      marketConfidence: 0.3,
+      personalWealth: 0.2,
+    },
+    pressureRelief: {
+      airlineCash: 1.2,
+      legalHeat: -0.3,
+      publicAnger: -0.2,
+    },
+    exitBias: -24,
+  },
+  {
+    id: "shadow-subsidiary",
+    label: "Shadow-subsidiary bot",
+    description:
+      "Builds shell-carrier optionality and then routes labor, liabilities, and growth through the subsidiary lane.",
+    groupWeights: {
+      operations: 22,
+      labor: 22,
+      finance: 18,
+      market: 16,
+      legal: 6,
+      exit: -14,
+    },
+    packWeights: {
+      shadowSubsidiaries: 46,
+      laborShock: 8,
+      marketTheater: 6,
+    },
+    diagnosticPacks: ["shadowSubsidiaries"],
+    tagWeights: {
+      shell: 30,
+      subsidiary: 22,
+      growth: 8,
+      labor: 12,
+      flying: 10,
+      pensions: 8,
+      finance: 8,
+      brand: 6,
+      "wet-lease": 10,
+      liability: 10,
+      rehire: 10,
+      integration: 6,
+    },
+    impactWeights: {
+      airlineCash: 1.1,
+      marketConfidence: 0.9,
+      stockPrice: 0.7,
+      debt: -0.5,
+      workforceMorale: -1.2,
+      publicAnger: -0.3,
+      legalHeat: 0.3,
+      creditorPatience: 0.2,
+    },
+    pressureRelief: {
+      airlineCash: 0.9,
+      marketConfidence: 0.6,
+      creditorPatience: 0.3,
+    },
+    exitBias: -16,
+  },
+  {
+    id: "creditor-trench",
+    label: "Creditor trench bot",
+    description:
+      "Fights the debt stack directly, preferring covenant pressure, lender intimidation, and restructuring brinkmanship.",
+    groupWeights: {
+      finance: 32,
+      legal: 16,
+      market: 8,
+      operations: 2,
+      exit: -10,
+    },
+    packWeights: {
+      creditorWarfare: 40,
+      mergerBait: 6,
+      core: 4,
+    },
+    diagnosticPacks: ["creditorWarfare"],
+    tagWeights: {
+      creditors: 24,
+      debt: 18,
+      restructuring: 14,
+      threats: 12,
+      dip: 10,
+      capital: 8,
+      venue: 8,
+      risk: 8,
+      finance: 6,
+      vendors: 5,
+      lessors: 5,
+    },
+    impactWeights: {
+      airlineCash: 1.2,
+      debt: -1.9,
+      creditorPatience: -2.6,
+      legalHeat: 0.4,
+      marketConfidence: 0.6,
+      stockPrice: 0.3,
+      publicAnger: -0.2,
+    },
+    pressureRelief: {
+      airlineCash: 1.2,
+      debt: -1.1,
+      creditorPatience: 0.2,
+      legalHeat: -0.4,
+    },
+    exitBias: -8,
+  },
+  {
+    id: "regulatory-theatre",
+    label: "Regulatory theatre bot",
+    description:
+      "Buys calendar time with reform optics, managed compliance, hearings, concessions, and regulator-facing narrative control.",
+    groupWeights: {
+      legal: 30,
+      market: 18,
+      operations: 10,
+      finance: 4,
+      exit: -20,
+    },
+    packWeights: {
+      regulatoryTheater: 42,
+      safetyDenial: 6,
+      marketTheater: 6,
+    },
+    diagnosticPacks: ["regulatoryTheater"],
+    tagWeights: {
+      regulators: 28,
+      legal: 10,
+      optics: 16,
+      review: 12,
+      spin: 8,
+      jobs: 7,
+      press: 5,
+      compliance: 14,
+      paperwork: 8,
+      hearing: 12,
+      concessions: 8,
+      inspection: 10,
+      consent: 12,
+      delay: 8,
+      reform: 12,
+      board: 4,
+      safety: 4,
+    },
+    impactWeights: {
+      legalHeat: -2.5,
+      marketConfidence: 1.3,
+      creditorPatience: 1.0,
+      publicAnger: -1.0,
+      safetyIntegrity: 0.5,
+      stockPrice: 0.4,
+      airlineCash: -0.2,
+    },
+    pressureRelief: {
+      legalHeat: -1.8,
+      publicAnger: -1.1,
+      marketConfidence: 0.8,
+      creditorPatience: 0.7,
+      safetyIntegrity: 0.4,
+    },
+    exitBias: -20,
+  },
 ];
 
 export function getArchetypePolicy(id: ArchetypeId): ArchetypePolicy {
@@ -288,7 +500,14 @@ export function simulateBotRun(
   let roundsPlayed = 0;
 
   while (run.status === "active" && roundsPlayed < options.maxRounds) {
-    const tray = getAvailableDecisions(content.decisions, run);
+    const tray = buildArchetypeDiagnosticTray(
+      getAvailableDecisions(content.decisions, run),
+      content.decisions,
+      run,
+      options.archetype,
+      seedValue,
+      options.runIndex,
+    );
     const mainTray = tray.filter((decision) => decision.group !== "exit");
     const mainTrayIds = new Set(mainTray.map((decision) => decision.id));
 
@@ -405,7 +624,8 @@ export function chooseArchetypeDecisions(
     }
 
     const differentGroup = entry.decision.group !== primaryGroup;
-    const isExit = entry.decision.group === "exit" || Boolean(entry.decision.ending);
+    const isExit =
+      entry.decision.group === "exit" || Boolean(entry.decision.ending);
     const worthwhile = entry.score >= 10 || (isExit && entry.score > 0);
     const affordable = canAffordResourceCosts(
       run.resources,
@@ -421,6 +641,66 @@ export function chooseArchetypeDecisions(
   return chosen.map((decision) => decision.id);
 }
 
+function buildArchetypeDiagnosticTray(
+  baseTray: DecisionDefinition[],
+  decisions: DecisionDefinition[],
+  run: RunState,
+  archetype: ArchetypePolicy,
+  seedValue: number,
+  runIndex: number,
+): DecisionDefinition[] {
+  const diagnosticPacks = archetype.diagnosticPacks ?? [];
+
+  if (diagnosticPacks.length === 0) {
+    return baseTray;
+  }
+
+  const tray = [...baseTray];
+  const offeredIds = new Set(tray.map((decision) => decision.id));
+
+  for (const pack of diagnosticPacks) {
+    if (tray.some((decision) => decision.pack === pack)) {
+      continue;
+    }
+
+    const [bestCandidate] = decisions
+      .filter(
+        (decision) =>
+          decision.pack === pack &&
+          !offeredIds.has(decision.id) &&
+          isDecisionEligible(decision, run) &&
+          canAffordResourceCosts(
+            run.resources,
+            getDecisionSelectionCost([decision]),
+          ),
+      )
+      .map((decision) => ({
+        decision,
+        score: scoreArchetypeDecision(
+          decision,
+          run,
+          archetype,
+          seedValue,
+          runIndex,
+        ),
+      }))
+      .sort((left, right) => {
+        if (right.score !== left.score) {
+          return right.score - left.score;
+        }
+
+        return left.decision.id.localeCompare(right.decision.id);
+      });
+
+    if (bestCandidate) {
+      tray.push(bestCandidate.decision);
+      offeredIds.add(bestCandidate.decision.id);
+    }
+  }
+
+  return tray;
+}
+
 export function scoreArchetypeDecision(
   decision: DecisionDefinition,
   run: RunState,
@@ -429,11 +709,9 @@ export function scoreArchetypeDecision(
   runIndex: number,
 ): number {
   const baseScore = getImpactSetScore(decision.impacts) * 4;
-  const groupScore = archetype.groupWeights[decision.group] ?? 0;
-  const tagScore = decision.tags.reduce(
-    (sum, tag) => sum + (archetype.tagWeights[tag] ?? 0),
-    0,
-  );
+  const groupScore = scoreGroupAffinity(decision, archetype);
+  const tagScore = scoreTagAffinity(decision, archetype);
+  const packScore = scorePackAffinity(decision, archetype);
   const impactScore = scoreImpacts(decision.impacts, archetype.impactWeights);
   const pressureScore = scorePressureRelief(
     decision.impacts,
@@ -448,11 +726,36 @@ export function scoreArchetypeDecision(
     baseScore +
     groupScore +
     tagScore +
+    packScore +
     impactScore +
     pressureScore +
     exitScore +
     jitter / 1000
   );
+}
+
+function scoreGroupAffinity(
+  decision: DecisionDefinition,
+  archetype: ArchetypePolicy,
+): number {
+  return archetype.groupWeights[decision.group] ?? 0;
+}
+
+function scoreTagAffinity(
+  decision: DecisionDefinition,
+  archetype: ArchetypePolicy,
+): number {
+  return decision.tags.reduce(
+    (sum, tag) => sum + (archetype.tagWeights[tag] ?? 0),
+    0,
+  );
+}
+
+function scorePackAffinity(
+  decision: DecisionDefinition,
+  archetype: ArchetypePolicy,
+): number {
+  return archetype.packWeights?.[decision.pack] ?? 0;
 }
 
 function getExitScore(

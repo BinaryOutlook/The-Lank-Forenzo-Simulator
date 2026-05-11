@@ -201,6 +201,8 @@ export function formatBalanceMatrixReport(report: BalanceMatrixReport): string {
       `Average run length: ${row.averageRunLength.toFixed(1)} rounds`,
       `Surfaced decisions: ${formatCoverage(row.surfacedDecisionCoverage)}`,
       `Selected decisions: ${formatCoverage(row.selectedDecisionCoverage)}`,
+      `Surfaced decision IDs: ${formatIdList(row.surfacedDecisionIds)}`,
+      `Selected decision IDs: ${formatIdList(row.selectedDecisionIds)}`,
       `Triggered events: ${formatCoverage(row.triggeredEventCoverage)}`,
       `Delayed events: ${formatCoverage(row.delayedEventCoverage)}`,
       `Hazard events: ${formatCoverage(row.hazardEventCoverage)}`,
