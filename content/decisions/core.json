@@ -13,6 +13,9 @@
       "publicAnger": 9,
       "legalHeat": 4
     },
+    "operationEffects": {
+      "crewFatigue": 12
+    },
     "delayedConsequences": [
       { "eventIds": ["whistleblower_letter", "faa_exit_interviews", "severance_injunction"], "delay": 2 }
     ]
@@ -82,6 +85,10 @@
       "safetyIntegrity": -14,
       "legalHeat": 8
     },
+    "operationEffects": {
+      "maintenanceBacklog": 18,
+      "contractorDependence": 4
+    },
     "delayedConsequences": [
       { "eventIds": ["maintenance_near_miss", "maintenance_paper_trail", "faa_ramp_audit"], "delay": 2 }
     ]
@@ -114,6 +121,11 @@
       "marketConfidence": 3,
       "safetyIntegrity": -8,
       "legalHeat": 5
+    },
+    "operationEffects": {
+      "contractorDependence": 12,
+      "crewFatigue": 8,
+      "serviceDisruption": 3
     },
     "delayedConsequences": [
       { "eventIds": ["contractor_walkout", "badge_access_chaos", "vendor_safety_dispute"], "delay": 2 }
@@ -220,6 +232,11 @@
       "workforceMorale": 6,
       "legalHeat": -7,
       "publicAnger": -4
+    },
+    "operationEffects": {
+      "maintenanceBacklog": -18,
+      "crewFatigue": -4,
+      "serviceDisruption": -3
     },
     "requirements": {
       "metricMax": {

@@ -1,3 +1,5 @@
+import type { DecisionDefinition, OperationEffectSet } from "../state/types";
+
 export interface HubState {
   id: string;
   slotCapacity: number;
@@ -43,20 +45,11 @@ export interface NetworkState {
 }
 
 export interface NetworkDecisionEffectInput {
-  selectedDecisionIds: string[];
+  selectedDecisions: readonly Pick<
+    DecisionDefinition,
+    "id" | "operationEffects"
+  >[];
 }
-
-const MAINTENANCE_DEFERRAL_DECISIONS = new Set([
-  "downgrade_the_inspection_memo",
-  "vendor_swap_the_heavy_checks",
-  "stretch_the_mel_clock",
-]);
-
-const CREW_STRESS_DECISIONS = new Set([
-  "replace_the_strike_map",
-  "headcount_bloodletting",
-  "weaponize_the_scope_clause",
-]);
 
 export function createDefaultNetworkState(): NetworkState {
   return {
@@ -112,34 +105,117 @@ export function applyNetworkDecisionEffects(
   network: NetworkState,
   input: NetworkDecisionEffectInput,
 ): NetworkState {
-  let maintenanceBacklog = network.maintenanceBacklog;
-  let contractorDependence = network.contractorDependence;
-  let crewStress = 0;
-
-  for (const decisionId of input.selectedDecisionIds) {
-    if (MAINTENANCE_DEFERRAL_DECISIONS.has(decisionId)) {
-      maintenanceBacklog += 16;
-      contractorDependence += decisionId === "vendor_swap_the_heavy_checks" ? 14 : 6;
-    }
-
-    if (CREW_STRESS_DECISIONS.has(decisionId)) {
-      crewStress += 12;
-    }
-  }
+  const effects = combineOperationEffects(
+    input.selectedDecisions.map((decision) => decision.operationEffects),
+  );
+  const maintenanceBacklog = clamp(
+    network.maintenanceBacklog + (effects.maintenanceBacklog ?? 0),
+    0,
+    100,
+  );
+  const contractorDependence = clamp(
+    network.contractorDependence + (effects.contractorDependence ?? 0),
+    0,
+    100,
+  );
+  const serviceDisruption = clamp(
+    network.serviceDisruption + (effects.serviceDisruption ?? 0),
+    0,
+    100,
+  );
+  const crewFatigue = effects.crewFatigue ?? 0;
 
   return {
     ...network,
     maintenanceBacklog,
     contractorDependence,
+    serviceDisruption,
     hubs: network.hubs.map((hub) => ({
       ...hub,
-      fragility: clamp(hub.fragility + Math.round(maintenanceBacklog / 24), 0, 100),
+      fragility: clamp(
+        hub.fragility +
+          Math.round(maintenanceBacklog / 24) +
+          (effects.hubFragility?.[hub.id] ?? 0),
+        0,
+        100,
+      ),
+    })),
+    routes: network.routes.map((route) => ({
+      ...route,
+      fragility: clamp(
+        route.fragility + (effects.routeFragility?.[route.id] ?? 0),
+        0,
+        100,
+      ),
     })),
     crewPools: network.crewPools.map((pool) => ({
       ...pool,
-      fatigue: clamp(pool.fatigue + crewStress, 0, 100),
+      fatigue: clamp(pool.fatigue + crewFatigue, 0, 100),
+    })),
+    weatherFronts: network.weatherFronts.map((front) => ({
+      ...front,
+      severity: clamp(front.severity + (effects.weatherExposure ?? 0), 0, 100),
     })),
   };
+}
+
+function combineOperationEffects(
+  effectSets: readonly (OperationEffectSet | undefined)[],
+): OperationEffectSet {
+  const combined: OperationEffectSet = {};
+
+  for (const effects of effectSets) {
+    if (!effects) {
+      continue;
+    }
+
+    addScalarEffect(combined, "maintenanceBacklog", effects.maintenanceBacklog);
+    addScalarEffect(
+      combined,
+      "contractorDependence",
+      effects.contractorDependence,
+    );
+    addScalarEffect(combined, "crewFatigue", effects.crewFatigue);
+    addScalarEffect(combined, "serviceDisruption", effects.serviceDisruption);
+    addScalarEffect(combined, "weatherExposure", effects.weatherExposure);
+    addRecordEffects(combined, "hubFragility", effects.hubFragility);
+    addRecordEffects(combined, "routeFragility", effects.routeFragility);
+  }
+
+  return combined;
+}
+
+function addScalarEffect(
+  target: OperationEffectSet,
+  key:
+    | "maintenanceBacklog"
+    | "contractorDependence"
+    | "crewFatigue"
+    | "serviceDisruption"
+    | "weatherExposure",
+  value: number | undefined,
+) {
+  if (value === undefined) {
+    return;
+  }
+
+  target[key] = (target[key] ?? 0) + value;
+}
+
+function addRecordEffects(
+  target: OperationEffectSet,
+  key: "hubFragility" | "routeFragility",
+  values: Record<string, number> | undefined,
+) {
+  if (!values) {
+    return;
+  }
+
+  target[key] ??= {};
+
+  for (const [id, value] of Object.entries(values)) {
+    target[key][id] = (target[key][id] ?? 0) + value;
+  }
 }
 
 export function clamp(value: number, min = 0, max = 100): number {

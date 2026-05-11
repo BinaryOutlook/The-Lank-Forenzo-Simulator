@@ -2,10 +2,10 @@
 
 This is the documentation home for the full decision library and the public-history parallels that helped shape it.
 
-As of `2026-05-11`, the repo contains `112` authored decisions across `11` packs:
+As of `2026-05-11`, the repo contains `113` authored decisions across `11` packs:
 
 - `21` core decisions
-- `79` expansion decisions from `V0.3`
+- `80` expansion decisions from `V0.3`
 - `12` incident-variant decisions from `V0.5`
 
 ## How to Read This
@@ -20,6 +20,39 @@ No decision in this file should be read as:
 - a direct portrayal of a real person
 - a one-to-one recreation of a named airline move
 - a claim that one executive or one carrier uniquely "owns" a given tactic
+
+## Authoring Syntax: Operational Effects
+
+Decisions may include optional `operationEffects` metadata when the choice should
+change the board-level network state. The simulation consumes this metadata from
+the executed decision itself; do not add new hardcoded decision-id checks for
+maintenance, labor, contractor, or weather fallout.
+
+```json
+{
+  "id": "vendor_swap_the_heavy_checks",
+  "operationEffects": {
+    "maintenanceBacklog": 16,
+    "contractorDependence": 14
+  }
+}
+```
+
+Supported keys are:
+
+- `maintenanceBacklog`
+- `contractorDependence`
+- `crewFatigue`
+- `serviceDisruption`
+- `hubFragility` as a map of hub id to delta
+- `routeFragility` as a map of route id to delta
+- `weatherExposure`
+
+Positive values add stress; negative values represent stabilizing or mitigating
+actions. Keep values small enough that a two-card quarter remains readable.
+The first representative metadata pass covers `14` operations, labor, and safety
+choices; expansion should continue pack-by-pack instead of sweeping every card at
+once.
 
 ## Historical Parallel Matrix
 

@@ -4,6 +4,7 @@ Status: Forward-looking technical and product report
 Owner: BinaryOutlook  
 Last updated: 2026-05-11  
 Audience: future maintainers, designers, simulation engineers, and agents re-entering the project
+Implementation plan: [`docs/FUTURE_REPORT_IMPLEMENTATION_PLAN.md`](FUTURE_REPORT_IMPLEMENTATION_PLAN.md)
 
 ## 1. Executive Thesis
 
@@ -800,6 +801,8 @@ $$
 Where \(q\) is a decision sequence prefix.
 
 ## 9. Versioned Implementation Plan
+
+The issue-by-issue execution map for this section lives in [`FUTURE_REPORT_IMPLEMENTATION_PLAN.md`](FUTURE_REPORT_IMPLEMENTATION_PLAN.md). Use that plan for current tracker boundaries, dependencies, and per-milestone exit gates; use this report for product and technical rationale.
 
 ### 9.1 V0.6: Balance And Reachability Repair
 

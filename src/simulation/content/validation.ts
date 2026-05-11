@@ -1,7 +1,5 @@
 import type {
   ContentBundle,
-  DecisionDefinition,
-  EventDefinition,
   MetricKey,
   RequirementSpec,
 } from "../state/types";
@@ -26,6 +24,10 @@ export interface ContentValidationReport {
     total: number;
     byKind: ValidationMap;
   };
+  hazards: {
+    total: number;
+    byFamily: ValidationMap;
+  };
   endings: number;
   errors: ValidationEntry[];
   warnings: ValidationEntry[];
@@ -37,6 +39,7 @@ export function validateContentBundle(
   const byPack = new Map<string, number>();
   const byGroup = new Map<string, number>();
   const byKind = new Map<string, number>();
+  const byFamily = new Map<string, number>();
   const errors: ValidationEntry[] = [];
   const warnings: ValidationEntry[] = [];
   const referencedDelayedEventIds = new Set<string>();
@@ -47,6 +50,7 @@ export function validateContentBundle(
   accumulateCounts(content.decisions, (decision) => decision.pack, byPack);
   accumulateCounts(content.decisions, (decision) => decision.group, byGroup);
   accumulateCounts(content.events, (event) => event.kind, byKind);
+  accumulateCounts(content.hazards, (hazard) => hazard.sourceFamily, byFamily);
 
   collectDuplicates(
     content.decisions,
@@ -56,6 +60,7 @@ export function validateContentBundle(
   );
   collectDuplicates(content.events, (event) => event.id, "event", errors);
   collectDuplicates(content.endings, (ending) => ending.id, "ending", errors);
+  collectDuplicates(content.hazards, (hazard) => hazard.id, "hazard", errors);
 
   const eventById = new Map(
     content.events.map((event) => [event.id, event] as const),
@@ -109,6 +114,30 @@ export function validateContentBundle(
     );
   }
 
+  for (const hazard of content.hazards) {
+    collectFlagsAndRequirements(
+      hazard,
+      setFlags,
+      requiredFlags,
+      referencedFlags,
+      warnings,
+    );
+
+    const event = eventById.get(hazard.eventId);
+
+    if (!event) {
+      errors.push({
+        severity: "error",
+        message: `Broken hazard ref: hazard "${hazard.id}" references unknown event "${hazard.eventId}".`,
+      });
+      continue;
+    }
+
+    if (event.kind === "delayed") {
+      referencedDelayedEventIds.add(event.id);
+    }
+  }
+
   const unreferencedDelayedEvents = content.events
     .filter(
       (event) =>
@@ -154,6 +183,10 @@ export function validateContentBundle(
       total: content.events.length,
       byKind,
     },
+    hazards: {
+      total: content.hazards.length,
+      byFamily,
+    },
     endings: content.endings.length,
     errors,
     warnings,
@@ -172,6 +205,8 @@ export function formatContentValidationReport(
     `Decision groups: ${formatCounts(report.decisions.byGroup)}`,
     `Events: ${report.events.total}`,
     `Events by kind: ${formatCounts(report.events.byKind)}`,
+    `Hazards: ${report.hazards.total}`,
+    `Hazards by family: ${formatCounts(report.hazards.byFamily)}`,
     `Endings: ${report.endings}`,
   ];
 
@@ -227,7 +262,11 @@ function collectDuplicates<T>(
 }
 
 function collectFlagsAndRequirements(
-  item: DecisionDefinition | EventDefinition,
+  item: {
+    id: string;
+    requirements?: RequirementSpec;
+    setsFlags?: string[];
+  },
   setFlags: Set<string>,
   requiredFlags: Set<string>,
   referencedFlags: Set<string>,
