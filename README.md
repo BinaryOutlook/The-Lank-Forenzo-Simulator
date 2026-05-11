@@ -24,7 +24,7 @@ Implemented in the current build:
 - scroll-less fitted run layouts for desktop landscape, tablet landscape, tablet portrait, and phone portrait browser play
 - a standalone About page that frames the aviation satire, motivation, and design intent without interrupting play
 - an accessible Options page with locally persisted wallpaper presets, audio controls, UI density, animation, graphical-effect, interaction-feedback, and interaction sound-cue settings
-- unit tests, content validation, build checks, seeded balance tooling, reachability tooling, and a Playwright smoke test
+- unit tests, content validation, build checks, seeded balance tooling, nightly report artifacts, reachability tooling, and a Playwright smoke test
 
 ## Product Shape
 
@@ -99,12 +99,15 @@ npm run content:validate
 npm run simulate:runs
 npm run balance:report
 npm run balance:matrix
+npm run report:nightly
 npm run reachability:report
 ```
 
 `npm run simulate:runs` and `npm run balance:report` run a deterministic seeded campaign report without opening the browser. The report summarizes ending distribution, average run length, surfaced decision coverage, triggered event coverage, and repeated-tray pressure using the documented greedy pressure-relief bot.
 
 `npm run content:compile` prints the compiled manifest summary and content hash. `npm run balance:matrix` runs the archetype matrix across extraction, merger, offshore, stabilizer, safety-denial, shadow-subsidiary, creditor-trench, and regulatory-theatre bots; each archetype section includes surfaced and selected decision IDs for lane diagnostics. `npm run reachability:report` runs the bounded reachability explorer with state abstraction and low-confidence content reporting.
+
+`npm run report:nightly` generates the deep seeded simulation artifact set under `artifacts/nightly-simulation-report/` by default. The nightly profile runs `750` simulations per archetype (`6,000` total across the current eight bots), tracks ending distribution and low-confidence content, and ranks dominant decision-sequence prefixes. The generated warnings are intentionally soft: use them for balance review, not as automatic PR blockers.
 
 ## Responsive Browser Play
 
@@ -147,9 +150,13 @@ src/
 scripts/
   balance-matrix.ts
   compile-content.ts
+  nightly-report.ts
   reachability-report.ts
   simulate-runs.ts
   validate-content.ts
+.github/
+  workflows/
+    nightly-simulation-report.yml
 content/
   decisions/
     index.ts
@@ -167,6 +174,7 @@ docs/
     dossier-system.md
     event-library.md
     faction-system.md
+    nightly-simulation-reporting.md
     operational-model.md
 PRDs/
   v0.1.1/
@@ -204,4 +212,5 @@ tests/
 - V0.5 faction hooks: [docs/reference/faction-system.md](docs/reference/faction-system.md)
 - V0.5 operational hooks: [docs/reference/operational-model.md](docs/reference/operational-model.md)
 - V0.5 dossier hooks: [docs/reference/dossier-system.md](docs/reference/dossier-system.md)
+- Nightly simulation reporting: [docs/reference/nightly-simulation-reporting.md](docs/reference/nightly-simulation-reporting.md)
 - Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md), [PRDs/v0.5/v0.5.md](PRDs/v0.5/v0.5.md), [PRDs/v0.6/v0.6.md](PRDs/v0.6/v0.6.md)

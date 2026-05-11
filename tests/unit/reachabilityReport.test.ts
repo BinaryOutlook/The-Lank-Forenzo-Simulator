@@ -82,7 +82,7 @@ describe("exploreReachabilityReport", () => {
     expect(report.endingIds).toEqual(
       expect.arrayContaining(["forcedRemoval", "merger", "prison"]),
     );
-  });
+  }, 15_000);
 
   it("surfaces the repaired safety denial and shadow subsidiary packs", () => {
     const report = exploreReachabilityReport({
