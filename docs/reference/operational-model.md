@@ -44,6 +44,46 @@ Good operational feedback:
 - avoids dispatch jargon
 - distinguishes latent fragility from visible disruption
 
+## Decision Pressure Model
+
+The current implementation keeps the player at executive altitude by translating
+selected decisions into compact pressure deltas:
+
+- maintenance denial increases `maintenanceBacklog`, fleet burden, and hub/route
+  fragility
+- contractor and outsourcing plays increase `contractorDependence`
+- labor cuts, scope pressure, and live crew-system changes increase crew fatigue
+  and recovery brittleness
+- route, hub, gate, and slot decisions reshape route demand, hub slot capacity,
+  and route fragility
+- stabilizers such as `safety_spending_surge`,
+  `retention_for_loyal_captains`, `buy_the_audit_weekend`, and
+  `sacrifice_on_time_to_hide_safety` reduce future cascade pressure instead of
+  merely granting metric relief
+
+These effects are still deterministic and board-level. They should not expose
+dispatch controls or require players to manage individual aircraft.
+
+## Named Cascade Families
+
+`resolveNetworkQuarter` can now surface several traceable cascade families:
+
+| Cascade                       | Trigger pressure                                                                           | Primary consequences                                              | Dossier hook                                    |
+| ----------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- | ----------------------------------------------- |
+| `maintenance-weather-cascade` | weather severity + high maintenance backlog + weak safety integrity                        | safety decay, public anger, market confidence loss, legal heat    | `maintenance_fraud`                             |
+| `contractor-control-cascade`  | high contractor dependence + backlog or fleet burden + weak safety integrity               | legal heat, safety decay, market confidence loss                  | `maintenance_fraud`, light `regulatory_capture` |
+| `crew-availability-cascade`   | high crew fatigue + low morale or service disruption + brittle recovery routes             | public anger, cash drag, market confidence loss                   | `labor_abuse`                                   |
+| `route-stranding-cascade`     | high route fragility + visible public anger, weak market confidence, or service disruption | public anger, cash drag, market confidence loss, light legal heat | `regulatory_capture`                            |
+
+Each cascade carries a `cause` string. Operation history entries include that
+cause and switch `sourceKind` to `operational_cascade` when a named cascade
+fires. Major cascades also create board-level briefing signals whose body pairs
+the visible failure with its executive cause.
+
+Operational cascade ids can feed dossier evidence. This keeps the scandal layer
+answering “what can the world prove?” rather than merely restating current
+metrics.
+
 ## UI Hooks
 
 The board packet can render operational pressure in the `Pressure read` section when operational state exists. The ending screen can render the most damaging cascade in the run recap.

@@ -5,6 +5,7 @@ import {
   createInitialRunState,
   resolveRound,
 } from "../../src/simulation/resolution/resolveRound";
+import { createDefaultNetworkState } from "../../src/simulation/operations/networkState";
 import { getAvailableDecisions } from "../../src/simulation/systems/decisionEngine";
 import { applyImpactSet } from "../../src/simulation/systems/metricEffects";
 import { meetsRequirements } from "../../src/simulation/systems/requirements";
@@ -65,6 +66,43 @@ describe("resolveRound", () => {
         ?.evidenceWeight,
     ).toBeGreaterThan(0);
     expect(next.systemSignals?.length).toBeGreaterThan(0);
+  });
+
+  it("records severe operational cascades as caused history and dossier evidence", () => {
+    const run = createInitialRunState();
+    const operations = createDefaultNetworkState();
+    run.round = 5;
+    run.metrics.safetyIntegrity = 42;
+    operations.maintenanceBacklog = 52;
+    operations.weatherFronts = [
+      {
+        id: "front-dossier-link",
+        affectedHubIds: ["ewr", "ord"],
+        severity: 84,
+        roundsRemaining: 1,
+      },
+    ];
+    run.operations = operations;
+
+    const next = resolveRound(run);
+    const operationHistory = next.history.find(
+      (entry) => entry.operationId === "maintenance-weather-cascade",
+    );
+    const maintenanceDossier = next.dossiers?.find(
+      (thread) => thread.theme === "maintenance_fraud",
+    );
+
+    expect(operationHistory?.sourceKind).toBe("operational_cascade");
+    expect(operationHistory?.cause).toContain("Deferred maintenance");
+    expect(operationHistory?.body).toContain("Cause:");
+    expect(maintenanceDossier?.linkedEventIds).toContain(
+      "maintenance-weather-cascade",
+    );
+    expect(
+      next.systemSignals?.some((signal) =>
+        signal.body.includes("Deferred maintenance"),
+      ),
+    ).toBe(true);
   });
 
   it("offers a curated decision tray for a fresh run", () => {
@@ -149,7 +187,9 @@ describe("resolveRound", () => {
       personalAssets: 8,
       publicRelationsCapital: 15,
     });
-    expect(next.history.some((entry) => entry.body.includes("Reserve spend"))).toBe(true);
+    expect(
+      next.history.some((entry) => entry.body.includes("Reserve spend")),
+    ).toBe(true);
   });
 
   it("blocks selected strategic actions when reserves are insufficient", () => {
@@ -165,7 +205,11 @@ describe("resolveRound", () => {
 
     expect(next.resources).toEqual(run.resources);
     expect(next.pendingEvents).toHaveLength(0);
-    expect(next.history.some((entry) => entry.title === "Strategic Reserve Shortfall")).toBe(true);
+    expect(
+      next.history.some(
+        (entry) => entry.title === "Strategic Reserve Shortfall",
+      ),
+    ).toBe(true);
   });
 
   it("supports authored exit endings", () => {

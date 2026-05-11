@@ -1,7 +1,7 @@
 import type { FactionIntent } from "../factions/factionState";
 import type { DossierTheme, DossierThread } from "./dossierState";
 
-export type EvidenceSourceType = "decision" | "event" | "faction";
+export type EvidenceSourceType = "decision" | "event" | "faction" | "operation";
 
 export interface EvidenceFragment {
   id: string;
@@ -16,9 +16,13 @@ export interface EvidenceCollectionInput {
   selectedDecisionIds: string[];
   emittedEventIds: string[];
   factionIntents: FactionIntent[];
+  operationalCascadeIds?: string[];
 }
 
-const DECISION_EVIDENCE: Record<string, Array<Omit<EvidenceFragment, "id" | "sourceType" | "sourceId">>> = {
+const DECISION_EVIDENCE: Record<
+  string,
+  Array<Omit<EvidenceFragment, "id" | "sourceType" | "sourceId">>
+> = {
   downgrade_the_inspection_memo: [
     { theme: "maintenance_fraud", weight: 14, witness: "line mechanic" },
   ],
@@ -45,7 +49,10 @@ const DECISION_EVIDENCE: Record<string, Array<Omit<EvidenceFragment, "id" | "sou
   ],
 };
 
-const EVENT_EVIDENCE: Record<string, Array<Omit<EvidenceFragment, "id" | "sourceType" | "sourceId">>> = {
+const EVENT_EVIDENCE: Record<
+  string,
+  Array<Omit<EvidenceFragment, "id" | "sourceType" | "sourceId">>
+> = {
   inspection_memo_leak: [
     { theme: "maintenance_fraud", weight: 12, witness: "line mechanic" },
   ],
@@ -57,6 +64,29 @@ const EVENT_EVIDENCE: Record<string, Array<Omit<EvidenceFragment, "id" | "source
   ],
   customs_broker_ping: [
     { theme: "offshore_evasion", weight: 10, witness: "customs broker" },
+  ],
+};
+
+const OPERATION_EVIDENCE: Record<
+  string,
+  Array<Omit<EvidenceFragment, "id" | "sourceType" | "sourceId">>
+> = {
+  "maintenance-weather-cascade": [
+    {
+      theme: "maintenance_fraud",
+      weight: 10,
+      witness: "station recovery manager",
+    },
+  ],
+  "contractor-control-cascade": [
+    { theme: "maintenance_fraud", weight: 11, witness: "contractor auditor" },
+    { theme: "regulatory_capture", weight: 7, witness: "FAA liaison" },
+  ],
+  "crew-availability-cascade": [
+    { theme: "labor_abuse", weight: 10, witness: "crew scheduler" },
+  ],
+  "route-stranding-cascade": [
+    { theme: "regulatory_capture", weight: 8, witness: "airport authority" },
   ],
 };
 
@@ -72,7 +102,15 @@ export function collectEvidenceFragments(
   }
 
   for (const eventId of input.emittedEventIds) {
-    fragments.push(...buildFragments("event", eventId, EVENT_EVIDENCE[eventId]));
+    fragments.push(
+      ...buildFragments("event", eventId, EVENT_EVIDENCE[eventId]),
+    );
+  }
+
+  for (const cascadeId of input.operationalCascadeIds ?? []) {
+    fragments.push(
+      ...buildFragments("operation", cascadeId, OPERATION_EVIDENCE[cascadeId]),
+    );
   }
 
   for (const intent of input.factionIntents) {
@@ -105,7 +143,9 @@ export function applyEvidenceFragments(
   fragments: EvidenceFragment[],
 ): DossierThread[] {
   return dossiers.map((thread) => {
-    const relevant = fragments.filter((fragment) => fragment.theme === thread.theme);
+    const relevant = fragments.filter(
+      (fragment) => fragment.theme === thread.theme,
+    );
     if (relevant.length === 0) {
       return thread;
     }

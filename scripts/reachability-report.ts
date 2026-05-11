@@ -1,5 +1,9 @@
 import { pathToFileURL } from "node:url";
-import { hashNumber, hashString, shuffleWithSeed } from "../src/lib/random/seeded";
+import {
+  hashNumber,
+  hashString,
+  shuffleWithSeed,
+} from "../src/lib/random/seeded";
 import { loadContent } from "../src/simulation/content";
 import {
   createInitialRunState,
@@ -107,15 +111,19 @@ export function exploreReachabilityReport(
   const content = options.content ?? loadContent();
   const contentHash = getContentHash(content);
   const context = createNoveltyContext();
+  const decisionById = new Map(
+    content.decisions.map((decision) => [decision.id, decision] as const),
+  );
   const eventKindById = new Map(
     content.events.map((event) => [event.id, event.kind] as const),
   );
+  const initialRun = createInitialRunState();
   let frontier: SearchNode[] = [
     {
-      run: createInitialRunState(),
+      run: initialRun,
       score: 0,
       path: [],
-      stateKey: abstractRunStateKey(createInitialRunState()),
+      stateKey: abstractRunStateKey(initialRun),
     },
   ];
   let exploredStates = 0;
@@ -161,10 +169,10 @@ export function exploreReachabilityReport(
           selectedDecisionIds,
         });
         const selectedDecisions = selectedDecisionIds
-          .map((decisionId) =>
-            content.decisions.find((decision) => decision.id === decisionId),
-          )
-          .filter((decision): decision is DecisionDefinition => Boolean(decision));
+          .map((decisionId) => decisionById.get(decisionId))
+          .filter((decision): decision is DecisionDefinition =>
+            Boolean(decision),
+          );
         const stateKey = abstractRunStateKey(nextRun);
         const triggeredEventIds = getTriggeredEventIds(nextRun);
         const packIds = selectedDecisions.map((decision) => decision.pack);
@@ -253,7 +261,10 @@ export function exploreReachabilityReport(
       content.events.filter((event) => event.kind === "delayed").length,
     ),
     hazardEventCoverage: buildCoverageStat(0, 0),
-    endingCoverage: buildCoverageStat(context.endingIds.size, content.endings.length),
+    endingCoverage: buildCoverageStat(
+      context.endingIds.size,
+      content.endings.length,
+    ),
     packCoverage,
     flagCoverage: buildCoverageStat(
       context.flagIds.size,
@@ -316,8 +327,10 @@ export function scoreNovelty(
   candidate: CandidateNoveltyInput,
 ): number {
   let score = context.knownStateKeys.has(candidate.stateKey) ? 0 : 18;
-  score += countNew(candidate.surfacedDecisionIds, context.surfacedDecisionIds) * 2;
-  score += countNew(candidate.selectedDecisionIds, context.selectedDecisionIds) * 7;
+  score +=
+    countNew(candidate.surfacedDecisionIds, context.surfacedDecisionIds) * 2;
+  score +=
+    countNew(candidate.selectedDecisionIds, context.selectedDecisionIds) * 7;
   score += countNew(candidate.triggeredEventIds, context.triggeredEventIds) * 9;
   score += countNew(candidate.packIds, context.packIds) * 5;
   score += countNew(candidate.flagIds, context.flagIds) * 3;
@@ -378,7 +391,9 @@ function buildDecisionBranches(
     hashNumber(hashString(seed), run.round, depthIndex, tray.length),
   )
     .slice(0, MAX_BRANCHING_TRAY)
-    .sort((left, right) => scoreBranchDecision(right) - scoreBranchDecision(left));
+    .sort(
+      (left, right) => scoreBranchDecision(right) - scoreBranchDecision(left),
+    );
   const branches: string[][] = [[]];
 
   for (const decision of ranked) {
@@ -447,10 +462,15 @@ function buildPackCoverage(
   seenPacks: Set<string>,
   content: ContentBundle,
 ): Record<DecisionPackId, CoverageStat> {
-  const packs = [...new Set(content.decisions.map((decision) => decision.pack))];
+  const packs = [
+    ...new Set(content.decisions.map((decision) => decision.pack)),
+  ];
 
   return Object.fromEntries(
-    packs.map((pack) => [pack, buildCoverageStat(seenPacks.has(pack) ? 1 : 0, 1)]),
+    packs.map((pack) => [
+      pack,
+      buildCoverageStat(seenPacks.has(pack) ? 1 : 0, 1),
+    ]),
   ) as Record<DecisionPackId, CoverageStat>;
 }
 
@@ -561,7 +581,11 @@ function bucketMetric(metric: MetricKey, value: number): string {
     return "flush";
   }
 
-  if (metric === "debt" || metric === "assetValue" || metric === "workforceSize") {
+  if (
+    metric === "debt" ||
+    metric === "assetValue" ||
+    metric === "workforceSize"
+  ) {
     if (value < 300) {
       return "low";
     }

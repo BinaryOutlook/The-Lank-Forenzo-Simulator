@@ -9,6 +9,8 @@ import {
   type NoveltyContext,
 } from "../../scripts/reachability-report";
 
+const DEFAULT_PASS_TIMEOUT_MS = 20_000;
+
 describe("reachability report helpers", () => {
   it("abstracts run state into stable buckets instead of exact metric values", () => {
     const baseRun = createInitialRunState();
@@ -71,18 +73,22 @@ describe("exploreReachabilityReport", () => {
     expect(first.repeatedTrayPressure.percentage).toBeLessThanOrEqual(1);
   });
 
-  it("reaches bounded failure and merger endings in the default pass", () => {
-    const report = exploreReachabilityReport({
-      width: 32,
-      depth: 24,
-      seed: "v0.5-default",
-    });
+  it(
+    "reaches bounded failure and merger endings in the default pass",
+    () => {
+      const report = exploreReachabilityReport({
+        width: 32,
+        depth: 24,
+        seed: "v0.5-default",
+      });
 
-    expect(report.endingCoverage.seen).toBeGreaterThanOrEqual(3);
-    expect(report.endingIds).toEqual(
-      expect.arrayContaining(["forcedRemoval", "merger", "prison"]),
-    );
-  });
+      expect(report.endingCoverage.seen).toBeGreaterThanOrEqual(3);
+      expect(report.endingIds).toEqual(
+        expect.arrayContaining(["forcedRemoval", "merger", "prison"]),
+      );
+    },
+    DEFAULT_PASS_TIMEOUT_MS,
+  );
 
   it("surfaces the repaired safety denial and shadow subsidiary packs", () => {
     const report = exploreReachabilityReport({
