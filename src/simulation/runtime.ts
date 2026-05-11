@@ -2,6 +2,7 @@ import { loadContentManifest } from "./content/index.js";
 import {
   createInitialRunState,
   resolveRound as resolveSimulationRound,
+  type ResolveRoundOptions,
 } from "./resolution/resolveRound.js";
 import {
   composeDecisionTray,
@@ -39,7 +40,7 @@ export interface SimulationRuntime {
   createInitialRun(input?: InitialRunInput): RunState;
   getAvailableDecisions(run: RunState): TrayCompositionResult;
   toggleDecision(run: RunState, decisionId: string): RunState;
-  resolveRound(run: RunState): RunState;
+  resolveRound(run: RunState, options?: ResolveRoundOptions): RunState;
   getEnding(run: RunState): EndingDefinition | null;
 }
 
@@ -110,12 +111,15 @@ export function toggleDecision(run: RunState, decisionId: string): RunState {
   };
 }
 
-export function resolveRound(run: RunState): RunState {
+export function resolveRound(
+  run: RunState,
+  options?: ResolveRoundOptions,
+): RunState {
   if (run.status !== "active") {
     return run;
   }
 
-  return resolveSimulationRound(run);
+  return resolveSimulationRound(run, options);
 }
 
 export function getEnding(run: RunState): EndingDefinition | null {

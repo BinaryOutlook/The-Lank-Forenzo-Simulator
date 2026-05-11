@@ -588,10 +588,13 @@ export function simulateBotRun(
     }
     selectedDecisionSequence.push(...chosenIds);
 
-    run = resolveRound({
-      ...run,
-      selectedDecisionIds: chosenIds,
-    });
+    run = resolveRound(
+      {
+        ...run,
+        selectedDecisionIds: chosenIds,
+      },
+      { buildRecap: false },
+    );
     roundsPlayed += 1;
   }
 

@@ -247,7 +247,9 @@ describe("resolveRound", () => {
       personalAssets: 8,
       publicRelationsCapital: 15,
     });
-    expect(next.history.some((entry) => entry.body.includes("Reserve spend"))).toBe(true);
+    expect(
+      next.history.some((entry) => entry.body.includes("Reserve spend")),
+    ).toBe(true);
   });
 
   it("blocks selected strategic actions when reserves are insufficient", () => {
@@ -263,7 +265,11 @@ describe("resolveRound", () => {
 
     expect(next.resources).toEqual(run.resources);
     expect(next.pendingEvents).toHaveLength(0);
-    expect(next.history.some((entry) => entry.title === "Strategic Reserve Shortfall")).toBe(true);
+    expect(
+      next.history.some(
+        (entry) => entry.title === "Strategic Reserve Shortfall",
+      ),
+    ).toBe(true);
   });
 
   it("supports authored exit endings", () => {
@@ -375,6 +381,29 @@ describe("resolveRound", () => {
 
     expect(getAutomaticEndingId(prisonRun.metrics)).toBe("prison");
     expect(getAutomaticEndingId(forcedRun.metrics)).toBe("forcedRemoval");
+  });
+
+  it("builds a structured case-summary recap for ended runs", () => {
+    const run = createInitialRunState();
+    run.round = 7;
+    run.metrics.marketConfidence = 74;
+    run.metrics.stockPrice = 36;
+    run.metrics.personalWealth = 48;
+    run.metrics.legalHeat = 92;
+    run.metrics.safetyIntegrity = 30;
+    run.selectedDecisionIds = ["downgrade_the_inspection_memo"];
+
+    const next = resolveRound(run);
+
+    expect(next.status).toBe("ended");
+    expect(next.endingId).toBe("prison");
+    expect(next.recap?.outcome[0]?.title).toBe("Why it ended");
+    expect(next.recap?.dominantStrategy[0]?.title).toBe("Operational denial");
+    expect(next.recap?.operations[0]?.body).toMatch(/backlog|cascade/i);
+    expect(next.recap?.dossiers[0]?.body).toMatch(/file/i);
+    expect(next.recap?.missedExitWindows.map((item) => item.title)).toContain(
+      "Extraction window",
+    );
   });
 
   it("supports all authored exit endings", () => {
