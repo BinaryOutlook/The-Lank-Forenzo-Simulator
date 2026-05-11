@@ -265,8 +265,25 @@ Where:
    - `temptation`
    - `exit-window`
    - `chain-continuation`
-   - `pack-diversity`
-   - `low-reachability-repair`
+   - `coverage-repair`
+   - `repeat-avoidance`
+   - `fallback-fill`
+
+The current v0.7 diagnostics scaffold uses this taxonomy:
+
+- `relief`: the card repairs an urgent public-company pressure such as cash,
+  legal heat, safety integrity, creditor patience, or market confidence.
+- `temptation`: the card advances private extraction pressure, especially
+  personal wealth or extraction-lane plays.
+- `chain-continuation`: the card is gated by live requirements or opens a
+  flagged follow-up chain.
+- `exit-window`: the card is an eligible exit or ending window.
+- `coverage-repair`: the composer or diagnostic tooling surfaced the card to
+  keep pack/group coverage legible.
+- `repeat-avoidance`: the composer preferred the card while avoiding exact
+  previous-tray repetition.
+- `fallback-fill`: no stronger category applied; the card filled remaining tray
+  capacity deterministically.
 5. Add tests that prove:
    - exit cards are preserved when eligible
    - exact previous trays do not repeat when alternatives exist

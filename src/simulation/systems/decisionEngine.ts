@@ -36,16 +36,51 @@ export const TRAY_COMPOSER_POLICY = {
   noRepeatCandidateBonus: 10,
 } as const;
 
+export const TRAY_PICK_REASONS = [
+  "relief",
+  "temptation",
+  "chain-continuation",
+  "exit-window",
+  "coverage-repair",
+  "repeat-avoidance",
+  "fallback-fill",
+] as const;
+
+export type TrayPickReason = (typeof TRAY_PICK_REASONS)[number];
+
+export interface TrayPickDiagnostic {
+  decisionId: string;
+  score: number;
+  reasons: TrayPickReason[];
+}
+
+export type TrayPickReasonCounts = Record<TrayPickReason, number>;
+
 interface RankedDecision {
   decision: DecisionDefinition;
   score: number;
   seededIndex: number;
 }
 
+interface PickedDecision {
+  decision: DecisionDefinition;
+  score: number;
+  seededIndex: number;
+  options: PickCandidateOptions;
+}
+
 interface TrayScoreContext {
+  run: RunState;
   previousRoundIds: Set<string>;
   availableGroupCount: number;
   availablePackCount: number;
+}
+
+interface PickCandidateOptions {
+  allowRepeats: boolean;
+  enforceGroupCap: boolean;
+  requireNewPack?: boolean;
+  requireFollowUp?: boolean;
 }
 
 export interface TrayCompositionResult {
@@ -57,6 +92,8 @@ export interface TrayCompositionResult {
     distinctGroups: number;
     distinctPacks: number;
     exitPreserved: boolean;
+    pickReasons: TrayPickDiagnostic[];
+    reasonCounts: TrayPickReasonCounts;
   };
 }
 
@@ -69,6 +106,72 @@ export function isDecisionEligible(
 
 function isFollowUpDecision(decision: DecisionDefinition): boolean {
   return hasRequirementConstraints(decision.requirements);
+}
+
+function addReason(
+  reasons: Set<TrayPickReason>,
+  reason: TrayPickReason,
+): void {
+  reasons.add(reason);
+}
+
+function sortReasons(reasons: Iterable<TrayPickReason>): TrayPickReason[] {
+  const reasonSet = new Set(reasons);
+  const sorted = TRAY_PICK_REASONS.filter((reason) => reasonSet.has(reason));
+
+  return sorted.length > 0 ? sorted : ["fallback-fill"];
+}
+
+function orderReasons(reasons: Iterable<TrayPickReason>): TrayPickReason[] {
+  const reasonSet = new Set(reasons);
+
+  return TRAY_PICK_REASONS.filter((reason) => reasonSet.has(reason));
+}
+
+function getUtilityReasons(
+  decision: DecisionDefinition,
+  run: RunState,
+): TrayPickReason[] {
+  const reasons = new Set<TrayPickReason>();
+  const { metrics } = run;
+  const { impacts } = decision;
+
+  if (metrics.airlineCash < 110 && (impacts.airlineCash ?? 0) > 0) {
+    addReason(reasons, "relief");
+  }
+
+  if (metrics.legalHeat > 58 && (impacts.legalHeat ?? 0) < 0) {
+    addReason(reasons, "relief");
+  }
+
+  if (metrics.safetyIntegrity < 55 && (impacts.safetyIntegrity ?? 0) > 0) {
+    addReason(reasons, "relief");
+  }
+
+  if (metrics.creditorPatience < 40 && (impacts.creditorPatience ?? 0) > 0) {
+    addReason(reasons, "relief");
+  }
+
+  if (metrics.marketConfidence < 45 && (impacts.marketConfidence ?? 0) > 0) {
+    addReason(reasons, "relief");
+  }
+
+  if (
+    decision.group === "extraction" ||
+    (metrics.personalWealth < 42 && (impacts.personalWealth ?? 0) > 0)
+  ) {
+    addReason(reasons, "temptation");
+  }
+
+  if (decision.group === "exit" || decision.ending) {
+    addReason(reasons, "exit-window");
+  }
+
+  if (isFollowUpDecision(decision) || (decision.setsFlags?.length ?? 0) > 0) {
+    addReason(reasons, "chain-continuation");
+  }
+
+  return orderReasons(reasons);
 }
 
 function scoreDecision(
@@ -148,17 +251,34 @@ function sortRankedDecisions(
   return left.seededIndex - right.seededIndex;
 }
 
-function appendDecision(
+function appendPickedDecision(
   chosen: DecisionDefinition[],
-  decision: DecisionDefinition,
+  picked: PickedDecision,
   chosenIds: Set<string>,
   chosenPacks: Set<DecisionPackId>,
   groupCounts: Map<DecisionGroup, number>,
-) {
+  context: TrayScoreContext,
+  pickReasons: TrayPickDiagnostic[],
+): void {
+  const { decision } = picked;
+  const reasons = getCandidateReasons(
+    decision,
+    chosen,
+    groupCounts,
+    chosenPacks,
+    context,
+    picked.options,
+  );
+
   chosen.push(decision);
   chosenIds.add(decision.id);
   chosenPacks.add(decision.pack);
   groupCounts.set(decision.group, (groupCounts.get(decision.group) ?? 0) + 1);
+  pickReasons.push({
+    decisionId: decision.id,
+    score: picked.score,
+    reasons,
+  });
 }
 
 function countDistinctGroups(decisions: DecisionDefinition[]): number {
@@ -220,6 +340,46 @@ function scoreTrayCandidate(
   return score;
 }
 
+function getCandidateReasons(
+  decision: DecisionDefinition,
+  chosen: DecisionDefinition[],
+  groupCounts: Map<DecisionGroup, number>,
+  chosenPacks: Set<DecisionPackId>,
+  context: TrayScoreContext,
+  options: PickCandidateOptions,
+): TrayPickReason[] {
+  const groupCount = groupCounts.get(decision.group) ?? 0;
+  const distinctGroups = countDistinctGroups(chosen);
+  const groupTarget = Math.min(
+    TRAY_COMPOSER_POLICY.minDistinctGroups,
+    TRAY_COMPOSER_POLICY.mainTraySize,
+    context.availableGroupCount,
+  );
+  const packTarget = Math.min(
+    TRAY_COMPOSER_POLICY.minDistinctPacks,
+    TRAY_COMPOSER_POLICY.mainTraySize,
+    context.availablePackCount,
+  );
+  const reasons = new Set(getUtilityReasons(decision, context.run));
+
+  if (
+    (groupCount === 0 && distinctGroups < groupTarget) ||
+    (!chosenPacks.has(decision.pack) && chosenPacks.size < packTarget) ||
+    options.requireNewPack
+  ) {
+    addReason(reasons, "coverage-repair");
+  }
+
+  if (
+    context.previousRoundIds.size > 0 &&
+    !context.previousRoundIds.has(decision.id)
+  ) {
+    addReason(reasons, "repeat-avoidance");
+  }
+
+  return sortReasons(reasons);
+}
+
 function pickCandidate(
   ranked: RankedDecision[],
   chosen: DecisionDefinition[],
@@ -228,18 +388,9 @@ function pickCandidate(
   chosenPacks: Set<DecisionPackId>,
   groupCounts: Map<DecisionGroup, number>,
   context: TrayScoreContext,
-  options: {
-    allowRepeats: boolean;
-    enforceGroupCap: boolean;
-    requireNewPack?: boolean;
-    requireFollowUp?: boolean;
-  },
-): DecisionDefinition | null {
-  let best: {
-    decision: DecisionDefinition;
-    score: number;
-    seededIndex: number;
-  } | null = null;
+  options: PickCandidateOptions,
+): PickedDecision | null {
+  let best: PickedDecision | null = null;
 
   for (const entry of ranked) {
     const { decision } = entry;
@@ -281,11 +432,36 @@ function pickCandidate(
       setScore > best.score ||
       (setScore === best.score && entry.seededIndex < best.seededIndex)
     ) {
-      best = { decision, score: setScore, seededIndex: entry.seededIndex };
+      best = {
+        decision,
+        score: setScore,
+        seededIndex: entry.seededIndex,
+        options,
+      };
     }
   }
 
-  return best?.decision ?? null;
+  return best;
+}
+
+export function createEmptyTrayPickReasonCounts(): TrayPickReasonCounts {
+  return Object.fromEntries(
+    TRAY_PICK_REASONS.map((reason) => [reason, 0]),
+  ) as TrayPickReasonCounts;
+}
+
+export function summarizeTrayPickReasons(
+  pickReasons: TrayPickDiagnostic[],
+): TrayPickReasonCounts {
+  const counts = createEmptyTrayPickReasonCounts();
+
+  for (const pick of pickReasons) {
+    for (const reason of pick.reasons) {
+      counts[reason] += 1;
+    }
+  }
+
+  return counts;
 }
 
 export function composeDecisionTray(
@@ -321,7 +497,9 @@ export function composeDecisionTray(
   const chosenIds = new Set<string>();
   const chosenPacks = new Set<DecisionPackId>();
   const groupCounts = new Map<DecisionGroup, number>();
+  const pickReasons: TrayPickDiagnostic[] = [];
   const scoreContext: TrayScoreContext = {
+    run,
     previousRoundIds,
     availableGroupCount: new Set(ranked.map((entry) => entry.decision.group))
       .size,
@@ -383,7 +561,15 @@ export function composeDecisionTray(
       break;
     }
 
-    appendDecision(chosen, candidate, chosenIds, chosenPacks, groupCounts);
+    appendPickedDecision(
+      chosen,
+      candidate,
+      chosenIds,
+      chosenPacks,
+      groupCounts,
+      scoreContext,
+      pickReasons,
+    );
   }
 
   if (!chosen.some(isFollowUpDecision)) {
@@ -418,12 +604,14 @@ export function composeDecisionTray(
       );
 
     if (followUpCandidate) {
-      appendDecision(
+      appendPickedDecision(
         chosen,
         followUpCandidate,
         chosenIds,
         chosenPacks,
         groupCounts,
+        scoreContext,
+        pickReasons,
       );
     }
   }
@@ -474,7 +662,15 @@ export function composeDecisionTray(
       break;
     }
 
-    appendDecision(chosen, candidate, chosenIds, chosenPacks, groupCounts);
+    appendPickedDecision(
+      chosen,
+      candidate,
+      chosenIds,
+      chosenPacks,
+      groupCounts,
+      scoreContext,
+      pickReasons,
+    );
   }
 
   let exitPreserved = false;
@@ -486,7 +682,23 @@ export function composeDecisionTray(
         scoreDecision(left, run, previousRoundIds),
     );
     if (bestExit) {
-      chosen.push(bestExit);
+      appendPickedDecision(
+        chosen,
+        {
+          decision: bestExit,
+          score: scoreDecision(bestExit, run, previousRoundIds),
+          seededIndex: mainPool.length,
+          options: {
+            allowRepeats: true,
+            enforceGroupCap: false,
+          },
+        },
+        chosenIds,
+        chosenPacks,
+        groupCounts,
+        scoreContext,
+        pickReasons,
+      );
       exitPreserved = true;
     }
   }
@@ -506,6 +718,8 @@ export function composeDecisionTray(
         chosen.filter((decision) => decision.group !== "exit"),
       ),
       exitPreserved,
+      pickReasons,
+      reasonCounts: summarizeTrayPickReasons(pickReasons),
     },
   };
 }

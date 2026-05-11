@@ -56,6 +56,9 @@ describe("buildBalanceMatrixReport", () => {
     expect(first.aggregate.repeatedTrayPressure.percentage).toBeLessThanOrEqual(
       1,
     );
+    expect(first.aggregate.trayPickReasonCounts["coverage-repair"]).toBeGreaterThan(
+      0,
+    );
   });
 
   it("reaches multiple successful exits in the default balance matrix", () => {
@@ -111,6 +114,7 @@ describe("buildBalanceMatrixReport", () => {
     expect(output).toContain("Aggregate:");
     expect(output).toContain("Extraction bot");
     expect(output).toContain("Low-reachability packs:");
+    expect(output).toContain("Tray pick reasons:");
     expect(output).toContain("Surfaced decision IDs:");
     expect(output).toContain("Selected decision IDs:");
   });

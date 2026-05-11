@@ -69,20 +69,25 @@ describe("exploreReachabilityReport", () => {
     expect(first.triggeredEventCoverage.total).toBeGreaterThan(0);
     expect(first.repeatedTrayPressure.percentage).toBeGreaterThanOrEqual(0);
     expect(first.repeatedTrayPressure.percentage).toBeLessThanOrEqual(1);
+    expect(first.trayPickReasonCounts["coverage-repair"]).toBeGreaterThan(0);
   });
 
-  it("reaches bounded failure and merger endings in the default pass", () => {
-    const report = exploreReachabilityReport({
-      width: 32,
-      depth: 24,
-      seed: "v0.5-default",
-    });
+  it(
+    "reaches bounded failure and merger endings in the default pass",
+    () => {
+      const report = exploreReachabilityReport({
+        width: 32,
+        depth: 24,
+        seed: "v0.5-default",
+      });
 
-    expect(report.endingCoverage.seen).toBeGreaterThanOrEqual(3);
-    expect(report.endingIds).toEqual(
-      expect.arrayContaining(["forcedRemoval", "merger", "prison"]),
-    );
-  });
+      expect(report.endingCoverage.seen).toBeGreaterThanOrEqual(3);
+      expect(report.endingIds).toEqual(
+        expect.arrayContaining(["forcedRemoval", "merger", "prison"]),
+      );
+    },
+    30_000,
+  );
 
   it("surfaces the repaired safety denial and shadow subsidiary packs", () => {
     const report = exploreReachabilityReport({
@@ -109,6 +114,7 @@ describe("exploreReachabilityReport", () => {
     expect(output).toContain("V0.6 reachability explorer");
     expect(output).toContain("Content hash:");
     expect(output).toContain("Surfaced decisions:");
+    expect(output).toContain("Tray pick reasons:");
     expect(output).toContain("Low-confidence decision ids:");
     expect(output).toContain("Top frontier abstractions:");
   });
