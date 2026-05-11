@@ -7,6 +7,44 @@ As of `2026-05-11`, the repo contains `165` authored events:
 - `74` ambient events
 - `91` delayed events
 
+The repo also contains `5` authored hazard rules under `content/hazards/`.
+Hazards are not a third event kind; they are deterministic scheduler rules that
+point at existing event IDs when accumulated run state makes that fallout
+legible.
+
+## Hazard Authoring
+
+Hazards turn state pressure into inspectable event pressure. Author them in
+`content/hazards/*.json`, export them from `content/hazards/index.ts`, and let
+the content manifest compile them into `hazardById` and `hazardsByFamily`.
+
+Each hazard rule must include:
+
+- `id`: stable rule ID, preferably prefixed with `hazard_`.
+- `eventId`: existing authored event to emit when the rule wins scheduler
+  selection.
+- `baseWeight`: positive deterministic selection weight.
+- `cooldownRounds`: positive per-rule cooldown after firing.
+- `sourceFamily`: one of `legalHeat`, `safetyDecay`, `publicAnger`,
+  `creditorPressure`, or `dossierExposure`.
+- `explanation`: player- and diagnostic-facing reason this pressure exists.
+- `requirements`: at least one `roundAtLeast`, `roundAtMost`, `metricMin`,
+  `metricMax`, `flagsAll`, or `flagsNone` gate.
+
+Validation fails if a hazard references a missing event, uses a malformed
+requirement shape, duplicates another hazard ID, or consumes a flag that no
+content produces. Hazard references to delayed events also count as legitimate
+delayed-event references, so systemic pressure can reuse authored fallout
+without creating orphan diagnostics.
+
+Starter families:
+
+- `hazard_legal_heat_ig_letter` -> `inspector_general_letter`
+- `hazard_safety_decay_paper_trail` -> `maintenance_paper_trail`
+- `hazard_public_anger_documentary` -> `documentary_teaser_drop`
+- `hazard_creditor_default_clock` -> `covenant_default_clock`
+- `hazard_dossier_metadata_snag` -> `subpoena_metadata_snag`
+
 ## How to Read This
 
 - `Parallel` means a broad historical rhyme, not a documentary retelling.

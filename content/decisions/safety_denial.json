@@ -10,6 +10,10 @@
       "safetyIntegrity": -8,
       "legalHeat": 6
     },
+    "operationEffects": {
+      "maintenanceBacklog": 16,
+      "contractorDependence": 6
+    },
     "requirements": {
       "metricMin": {
         "safetyIntegrity": 60
@@ -45,6 +49,10 @@
       "safetyIntegrity": -10,
       "workforceMorale": -5,
       "legalHeat": 6
+    },
+    "operationEffects": {
+      "maintenanceBacklog": 16,
+      "contractorDependence": 14
     },
     "requirements": {
       "flagsAll": ["safetyDenialPattern"]
@@ -107,6 +115,10 @@
       "legalHeat": 7,
       "marketConfidence": 1
     },
+    "operationEffects": {
+      "maintenanceBacklog": 16,
+      "contractorDependence": 6
+    },
     "requirements": {
       "flagsAll": ["safetyDenialPattern"]
     },
@@ -125,6 +137,10 @@
       "safetyIntegrity": -11,
       "workforceMorale": -6,
       "legalHeat": 5
+    },
+    "operationEffects": {
+      "maintenanceBacklog": 12,
+      "contractorDependence": 6
     },
     "requirements": {
       "flagsAll": ["safetyDenialPattern"]
@@ -165,6 +181,10 @@
       "safetyIntegrity": 12,
       "marketConfidence": -5,
       "legalHeat": -4
+    },
+    "operationEffects": {
+      "maintenanceBacklog": -12,
+      "serviceDisruption": 4
     },
     "requirements": {
       "metricMax": {

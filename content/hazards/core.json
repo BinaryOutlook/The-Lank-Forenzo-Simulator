@@ -1,0 +1,85 @@
+[
+  {
+    "id": "hazard_legal_heat_ig_letter",
+    "eventId": "inspector_general_letter",
+    "baseWeight": 6,
+    "cooldownRounds": 4,
+    "sourceFamily": "legalHeat",
+    "explanation": "Legal heat above the comfort line turns quiet oversight files into active investigation pressure.",
+    "requirements": {
+      "roundAtLeast": 4,
+      "metricMin": {
+        "legalHeat": 78
+      },
+      "metricMax": {
+        "legalHeat": 82
+      }
+    }
+  },
+  {
+    "id": "hazard_safety_decay_paper_trail",
+    "eventId": "maintenance_paper_trail",
+    "baseWeight": 7,
+    "cooldownRounds": 4,
+    "sourceFamily": "safetyDecay",
+    "explanation": "A weakened safety ledger makes old deferred maintenance decisions legible as intent.",
+    "requirements": {
+      "roundAtLeast": 3,
+      "metricMax": {
+        "safetyIntegrity": 42
+      }
+    }
+  },
+  {
+    "id": "hazard_public_anger_documentary",
+    "eventId": "documentary_teaser_drop",
+    "baseWeight": 5,
+    "cooldownRounds": 3,
+    "sourceFamily": "publicAnger",
+    "explanation": "Sustained public anger gives producers, passengers, and ex-employees a cleaner story to sell.",
+    "requirements": {
+      "roundAtLeast": 3,
+      "metricMin": {
+        "publicAnger": 74
+      },
+      "metricMax": {
+        "legalHeat": 80
+      }
+    }
+  },
+  {
+    "id": "hazard_creditor_default_clock",
+    "eventId": "covenant_default_clock",
+    "baseWeight": 6,
+    "cooldownRounds": 4,
+    "sourceFamily": "creditorPressure",
+    "explanation": "Thin creditor patience plus a heavy debt stack lets lenders convert anxiety into deadlines.",
+    "requirements": {
+      "roundAtLeast": 4,
+      "metricMin": {
+        "debt": 760
+      },
+      "metricMax": {
+        "creditorPatience": 34
+      }
+    }
+  },
+  {
+    "id": "hazard_dossier_metadata_snag",
+    "eventId": "subpoena_metadata_snag",
+    "baseWeight": 5,
+    "cooldownRounds": 5,
+    "sourceFamily": "dossierExposure",
+    "explanation": "Visible personal enrichment under legal heat makes the paper trail feel worth subpoenaing.",
+    "requirements": {
+      "roundAtLeast": 5,
+      "metricMin": {
+        "legalHeat": 70,
+        "personalWealth": 55
+      },
+      "metricMax": {
+        "legalHeat": 82
+      }
+    }
+  }
+]

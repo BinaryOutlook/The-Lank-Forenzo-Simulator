@@ -4,6 +4,7 @@ Status: Forward-looking technical and product report
 Owner: BinaryOutlook  
 Last updated: 2026-05-11  
 Audience: future maintainers, designers, simulation engineers, and agents re-entering the project
+Implementation plan: [`docs/FUTURE_REPORT_IMPLEMENTATION_PLAN.md`](FUTURE_REPORT_IMPLEMENTATION_PLAN.md)
 
 ## 1. Executive Thesis
 
@@ -70,31 +71,32 @@ This is enough content for meaningful replay variety. The problem is not raw vol
 - Ending distribution:
   - `active`: `0/1600` runs, or `0.0%`
   - `bahamas`: `200/1600` runs, or `12.5%`
-  - `extraction`: `200/1600` runs, or `12.5%`
-  - `forcedRemoval`: `200/1600` runs, or `12.5%`
+  - `extraction`: `117/1600` runs, or `7.3%`
+  - `forcedRemoval`: `242/1600` runs, or `15.1%`
   - `merger`: `200/1600` runs, or `12.5%`
-  - `prison`: `800/1600` runs, or `50.0%`
-- Surfaced decisions: `61/113`, or `54.0%`
+  - `prison`: `841/1600` runs, or `52.6%`
+- Surfaced decisions: `54/113`, or `47.8%`
 - Selected decisions: `43/113`, or `38.1%`
-- Triggered events: `75/165`, or `45.5%`
-- Delayed events: `34/91`, or `37.4%`
-- Low-reachability packs: `marketTheater`
+- Triggered events: `74/165`, or `44.8%`
+- Delayed events: `28/91`, or `30.8%`
+- Low-reachability packs: `incidentVariants`
 
 `npm run reachability:report` currently reports:
 
-- Surfaced decisions: `64/113`, or `56.6%`
-- Selected decisions: `64/113`, or `56.6%`
-- Triggered events: `96/165`, or `58.2%`
-- Delayed events: `31/91`, or `34.1%`
-- Endings reached: `3/5`, or `60.0%` (`forcedRemoval`, `merger`, `prison`)
+- Surfaced decisions: `55/113`, or `48.7%`
+- Selected decisions: `55/113`, or `48.7%`
+- Triggered events: `115/165`, or `69.7%`
+- Delayed events: `45/91`, or `49.5%`
+- Endings reached: `5/5`, or `100.0%` (`bahamas`, `extraction`, `forcedRemoval`, `merger`, `prison`)
 - Low-confidence packs: none
 
 This is a healthier baseline than the earlier extraction-dominated state. The
-default matrix now verifies all five endings, and the previously
-low-reachability `safetyDenial` and `shadowSubsidiaries` packs now surface in
-the primary diagnostics. The central work ahead remains making the
-`marketTheater` lane more robust under scripted play while continuing to raise
-authored decision and delayed-event coverage.
+default matrix and bounded reachability explorer now both verify all five
+endings. The bounded reachability explorer has no low-confidence packs, while
+the aggregate matrix still leaves `incidentVariants` as the remaining
+low-reachability pack. The central work ahead remains raising authored decision
+coverage and delayed-event coverage in the default matrix without weakening the
+ending spread.
 
 ### 2.4 Verification Baseline
 
@@ -265,8 +267,18 @@ Where:
    - `temptation`
    - `exit-window`
    - `chain-continuation`
+   - `risk-penalty`
+   - `repeat-suppression`
+   - `group-diversity`
    - `pack-diversity`
    - `low-reachability-repair`
+
+The diagnostics scaffold also keeps aggregate reason counts in balance and
+reachability reports. These counts are design signals, not pass/fail gates: they
+show whether the tray composer is mostly repairing urgent pressure, preserving
+strategic windows, diversifying groups/packs, suppressing repetition, or
+surfacing low-reachability content.
+
 5. Add tests that prove:
    - exit cards are preserved when eligible
    - exact previous trays do not repeat when alternatives exist
@@ -774,17 +786,26 @@ Recommended CI stages:
 
 ### 8.3 Nightly Simulation Job
 
-Add a nightly job later for deeper balance work:
+An initial nightly reporting path now exists through `npm run report:nightly`
+and `.github/workflows/nightly-simulation-report.yml`. The default profile runs
+`750` seeded simulations per archetype, or `6,000` total runs across the current
+eight scripted bots, with a `30` round cap. It uploads artifacts instead of
+failing on soft balance warnings, keeping deep diagnostics separate from fast PR
+checks.
 
-- `5,000` to `20,000` scripted runs
-- all archetype bots
-- seeded random bot
-- high-risk bot
-- stabilizer bot
-- underused-pack bot
+The current artifact set includes:
+
 - ending distribution report
 - low-confidence content report
+- low-confidence trend point
 - dominant sequence report
+
+Future extensions can still add:
+
+- seeded random bot
+- high-risk bot
+- underused-pack bot
+- larger `10,000` to `20,000` run profiles when runtime is known
 
 Dominant sequences can be scored as:
 
@@ -800,6 +821,8 @@ $$
 Where \(q\) is a decision sequence prefix.
 
 ## 9. Versioned Implementation Plan
+
+The issue-by-issue execution map for this section lives in [`FUTURE_REPORT_IMPLEMENTATION_PLAN.md`](FUTURE_REPORT_IMPLEMENTATION_PLAN.md). Use that plan for current tracker boundaries, dependencies, and per-milestone exit gates; use this report for product and technical rationale.
 
 ### 9.1 V0.6: Balance And Reachability Repair
 

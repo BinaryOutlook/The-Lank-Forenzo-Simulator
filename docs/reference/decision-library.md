@@ -23,7 +23,9 @@ No decision in this file should be read as:
 
 ## Faction Metadata Rules
 
-Decisions may include optional `factionEffects` metadata. This is the preferred way to author faction reactions; old ID/tag substring heuristics remain only as migration fallback for decisions without metadata.
+Decisions and events may include optional `factionEffects` metadata. This is the
+preferred way to author faction reactions; old ID/tag substring heuristics remain
+only as migration fallback for content without metadata.
 
 ```json
 "factionEffects": {
@@ -40,9 +42,42 @@ Rules:
 
 - Valid faction IDs are `board`, `creditors`, `labor`, `regulators`, and `press`.
 - Numeric deltas may target `patience`, `aggression`, `trust`, `cohesion`, `leverage`, or `dossierWeight`.
-- Each numeric delta must be an integer in \( -25 \le \Delta \le 25 \).
+- Each numeric delta must be an integer in $-25 \le \Delta \le 25$.
 - `grievance` is optional, but when present it should explain what the faction remembers in short reviewable language.
 - A first pass is intentionally representative, not exhaustive: labor, safety, offshore, market, and creditor lanes now have explicit examples.
+
+## Authoring Syntax: Operational Effects
+
+Decisions may include optional `operationEffects` metadata when the choice should
+change the board-level network state. The simulation consumes this metadata from
+the executed decision itself; do not add new hardcoded decision-id checks for
+maintenance, labor, contractor, or weather fallout.
+
+```json
+{
+  "id": "vendor_swap_the_heavy_checks",
+  "operationEffects": {
+    "maintenanceBacklog": 16,
+    "contractorDependence": 14
+  }
+}
+```
+
+Supported keys are:
+
+- `maintenanceBacklog`
+- `contractorDependence`
+- `crewFatigue`
+- `serviceDisruption`
+- `hubFragility` as a map of hub id to delta
+- `routeFragility` as a map of route id to delta
+- `weatherExposure`
+
+Positive values add stress; negative values represent stabilizing or mitigating
+actions. Keep values small enough that a two-card quarter remains readable.
+The first representative metadata pass covers `14` operations, labor, and safety
+choices; expansion should continue pack-by-pack instead of sweeping every card at
+once.
 
 ## Historical Parallel Matrix
 

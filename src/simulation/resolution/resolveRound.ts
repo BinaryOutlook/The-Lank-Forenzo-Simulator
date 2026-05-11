@@ -38,6 +38,7 @@ import {
   resolveEventScheduler,
   scheduleEvent,
   type EventSchedulerState,
+  type HazardRule,
 } from "../scheduler/eventScheduler";
 import { getImpactSetScore } from "../state/metricSemantics";
 import { getAvailableDecisions } from "../systems/decisionEngine";
@@ -257,6 +258,7 @@ interface SelectedDecisionResult {
   historyEntries: HistoryEntry[];
   executedDecisionIds: string[];
   factionEffectSources: FactionEffectSource[];
+  executedDecisions: DecisionDefinition[];
   endingId: EndingId | null;
 }
 
@@ -273,6 +275,7 @@ function applySelectedDecisions(
   const historyEntries: HistoryEntry[] = [];
   const executedDecisionIds: string[] = [];
   const factionEffectSources: FactionEffectSource[] = [];
+  const executedDecisions: DecisionDefinition[] = [];
   let nextScheduler = scheduler;
 
   for (const decisionId of run.selectedDecisionIds) {
@@ -302,6 +305,7 @@ function applySelectedDecisions(
         effects: decision.factionEffects,
       });
     }
+    executedDecisions.push(decision);
     historyEntries.push(
       buildHistoryEntry(
         round,
@@ -346,6 +350,7 @@ function applySelectedDecisions(
     historyEntries,
     executedDecisionIds,
     factionEffectSources,
+    executedDecisions,
     endingId,
   };
 }
@@ -392,6 +397,7 @@ function resolveScheduledEventsStep(
   eventCounts: Record<string, number>,
   scheduler: EventSchedulerState,
   eventById: Record<string, EventDefinition>,
+  hazardRules: HazardRule[],
 ): EventResolutionResult {
   let nextMetrics = metrics;
   let nextFlags = flags;
@@ -406,15 +412,16 @@ function resolveScheduledEventsStep(
     },
     state: scheduler,
     eventById,
-    hazardRules: [],
+    hazardRules,
     seed: hashNumber(round, nextMetrics.legalHeat, nextMetrics.publicAnger),
     budget: {
       guaranteedEvents: 1,
-      hazardEvents: 0,
+      hazardEvents: 1,
     },
   });
 
-  for (const event of schedulerResult.events) {
+  for (const emitted of schedulerResult.emittedEvents) {
+    const { event } = emitted;
     const processed = processEvent(
       event,
       round,
@@ -426,8 +433,10 @@ function resolveScheduledEventsStep(
     nextFlags = processed.flags;
     historyEntries.push({
       ...processed.history,
-      sourceKind: "scheduled_event",
-      scheduledEventId: event.id,
+      sourceKind:
+        emitted.sourceKind === "hazard" ? "hazard_event" : "scheduled_event",
+      scheduledEventId: emitted.sourceId,
+      cause: emitted.hazardRule?.explanation,
     });
     emittedEventIds.push(event.id);
   }
@@ -778,7 +787,7 @@ export function resolveRound(run: RunState): RunState {
     factionIntents: [],
   });
   let operations = applyNetworkDecisionEffects(getRunOperations(run), {
-    selectedDecisionIds,
+    selectedDecisions: selectedDecisionResult.executedDecisions,
   });
   let factions = updateFactionStates(getRunFactions(run), {
     metrics,
@@ -821,6 +830,7 @@ export function resolveRound(run: RunState): RunState {
     eventCounts,
     selectedDecisionResult.scheduler,
     content.eventById,
+    content.hazards,
   );
   metrics = scheduledResult.metrics;
   flags = scheduledResult.flags;

@@ -203,16 +203,28 @@ describe("event scheduler", () => {
       {
         id: "legal-hazard",
         eventId: "legal_alarm",
-        baseWeight: 0,
+        baseWeight: 5,
         cooldownRounds: 2,
-        tags: ["legal"],
+        sourceFamily: "legalHeat",
+        explanation: "Legal alarm fixture.",
+        requirements: {
+          metricMin: {
+            legalHeat: 90,
+          },
+        },
       },
       {
         id: "operations-hazard",
         eventId: "operations_alarm",
         baseWeight: 5,
         cooldownRounds: 2,
-        tags: ["operations"],
+        sourceFamily: "safetyDecay",
+        explanation: "Operations alarm fixture.",
+        requirements: {
+          metricMin: {
+            legalHeat: 20,
+          },
+        },
       },
     ];
 

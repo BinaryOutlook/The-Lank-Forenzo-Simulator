@@ -67,6 +67,23 @@ describe("resolveRound", () => {
     expect(next.systemSignals?.length).toBeGreaterThan(0);
   });
 
+  it("feeds authored hazards into the active scheduler", () => {
+    const run = createInitialRunState();
+    run.round = 4;
+    run.metrics.legalHeat = 82;
+
+    const next = resolveRound(run);
+    const hazardEntry = next.history.find(
+      (entry) =>
+        entry.sourceKind === "hazard_event" &&
+        entry.scheduledEventId === "hazard_legal_heat_ig_letter",
+    );
+
+    expect(hazardEntry?.title).toBe("Inspector General Letter");
+    expect(hazardEntry?.cause).toMatch(/Legal heat/);
+    expect(next.scheduler?.cooldowns.hazard_legal_heat_ig_letter).toBe(9);
+  });
+
   it("offers a curated decision tray for a fresh run", () => {
     const run = createInitialRunState();
     const decisions = getAvailableDecisions(loadContent().decisions, run);
