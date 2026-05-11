@@ -71,6 +71,17 @@ describe("exploreReachabilityReport", () => {
     expect(first.repeatedTrayPressure.percentage).toBeLessThanOrEqual(1);
   });
 
+  it("reaches at least four endings in the default reachability pass", () => {
+    const report = exploreReachabilityReport({
+      width: 32,
+      depth: 24,
+      seed: "v0.5-default",
+    });
+
+    expect(report.endingCoverage.seen).toBeGreaterThanOrEqual(4);
+    expect(report.endingIds).toContain("bahamas");
+  });
+
   it("formats a concise console report", () => {
     const report = exploreReachabilityReport({
       width: 4,
@@ -80,7 +91,7 @@ describe("exploreReachabilityReport", () => {
 
     const output = formatReachabilityReport(report);
 
-    expect(output).toContain("V0.5 reachability explorer");
+    expect(output).toContain("V0.6 reachability explorer");
     expect(output).toContain("Content hash:");
     expect(output).toContain("Surfaced decisions:");
     expect(output).toContain("Low-confidence decision ids:");

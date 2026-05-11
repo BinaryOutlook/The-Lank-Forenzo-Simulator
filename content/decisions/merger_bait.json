@@ -70,7 +70,7 @@
       "roundAtLeast": 3
     },
     "delayedConsequences": [
-      { "eventIds": ["severance_injunction", "seniority_map_fight", "route_overlap_chart"], "delay": 2 }
+      { "eventIds": ["severance_injunction", "seniority_map_fight", "merger_interest"], "delay": 2 }
     ]
   },
   {

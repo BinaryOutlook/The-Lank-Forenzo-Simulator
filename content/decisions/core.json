@@ -369,8 +369,8 @@
     "requirements": {
       "roundAtLeast": 6,
       "metricMin": {
-        "offshoreReadiness": 60,
-        "personalWealth": 55
+        "offshoreReadiness": 35,
+        "personalWealth": 45
       }
     },
     "ending": "bahamas"
