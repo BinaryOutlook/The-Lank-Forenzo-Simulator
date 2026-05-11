@@ -21,6 +21,19 @@
       "flagsNone": ["safetyDenialPattern"]
     },
     "setsFlags": ["safetyDenialPattern"],
+    "factionEffects": {
+      "regulators": {
+        "patience": -4,
+        "aggression": 9,
+        "leverage": 3,
+        "dossierWeight": 6,
+        "grievance": "downgraded inspection memo suggested intentional deferral"
+      },
+      "press": {
+        "leverage": 2,
+        "dossierWeight": 3
+      }
+    },
     "delayedConsequences": [
       { "eventIds": ["faa_ramp_audit", "maintenance_paper_trail", "inspection_memo_leak"], "delay": 2 }
     ]

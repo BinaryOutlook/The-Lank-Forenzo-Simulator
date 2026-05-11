@@ -8,10 +8,16 @@ import {
   hazardSourceFamilies,
   metricKeys,
 } from "../../simulation/content/metadata";
+import {
+  factionEffectDeltaBounds,
+  factionEffectKeys,
+  factionIds,
+} from "../../simulation/factions/factionState.js";
 
 export const metricKeySchema = z.enum(metricKeys);
 export const decisionPackIdSchema = z.enum(decisionPackIds);
 export const endingIdSchema = z.enum(endingIds);
+export const factionIdSchema = z.enum(factionIds);
 export const hazardSourceFamilySchema = z.enum(hazardSourceFamilies);
 
 const metricShape = Object.fromEntries(
@@ -31,6 +37,48 @@ const resourceShape = Object.fromEntries(
 >;
 
 const resourceCostSchema = z.object(resourceShape).strict();
+
+const factionEffectShape = Object.fromEntries(
+  factionEffectKeys.map((key) => [
+    key,
+    z
+      .number()
+      .int()
+      .min(factionEffectDeltaBounds.min)
+      .max(factionEffectDeltaBounds.max)
+      .optional(),
+  ]),
+) as Record<
+  (typeof factionEffectKeys)[number],
+  z.ZodOptional<z.ZodNumber>
+>;
+
+export const factionEffectSchema = z
+  .object({
+    ...factionEffectShape,
+    grievance: z.string().min(1).max(96).optional(),
+  })
+  .strict()
+  .refine(
+    (value) => factionEffectKeys.some((key) => value[key] !== undefined),
+    {
+      message: "Faction effects must include at least one numeric delta.",
+    },
+  );
+
+const factionEffectSetShape = Object.fromEntries(
+  factionIds.map((factionId) => [factionId, factionEffectSchema.optional()]),
+) as Record<
+  (typeof factionIds)[number],
+  z.ZodOptional<typeof factionEffectSchema>
+>;
+
+export const factionEffectSetSchema = z
+  .object(factionEffectSetShape)
+  .strict()
+  .refine((value) => Object.values(value).some(Boolean), {
+    message: "Faction effect sets must include at least one faction.",
+  });
 
 const operationEffectSchema = z
   .object({
@@ -94,6 +142,7 @@ export const decisionSchema = z
     requirements: requirementSchema.optional(),
     delayedConsequences: z.array(delayedConsequenceSchema).optional(),
     setsFlags: z.array(z.string()).optional(),
+    factionEffects: factionEffectSetSchema.optional(),
     ending: endingIdSchema.optional(),
   })
   .strict();
@@ -109,6 +158,7 @@ export const eventSchema = z
     impacts: metricRecordSchema,
     requirements: requirementSchema.optional(),
     setsFlags: z.array(z.string()).optional(),
+    factionEffects: factionEffectSetSchema.optional(),
   })
   .strict();
 

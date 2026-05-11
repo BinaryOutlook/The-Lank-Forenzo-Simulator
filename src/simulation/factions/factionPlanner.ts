@@ -1,5 +1,7 @@
 import type { RunMetrics } from "../state/types";
 import type {
+  FactionEffect,
+  FactionEffectSource,
   FactionId,
   FactionIntent,
   FactionIntentFamily,
@@ -7,12 +9,16 @@ import type {
   FactionStates,
 } from "./factionState";
 
+const emptyExplicitSourceIds = new Set<string>();
+const explicitSourceIdsCache = new WeakMap<FactionUpdateInput, Set<string>>();
+
 export interface FactionUpdateInput {
   metrics: RunMetrics;
   selectedDecisionIds: string[];
   emittedEventIds: string[];
   flags?: string[];
   evidenceHints?: Partial<Record<string, number>>;
+  factionEffectSources?: FactionEffectSource[];
 }
 
 export interface FactionPlanningInput {
@@ -63,7 +69,7 @@ function updateBoard(
     "offshore",
   ]);
 
-  return clampFaction({
+  const updated = {
     ...faction,
     patience: faction.patience - riskyExitSignals.length * 2,
     aggression: faction.aggression + riskyExitSignals.length * 3,
@@ -77,7 +83,9 @@ function updateBoard(
       faction.recentGrievances,
       riskyExitSignals,
     ),
-  });
+  };
+
+  return clampFaction(applyExplicitFactionEffects(updated, input));
 }
 
 function updateCreditors(
@@ -95,7 +103,7 @@ function updateCreditors(
     "reserve",
   ]);
 
-  return clampFaction({
+  const updated = {
     ...faction,
     patience: faction.patience - cashStress - debtStress - creditorSignals.length * 3,
     aggression:
@@ -108,7 +116,9 @@ function updateCreditors(
       faction.recentGrievances,
       creditorSignals,
     ),
-  });
+  };
+
+  return clampFaction(applyExplicitFactionEffects(updated, input));
 }
 
 function updateLabor(
@@ -118,10 +128,10 @@ function updateLabor(
   const laborEvidence = input.evidenceHints?.labor_abuse ?? 0;
   const grievanceSources =
     input.metrics.workforceMorale < 42 || laborEvidence > 0
-      ? [...input.selectedDecisionIds, ...input.emittedEventIds]
+      ? collectLegacySourceIds(input)
       : [];
 
-  return clampFaction({
+  const updated = {
     ...faction,
     patience: faction.patience - (input.metrics.workforceMorale < 42 ? 8 : 0),
     aggression:
@@ -141,7 +151,9 @@ function updateLabor(
       faction.recentGrievances,
       grievanceSources,
     ),
-  });
+  };
+
+  return clampFaction(applyExplicitFactionEffects(updated, input));
 }
 
 function updateRegulators(
@@ -162,7 +174,7 @@ function updateRegulators(
     "hearing",
   ]);
 
-  return clampFaction({
+  const updated = {
     ...faction,
     patience: faction.patience - regulatorSignals.length * 2,
     aggression:
@@ -179,7 +191,9 @@ function updateRegulators(
       faction.recentGrievances,
       regulatorSignals,
     ),
-  });
+  };
+
+  return clampFaction(applyExplicitFactionEffects(updated, input));
 }
 
 function updatePress(
@@ -201,7 +215,7 @@ function updatePress(
     "inspection",
   ]);
 
-  return clampFaction({
+  const updated = {
     ...faction,
     aggression:
       faction.aggression +
@@ -213,7 +227,9 @@ function updatePress(
       faction.recentGrievances,
       pressSignals,
     ),
-  });
+  };
+
+  return clampFaction(applyExplicitFactionEffects(updated, input));
 }
 
 function planFactionIntent(
@@ -297,11 +313,98 @@ function collectMatchingSignals(
   input: FactionUpdateInput,
   needles: string[],
 ): string[] {
+  const explicitSourceIds = collectExplicitSourceIds(input);
+  const hasExplicitSources = explicitSourceIds.size > 0;
+
   return [
     ...input.selectedDecisionIds,
     ...input.emittedEventIds,
     ...(input.flags ?? []),
-  ].filter((id) => needles.some((needle) => id.includes(needle)));
+  ].filter(
+    (id) =>
+      (!hasExplicitSources || !explicitSourceIds.has(id)) &&
+      needles.some((needle) => id.includes(needle)),
+  );
+}
+
+function collectLegacySourceIds(input: FactionUpdateInput): string[] {
+  const explicitSourceIds = collectExplicitSourceIds(input);
+  const sourceIds = [...input.selectedDecisionIds, ...input.emittedEventIds];
+
+  if (explicitSourceIds.size === 0) {
+    return sourceIds;
+  }
+
+  return sourceIds.filter((id) => !explicitSourceIds.has(id));
+}
+
+function collectExplicitSourceIds(input: FactionUpdateInput): Set<string> {
+  if (!input.factionEffectSources?.length) {
+    return emptyExplicitSourceIds;
+  }
+
+  const cached = explicitSourceIdsCache.get(input);
+
+  if (cached) {
+    return cached;
+  }
+
+  const sourceIds = new Set(
+    input.factionEffectSources.map((source) => source.sourceId),
+  );
+  explicitSourceIdsCache.set(input, sourceIds);
+
+  return sourceIds;
+}
+
+function applyExplicitFactionEffects(
+  faction: FactionState,
+  input: FactionUpdateInput,
+): FactionState {
+  if (!input.factionEffectSources?.length) {
+    return faction;
+  }
+
+  let next = faction;
+  const grievances: string[] = [];
+
+  for (const source of input.factionEffectSources) {
+    const effect = source.effects[faction.id];
+
+    if (!effect) {
+      continue;
+    }
+
+    next = applyFactionEffect(next, effect);
+
+    if (effect.grievance) {
+      grievances.push(`${source.sourceId}: ${effect.grievance}`);
+    }
+  }
+
+  if (grievances.length === 0) {
+    return next;
+  }
+
+  return {
+    ...next,
+    recentGrievances: mergeRecentGrievances(next.recentGrievances, grievances),
+  };
+}
+
+function applyFactionEffect(
+  faction: FactionState,
+  effect: FactionEffect,
+): FactionState {
+  return {
+    ...faction,
+    patience: faction.patience + (effect.patience ?? 0),
+    aggression: faction.aggression + (effect.aggression ?? 0),
+    trust: faction.trust + (effect.trust ?? 0),
+    cohesion: faction.cohesion + (effect.cohesion ?? 0),
+    leverage: faction.leverage + (effect.leverage ?? 0),
+    dossierWeight: faction.dossierWeight + (effect.dossierWeight ?? 0),
+  };
 }
 
 function clampFaction(faction: FactionState): FactionState {

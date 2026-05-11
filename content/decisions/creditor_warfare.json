@@ -13,6 +13,18 @@
       "marketConfidence": 2
     },
     "setsFlags": ["bankruptcyPlaybookLive"],
+    "factionEffects": {
+      "creditors": {
+        "patience": -8,
+        "aggression": 9,
+        "leverage": 5,
+        "dossierWeight": 2,
+        "grievance": "rushed amend-and-extend terms invited lender coordination"
+      },
+      "press": {
+        "dossierWeight": 2
+      }
+    },
     "delayedConsequences": [
       { "eventIds": ["covenant_leak", "distressed_debt_pack_hunt", "covenant_default_clock"], "delay": 2 }
     ]

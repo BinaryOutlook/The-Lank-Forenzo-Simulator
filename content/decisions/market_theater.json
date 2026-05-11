@@ -55,6 +55,21 @@
       "stockPrice": 6,
       "legalHeat": 5
     },
+    "factionEffects": {
+      "board": {
+        "trust": 2,
+        "leverage": 2
+      },
+      "press": {
+        "aggression": 4,
+        "leverage": 3,
+        "dossierWeight": 4,
+        "grievance": "earnings deck looked written for the headline first"
+      },
+      "regulators": {
+        "dossierWeight": 2
+      }
+    },
     "delayedConsequences": [
       { "eventIds": ["earnings_guidance_correction", "call_transcript_supercut", "analyst_model_walkback"], "delay": 2 }
     ]

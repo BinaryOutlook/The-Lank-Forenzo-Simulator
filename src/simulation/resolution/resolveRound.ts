@@ -14,6 +14,7 @@ import {
 } from "../dossiers/dossierState";
 import {
   createInitialFactionStates,
+  type FactionEffectSource,
   type FactionIntent,
   type FactionStates,
 } from "../factions/factionState";
@@ -256,6 +257,7 @@ interface SelectedDecisionResult {
   scheduler: EventSchedulerState;
   historyEntries: HistoryEntry[];
   executedDecisionIds: string[];
+  factionEffectSources: FactionEffectSource[];
   executedDecisions: DecisionDefinition[];
   endingId: EndingId | null;
 }
@@ -272,6 +274,7 @@ function applySelectedDecisions(
   const flags = new Set(run.flags);
   const historyEntries: HistoryEntry[] = [];
   const executedDecisionIds: string[] = [];
+  const factionEffectSources: FactionEffectSource[] = [];
   const executedDecisions: DecisionDefinition[] = [];
   let nextScheduler = scheduler;
 
@@ -296,6 +299,12 @@ function applySelectedDecisions(
     resources = deductResourceCosts(resources, decision.resourceCosts);
     metrics = applyImpactSet(metrics, decision.impacts);
     executedDecisionIds.push(decision.id);
+    if (decision.factionEffects) {
+      factionEffectSources.push({
+        sourceId: decision.id,
+        effects: decision.factionEffects,
+      });
+    }
     executedDecisions.push(decision);
     historyEntries.push(
       buildHistoryEntry(
@@ -340,6 +349,7 @@ function applySelectedDecisions(
     scheduler: nextScheduler,
     historyEntries,
     executedDecisionIds,
+    factionEffectSources,
     executedDecisions,
     endingId,
   };
@@ -568,6 +578,28 @@ function summarizeEvidenceHints(
   return hints;
 }
 
+function collectEventFactionEffectSources(
+  emittedEventIds: string[],
+  eventById: Record<string, EventDefinition>,
+): FactionEffectSource[] {
+  const sources: FactionEffectSource[] = [];
+
+  for (const eventId of emittedEventIds) {
+    const event = eventById[eventId];
+
+    if (!event?.factionEffects) {
+      continue;
+    }
+
+    sources.push({
+      sourceId: event.id,
+      effects: event.factionEffects,
+    });
+  }
+
+  return sources;
+}
+
 function buildFactionSignals(intents: FactionIntent[]): BoardSignal[] {
   return intents.slice(0, 2).map((intent) => ({
     title: `${formatId(intent.factionId)} ${formatId(intent.family)}`,
@@ -762,6 +794,7 @@ export function resolveRound(run: RunState): RunState {
     selectedDecisionIds,
     emittedEventIds: [],
     evidenceHints: summarizeEvidenceHints(initialEvidence),
+    factionEffectSources: selectedDecisionResult.factionEffectSources,
   });
   const factionIntents = planFactionIntents(factions, {
     metrics,
@@ -838,6 +871,10 @@ export function resolveRound(run: RunState): RunState {
     selectedDecisionIds: [],
     emittedEventIds,
     evidenceHints: summarizeEvidenceHints(followOnEvidence),
+    factionEffectSources: collectEventFactionEffectSources(
+      emittedEventIds,
+      content.eventById,
+    ),
   });
   const dossiers = applyEvidenceFragments(getRunDossiers(run), [
     ...initialEvidence,

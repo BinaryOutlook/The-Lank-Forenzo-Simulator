@@ -58,6 +58,29 @@ No event in this file should be read as:
 - a direct retelling of a single historical incident
 - a claim that one real executive or one real airline uniquely "owns" a given event
 
+## Faction Metadata Rules
+
+Events may include optional `factionEffects` metadata. Authored effects make the faction planner read event fallout directly instead of guessing from an event ID substring.
+
+```json
+"factionEffects": {
+  "regulators": {
+    "patience": -4,
+    "aggression": 8,
+    "dossierWeight": 6,
+    "grievance": "audit redlines turned the binder into evidence"
+  }
+}
+```
+
+Rules:
+
+- Valid faction IDs are `board`, `creditors`, `labor`, `regulators`, and `press`.
+- Numeric deltas may target `patience`, `aggression`, `trust`, `cohesion`, `leverage`, or `dossierWeight`.
+- Each numeric delta must be an integer in \( -25 \le \Delta \le 25 \).
+- `grievance` is optional and should capture the remembered narrative hook, not duplicate the event body.
+- During migration, unannotated events still use the legacy fallback. Annotated events opt into explicit reactions.
+
 ## Historical Parallel Matrix
 
 | Event pack | Closest public-history parallel | What we are borrowing | Framing |

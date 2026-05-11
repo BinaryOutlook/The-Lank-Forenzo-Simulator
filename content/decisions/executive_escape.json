@@ -140,6 +140,23 @@
       "offshoreReadiness": 10,
       "legalHeat": 6
     },
+    "factionEffects": {
+      "board": {
+        "patience": -4,
+        "aggression": 4,
+        "trust": -5,
+        "dossierWeight": 3,
+        "grievance": "offshore retainer made the exit plan look personal"
+      },
+      "regulators": {
+        "aggression": 5,
+        "dossierWeight": 5
+      },
+      "press": {
+        "leverage": 4,
+        "dossierWeight": 5
+      }
+    },
     "delayedConsequences": [
       { "eventIds": ["offshore_auditor_ping", "nominee_director_jitters", "correspondent_bank_query", "customs_broker_ping"], "delay": 3 }
     ]

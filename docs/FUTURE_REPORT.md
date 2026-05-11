@@ -75,11 +75,11 @@ This is enough content for meaningful replay variety. The problem is not raw vol
   - `forcedRemoval`: `242/1600` runs, or `15.1%`
   - `merger`: `200/1600` runs, or `12.5%`
   - `prison`: `841/1600` runs, or `52.6%`
-- Surfaced decisions: `55/113`, or `48.7%`
-- Selected decisions: `46/113`, or `40.7%`
-- Triggered events: `76/165`, or `46.1%`
-- Delayed events: `30/91`, or `33.0%`
-- Low-reachability packs: none
+- Surfaced decisions: `54/113`, or `47.8%`
+- Selected decisions: `43/113`, or `38.1%`
+- Triggered events: `74/165`, or `44.8%`
+- Delayed events: `28/91`, or `30.8%`
+- Low-reachability packs: `incidentVariants`
 
 `npm run reachability:report` currently reports:
 
@@ -92,8 +92,9 @@ This is enough content for meaningful replay variety. The problem is not raw vol
 
 This is a healthier baseline than the earlier extraction-dominated state. The
 default matrix and bounded reachability explorer now both verify all five
-endings, and no pack is low-reachability in the aggregate matrix or bounded
-reachability explorer. The central work ahead remains raising authored decision
+endings. The bounded reachability explorer has no low-confidence packs, while
+the aggregate matrix still leaves `incidentVariants` as the remaining
+low-reachability pack. The central work ahead remains raising authored decision
 coverage and delayed-event coverage in the default matrix without weakening the
 ending spread.
 
