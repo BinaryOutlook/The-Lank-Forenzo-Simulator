@@ -256,6 +256,7 @@ interface SelectedDecisionResult {
   scheduler: EventSchedulerState;
   historyEntries: HistoryEntry[];
   executedDecisionIds: string[];
+  executedDecisions: DecisionDefinition[];
   endingId: EndingId | null;
 }
 
@@ -271,6 +272,7 @@ function applySelectedDecisions(
   const flags = new Set(run.flags);
   const historyEntries: HistoryEntry[] = [];
   const executedDecisionIds: string[] = [];
+  const executedDecisions: DecisionDefinition[] = [];
   let nextScheduler = scheduler;
 
   for (const decisionId of run.selectedDecisionIds) {
@@ -294,6 +296,7 @@ function applySelectedDecisions(
     resources = deductResourceCosts(resources, decision.resourceCosts);
     metrics = applyImpactSet(metrics, decision.impacts);
     executedDecisionIds.push(decision.id);
+    executedDecisions.push(decision);
     historyEntries.push(
       buildHistoryEntry(
         round,
@@ -337,6 +340,7 @@ function applySelectedDecisions(
     scheduler: nextScheduler,
     historyEntries,
     executedDecisionIds,
+    executedDecisions,
     endingId,
   };
 }
@@ -751,7 +755,7 @@ export function resolveRound(run: RunState): RunState {
     factionIntents: [],
   });
   let operations = applyNetworkDecisionEffects(getRunOperations(run), {
-    selectedDecisionIds,
+    selectedDecisions: selectedDecisionResult.executedDecisions,
   });
   let factions = updateFactionStates(getRunFactions(run), {
     metrics,

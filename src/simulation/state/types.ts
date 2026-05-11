@@ -50,6 +50,16 @@ export type ImpactSet = Partial<Record<MetricKey, number>>;
 
 export type ResourceCostSet = Partial<Record<ConsumableResourceKey, number>>;
 
+export interface OperationEffectSet {
+  maintenanceBacklog?: number;
+  contractorDependence?: number;
+  crewFatigue?: number;
+  serviceDisruption?: number;
+  hubFragility?: Record<string, number>;
+  routeFragility?: Record<string, number>;
+  weatherExposure?: number;
+}
+
 export interface RequirementSpec {
   roundAtLeast?: number;
   roundAtMost?: number;
@@ -74,6 +84,7 @@ export interface DecisionDefinition {
   tags: string[];
   impacts: ImpactSet;
   resourceCosts?: ResourceCostSet;
+  operationEffects?: OperationEffectSet;
   requirements?: RequirementSpec;
   delayedConsequences?: DelayedConsequenceRef[];
   setsFlags?: string[];

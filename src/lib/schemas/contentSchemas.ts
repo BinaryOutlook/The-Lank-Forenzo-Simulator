@@ -32,6 +32,18 @@ const resourceShape = Object.fromEntries(
 
 const resourceCostSchema = z.object(resourceShape).strict();
 
+const operationEffectSchema = z
+  .object({
+    maintenanceBacklog: z.number().int().optional(),
+    contractorDependence: z.number().int().optional(),
+    crewFatigue: z.number().int().optional(),
+    serviceDisruption: z.number().int().optional(),
+    hubFragility: z.record(z.string(), z.number().int()).optional(),
+    routeFragility: z.record(z.string(), z.number().int()).optional(),
+    weatherExposure: z.number().int().optional(),
+  })
+  .strict();
+
 const requirementSchema = z
   .object({
     roundAtLeast: z.number().int().optional(),
@@ -78,6 +90,7 @@ export const decisionSchema = z
     tags: z.array(z.string()).min(1),
     impacts: metricRecordSchema,
     resourceCosts: resourceCostSchema.optional(),
+    operationEffects: operationEffectSchema.optional(),
     requirements: requirementSchema.optional(),
     delayedConsequences: z.array(delayedConsequenceSchema).optional(),
     setsFlags: z.array(z.string()).optional(),

@@ -11,6 +11,9 @@
       "publicAnger": 7,
       "legalHeat": 4
     },
+    "operationEffects": {
+      "crewFatigue": 12
+    },
     "setsFlags": ["scopeWarOpen"],
     "delayedConsequences": [
       { "eventIds": ["scope_clause_arbitration", "severance_injunction", "seniority_map_fight"], "delay": 2 }
@@ -64,6 +67,11 @@
       "safetyIntegrity": -8,
       "legalHeat": 5
     },
+    "operationEffects": {
+      "maintenanceBacklog": 10,
+      "contractorDependence": 12,
+      "crewFatigue": 4
+    },
     "delayedConsequences": [
       { "eventIds": ["contractor_walkout", "vendor_safety_dispute", "maintenance_paper_trail"], "delay": 2 }
     ]
@@ -84,6 +92,9 @@
     "resourceCosts": {
       "inGameMoney": 7,
       "publicRelationsCapital": 2
+    },
+    "operationEffects": {
+      "crewFatigue": 12
     },
     "requirements": {
       "metricMax": {
