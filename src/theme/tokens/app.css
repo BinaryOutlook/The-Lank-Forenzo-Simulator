@@ -1,17 +1,122 @@
 body {
   min-height: 100vh;
+  background: var(--wallpaper-backdrop, var(--backdrop));
 }
 
 #root {
   min-height: 100vh;
 }
 
-.app-frame {
-  min-height: 100vh;
-  background-image:
+:root {
+  --visual-effect-intensity: 0.7;
+  --music-volume: 0.35;
+  --wallpaper-backdrop: var(--backdrop);
+  --wallpaper-frame:
     linear-gradient(to right, var(--grid) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
-  background-size: 32px 32px;
+  --wallpaper-size: 32px 32px;
+  --wallpaper-position: center;
+}
+
+.app-frame {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  background-image: var(--wallpaper-frame);
+  background-position: var(--wallpaper-position);
+  background-size: var(--wallpaper-size);
+}
+
+.app-frame::before {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(circle at 18% 18%, var(--accent-soft), transparent 28%),
+    radial-gradient(circle at 82% 12%, color-mix(in oklab, var(--accent) 20%, transparent), transparent 24%);
+  opacity: calc(var(--visual-effect-intensity) * 0.24);
+  mix-blend-mode: screen;
+}
+
+.app-frame > * {
+  position: relative;
+  z-index: 1;
+}
+
+:root[data-wallpaper="executive-grid"] {
+  --wallpaper-backdrop: var(--backdrop);
+  --wallpaper-frame:
+    linear-gradient(to right, var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  --wallpaper-size: 32px 32px;
+  --wallpaper-position: center;
+}
+
+:root[data-wallpaper="runway-night"] {
+  --wallpaper-backdrop:
+    radial-gradient(circle at top right, color-mix(in oklab, var(--accent) 20%, transparent), transparent 30%),
+    var(--backdrop);
+  --wallpaper-frame:
+    linear-gradient(116deg, transparent 47%, color-mix(in oklab, var(--accent) 22%, transparent) 48% 49%, transparent 50%),
+    linear-gradient(64deg, transparent 50%, color-mix(in oklab, var(--accent) 14%, transparent) 51% 52%, transparent 53%),
+    linear-gradient(to right, var(--grid) 1px, transparent 1px);
+  --wallpaper-size:
+    100% 100%,
+    100% 100%,
+    42px 42px;
+  --wallpaper-position: center;
+}
+
+:root[data-wallpaper="audit-room"] {
+  --wallpaper-backdrop:
+    linear-gradient(180deg, color-mix(in oklab, var(--canvas) 88%, var(--panel-strong)), var(--canvas)),
+    var(--backdrop);
+  --wallpaper-frame:
+    repeating-linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--text-muted) 12%, transparent) 0 1px,
+      transparent 1px 22px
+    ),
+    linear-gradient(90deg, transparent 0 18%, color-mix(in oklab, var(--accent) 12%, transparent) 18% 18.25%, transparent 18.25%),
+    linear-gradient(to right, var(--grid) 1px, transparent 1px);
+  --wallpaper-size:
+    100% 22px,
+    100% 100%,
+    48px 48px;
+  --wallpaper-position: center;
+}
+
+:root[data-wallpaper="clean-boardroom"] {
+  --wallpaper-backdrop:
+    radial-gradient(circle at top right, color-mix(in oklab, var(--accent) 12%, transparent), transparent 34%),
+    linear-gradient(180deg, color-mix(in oklab, var(--canvas) 96%, var(--panel-strong)), var(--canvas));
+  --wallpaper-frame:
+    linear-gradient(180deg, color-mix(in oklab, var(--panel) 20%, transparent), transparent);
+  --wallpaper-size: 100% 100%;
+  --wallpaper-position: center;
+}
+
+:root[data-visual-effects="off"] {
+  --shadow-ambient: none;
+}
+
+:root[data-visual-effects="off"] .app-frame::before {
+  display: none;
+}
+
+:root[data-ui-density="compact"] .app-frame {
+  font-size: 0.94rem;
+}
+
+:root[data-animations="off"] *,
+:root[data-animations="off"] *::before,
+:root[data-animations="off"] *::after {
+  transition-duration: 0.001ms !important;
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
 }
 
 .visually-hidden {

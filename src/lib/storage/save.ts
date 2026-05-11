@@ -4,18 +4,25 @@ import type {
   StateStorage,
   StorageValue,
 } from "zustand/middleware";
-import type { RunState, ThemeName } from "../../simulation/state/types";
+import {
+  defaultGameSettings,
+  normalizeGameSettings,
+} from "../../simulation/state/settings.js";
+import type { GameSettings } from "../../simulation/state/settings.js";
+import type { RunState, ThemeName } from "../../simulation/state/types.js";
 
 export interface GameSavePayload {
   theme: ThemeName;
+  settings: GameSettings;
   run: RunState | null;
 }
 
-export const GAME_SAVE_STORAGE_VERSION = 2;
+export const GAME_SAVE_STORAGE_VERSION = 3;
 const LEGACY_SAVE_VERSION = 0;
 export const SAVE_MIGRATIONS: Record<number, (state: unknown) => unknown> = {
   [LEGACY_SAVE_VERSION]: (state) => state,
   1: (state) => state,
+  2: (state) => state,
 };
 
 const themeSchema = z.enum(["earth", "armonk-blue"]);
@@ -88,6 +95,7 @@ const runStateSchema = z
 const gameSavePayloadSchema = z
   .object({
     theme: themeSchema,
+    settings: z.unknown().optional(),
     run: runStateSchema.nullable(),
   })
   .strict();
@@ -116,18 +124,24 @@ function parseRun(value: unknown): RunState | null {
 export function coerceGameSavePayload(value: unknown): GameSavePayload {
   const parsed = gameSavePayloadSchema.safeParse(value);
   if (parsed.success) {
-    return parsed.data;
+    return {
+      theme: parsed.data.theme,
+      settings: normalizeGameSettings(parsed.data.settings),
+      run: parsed.data.run,
+    };
   }
 
   if (!isRecord(value)) {
     return {
       theme: "earth",
+      settings: defaultGameSettings,
       run: null,
     };
   }
 
   return {
     theme: parseTheme(value.theme),
+    settings: normalizeGameSettings(value.settings),
     run: parseRun(value.run),
   };
 }
@@ -145,7 +159,7 @@ function parseStoredRecord(raw: unknown): StorageValue<GameSavePayload> | null {
     };
   }
 
-  if ("theme" in raw || "run" in raw) {
+  if ("theme" in raw || "settings" in raw || "run" in raw) {
     return {
       state: coerceGameSavePayload(raw),
       version: LEGACY_SAVE_VERSION,

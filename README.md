@@ -20,6 +20,7 @@ Implemented in the current build:
 - shared metric-semantics rules so inverse-pressure indicators such as `legalHeat`, `publicAnger`, and `debt` read correctly
 - multiple endings, including merger, extraction, prison, and Bahamas escape
 - two first-class themes: `Earth` and `Armonk Blue`
+- an accessible Options page with locally persisted wallpaper presets, audio controls, UI density, animation, and graphical-effect settings
 - unit tests, content validation, build checks, seeded balance tooling, reachability tooling, and a Playwright smoke test
 
 ## Product Shape
@@ -75,6 +76,8 @@ Open the local Vite URL shown in the terminal.
 
 Decision and event content are assembled from validated packs under `content/decisions/` and `content/events/` through their `index.ts` files.
 
+Options are available from the app header. The current settings implementation is local-first and preset-based: wallpaper selection changes the shell background immediately, music can be toggled with a restrained Web Audio ambience, and visual effects can be reduced or disabled for lower-end devices.
+
 ## Scripts
 
 ```bash
@@ -113,6 +116,7 @@ src/
   app/
   components/
   screens/
+    options/
   simulation/
     content/
     dossiers/
