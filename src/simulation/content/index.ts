@@ -1,10 +1,12 @@
 import { allDecisions } from "../../../content/decisions";
 import rawEndings from "../../../content/endings/core.json";
 import { allEvents } from "../../../content/events";
+import { allHazards } from "../../../content/hazards";
 import {
   decisionsSchema,
   endingsSchema,
   eventsSchema,
+  hazardsSchema,
 } from "../../lib/schemas/contentSchemas";
 import type { ContentBundle } from "../state/types";
 import {
@@ -23,6 +25,7 @@ export function loadContent(): ContentBundle {
   cachedContent = {
     decisions: decisionsSchema.parse(allDecisions),
     events: eventsSchema.parse(allEvents),
+    hazards: hazardsSchema.parse(allHazards),
     endings: endingsSchema.parse(rawEndings),
   };
 
