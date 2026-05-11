@@ -298,7 +298,7 @@ export function OptionsScreen() {
           <SettingsSection
             eyebrow="Audio"
             title="Music and sound"
-            description="A restrained Web Audio drone can be enabled for the browser session; all levels persist for future audio hooks."
+            description="A restrained Web Audio drone and short interaction motifs can be enabled for the browser session."
           >
             <ToggleRow
               id="music-enabled"
@@ -318,7 +318,7 @@ export function OptionsScreen() {
             <ToggleRow
               id="sound-effects-enabled"
               label="Sound effects"
-              description="Reserve UI and consequence pings for future effect cues."
+              description="Let decision picks and quarter resolution add precise tonal cues when music is also enabled."
               checked={settings.soundEffectsEnabled}
               onChange={setSoundEffectsEnabled}
             />
@@ -374,6 +374,10 @@ export function OptionsScreen() {
                   ? `Enabled at ${settings.musicVolume}%`
                   : "Muted"}
               </dd>
+            </div>
+            <div>
+              <dt>Sound effects</dt>
+              <dd>{settings.soundEffectsEnabled ? "Enabled" : "Disabled"}</dd>
             </div>
             <div>
               <dt>Effects</dt>

@@ -47,6 +47,7 @@ describe("save storage", () => {
           wallpaper: "runway-night" as const,
           musicEnabled: true,
           musicVolume: 55,
+          soundEffectsEnabled: false,
           visualEffectIntensity: 40,
         },
         run,

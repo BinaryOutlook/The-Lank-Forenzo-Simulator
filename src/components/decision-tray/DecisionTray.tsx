@@ -4,9 +4,10 @@ import {
   formatDelta,
   getImpactPreview,
   metricLabels,
-} from "../../lib/formatters";
-import { getImpactTone } from "../../simulation/state/metricSemantics";
-import type { DecisionDefinition } from "../../simulation/state/types";
+} from "../../lib/formatters.js";
+import { emitInteractionCue } from "../audio/interactionAudioEvents.js";
+import { getImpactTone } from "../../simulation/state/metricSemantics.js";
+import type { DecisionDefinition } from "../../simulation/state/types.js";
 import styles from "./DecisionTray.module.css";
 
 interface DecisionTrayProps {
@@ -24,6 +25,10 @@ export function DecisionTray({
 }: DecisionTrayProps) {
   const resolveLabel =
     selectedDecisionIds.length > 0 ? "Resolve the quarter" : "Hold the line";
+  const handleEndTurn = () => {
+    emitInteractionCue("quarter-resolve");
+    onEndTurn();
+  };
 
   return (
     <section className={styles.tray}>
@@ -39,7 +44,7 @@ export function DecisionTray({
         <button
           type="button"
           className={styles.resolveButton}
-          onClick={onEndTurn}
+          onClick={handleEndTurn}
         >
           {resolveLabel}
         </button>
@@ -48,6 +53,11 @@ export function DecisionTray({
       <div className={styles.list}>
         {decisions.map((decision, index) => {
           const selected = selectedDecisionIds.includes(decision.id);
+          const cue = selected
+            ? "decision-deselect"
+            : selectedDecisionIds.length < 2
+              ? "decision-select"
+              : null;
           const preview = getImpactPreview(decision.impacts);
 
           return (
@@ -56,7 +66,13 @@ export function DecisionTray({
               type="button"
               className={clsx(styles.card, selected && styles.cardSelected)}
               aria-pressed={selected}
-              onClick={() => onToggle(decision.id)}
+              onClick={() => {
+                if (cue) {
+                  emitInteractionCue(cue);
+                }
+
+                onToggle(decision.id);
+              }}
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.04, duration: 0.28 }}

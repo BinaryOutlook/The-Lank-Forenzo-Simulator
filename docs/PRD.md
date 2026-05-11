@@ -295,6 +295,7 @@ Player-facing options should be local-first and incremental:
 - theme and wallpaper choices should update the shell immediately
 - wallpaper support may begin with curated presets before full file uploads
 - music and sound-effect controls should persist without causing browser audio errors
+- musical interaction cues should stay optional, low-latency, and gated by the music volume plus sound-effects setting
 - animation and graphical-effect controls should let lower-end devices reduce ornamentation
 - defaults should preserve the authored boardroom atmosphere out of the box
 

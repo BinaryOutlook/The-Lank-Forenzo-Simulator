@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import type { PropsWithChildren } from "react";
 import { MotionConfig } from "framer-motion";
 import { AmbientMusic } from "../../components/audio/AmbientMusic.js";
+import { InteractionAudio } from "../../components/audio/InteractionAudio.js";
 import { useGameStore } from "../../simulation/state/gameStore.js";
 
 export function AppProviders({ children }: PropsWithChildren) {
@@ -42,6 +43,7 @@ export function AppProviders({ children }: PropsWithChildren) {
   return (
     <MotionConfig reducedMotion={settings.animationsEnabled ? "user" : "always"}>
       <AmbientMusic />
+      <InteractionAudio />
       {children}
     </MotionConfig>
   );
