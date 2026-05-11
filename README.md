@@ -12,7 +12,8 @@ Implemented in the current build:
 - browser-native deterministic simulation loop
 - local save persistence
 - expanded multi-pack decision and event libraries with deterministic delayed-event pools
-- compiled content manifest with direct lookup maps, content hash, flag diagnostics, and pack/tag indexes
+- authored hazard rules that turn accumulated state into scheduler pressure
+- compiled content manifest with direct lookup maps, content hash, flag diagnostics, pack/tag indexes, and hazard indexes
 - set-aware decision tray composition with diversity, follow-up, exit, and repeat-suppression rules
 - v0.5 scheduler, faction memory, operational network, and dossier primitives wired into active runs
 - consumable strategic reserves for high-impact political, labor, regulatory, and executive-network actions
@@ -79,7 +80,7 @@ npm run dev
 
 Open the local Vite URL shown in the terminal.
 
-Decision and event content are assembled from validated packs under `content/decisions/` and `content/events/` through their `index.ts` files.
+Decision, event, and hazard content are assembled from validated packs under `content/decisions/`, `content/events/`, and `content/hazards/` through their `index.ts` files.
 
 About and Options are available from the app header. The About route is a lightweight secondary page for player-facing project context; it links back to the active run when one is in progress and otherwise returns to the landing screen. The current settings implementation is local-first and preset-based: wallpaper selection changes the shell background immediately, music can be toggled with a restrained Web Audio ambience, interaction cues follow the music volume and sound-effects toggle, and visual plus interaction feedback effects can be reduced or disabled for lower-end devices.
 
@@ -109,6 +110,12 @@ npm run reachability:report
 
 `npm run report:nightly` generates the deep seeded simulation artifact set under `artifacts/nightly-simulation-report/` by default. The nightly profile runs `750` simulations per archetype (`6,000` total across the current eight bots), tracks ending distribution and low-confidence content, and ranks dominant decision-sequence prefixes. The generated warnings are intentionally soft: use them for balance review, not as automatic PR blockers.
 
+## Continuous Integration
+
+GitHub Actions runs the CI workflow in `.github/workflows/ci.yml` on pull requests targeting `main`, pushes to `main`, and manual dispatches. The core gate uses Node.js `22` with npm dependency caching, then runs `npm run check`, `npm run content:validate`, `npm run content:compile`, and `npm run build`.
+
+After the core gate passes, CI runs the lightweight balance and reachability diagnostics (`npm run balance:matrix` and `npm run reachability:report`) and uploads their console output as the `simulation-diagnostics` artifact. The existing Playwright smoke suite (`npm run test:e2e`) also runs on normal PRs across the configured Chromium viewport projects; long nightly-style simulation sweeps are intentionally out of scope for standard PR CI.
+
 ## Responsive Browser Play
 
 The run screen is designed as a fitted app surface across desktop landscape, tablet landscape, tablet portrait, and mobile portrait browser viewports.
@@ -130,6 +137,10 @@ Theme references live in [`Themes/Earth.md`](Themes/Earth.md) and [`Themes/Armon
 ## Project Layout
 
 ```text
+.github/
+  workflows/
+    ci.yml
+    nightly-simulation-report.yml
 idea.md
 src/
   app/
@@ -138,6 +149,8 @@ src/
     about/
     options/
   simulation/
+    index.ts
+    runtime.ts
     content/
     dossiers/
     factions/
@@ -154,9 +167,6 @@ scripts/
   reachability-report.ts
   simulate-runs.ts
   validate-content.ts
-.github/
-  workflows/
-    nightly-simulation-report.yml
 content/
   decisions/
     index.ts
@@ -164,11 +174,17 @@ content/
   events/
     index.ts
     *.json
+  hazards/
+    index.ts
+    *.json
   endings/
 docs/
   PRD.md
   TECHNICAL_BRIEF.md
   FUTURE_REPORT.md
+  FUTURE_REPORT_IMPLEMENTATION_PLAN.md
+  decisions/
+    ADR-001-prepare-future-package-boundaries.md
   reference/
     decision-library.md
     dossier-system.md
@@ -176,6 +192,7 @@ docs/
     faction-system.md
     nightly-simulation-reporting.md
     operational-model.md
+    run-archive.md
 PRDs/
   v0.1.1/
     v0.1.1.md
@@ -201,11 +218,19 @@ tests/
   e2e/
 ```
 
+`src/simulation/index.ts` is the public simulation entry point. It exposes
+`simulationRuntime` plus named helpers for creating runs, composing available
+decision trays, toggling selections, resolving rounds, and looking up endings.
+React, scripts, replay tooling, and high-level tests should prefer that facade
+unless they are intentionally testing lower-level systems.
+
 ## Documentation
 
 - Product requirements: [docs/PRD.md](docs/PRD.md)
 - Systems and design brief: [docs/TECHNICAL_BRIEF.md](docs/TECHNICAL_BRIEF.md)
 - Future report and technical roadmap: [docs/FUTURE_REPORT.md](docs/FUTURE_REPORT.md)
+- Future package boundary ADR: [docs/decisions/ADR-001-prepare-future-package-boundaries.md](docs/decisions/ADR-001-prepare-future-package-boundaries.md)
+- Future Report implementation plan and child issue map: [docs/FUTURE_REPORT_IMPLEMENTATION_PLAN.md](docs/FUTURE_REPORT_IMPLEMENTATION_PLAN.md)
 - Expansion and systems roadmap: [idea.md](idea.md)
 - Decision library and historical parallels: [docs/reference/decision-library.md](docs/reference/decision-library.md)
 - Event library and historical parallels: [docs/reference/event-library.md](docs/reference/event-library.md)
@@ -213,4 +238,5 @@ tests/
 - V0.5 operational hooks: [docs/reference/operational-model.md](docs/reference/operational-model.md)
 - V0.5 dossier hooks: [docs/reference/dossier-system.md](docs/reference/dossier-system.md)
 - Nightly simulation reporting: [docs/reference/nightly-simulation-reporting.md](docs/reference/nightly-simulation-reporting.md)
+- Local-first run archive design: [docs/reference/run-archive.md](docs/reference/run-archive.md)
 - Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md), [PRDs/v0.5/v0.5.md](PRDs/v0.5/v0.5.md), [PRDs/v0.6/v0.6.md](PRDs/v0.6/v0.6.md)

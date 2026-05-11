@@ -5,12 +5,14 @@ import {
   decisionPackIds,
   endingIds,
   eventKinds,
+  hazardSourceFamilies,
   metricKeys,
 } from "../../simulation/content/metadata";
 
 export const metricKeySchema = z.enum(metricKeys);
 export const decisionPackIdSchema = z.enum(decisionPackIds);
 export const endingIdSchema = z.enum(endingIds);
+export const hazardSourceFamilySchema = z.enum(hazardSourceFamilies);
 
 const metricShape = Object.fromEntries(
   metricKeys.map((metric) => [metric, z.number().optional()]),
@@ -30,6 +32,18 @@ const resourceShape = Object.fromEntries(
 
 const resourceCostSchema = z.object(resourceShape).strict();
 
+const operationEffectSchema = z
+  .object({
+    maintenanceBacklog: z.number().int().optional(),
+    contractorDependence: z.number().int().optional(),
+    crewFatigue: z.number().int().optional(),
+    serviceDisruption: z.number().int().optional(),
+    hubFragility: z.record(z.string(), z.number().int()).optional(),
+    routeFragility: z.record(z.string(), z.number().int()).optional(),
+    weatherExposure: z.number().int().optional(),
+  })
+  .strict();
+
 const requirementSchema = z
   .object({
     roundAtLeast: z.number().int().optional(),
@@ -40,6 +54,19 @@ const requirementSchema = z
     flagsNone: z.array(z.string()).optional(),
   })
   .strict();
+
+const hazardRequirementSchema = requirementSchema.refine(
+  (value) =>
+    value.roundAtLeast !== undefined ||
+    value.roundAtMost !== undefined ||
+    Object.keys(value.metricMin ?? {}).length > 0 ||
+    Object.keys(value.metricMax ?? {}).length > 0 ||
+    (value.flagsAll?.length ?? 0) > 0 ||
+    (value.flagsNone?.length ?? 0) > 0,
+  {
+    message: "Hazard requirements must include at least one gating field.",
+  },
+);
 
 const delayedConsequenceSchema = z
   .object({
@@ -63,6 +90,7 @@ export const decisionSchema = z
     tags: z.array(z.string()).min(1),
     impacts: metricRecordSchema,
     resourceCosts: resourceCostSchema.optional(),
+    operationEffects: operationEffectSchema.optional(),
     requirements: requirementSchema.optional(),
     delayedConsequences: z.array(delayedConsequenceSchema).optional(),
     setsFlags: z.array(z.string()).optional(),
@@ -93,6 +121,19 @@ export const endingSchema = z
   })
   .strict();
 
+export const hazardSchema = z
+  .object({
+    id: z.string(),
+    eventId: z.string(),
+    baseWeight: z.number().int().positive(),
+    cooldownRounds: z.number().int().min(1),
+    requirements: hazardRequirementSchema,
+    sourceFamily: hazardSourceFamilySchema,
+    explanation: z.string().min(1),
+  })
+  .strict();
+
 export const decisionsSchema = z.array(decisionSchema);
 export const eventsSchema = z.array(eventSchema);
+export const hazardsSchema = z.array(hazardSchema);
 export const endingsSchema = z.array(endingSchema);

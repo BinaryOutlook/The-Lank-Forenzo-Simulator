@@ -53,3 +53,11 @@ export const decisionPackIds = [
 ] as const;
 
 export const eventKinds = ["ambient", "delayed"] as const;
+
+export const hazardSourceFamilies = [
+  "legalHeat",
+  "safetyDecay",
+  "publicAnger",
+  "creditorPressure",
+  "dossierExposure",
+] as const;

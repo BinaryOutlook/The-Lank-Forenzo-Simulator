@@ -66,6 +66,34 @@ describe("decision tray composer", () => {
     );
   });
 
+  it("does not break the group cap just to satisfy pack diversity", () => {
+    const run = createInitialRunState();
+    run.metrics.airlineCash = 70;
+
+    const decisions: DecisionDefinition[] = [
+      decision("finance-core", "finance", "core", { airlineCash: 30 }),
+      decision("finance-creditor", "finance", "creditorWarfare", {
+        airlineCash: 28,
+      }),
+      decision("finance-assets", "finance", "assetHarvest", {
+        airlineCash: 26,
+      }),
+      decision("labor-core", "labor", "core", { workforceMorale: 2 }),
+      decision("legal-core", "legal", "core", { legalHeat: -2 }),
+      decision("market-core", "market", "core", { marketConfidence: 2 }),
+    ];
+
+    const tray = composeDecisionTray(decisions, run).decisions;
+    const financeCount = tray.filter(
+      (entry) => entry.group === "finance",
+    ).length;
+
+    expect(tray).toHaveLength(TRAY_COMPOSER_POLICY.mainTraySize);
+    expect(financeCount).toBeLessThanOrEqual(
+      TRAY_COMPOSER_POLICY.maxGroupDuplicates,
+    );
+  });
+
   it("surfaces live follow-up decisions even when basic utility is lower", () => {
     const run = createInitialRunState();
     run.flags = ["shellCarrierLive"];
@@ -208,5 +236,28 @@ describe("decision tray composer", () => {
     );
 
     expect(second).toEqual(first);
+  });
+
+  it("uses deterministic content tie-breaking instead of input order", () => {
+    const run = createInitialRunState();
+    run.round = 3;
+
+    const decisions: DecisionDefinition[] = [
+      decision("tie-alpha", "finance", "core"),
+      decision("tie-bravo", "labor", "laborShock"),
+      decision("tie-charlie", "legal", "regulatoryTheater"),
+      decision("tie-delta", "market", "marketTheater"),
+      decision("tie-echo", "operations", "safetyDenial"),
+      decision("tie-foxtrot", "extraction", "executiveEscape"),
+    ];
+
+    const first = getAvailableDecisions(decisions, run).map(
+      (entry) => entry.id,
+    );
+    const reversed = getAvailableDecisions([...decisions].reverse(), run).map(
+      (entry) => entry.id,
+    );
+
+    expect(reversed).toEqual(first);
   });
 });
