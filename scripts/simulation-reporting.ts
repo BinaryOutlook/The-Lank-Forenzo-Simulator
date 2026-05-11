@@ -518,6 +518,7 @@ export function simulateBotRun(
   const eventKindById = new Map(
     content.events.map((event) => [event.id, event.kind] as const),
   );
+  const hazardRuleIds = new Set(content.hazards.map((hazard) => hazard.id));
   const seedValue = hashString(options.seed, options.archetype.id);
   let run: RunState = createInitialRunState();
   const surfacedDecisionIds = new Set<string>();
@@ -591,7 +592,11 @@ export function simulateBotRun(
       eventKindById,
       "delayed",
     ),
-    triggeredHazardEventIds: new Set(),
+    triggeredHazardEventIds: new Set(
+      Object.keys(run.scheduler?.cooldowns ?? {}).filter((hazardId) =>
+        hazardRuleIds.has(hazardId),
+      ),
+    ),
     surfacedPacks,
     finalFlags: new Set(run.flags),
     repeatedTrayOverlap,

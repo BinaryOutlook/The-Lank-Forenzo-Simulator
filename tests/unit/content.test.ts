@@ -1,4 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { ZodError } from "zod";
+import { hazardsSchema } from "../../src/lib/schemas/contentSchemas";
 import { loadContent } from "../../src/simulation/content";
 import { validateContentBundle } from "../../src/simulation/content/validation";
 import { runMetricBounds } from "../../src/simulation/systems/metricEffects";
@@ -39,6 +41,24 @@ describe("content library", () => {
     expect(content.events.length).toBeGreaterThanOrEqual(165);
     expect(ambientEvents.length).toBeGreaterThanOrEqual(74);
     expect(delayedEvents.length).toBeGreaterThanOrEqual(91);
+  });
+
+  it("loads starter hazard families for state-driven pressure", () => {
+    const content = loadContent();
+    const hazardFamilies = new Set(
+      content.hazards.map((hazard) => hazard.sourceFamily),
+    );
+
+    expect(content.hazards.length).toBeGreaterThanOrEqual(5);
+    expect(hazardFamilies).toEqual(
+      new Set([
+        "legalHeat",
+        "safetyDecay",
+        "publicAnger",
+        "creditorPressure",
+        "dossierExposure",
+      ]),
+    );
   });
 
   it("covers fictionalized incident variants across distinct pressure families", () => {
@@ -117,11 +137,13 @@ describe("content library", () => {
     expect(report.events.total).toBeGreaterThanOrEqual(165);
     expect(report.events.byKind.get("ambient")).toBeGreaterThan(0);
     expect(report.events.byKind.get("delayed")).toBeGreaterThan(0);
+    expect(report.hazards.total).toBeGreaterThanOrEqual(5);
+    expect(report.hazards.byFamily.get("legalHeat")).toBeGreaterThan(0);
     expect(report.errors).toHaveLength(0);
     expect(report.warnings).toHaveLength(0);
   });
 
-  it("flags broken refs, orphaned delayed events, flag gaps, and impossible requirements", () => {
+  it("flags broken refs, orphaned delayed events, hazard refs, flag gaps, and impossible requirements", () => {
     const report = validateContentBundle({
       decisions: [
         {
@@ -173,6 +195,21 @@ describe("content library", () => {
           impacts: {},
         },
       ],
+      hazards: [
+        {
+          id: "broken-hazard",
+          eventId: "missing_hazard_event",
+          baseWeight: 4,
+          cooldownRounds: 2,
+          sourceFamily: "legalHeat",
+          explanation: "Fixture broken hazard.",
+          requirements: {
+            metricMin: {
+              legalHeat: 50,
+            },
+          },
+        },
+      ],
       endings: [
         {
           id: "prison",
@@ -195,6 +232,11 @@ describe("content library", () => {
     ).toBe(true);
     expect(
       report.errors.some((entry) =>
+        entry.message.includes('hazard "broken-hazard" references unknown event'),
+      ),
+    ).toBe(true);
+    expect(
+      report.errors.some((entry) =>
         entry.message.includes("Flags required but never set"),
       ),
     ).toBe(true);
@@ -213,5 +255,25 @@ describe("content library", () => {
         entry.message.includes("Likely impossible requirements"),
       ),
     ).toBe(true);
+  });
+
+  it("rejects malformed hazard requirement shapes at schema load time", () => {
+    expect(() =>
+      hazardsSchema.parse([
+        {
+          id: "bad-hazard",
+          eventId: "known_event",
+          baseWeight: 4,
+          cooldownRounds: 2,
+          sourceFamily: "legalHeat",
+          explanation: "Bad requirement shape.",
+          requirements: {
+            metricFloor: {
+              legalHeat: 50,
+            },
+          },
+        },
+      ]),
+    ).toThrow(ZodError);
   });
 });
