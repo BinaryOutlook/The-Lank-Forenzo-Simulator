@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { NavLink, Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useGameStore } from "../../simulation/state/gameStore";
 import type { ThemeName } from "../../simulation/state/types";
 import styles from "./AppShell.module.css";
@@ -10,9 +11,14 @@ const themes: Array<{ id: ThemeName; label: string }> = [
 ];
 
 export function AppShell() {
+  const location = useLocation();
   const theme = useGameStore((state) => state.theme);
   const setTheme = useGameStore((state) => state.setTheme);
   const run = useGameStore((state) => state.run);
+
+  useEffect(() => {
+    window.scrollTo({ behavior: "auto", left: 0, top: 0 });
+  }, [location.pathname]);
 
   return (
     <div className={`app-frame ${styles.shell}`}>

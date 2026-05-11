@@ -1,13 +1,16 @@
 .tray {
   display: grid;
+  grid-template-areas:
+    "header controls"
+    "list list";
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 1rem;
+  align-items: end;
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  align-items: end;
+  grid-area: header;
+  min-width: 0;
 }
 
 .eyebrow {
@@ -26,6 +29,7 @@
 }
 
 .controls {
+  grid-area: controls;
   display: grid;
   gap: 0.45rem;
   justify-items: end;
@@ -51,16 +55,13 @@
     background 180ms ease;
 }
 
-.resolveButton:hover {
-  transform: translateY(-1px);
-}
-
 .resolveButton:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 26%, transparent);
 }
 
 .list {
+  grid-area: list;
   display: grid;
   gap: 0.75rem;
 }
@@ -68,6 +69,7 @@
 .card {
   display: grid;
   gap: 0.8rem;
+  min-height: 3.5rem;
   padding: 1rem;
   border: 1px solid var(--border);
   background: var(--panel);
@@ -77,11 +79,6 @@
     border-color 180ms ease,
     background 180ms ease,
     box-shadow 180ms ease;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  border-color: color-mix(in oklab, var(--accent) 35%, var(--border));
 }
 
 .card:focus-visible {
@@ -161,13 +158,82 @@
   color: var(--text-muted);
 }
 
+@media (hover: hover) {
+  .resolveButton:hover {
+    transform: translateY(-1px);
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--accent) 35%, var(--border));
+  }
+}
+
 @media (max-width: 860px) {
-  .header {
-    flex-direction: column;
+  .tray {
+    grid-template-areas:
+      "header"
+      "controls"
+      "list";
+    grid-template-columns: 1fr;
     align-items: stretch;
   }
 
   .controls {
+    position: sticky;
+    top: calc(8.25rem + env(safe-area-inset-top));
+    z-index: 15;
     justify-items: stretch;
+    padding: 0.7rem;
+    border: 1px solid color-mix(in oklab, var(--accent) 44%, var(--border));
+    background: color-mix(in oklab, var(--panel-strong) 90%, transparent);
+    box-shadow: var(--shadow-ambient);
+    backdrop-filter: blur(16px);
+  }
+
+  .controls .selectionCount {
+    text-align: center;
+  }
+
+  .controls .resolveButton {
+    width: 100%;
+    min-height: 3.25rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .tray {
+    gap: 0.85rem;
+  }
+
+  .title {
+    font-size: clamp(1.25rem, 9vw, 1.65rem);
+    line-height: 1.1;
+  }
+
+  .card {
+    gap: 0.7rem;
+    padding: 0.9rem;
+  }
+
+  .cardHeader {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .cardTitle {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  .cardSummary {
+    line-height: 1.48;
+  }
+
+  .previewPositive,
+  .previewNegative,
+  .previewNeutral {
+    min-height: 2.1rem;
+    white-space: normal;
   }
 }

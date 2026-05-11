@@ -11,7 +11,7 @@
   justify-content: space-between;
   gap: 1rem;
   align-items: center;
-  padding: 1rem clamp(1rem, 2vw, 2rem);
+  padding: calc(0.85rem + env(safe-area-inset-top)) clamp(0.85rem, 2vw, 2rem) 0.85rem;
   border-bottom: 1px solid var(--border);
   background: color-mix(in oklab, var(--canvas) 76%, transparent);
   backdrop-filter: blur(18px);
@@ -27,6 +27,7 @@
   font-size: clamp(1rem, 1vw + 0.8rem, 1.3rem);
   letter-spacing: 0.02em;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .subtitle {
@@ -40,11 +41,14 @@
   display: flex;
   align-items: center;
   gap: 0.9rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .roundBadge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: 2.4rem;
   padding: 0 0.9rem;
   border: 1px solid var(--border);
@@ -57,6 +61,7 @@
 
 .themeSwitch {
   display: inline-flex;
+  flex-wrap: wrap;
   padding: 0.2rem;
   border: 1px solid var(--border);
   background: var(--panel);
@@ -64,7 +69,7 @@
 
 .themeButton,
 .themeButtonActive {
-  min-height: 2.2rem;
+  min-height: 2.75rem;
   padding: 0 0.95rem;
   border: 0;
   background: transparent;
@@ -78,16 +83,61 @@
 }
 
 .main {
-  padding: clamp(1rem, 2vw, 1.8rem);
+  padding: clamp(0.75rem, 2vw, 1.8rem);
 }
 
 @media (max-width: 860px) {
   .header {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.75rem;
   }
 
   .headerControls {
     justify-content: space-between;
+    gap: 0.6rem;
+  }
+
+  .roundBadge {
+    flex: 1 1 7rem;
+  }
+
+  .themeSwitch {
+    flex: 2 1 14rem;
+  }
+
+  .themeButton,
+  .themeButtonActive {
+    flex: 1 1 7rem;
+    padding-inline: 0.65rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .header {
+    padding-inline: 0.75rem;
+  }
+
+  .subtitle {
+    font-size: 0.68rem;
+    line-height: 1.35;
+  }
+
+  .main {
+    padding: 0.75rem;
+  }
+
+  .roundBadge {
+    flex-basis: 5.75rem;
+    padding-inline: 0.65rem;
+  }
+
+  .themeSwitch {
+    flex-basis: 10.5rem;
+  }
+
+  .themeButton,
+  .themeButtonActive {
+    flex-basis: 5rem;
   }
 }

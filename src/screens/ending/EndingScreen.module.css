@@ -1,6 +1,6 @@
 .page {
   display: grid;
-  min-height: calc(100vh - 8rem);
+  min-height: calc(100svh - 8rem);
   place-items: center;
 }
 
@@ -147,5 +147,31 @@
   .snapshot,
   .recapGrid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .page {
+    min-height: auto;
+    place-items: stretch;
+  }
+
+  .panel {
+    padding: 1rem;
+  }
+
+  .title {
+    font-size: clamp(2rem, 14vw, 3rem);
+    line-height: 1;
+  }
+
+  .actions {
+    display: grid;
+  }
+
+  .primaryAction,
+  .secondaryAction {
+    width: 100%;
+    min-height: 3.35rem;
   }
 }

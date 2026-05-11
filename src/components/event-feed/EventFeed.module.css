@@ -78,10 +78,38 @@
   margin: 0;
   color: var(--text-muted);
   line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 .cause {
   padding-left: 0.65rem;
   border-left: 2px solid color-mix(in oklab, var(--accent) 48%, var(--border));
   font-size: 0.9rem;
+}
+
+@media (min-width: 1181px) {
+  .feed {
+    position: sticky;
+    top: calc(5.5rem + env(safe-area-inset-top));
+    max-height: calc(100svh - 6.5rem - env(safe-area-inset-top));
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+}
+
+@media (max-width: 520px) {
+  .feed {
+    gap: 0.85rem;
+    padding: 0.9rem;
+  }
+
+  .title {
+    font-size: 1rem;
+    line-height: 1.15;
+  }
+
+  .entry {
+    gap: 0.4rem;
+    padding-top: 0.75rem;
+  }
 }

@@ -46,3 +46,41 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
     .poll(async () => consequenceFeed.locator("article").count())
     .toBeGreaterThan(historyCountBefore);
 });
+
+test("responsive run layout keeps touch controls and section jumps reachable", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /start a new run/i }).click();
+
+  const viewport = page.viewportSize();
+  const runSections = page.getByRole("navigation", { name: /run sections/i });
+
+  if (viewport && viewport.width <= 1180) {
+    await expect(runSections).toBeVisible();
+    await expect(
+      runSections.getByRole("link", { name: /decisions/i }),
+    ).toBeVisible();
+    await expect(
+      runSections.getByRole("link", { name: /state/i }),
+    ).toBeVisible();
+  } else {
+    await expect(runSections).toBeHidden();
+  }
+
+  if (viewport && viewport.width <= 860) {
+    const decisionTray = page
+      .getByRole("heading", { name: /choose where the pain goes next/i })
+      .locator("xpath=ancestor::section[1]");
+    const controls = page.getByTestId("quarter-controls");
+
+    await decisionTray.scrollIntoViewIfNeeded();
+    await expect(controls).toBeVisible();
+    await expect(controls.getByText("0/2 selected")).toBeVisible();
+    await decisionTray.locator("button[aria-pressed]").first().click();
+
+    await expect(controls.getByText("1/2 selected")).toBeVisible();
+    await controls.getByRole("button", { name: /resolve the quarter/i }).click();
+    await expect(page.getByText(/^R2$/).first()).toBeVisible();
+  }
+});

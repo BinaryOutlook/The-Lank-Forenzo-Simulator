@@ -20,6 +20,7 @@ Implemented in the current build:
 - shared metric-semantics rules so inverse-pressure indicators such as `legalHeat`, `publicAnger`, and `debt` read correctly
 - multiple endings, including merger, extraction, prison, and Bahamas escape
 - two first-class themes: `Earth` and `Armonk Blue`
+- responsive desktop, tablet, and phone browser layouts with touch-friendly run controls
 - unit tests, content validation, build checks, seeded balance tooling, reachability tooling, and a Playwright smoke test
 
 ## Product Shape
@@ -97,6 +98,16 @@ npm run reachability:report
 `npm run simulate:runs` and `npm run balance:report` run a deterministic seeded campaign report without opening the browser. The report summarizes ending distribution, average run length, surfaced decision coverage, triggered event coverage, and repeated-tray pressure using the documented greedy pressure-relief bot.
 
 `npm run content:compile` prints the compiled manifest summary and content hash. `npm run balance:matrix` runs the v0.5 archetype matrix across extraction, merger, offshore, and stabilizer bots. `npm run reachability:report` runs the bounded reachability explorer with state abstraction and low-confidence content reporting.
+
+## Responsive Browser Play
+
+The run screen is designed to stay playable across desktop landscape, tablet landscape, tablet portrait, and mobile portrait browser viewports.
+
+- The primary run layout reflows from a three-column board packet into tablet and portrait-friendly sections.
+- Tablet and phone players get section jump links for the brief, state rail, decision tray, and consequence feed.
+- Mobile portrait players get a sticky touch quarter-control bar in the decision tray so resolving a round does not require awkward scrolling after selecting decisions.
+- Viewport safe-area and dynamic-height CSS are used so browser chrome and virtual keyboards are less likely to cover critical controls.
+- `npm run test:e2e` runs the smoke flow across desktop landscape, tablet landscape, tablet portrait, and mobile portrait Chromium projects.
 
 ## Theme Direction
 

@@ -1,17 +1,28 @@
 body {
   min-height: 100vh;
+  min-height: 100svh;
 }
 
 #root {
   min-height: 100vh;
+  min-height: 100svh;
 }
 
 .app-frame {
   min-height: 100vh;
+  min-height: 100svh;
   background-image:
     linear-gradient(to right, var(--grid) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
   background-size: 32px 32px;
+}
+
+@supports (min-height: 100dvh) {
+  body,
+  #root,
+  .app-frame {
+    min-height: 100dvh;
+  }
 }
 
 .visually-hidden {

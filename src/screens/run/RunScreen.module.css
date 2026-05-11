@@ -1,17 +1,120 @@
 .layout {
+  --run-layout-gap: clamp(0.75rem, 1vw, 1rem);
   display: grid;
+  grid-template-areas:
+    "metrics board feed"
+    "metrics decisions feed";
   grid-template-columns: minmax(16rem, 0.8fr) minmax(0, 1.92fr) minmax(16rem, 0.84fr);
-  gap: clamp(0.75rem, 1vw, 1rem);
+  gap: var(--run-layout-gap);
   align-items: start;
 }
 
-.centerColumn {
+.sectionNav {
+  display: none;
+}
+
+.metricsArea,
+.boardArea,
+.decisionArea,
+.feedArea {
+  min-width: 0;
+}
+
+.metricsArea {
+  grid-area: metrics;
+}
+
+.boardArea {
+  grid-area: board;
+}
+
+.decisionArea {
+  grid-area: decisions;
+}
+
+.feedArea {
+  grid-area: feed;
+  align-self: stretch;
+}
+
+.feedArea > * {
+  min-height: 100%;
+}
+
+.boardArea,
+.decisionArea {
   display: grid;
-  gap: 1rem;
 }
 
 @media (max-width: 1180px) {
   .layout {
+    grid-template-areas:
+      "nav nav"
+      "board metrics"
+      "decisions metrics"
+      "decisions feed";
+    grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.65fr);
+  }
+
+  .sectionNav {
+    grid-area: nav;
+    display: flex;
+    gap: 0.45rem;
+    padding: 0.35rem;
+    border: 1px solid var(--border);
+    background: color-mix(in oklab, var(--panel) 88%, transparent);
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .sectionNav a {
+    display: inline-flex;
+    flex: 1 0 auto;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0 0.8rem;
+    border: 1px solid color-mix(in oklab, var(--border) 88%, transparent);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: color-mix(in oklab, var(--panel-strong) 68%, transparent);
+  }
+
+  .sectionNav a:focus-visible {
+    outline: none;
+    border-color: color-mix(in oklab, var(--accent) 60%, var(--border));
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+  }
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-areas:
+      "nav"
+      "board"
+      "metrics"
+      "decisions"
+      "feed";
     grid-template-columns: 1fr;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (max-width: 520px) {
+  .layout {
+    --run-layout-gap: 0.75rem;
+  }
+
+  .sectionNav {
+    margin-inline: -0.25rem;
+  }
+
+  .sectionNav a {
+    min-height: 2.65rem;
+    padding-inline: 0.7rem;
+    font-size: 0.7rem;
   }
 }

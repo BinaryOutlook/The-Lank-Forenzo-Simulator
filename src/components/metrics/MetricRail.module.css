@@ -43,16 +43,19 @@
   justify-content: space-between;
   gap: 0.8rem;
   align-items: baseline;
+  min-width: 0;
 }
 
 .metricLabel {
   color: var(--text-muted);
   font-size: 0.85rem;
+  overflow-wrap: anywhere;
 }
 
 .metricValue {
   font-family: var(--font-mono);
   font-size: 0.86rem;
+  white-space: nowrap;
 }
 
 .meter {
@@ -76,4 +79,59 @@
 
 .meterNeutral {
   background: linear-gradient(90deg, color-mix(in oklab, var(--text-muted) 32%, transparent), var(--text-muted));
+}
+
+@media (min-width: 1181px) {
+  .rail {
+    position: sticky;
+    top: calc(5.5rem + env(safe-area-inset-top));
+    max-height: calc(100svh - 6.5rem - env(safe-area-inset-top));
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+}
+
+@media (max-width: 1180px) {
+  .rail {
+    padding: 1rem;
+  }
+
+  .metrics {
+    grid-template-columns: repeat(2, minmax(7rem, 1fr));
+    gap: 0.75rem;
+  }
+
+  .metricRow {
+    gap: 0.3rem;
+  }
+
+  .metricMeta {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .metricLabel,
+  .metricValue {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .rail {
+    gap: 0.85rem;
+    padding: 0.85rem;
+  }
+
+  .header {
+    gap: 0.25rem;
+  }
+
+  .title {
+    font-size: 1rem;
+    line-height: 1.15;
+  }
+
+  .metrics {
+    gap: 0.65rem;
+  }
 }

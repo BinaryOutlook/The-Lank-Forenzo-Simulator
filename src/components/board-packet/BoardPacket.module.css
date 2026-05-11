@@ -58,6 +58,7 @@
   margin: 0.38rem 0 0;
   color: var(--text-muted);
   line-height: 1.48;
+  overflow-wrap: anywhere;
 }
 
 .signals {
@@ -108,5 +109,28 @@
 
   .title {
     text-wrap: pretty;
+  }
+}
+
+@media (max-width: 520px) {
+  .packet {
+    gap: 0.85rem;
+    padding: 0.9rem;
+  }
+
+  .title {
+    font-size: clamp(1.15rem, 7vw, 1.35rem);
+    line-height: 1.08;
+  }
+
+  .summary,
+  .memoBody,
+  .signalBody {
+    font-size: 0.94rem;
+    line-height: 1.5;
+  }
+
+  .pressureSignal {
+    padding: 0.75rem;
   }
 }
