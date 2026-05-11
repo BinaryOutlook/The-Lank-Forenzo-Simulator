@@ -14,6 +14,12 @@ export const metricKeys = [
   "offshoreReadiness",
 ] as const;
 
+export const consumableResourceKeys = [
+  "inGameMoney",
+  "personalAssets",
+  "publicRelationsCapital",
+] as const;
+
 export const endingIds = [
   "prison",
   "forcedRemoval",

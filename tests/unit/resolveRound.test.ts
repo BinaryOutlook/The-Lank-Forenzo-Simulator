@@ -15,6 +15,11 @@ describe("resolveRound", () => {
 
     expect(run.contentVersion).toBe("v0.5");
     expect(run.contentHash).toMatch(/^[a-f0-9]{8}$/);
+    expect(run.resources).toEqual({
+      inGameMoney: 54,
+      personalAssets: 9,
+      publicRelationsCapital: 16,
+    });
     expect(run.scheduler).toEqual({
       queue: [],
       cooldowns: {},
@@ -131,6 +136,36 @@ describe("resolveRound", () => {
       "severance_injunction",
     ]).toContain(next.pendingEvents[0]?.eventId);
     expect(next.history[0]?.title).toBeTruthy();
+  });
+
+  it("deducts data-driven consumable costs from strategic actions", () => {
+    const run = createInitialRunState();
+    run.selectedDecisionIds = ["hire_the_former_regulator"];
+
+    const next = resolveRound(run);
+
+    expect(next.resources).toEqual({
+      inGameMoney: 44,
+      personalAssets: 8,
+      publicRelationsCapital: 15,
+    });
+    expect(next.history.some((entry) => entry.body.includes("Reserve spend"))).toBe(true);
+  });
+
+  it("blocks selected strategic actions when reserves are insufficient", () => {
+    const run = createInitialRunState();
+    run.resources = {
+      inGameMoney: 0,
+      personalAssets: 0,
+      publicRelationsCapital: 0,
+    };
+    run.selectedDecisionIds = ["hire_the_former_regulator"];
+
+    const next = resolveRound(run);
+
+    expect(next.resources).toEqual(run.resources);
+    expect(next.pendingEvents).toHaveLength(0);
+    expect(next.history.some((entry) => entry.title === "Strategic Reserve Shortfall")).toBe(true);
   });
 
   it("supports authored exit endings", () => {

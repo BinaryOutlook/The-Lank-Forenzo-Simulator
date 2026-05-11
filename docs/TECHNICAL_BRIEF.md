@@ -258,7 +258,19 @@ The board cares about survivability and deniability:
 
 This creates rich decision space because the player is managing not just resources, but constituencies.
 
-### 6. Safety Decay
+### 6. Consumable Strategic Resources
+
+The game should distinguish between an option being legalistically available and the player having the ammunition to execute it.
+
+High-impact strategic actions can spend finite reserves:
+
+- in-game strategic cash for retainers, lobbying, logistics, and influence operations
+- personal assets for favors, private introductions, and offshore-network leverage
+- public relations capital for press cover, civic theater, and narrative discipline
+
+This creates a second layer of planning around the decision tray. A player may know the right ugly move and still lack the reserve ledger to pay for it. Costs should live in content data so individual actions can be tuned without changing the resolver.
+
+### 7. Safety Decay
 
 Safety should be a hidden or semi-visible system tied to maintenance, staffing depth, and operational chaos.
 
@@ -553,6 +565,7 @@ Each action card should define:
 - title
 - description
 - eligibility rules
+- consumable resource costs
 - immediate effects
 - delayed effects
 - heat modifiers

@@ -6,6 +6,7 @@ import {
   readGameSaveStorageValue,
 } from "../../src/lib/storage/save.js";
 import { defaultGameSettings } from "../../src/simulation/state/settings.js";
+import { initialConsumableResources } from "../../src/simulation/systems/consumables.js";
 
 const storageKey = "the-lank-forenzo-simulator/v1";
 const createMockStorage = () => {
@@ -66,9 +67,11 @@ describe("save storage", () => {
 
   it("migrates a legacy raw save payload", () => {
     const run = createInitialRunState();
+    const { resources: _legacyResources, ...legacyRun } = run;
+    expect(_legacyResources).toEqual(initialConsumableResources);
     const legacyPayload = {
       theme: "earth" as const,
-      run,
+      run: legacyRun,
     };
 
     const storedValue = readGameSaveStorageValue(JSON.stringify(legacyPayload));
@@ -78,6 +81,10 @@ describe("save storage", () => {
       state: {
         ...legacyPayload,
         settings: defaultGameSettings,
+        run: {
+          ...legacyRun,
+          resources: initialConsumableResources,
+        },
       },
       version: 0,
     });
@@ -86,6 +93,10 @@ describe("save storage", () => {
     ).toEqual({
       ...legacyPayload,
       settings: defaultGameSettings,
+      run: {
+        ...legacyRun,
+        resources: initialConsumableResources,
+      },
     });
   });
 

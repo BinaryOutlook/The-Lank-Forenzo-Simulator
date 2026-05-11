@@ -12,6 +12,9 @@ describe("content library", () => {
     const delayedDecisions = content.decisions.filter(
       (decision) => decision.delayedConsequences?.length,
     );
+    const strategicCostDecisions = content.decisions.filter(
+      (decision) => decision.resourceCosts,
+    );
 
     expect(content.decisions.length).toBeGreaterThanOrEqual(112);
     expect(decisionPacks.size).toBeGreaterThanOrEqual(11);
@@ -21,6 +24,7 @@ describe("content library", () => {
     expect(decisionPacks.has("executiveEscape")).toBe(true);
     expect(decisionPacks.has("incidentVariants")).toBe(true);
     expect(delayedDecisions.length).toBeGreaterThanOrEqual(82);
+    expect(strategicCostDecisions.length).toBeGreaterThanOrEqual(12);
   });
 
   it("loads a materially expanded multi-pack event library", () => {

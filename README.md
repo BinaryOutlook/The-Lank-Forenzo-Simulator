@@ -15,6 +15,7 @@ Implemented in the current build:
 - compiled content manifest with direct lookup maps, content hash, flag diagnostics, and pack/tag indexes
 - set-aware decision tray composition with diversity, follow-up, exit, and repeat-suppression rules
 - v0.5 scheduler, faction memory, operational network, and dossier primitives wired into active runs
+- consumable strategic reserves for high-impact political, labor, regulatory, and executive-network actions
 - post-run recap surfaces for faction pressure, operational damage, dossier trails, missed windows, and critical chains
 - personal wealth, legal heat, creditor patience, safety, market confidence, and workforce systems
 - shared metric-semantics rules so inverse-pressure indicators such as `legalHeat`, `publicAnger`, and `debt` read correctly
@@ -31,6 +32,8 @@ There have been decades of airline and air-management games, but most define man
 You are not playing as a meticulous operator trying to build the best airline. You are playing from the macro level, managing the distance between two ledgers: the company and yourself. The airline can be failing while you are still winning, and that split is the product's core lens for every system, screen, and decision.
 
 Each round presents a board packet, a curated decision tray, and a consequence feed. The question is not how to optimize routes or tune fleet utilization. The question is how long you can keep the company just credible enough to keep extracting value before creditors, regulators, workers, and the market close in.
+
+Strategic actions can now draw from three limited reserves: strategic cash, personal assets, and public relations capital. Expensive plays such as regulator influence, union-conflict maneuvers, lobbying, merger backchannels, and offshore networking show their reserve costs in the decision tray before they can be queued.
 
 ## Winning, Losing, and End States
 

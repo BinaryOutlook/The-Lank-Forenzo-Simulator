@@ -1,4 +1,5 @@
 import type {
+  consumableResourceKeys,
   decisionGroups,
   decisionPackIds,
   endingIds,
@@ -13,6 +14,8 @@ import type { EventSchedulerState } from "../scheduler/eventScheduler";
 export type ThemeName = "earth" | "armonk-blue";
 
 export type MetricKey = (typeof metricKeys)[number];
+
+export type ConsumableResourceKey = (typeof consumableResourceKeys)[number];
 
 export type EndingId = (typeof endingIds)[number];
 
@@ -38,7 +41,11 @@ export interface RunMetrics {
   offshoreReadiness: number;
 }
 
+export type ConsumableResources = Record<ConsumableResourceKey, number>;
+
 export type ImpactSet = Partial<Record<MetricKey, number>>;
+
+export type ResourceCostSet = Partial<Record<ConsumableResourceKey, number>>;
 
 export interface RequirementSpec {
   roundAtLeast?: number;
@@ -63,6 +70,7 @@ export interface DecisionDefinition {
   group: DecisionGroup;
   tags: string[];
   impacts: ImpactSet;
+  resourceCosts?: ResourceCostSet;
   requirements?: RequirementSpec;
   delayedConsequences?: DelayedConsequenceRef[];
   setsFlags?: string[];
@@ -134,6 +142,7 @@ export interface RunState {
   contentVersion?: string;
   contentHash?: string;
   metrics: RunMetrics;
+  resources: ConsumableResources;
   selectedDecisionIds: string[];
   lastOfferedDecisionIds: string[];
   pendingEvents: PendingEvent[];
