@@ -19,6 +19,8 @@ describe("resolveRound", () => {
       queue: [],
       cooldowns: {},
       firedEventIds: {},
+      recentEventTitles: [],
+      recentEventFamilies: [],
     });
     expect(Object.keys(run.factions ?? {})).toEqual([
       "board",

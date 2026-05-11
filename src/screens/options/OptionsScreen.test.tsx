@@ -48,7 +48,7 @@ describe("OptionsScreen", () => {
     );
     await user.click(
       screen.getByRole("checkbox", {
-        name: /music/i,
+        name: /^music\b/i,
       }),
     );
     fireEvent.change(screen.getByRole("slider", { name: /music volume/i }), {
@@ -57,6 +57,11 @@ describe("OptionsScreen", () => {
     await user.click(
       screen.getByRole("checkbox", {
         name: /visual effects/i,
+      }),
+    );
+    await user.click(
+      screen.getByRole("checkbox", {
+        name: /sound effects/i,
       }),
     );
     await user.click(
@@ -70,11 +75,12 @@ describe("OptionsScreen", () => {
       uiDensity: "compact",
       musicEnabled: true,
       musicVolume: 65,
+      soundEffectsEnabled: false,
       visualEffectsEnabled: false,
       interactionEffectsEnabled: false,
     });
     expect(screen.getByText("Enabled at 65%")).toBeInTheDocument();
-    expect(screen.getByText("Disabled")).toBeInTheDocument();
+    expect(screen.getAllByText("Disabled")).toHaveLength(2);
     expect(
       screen.getByText("Paused while visual effects are off"),
     ).toBeInTheDocument();

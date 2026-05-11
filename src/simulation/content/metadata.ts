@@ -43,6 +43,7 @@ export const decisionPackIds = [
   "marketTheater",
   "regulatoryTheater",
   "executiveEscape",
+  "incidentVariants",
 ] as const;
 
 export const eventKinds = ["ambient", "delayed"] as const;
