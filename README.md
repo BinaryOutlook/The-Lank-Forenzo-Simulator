@@ -16,7 +16,7 @@ Implemented in the current build:
 - set-aware decision tray composition with diversity, follow-up, exit, and repeat-suppression rules
 - v0.5 scheduler, faction memory, operational network, and dossier primitives wired into active runs
 - consumable strategic reserves for high-impact political, labor, regulatory, and executive-network actions
-- post-run recap surfaces for faction pressure, operational damage, dossier trails, missed windows, and critical chains
+- structured post-run case summaries for outcome causes, dominant strategy, faction pressure, operational cascades, dossier files, missed windows, and final decision chains
 - personal wealth, legal heat, creditor patience, safety, market confidence, and workforce systems
 - shared metric-semantics rules so inverse-pressure indicators such as `legalHeat`, `publicAnger`, and `debt` read correctly
 - multiple endings, including merger, extraction, prison, and Bahamas escape
@@ -57,6 +57,8 @@ Strategy framing:
 - If you want `Extraction`, keep the market story alive long enough to sell optimism into strength without letting legal heat spike into a collapse.
 - If you want `Bahamas`, convert corporate value into personal wealth and offshore readiness early, because the escape route is a race against accumulating heat.
 - If you ignore the end states, the game will usually choose one for you, and those are the bad ones.
+
+When a run ends, the ending screen now reads like a concise scandal case file: it calls out why the ending fired, what strategy the record reveals, what the world could prove, and which exit windows slipped away.
 
 ## Stack
 

@@ -183,10 +183,13 @@ function simulateSingleRun(
       seedValue,
       runIndex,
     );
-    run = resolveRound({
-      ...run,
-      selectedDecisionIds,
-    });
+    run = resolveRound(
+      {
+        ...run,
+        selectedDecisionIds,
+      },
+      { buildRecap: false },
+    );
     roundsPlayed += 1;
   }
 

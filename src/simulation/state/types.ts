@@ -129,6 +129,8 @@ export interface RecapItem {
 
 export interface RunRecap {
   headline: string;
+  outcome: RecapItem[];
+  dominantStrategy: RecapItem[];
   factions: RecapItem[];
   operations: RecapItem[];
   dossiers: RecapItem[];

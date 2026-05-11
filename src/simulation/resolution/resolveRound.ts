@@ -4,7 +4,11 @@ import {
   pickWeighted,
   shuffleWithSeed,
 } from "../../lib/random/seeded";
-import { applyEvidenceFragments, collectEvidenceFragments, type EvidenceFragment } from "../dossiers/evidence";
+import {
+  applyEvidenceFragments,
+  collectEvidenceFragments,
+  type EvidenceFragment,
+} from "../dossiers/evidence";
 import {
   createInitialDossierState,
   summarizeDossiers,
@@ -30,6 +34,7 @@ import {
   resolveNetworkQuarter,
   type NetworkQuarterResult,
 } from "../operations/networkResolution";
+import { buildRunRecap } from "./runRecap.js";
 import {
   createInitialEventSchedulerState,
   getEventNarrativeWeight,
@@ -60,8 +65,6 @@ import {
   type HistoryEntry,
   type ImpactSet,
   type PendingEvent,
-  type RecapItem,
-  type RunRecap,
   type RunMetrics,
   type RunState,
 } from "../state/types";
@@ -303,7 +306,9 @@ function applySelectedDecisions(
       ),
     );
 
-    for (const [index, delayed] of (decision.delayedConsequences ?? []).entries()) {
+    for (const [index, delayed] of (
+      decision.delayedConsequences ?? []
+    ).entries()) {
       const eventId = pickDelayedEventId(decision.id, round, delayed);
 
       if (!eventId) {
@@ -584,7 +589,9 @@ function buildFactionHistoryEntry(
   round: number,
   intents: FactionIntent[],
 ): HistoryEntry | null {
-  const [intent] = [...intents].sort((left, right) => right.urgency - left.urgency);
+  const [intent] = [...intents].sort(
+    (left, right) => right.urgency - left.urgency,
+  );
 
   if (!intent || intent.urgency < 50) {
     return null;
@@ -619,8 +626,13 @@ function buildOperationHistoryEntry(
     source: "operation",
     sourceKind: "operational_read",
     operationId: cascade?.id ?? "network-quarter",
-    title: cascade?.id ? formatId(cascade.id) : (signal?.title ?? "Operational read"),
-    body: cascade?.body ?? signal?.body ?? "The network absorbed the quarter without a named cascade.",
+    title: cascade?.id
+      ? formatId(cascade.id)
+      : (signal?.title ?? "Operational read"),
+    body:
+      cascade?.body ??
+      signal?.body ??
+      "The network absorbed the quarter without a named cascade.",
     tone: cascade || signal?.tone === "negative" ? "negative" : "neutral",
   };
 }
@@ -647,71 +659,6 @@ function buildDossierHistoryEntry(
   };
 }
 
-function buildRunRecap(input: {
-  run: RunState;
-  endingId: EndingId;
-  factions: FactionStates;
-  operations: NetworkState;
-  dossiers: DossierThread[];
-  selectedDecisionIds: string[];
-  operationResult: NetworkQuarterResult;
-}): RunRecap {
-  const factionItems: RecapItem[] = Object.values(input.factions)
-    .sort(
-      (left, right) =>
-        Math.max(right.aggression, right.leverage) -
-        Math.max(left.aggression, left.leverage),
-    )
-    .slice(0, 2)
-    .map((faction) => ({
-      title: formatId(faction.id),
-      body: `Aggression ${faction.aggression}, leverage ${faction.leverage}. ${faction.recentGrievances[0] ?? "No single grievance controlled the room."}`,
-    }));
-  const dossierItems = summarizeDossiers(input.dossiers, 2).map((summary) => ({
-    title: formatId(summary.theme),
-    body: `Evidence weight ${summary.evidenceWeight}; likely exposure ${formatId(summary.likelyExposure)}.`,
-  }));
-  const operationItems: RecapItem[] = [
-    {
-      title: "Network condition",
-      body:
-        input.operationResult.cascades[0]?.body ??
-        `Maintenance backlog ${input.operations.maintenanceBacklog}; service disruption ${input.operations.serviceDisruption}.`,
-    },
-  ];
-
-  return {
-    headline: `The ${formatId(input.endingId)} record is now legible.`,
-    factions: factionItems,
-    operations: operationItems,
-    dossiers: dossierItems,
-    missedExitWindows: getMissedExitWindows(input.run),
-    criticalChains: input.selectedDecisionIds.slice(0, 3).map((decisionId) => ({
-      title: formatId(decisionId),
-      body: "Selected in the final resolved quarter.",
-    })),
-  };
-}
-
-function getMissedExitWindows(run: RunState): RecapItem[] {
-  const missed: RecapItem[] = [];
-
-  if (run.round >= 7 && run.metrics.marketConfidence >= 60 && run.metrics.legalHeat > 74) {
-    missed.push({
-      title: "Extraction window",
-      body: "Market belief was available, but personal exposure made the cash-out unsafe.",
-    });
-  }
-
-  if (run.round >= 6 && run.metrics.offshoreReadiness >= 35 && run.metrics.personalWealth < 45) {
-    missed.push({
-      title: "Nassau window",
-      body: "The offshore apparatus was nearly ready before personal liquidity caught up.",
-    });
-  }
-
-  return missed;
-}
 
 function formatId(value: string): string {
   return value
@@ -719,7 +666,14 @@ function formatId(value: string): string {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-export function resolveRound(run: RunState): RunState {
+interface ResolveRoundOptions {
+  buildRecap?: boolean;
+}
+
+export function resolveRound(
+  run: RunState,
+  options: ResolveRoundOptions = {},
+): RunState {
   const content = loadContentManifest();
   const offeredThisRound = getAvailableDecisions(content.decisions, run).map(
     (decision) => decision.id,
@@ -863,17 +817,21 @@ export function resolveRound(run: RunState): RunState {
     flags: [...flags],
     endingId,
   };
-  const recap = endingId
-    ? buildRunRecap({
-        run: nextRunForRecap,
-        endingId,
-        factions,
-        operations,
-        dossiers,
-        selectedDecisionIds,
-        operationResult,
-      })
-    : null;
+  const recap =
+    endingId && (options.buildRecap ?? true)
+      ? buildRunRecap({
+          run: nextRunForRecap,
+          endingId,
+          factions,
+          operations,
+          dossiers,
+          selectedDecisionIds,
+          decisions: content.decisions,
+          decisionById: content.decisionById,
+          historyEntries: [...historyEntries, ...run.history],
+          operationResult,
+        })
+      : null;
 
   return {
     status: endingId ? "ended" : "active",

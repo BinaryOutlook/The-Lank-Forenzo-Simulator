@@ -156,10 +156,13 @@ export function exploreReachabilityReport(
         options.seed,
         depthIndex,
       )) {
-        const nextRun = resolveRound({
-          ...node.run,
-          selectedDecisionIds,
-        });
+        const nextRun = resolveRound(
+          {
+            ...node.run,
+            selectedDecisionIds,
+          },
+          { buildRecap: false },
+        );
         const selectedDecisions = selectedDecisionIds
           .map((decisionId) =>
             content.decisions.find((decision) => decision.id === decisionId),

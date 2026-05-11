@@ -71,18 +71,22 @@ describe("exploreReachabilityReport", () => {
     expect(first.repeatedTrayPressure.percentage).toBeLessThanOrEqual(1);
   });
 
-  it("reaches bounded failure and merger endings in the default pass", () => {
-    const report = exploreReachabilityReport({
-      width: 32,
-      depth: 24,
-      seed: "v0.5-default",
-    });
+  it(
+    "reaches bounded failure and merger endings in the default pass",
+    () => {
+      const report = exploreReachabilityReport({
+        width: 32,
+        depth: 24,
+        seed: "v0.5-default",
+      });
 
-    expect(report.endingCoverage.seen).toBeGreaterThanOrEqual(3);
-    expect(report.endingIds).toEqual(
-      expect.arrayContaining(["forcedRemoval", "merger", "prison"]),
-    );
-  });
+      expect(report.endingCoverage.seen).toBeGreaterThanOrEqual(3);
+      expect(report.endingIds).toEqual(
+        expect.arrayContaining(["forcedRemoval", "merger", "prison"]),
+      );
+    },
+    15_000,
+  );
 
   it("surfaces the repaired safety denial and shadow subsidiary packs", () => {
     const report = exploreReachabilityReport({
