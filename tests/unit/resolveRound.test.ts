@@ -67,6 +67,44 @@ describe("resolveRound", () => {
     expect(next.systemSignals?.length).toBeGreaterThan(0);
   });
 
+  it("stores current faction intents and routes them into signals, hazards, and history", () => {
+    const run = createInitialRunState();
+    run.metrics.marketConfidence = 70;
+    run.metrics.stockPrice = 34;
+    run.metrics.legalHeat = 38;
+    run.factions = {
+      ...run.factions!,
+      board: {
+        ...run.factions!.board,
+        trust: 82,
+        leverage: 72,
+      },
+    };
+
+    const next = resolveRound(run);
+
+    expect(next.factions?.board.currentIntent).toEqual(
+      expect.objectContaining({
+        family: "shield",
+        score: expect.objectContaining({
+          urgency: expect.any(Number),
+          leverage: expect.any(Number),
+          evidence: expect.any(Number),
+          cooldown: expect.any(Number),
+        }),
+      }),
+    );
+    expect(
+      next.systemSignals?.some((signal) => signal.title === "Board Shield"),
+    ).toBe(true);
+    expect(
+      next.history.some((entry) => entry.sourceKind === "faction_intent"),
+    ).toBe(true);
+    expect(
+      next.history.some((entry) => entry.body.includes("Hazard pressure")),
+    ).toBe(true);
+  });
+
   it("offers a curated decision tray for a fresh run", () => {
     const run = createInitialRunState();
     const decisions = getAvailableDecisions(loadContent().decisions, run);
@@ -149,7 +187,9 @@ describe("resolveRound", () => {
       personalAssets: 8,
       publicRelationsCapital: 15,
     });
-    expect(next.history.some((entry) => entry.body.includes("Reserve spend"))).toBe(true);
+    expect(
+      next.history.some((entry) => entry.body.includes("Reserve spend")),
+    ).toBe(true);
   });
 
   it("blocks selected strategic actions when reserves are insufficient", () => {
@@ -165,7 +205,11 @@ describe("resolveRound", () => {
 
     expect(next.resources).toEqual(run.resources);
     expect(next.pendingEvents).toHaveLength(0);
-    expect(next.history.some((entry) => entry.title === "Strategic Reserve Shortfall")).toBe(true);
+    expect(
+      next.history.some(
+        (entry) => entry.title === "Strategic Reserve Shortfall",
+      ),
+    ).toBe(true);
   });
 
   it("supports authored exit endings", () => {
@@ -181,6 +225,9 @@ describe("resolveRound", () => {
 
     expect(next.status).toBe("ended");
     expect(next.endingId).toBe("extraction");
+    expect(
+      next.recap?.factions.some((item) => item.body.includes("Intent ")),
+    ).toBe(true);
   });
 
   it("uses the shared requirement evaluator for both decisions and events", () => {

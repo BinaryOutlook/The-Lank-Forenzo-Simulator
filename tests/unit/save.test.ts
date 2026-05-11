@@ -100,6 +100,49 @@ describe("save storage", () => {
     });
   });
 
+  it("hydrates legacy faction saves with v2 intent memory defaults", () => {
+    const run = createInitialRunState();
+    const legacyFactions = Object.fromEntries(
+      Object.entries(run.factions!).map(([factionId, faction]) => {
+        return [
+          factionId,
+          {
+            id: faction.id,
+            patience: faction.patience,
+            aggression: faction.aggression,
+            trust: faction.trust,
+            cohesion: faction.cohesion,
+            leverage: faction.leverage,
+            dossierWeight: faction.dossierWeight,
+            recentGrievances: faction.recentGrievances,
+            lastIntentId: faction.lastIntentId,
+          },
+        ];
+      }),
+    );
+    const migrated = migrateGameSavePayload(
+      {
+        theme: "earth",
+        settings: defaultGameSettings,
+        run: {
+          ...run,
+          factions: legacyFactions,
+        },
+      },
+      3,
+    );
+
+    expect(migrated.run?.factions?.labor.currentIntent).toBeNull();
+    expect(migrated.run?.factions?.labor.intentMemory).toEqual({
+      cooldowns: {},
+      familyCounts: {},
+      lastFamily: null,
+      lastRound: null,
+      consecutiveCount: 0,
+    });
+    expect(migrated.run?.factions?.labor.behaviorMemory).toEqual({});
+  });
+
   it("coerces invalid option values back to safe defaults", () => {
     const payload = migrateGameSavePayload(
       {
