@@ -2,359 +2,437 @@
 
 ## Status
 
-Proposed for issue #31. This note is implementation-ready, but it intentionally does **not** prototype persistence code yet so the current local save behavior stays untouched.
+Design note for implementation planning. No runtime archive is implemented in
+issue #31; the current local save behavior remains unchanged.
 
-## Date
+## Why This Exists
 
-2026-05-11
+The archive turns completed runs into a local scandal shelf: post-run recaps,
+ending outcomes, replay seeds, and evidence summaries that make repeated play
+feel cumulative without accounts or a backend. It follows the direction in
+`docs/FUTURE_REPORT.md`:
 
-## Design Inputs
+- keep `localStorage` focused on the current run, theme, and lightweight
+  settings
+- move run archives, replay traces, scenario seeds, and post-run scandal records
+  to IndexedDB later
+- make the end screen and archive explain which evidence trail defined the run
 
-- `docs/FUTURE_REPORT.md` calls for saved post-run recaps, ending galleries, personal records, scandal history, and replay seed copying while remaining local-first.
-- `docs/PRD.md` requires local save/resume, versioned save snapshots, deterministic simulation, and no cloud saves for the MVP.
-- `src/lib/storage/save.ts` currently owns the live save wrapper in `localStorage` with `GAME_SAVE_STORAGE_VERSION = 4`.
-- `src/simulation/state/types.ts` already exposes the archive-worthy data: `endingId`, `metrics`, `contentVersion`, `contentHash`, `history`, `recap`, factions, operations, dossiers, and event counts.
-- `src/screens/ending/EndingScreen.tsx` is the first natural capture point because it already normalizes recap sections for display.
+## Current Baseline
 
-## Goals
+The current app has these persistence and recap facts:
 
-The run archive should make repeated play feel cumulative without accounts, a backend, or meta-progression pressure. It should preserve a compact local record of completed runs so a player can later answer questions such as:
+- `src/simulation/state/gameStore.ts` persists the active save under
+  `the-lank-forenzo-simulator/v1`.
+- `src/lib/storage/save.ts` owns the versioned `GameSavePayload`:
+  `theme`, `settings`, and `run`.
+- `RunState` already carries archive-ready fields such as `contentVersion`,
+  `contentHash`, `metrics`, `history`, `endingId`, optional `recap`, factions,
+  operations, and dossiers.
+- `EndingScreen` renders recap sections from `run.recap`, legacy recap aliases,
+  or live faction/operation/dossier state.
+- Runtime play does not yet store a player-facing replay seed or a per-round
+  decision trace. Diagnostic scripts use seeds, but active browser runs are only
+  partially replayable from current persisted state.
 
-- Which endings have I reached?
-- Which run made me richest?
-- Which scandal trail doomed or almost exposed me?
-- Which seed should I replay?
-- Which exit window did I miss?
+The archive design must be additive. It must not change the current save key,
+save schema version, hydrate path, or `clearRun()` semantics until a dedicated
+implementation issue does that work with migration tests.
 
 ## Non-Goals
 
-- No cloud sync, shared accounts, remote telemetry, or leaderboard behavior.
-- No migration of the active save system to IndexedDB in this issue.
-- No achievements, unlock tracks, or durable stat bonuses beyond archive recall.
-- No full replay trace until the simulation stores a stable seed and per-round decision sequence.
-
-## Current Persistence Boundary
-
-The current live save should remain a small `localStorage` payload:
-
-```text
-the-lank-forenzo-simulator/v1
-└── Zustand persist wrapper
-    ├── theme
-    ├── settings
-    └── run
-```
-
-That payload is synchronous, easy for Zustand to hydrate, and already guarded by Zod coercion and migration tests. The archive has a different profile: it is append-heavy, potentially prose-heavy, and useful after the live run is cleared. It should therefore live in a separate persistence tier.
+- No cloud sync, accounts, or shared profiles.
+- No achievements or meta-progression beyond archive-derived summaries.
+- No migration of the active run save from `localStorage` to IndexedDB.
+- No replay guarantees until browser runs persist seeds and per-round decision
+  traces.
 
 ## Storage Decision
 
-### Keep in `localStorage`
+### Keep In `localStorage`
 
-Use `localStorage` only for fast boot and tiny pointers:
+Use `localStorage` only for small, immediately-hydrated state:
 
-- active run save (`theme`, `settings`, `run`)
-- lightweight settings and preferences
-- optional archive affordance hints such as `lastArchivedRunId` or a cached archive count
-- optional archive UI preferences such as the last selected filter
+- active run save payload
+- selected theme
+- lightweight options and presentation settings
+- a future one-record archive migration marker, if needed
 
-Do **not** store full run archive records in `localStorage` unless a deliberately tiny prototype is created with a hard cap and a clear migration path.
+Do not store the full archive in `localStorage`. Web Storage is synchronous,
+string-only, and better suited to compact preferences than a growing library of
+structured records. It also makes every archive write compete with UI work on
+the main thread.
 
-### Use IndexedDB for the Archive
+### Move To IndexedDB
 
-Use IndexedDB for durable archive records once implementation begins:
+Use IndexedDB for the durable archive because it is asynchronous, supports
+indexed structured records, and can grow beyond the tiny current-save payload:
 
-- saved post-run recaps
-- ending records and personal best summaries
-- scandal records derived from dossier/history state
-- scenario seeds and future replay metadata
-- optional replay traces or per-round decision logs
+- completed run summary records
+- normalized ending gallery stats
+- replay seed metadata
+- future per-round replay traces
+- post-run scandal records and dossier evidence summaries
+- optional JSON export/import staging records
 
-Recommended database name: `tlfs-run-archive`.
+IndexedDB should be wrapped behind a small storage adapter so UI screens never
+call the raw browser API directly.
 
-Recommended initial object stores:
+Suggested module boundary:
 
-| Store | Key | Purpose |
-| --- | --- | --- |
-| `runs` | `archiveId` | Full `RunArchiveRecordV1` documents. |
-| `runSummaries` | `archiveId` | Compact list-card entries for the archive index. |
-| `metadata` | `key` | Archive schema version, retention settings, and last maintenance timestamp. |
-
-Recommended indexes on `runs` and/or `runSummaries`:
-
-- `endedAt`
-- `endingId`
-- `contentHash`
-- `personalWealth`
-- `legalHeat`
-- `roundCount`
-
-## Archive Schema V1
-
-The archive record should be a derived snapshot, not a second copy of the whole mutable `RunState`.
-
-```ts
-export interface RunArchiveRecordV1 {
-  schemaVersion: 1;
-  archiveId: string;
-  createdAt: string;
-  endedAt: string;
-  source: {
-    appVersion?: string;
-    contentVersion?: string;
-    contentHash?: string;
-    saveStorageVersion: number;
-  };
-  run: {
-    seed?: string;
-    roundCount: number;
-    selectedDecisionIds: string[];
-    selectedDecisionIdsByRound?: ArchivedDecisionRound[];
-    eventCounts: Record<string, number>;
-  };
-  outcome: {
-    endingId: EndingId;
-    endingTitle: string;
-    endingSubtitle: string;
-    finalMetrics: RunMetrics;
-  };
-  recap: ArchivedRecap;
-  scandalRecords: ArchivedScandalRecord[];
-  highlights: RunArchiveHighlights;
-  retention: {
-    pinned: boolean;
-    canPrune: boolean;
-  };
-}
+```text
+src/lib/storage/runArchive.ts
+  openRunArchiveDatabase()
+  listRunArchiveSummaries()
+  getRunArchiveEntry(id)
+  archiveCompletedRun(input)
+  deleteRunArchiveEntry(id)
+  pruneRunArchive()
 ```
 
-Supporting shapes:
+## Archive Schema
+
+Archive records should be summaries, not full mutable save snapshots. The
+current run save answers "can I resume?" while the archive answers "what
+happened?".
 
 ```ts
-export interface ArchivedDecisionRound {
+type RunArchiveSchemaVersion = 1;
+
+interface RunArchiveEntry {
+  id: string;
+  schemaVersion: RunArchiveSchemaVersion;
+  createdAt: string;
+  updatedAt: string;
+  endedAt: string;
+  pinned: boolean;
+  source: "ending-screen" | "import" | "migration";
+  status: "complete" | "summary-only" | "legacy";
+  content: {
+    version?: string;
+    hash?: string;
+  };
+  replay: {
+    seed?: string;
+    traceCompleteness: "none" | "summary" | "full";
+    decisionTrace?: ArchivedDecisionTurn[];
+  };
+  ending: {
+    id: string;
+    title: string;
+    subtitle?: string;
+  };
+  metrics: ArchivedRunMetrics;
+  recap: ArchivedRunRecap;
+  scandal: ArchivedScandalRecord;
+  historyExcerpt: ArchivedHistoryEntry[];
+  flags: string[];
+  privacy: {
+    storage: "local-device";
+    containsUserText: false;
+    cloudSync: false;
+  };
+}
+
+interface ArchivedDecisionTurn {
   round: number;
   decisionIds: string[];
 }
 
-export interface ArchivedRecap {
-  headline: string;
-  sections: ArchivedRecapSection[];
-  historyRefs: string[];
-}
-
-export interface ArchivedRecapSection {
-  id: "factions" | "operations" | "dossiers" | "missedExitWindows" | "criticalChains";
-  title: string;
-  items: Array<{
-    title: string;
-    body: string;
-  }>;
-}
-
-export interface ArchivedScandalRecord {
-  id: string;
-  theme: string;
-  severity?: number;
-  evidenceCount?: number;
-  summary: string;
-  exposureCause?: string;
-  supportingHistoryIds: string[];
-}
-
-export interface RunArchiveHighlights {
+interface ArchivedRunMetrics {
+  roundsSurvived: number;
   personalWealth: number;
   legalHeat: number;
-  airlineCash: number;
   marketConfidence: number;
-  strongestDossierTheme?: string;
-  dominantFactionId?: string;
-  mostDamagingOperation?: string;
+  creditorPatience: number;
+  safetyIntegrity: number;
+  publicAnger: number;
+  stockPrice: number;
+  offshoreReadiness: number;
 }
-```
 
-### Compact Index Entry
-
-Archive list screens should not need to read every full record just to render cards.
-
-```ts
-export interface RunArchiveSummaryV1 {
-  schemaVersion: 1;
-  archiveId: string;
-  endedAt: string;
-  endingId: EndingId;
-  endingTitle: string;
+interface ArchivedRunRecap {
   headline: string;
-  roundCount: number;
-  personalWealth: number;
-  legalHeat: number;
-  contentHash?: string;
-  seed?: string;
-  pinned: boolean;
+  sections: {
+    id:
+      | "factions"
+      | "operations"
+      | "dossiers"
+      | "missedExitWindows"
+      | "criticalChains";
+    title: string;
+    items: { title: string; body: string }[];
+  }[];
+}
+
+interface ArchivedScandalRecord {
+  primaryTheme?: string;
+  exposureCause?: string;
+  records: {
+    theme: string;
+    label: string;
+    severity?: number;
+    evidenceCount?: number;
+    summary: string;
+  }[];
+}
+
+interface ArchivedHistoryEntry {
+  round: number;
+  source: "decision" | "event" | "system" | "faction" | "operation" | "dossier";
+  title: string;
+  body: string;
+  tone: "positive" | "negative" | "neutral";
 }
 ```
 
-## Capture Flow
+### Derived Fields
 
-1. `resolveRound` ends a run and sets `run.status = "ended"`, `run.endingId`, and `run.recap`.
-2. The ending route renders the completed run.
-3. An archive service derives `RunArchiveRecordV1` from the ended run plus the resolved `EndingDefinition`.
-4. The service writes the full record and compact summary to IndexedDB.
-5. The UI shows a quiet confirmation such as “Saved to this browser” and offers `View archive` and `Copy seed` when seed data exists.
-6. The existing live save remains intact until the player starts another run or returns to the lobby.
+The implementation should derive archive fields from the ended `RunState`:
 
-Archive writes must be best-effort. A failed archive write should never prevent ending display, run clearing, or local save hydration.
+- `endedAt`: write time when the archive entry is created
+- `ending`: `run.endingId` plus the current content ending title/subtitle
+- `metrics.roundsSurvived`: `run.round`
+- `recap.sections`: the same normalized recap shape used by `EndingScreen`
+- `scandal.records`: top dossier threads by severity or evidence count
+- `historyExcerpt`: the most recent high-signal entries, capped to avoid
+  storing an entire feed forever
+- `replay.traceCompleteness`: `summary` until browser runs persist per-round
+  decision traces; `full` only after `ArchivedDecisionTurn[]` is available
 
-## Idempotency Strategy
+Archive IDs can use `crypto.randomUUID()` when available. A fallback can combine
+`endedAt`, `ending.id`, and `content.hash`; it only needs uniqueness, not
+simulation determinism.
 
-Duplicate records are the main capture risk because the ending screen can re-render or hydrate after refresh.
+## Capture And Idempotency Notes
 
-Preferred future approach:
+The future archive service should treat capture as a best-effort side effect of
+an already-ended run:
 
-- Add optional `startedAt`, `endedAt`, `seed`, and `archiveId` fields to `RunState` when replay seeds stabilize.
-- Generate `archiveId` once when the run reaches `ended`.
-- Store that `archiveId` in the live save so repeated ending-screen visits upsert the same archive record.
+1. `resolveRound` ends the run and produces `run.endingId` plus recap data.
+2. The ending screen renders from the ended run, regardless of archive storage
+   availability.
+3. A small archive service derives the archive entry from `RunState` and the
+   resolved ending definition.
+4. Storage upserts the archive entry and any compact list data needed by the
+   archive index.
+5. The UI can then show a quiet "saved on this device" confirmation, with
+   archive navigation or seed-copy actions only when those capabilities exist.
 
-Interim approach if no `RunState` field is added:
+Archive writes must never block ending display, `clearRun()`, start-new-run
+flows, or active-save hydration. IndexedDB quota errors, private-browser
+limitations, and corrupt archive records should degrade into a non-blocking
+archive warning rather than a failed game ending.
 
-- Compute a deterministic fingerprint from `contentHash`, `endingId`, `round`, final metrics, selected decisions, and the final history entry id.
-- Use that fingerprint as the IndexedDB key.
-- Accept that two identical deterministic runs may collapse into one record until true run ids exist.
+Duplicate records are the main capture risk because the ending screen can
+rerender or hydrate after refresh. The preferred implementation is to generate
+one `archiveId` when a run reaches `ended`, persist that id on the ended run, and
+upsert the same archive record on repeated visits. If the active `RunState` does
+not yet have stable run ids or replay seeds, an interim fingerprint can combine
+`contentHash`, `endingId`, `round`, final metrics, selected decisions, and the
+last history entry id. That fingerprint is less expressive than a true session
+id, but it keeps duplicate capture bounded until replay metadata lands.
 
-The preferred approach is better because the archive represents a player session, not just a state vector.
+## IndexedDB Shape
 
-## Migration Strategy
-
-### Active Save
-
-Do not change `GAME_SAVE_STORAGE_VERSION` only to add the archive. The archive should have an independent schema version.
-
-Increment the active save version only when live `RunState` needs new persisted fields with defaults or migrations, such as `seed`, `startedAt`, `endedAt`, or `archiveId`.
-
-### Archive Database
-
-Use independent archive migrations:
+Use one database so future local-only features have a clear home.
 
 ```text
-archive schema 0: no archive database
-archive schema 1: run records + summaries + metadata
-archive schema 2+: replay traces, richer scandal graph, or export metadata
+Database: the-lank-forenzo-simulator
+Version: 1
+
+Object stores:
+  runArchive
+    keyPath: id
+    indexes:
+      endedAt
+      ending.id
+      content.hash
+      metrics.personalWealth
+      metrics.legalHeat
+      metrics.roundsSurvived
+
+  archiveMeta
+    keyPath: key
+    records:
+      schemaVersion
+      lastPrunedAt
+      migratedLocalStorageArchiveAt
 ```
 
-Migration rules:
-
-- Unknown future archive records should be ignored, not coerced into the active save.
-- Corrupt archive records should be skipped and counted for a non-blocking maintenance warning.
-- Full record migrations should rebuild `runSummaries` so list screens stay fast.
-- Clearing the archive must not clear the active run, theme, or settings.
+Do not add `runArchive` data to the existing Zustand save payload. The save
+payload should stay small and quick to hydrate.
 
 ## UI Flow
 
 ### Entry Points
 
-- **Ending screen:** Show archive status after the recap. Primary action remains `Start another run`; archive actions stay secondary.
-- **Landing screen:** Add `Run archive` as a secondary action when at least one archived run exists.
-- **App shell:** Consider a header-level `Archive` link after the route exists and has useful empty-state handling.
-- **Options screen:** Add a privacy/storage section with `Clear run archive` once archive persistence ships.
+1. **Ending screen**  
+   When `run.status === "ended"`, offer a clear archive action:
+   - primary next-run action stays "Start another run"
+   - secondary archive action: "Save to archive" or "View archive"
+   - if auto-save is enabled later, show "Saved to archive" with an undo/delete
+     affordance rather than forcing a second decision
+2. **Landing screen**  
+   Add an "Archive" entry beside resume/new-run once the route exists.
+3. **App shell navigation**  
+   Add a low-noise Archive link after the feature has real content. It should not
+   displace the active run path.
 
-### Routes
+### Archive Route
 
-Recommended route shape for the first implementation:
+Proposed route: `/archive`.
 
-```text
-/archive
-/archive/:archiveId
-```
+The route should have:
 
-Do not add these routes until the archive can render useful data and fail gracefully when IndexedDB is unavailable.
-
-### Archive List
-
-The list should be glanceable rather than diagnostic-heavy:
-
-- sort newest first by default
-- filter by ending
-- show ending title, round count, personal wealth, legal heat, and recap headline
-- mark content hash mismatches when old records came from older content
-- include empty states for “no archived runs” and “archive unavailable”
+- empty state explaining that completed runs will appear on this device
+- ending filters: all, merger, extraction, Bahamas, forced removal, prison
+- summary stats:
+  - best personal wealth by ending
+  - fastest escape
+  - worst legal heat survived
+  - most common scandal theme
+- card list sorted by newest first
+- delete controls per card
+- optional "Export archive JSON" and "Import archive JSON" controls later
 
 ### Archive Detail
 
-The detail view should reuse ending-screen language where possible:
+Each detail view should show:
 
-- outcome panel
-- final metric snapshot
+- ending title, subtitle, and date
+- metric snapshot
 - recap sections
-- scandal file panel
-- seed copy affordance when available
-- future “replay from seed” affordance only after deterministic seed replay is implemented
+- scandal file / dossier evidence
+- missed windows and critical chains
+- replay seed copy button when a seed exists
+- clear local-data reminder
+
+The archive should read like a case file, not a second game board.
+
+## Migration Strategy
+
+### Phase 0: Design Only
+
+Issue #31 lands this design. No save migration is required because no runtime
+storage changes are made.
+
+### Phase 1: Small Local Prototype, If Approved
+
+If a later issue wants a minimal prototype before IndexedDB, it may store a tiny
+summary-only archive under a separate key:
+
+```text
+the-lank-forenzo-simulator/archive/v1
+```
+
+Hard constraints for that prototype:
+
+- maximum `10` records
+- maximum serialized payload target of `250 KB`
+- no full decision trace
+- no change to `the-lank-forenzo-simulator/v1`
+- unit tests proving current save migration behavior is unchanged
+
+This prototype should be deleted or imported once IndexedDB lands.
+
+### Phase 2: IndexedDB Archive
+
+The first IndexedDB implementation should:
+
+1. create `runArchive` and `archiveMeta`
+2. read any prototype archive key once, import valid records, and mark the import
+   in `archiveMeta`
+3. leave the prototype key in place for one release as rollback insurance
+4. write new archive entries only to IndexedDB
+5. keep the current run save in `localStorage`
+
+Archive schema migrations are separate from `GAME_SAVE_STORAGE_VERSION`. A
+future `RUN_ARCHIVE_SCHEMA_VERSION` should migrate archive entries inside the
+archive adapter, not in `src/lib/storage/save.ts`.
 
 ## Retention Limits
 
-The archive should feel durable, but it should not become an unbounded prose dump.
+Default retention should be generous enough to feel cumulative while respecting
+browser storage uncertainty:
 
-Recommended first limits:
+- IndexedDB: keep the newest `100` unpinned entries by default
+- pinned entries: never prune automatically
+- per-entry summary target: under `30 KB` before replay traces
+- full archive soft target: under `5 MB` before replay traces
+- localStorage prototype, if approved: keep only `10` summary-only entries
 
-- keep the newest `50` unpinned records
-- allow optional pinned records later, capped separately at `25`
-- keep each full record under roughly `100 KB`
-- prune oldest unpinned records after successful writes
-- expose `Clear archive` before exposing fine-grained export/import
+When pruning is required, delete the lowest-value unpinned entry first. A simple
+ranking can be:
 
-A simple maintenance rule is enough:
+$$
+P = R + B + S
+$$
 
-\[
-S_{\text{archive}} = \sum_{i=1}^{n} \operatorname{bytes}(record_i) \leq B_{\text{soft}}
-\]
-
-Start with \(B_{\text{soft}} = 5\,\text{MiB}\) for full records. IndexedDB can often hold more, but a soft cap keeps implementation honest and avoids surprising players on constrained devices.
+where \(R\) is recency, \(B\) is whether the run sets a personal best for an
+ending, and \(S\) is whether the run has a rare scandal theme. Lower \(P\) values
+are pruned first. Pinned entries are excluded from this formula.
 
 ## Privacy Assumptions
 
-- Archive data remains in the browser profile and is erased by browser site-data clearing.
-- No archive data is sent to a server.
-- Export, seed copy, or future share actions require explicit user action.
-- Future custom executive names or imported seeds should be treated as private local data.
-- The app should explain that the archive is local to the current browser/device.
+- The archive is local to the browser origin and device profile.
+- There are no accounts, cloud sync, analytics uploads, or cross-device merge
+  semantics.
+- The archive should not store player-authored names, emails, credentials, or
+  free text.
+- Browser "clear site data" actions may delete the archive.
+- Private/incognito sessions should be treated as ephemeral.
+- Export/import, if added, must be explicit and file-based.
+- The UI should describe the archive as "saved on this device" rather than
+  "permanent."
 
-## Prototype Guidance
+## Testing Requirements For Implementation
 
-A prototype is acceptable only if it is deliberately small:
+When runtime code is added, include tests for:
 
-- derive one compact `RunArchiveSummaryV1` on the ending screen
-- store at most `10` summaries under a separate `localStorage` key
-- include a one-way migration note to IndexedDB
-- do not touch the existing active save key or migration path
+- archive schema coercion and rejection of corrupt records
+- archiving an ended run without mutating the current save payload
+- duplicate prevention if the same ended run is archived twice from the ending
+  screen
+- retention pruning, including pinned records
+- localStorage prototype import into IndexedDB, if that prototype ever ships
+- `tests/unit/save.test.ts` continuing to pass unchanged
 
-However, the preferred next implementation is to skip the localStorage prototype and build the IndexedDB adapter directly. The current recap shape is stable enough to design against, while seed and replay shape still need runtime fields before a useful replay prototype exists.
+Suggested verification for the first code-bearing archive issue:
 
-## Risks and Mitigations
+```bash
+npm run test -- tests/unit/save.test.ts
+npm run typecheck
+npm run lint
+npm test
+```
 
-| Risk | Mitigation |
-| --- | --- |
-| Duplicate archive records | Persist a generated `archiveId` on ended runs before writing records. |
-| IndexedDB unavailable or quota-limited | Treat archive writes as optional; keep the ending screen usable. |
-| Records become too large | Archive summaries and bounded recap sections, not full run prose. |
-| Content changes make old records confusing | Store `contentHash` and show “from older content” markers. |
-| Archive migrations destabilize saves | Version archive records separately from `GAME_SAVE_STORAGE_VERSION`. |
-| Privacy expectations are unclear | State “saved only in this browser” near archive entry points and clear controls. |
+## Open Questions
 
-## Implementation Plan
+- Should completed runs auto-archive by default, or should the ending screen ask
+  the player to save each record?
+- What is the canonical browser-run seed once active play exposes replay seeds?
+- How much per-round trace is needed for useful replay without bloating the
+  archive?
+- Should archive detail be a full route (`/archive/:id`) or a modal on the
+  archive list for the first implementation?
+- Should export/import wait until after IndexedDB, or ship with the first
+  archive UI?
 
-1. Add `src/lib/archive/types.ts` with `RunArchiveRecordV1`, `RunArchiveSummaryV1`, and parse helpers.
-2. Add `src/lib/archive/createRunArchiveRecord.ts` to derive an archive record from `RunState` and `EndingDefinition`.
-3. Add unit tests for record derivation, recap normalization, and malformed input guards.
-4. Add a small IndexedDB adapter behind an interface such as `RunArchiveStorage`.
-5. Integrate archive capture after run completion with idempotent upsert behavior.
-6. Add `/archive` and `/archive/:archiveId` screens using summary-first loading.
-7. Add clear/delete flows and tests before enabling archive entry points broadly.
-8. Run existing save migration tests after any active save shape change.
+## Implementation Checklist
 
-## Acceptance Checklist for the Future Implementation
+- [ ] Add `RUN_ARCHIVE_SCHEMA_VERSION`.
+- [ ] Add a `runArchive` storage adapter with typed return values and no `any`
+      types.
+- [ ] Normalize ended-run recap data through a shared helper so the archive and
+      `EndingScreen` agree.
+- [ ] Add `/archive` only after list and empty states are ready.
+- [ ] Preserve existing save hydration and migration tests.
+- [ ] Update README once a route or player workflow exists.
 
-- Existing active saves still hydrate through `src/lib/storage/save.ts`.
-- Archive failures never block run endings, `clearRun`, or `startNewRun`.
-- A completed run creates or upserts one archive record.
-- Archive list renders from compact summaries.
-- Archive detail can reconstruct the recap and scandal record without live `RunState`.
-- Clear archive does not clear theme, settings, or active run.
-- Tests cover archive schema parsing, duplicate capture, retention pruning, and active save migration safety.
+## Platform References
+
+- [MDN: IndexedDB API](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API)
+- [MDN: Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)
+- [web.dev: Storage for the web](https://web.dev/articles/storage-for-the-web)
+- [MDN: Browser storage limits and eviction criteria](https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria)

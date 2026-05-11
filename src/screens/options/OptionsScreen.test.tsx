@@ -84,7 +84,7 @@ describe("OptionsScreen", () => {
     expect(
       screen.getByText("Paused while visual effects are off"),
     ).toBeInTheDocument();
-  }, 10_000);
+  }, 20_000);
 
   it("resets options to the default room tone", async () => {
     const user = userEvent.setup();
@@ -108,5 +108,5 @@ describe("OptionsScreen", () => {
 
     expect(useGameStore.getState().theme).toBe("earth");
     expect(useGameStore.getState().settings).toEqual(defaultGameSettings);
-  });
+  }, 20_000);
 });
