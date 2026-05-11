@@ -67,6 +67,10 @@
       "legalHeat": 6,
       "marketConfidence": 2
     },
+    "operationEffects": {
+      "maintenanceBacklog": 14,
+      "contractorDependence": 4
+    },
     "delayedConsequences": [
       {
         "eventIds": [
@@ -90,6 +94,11 @@
       "workforceMorale": -6,
       "publicAnger": 4,
       "marketConfidence": 2
+    },
+    "operationEffects": {
+      "crewFatigue": 8,
+      "serviceDisruption": 2,
+      "weatherExposure": 10
     },
     "requirements": {
       "roundAtLeast": 2

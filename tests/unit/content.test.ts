@@ -15,6 +15,9 @@ describe("content library", () => {
     const strategicCostDecisions = content.decisions.filter(
       (decision) => decision.resourceCosts,
     );
+    const operationalEffectDecisions = content.decisions.filter(
+      (decision) => decision.operationEffects,
+    );
 
     expect(content.decisions.length).toBeGreaterThanOrEqual(112);
     expect(decisionPacks.size).toBeGreaterThanOrEqual(11);
@@ -25,6 +28,27 @@ describe("content library", () => {
     expect(decisionPacks.has("incidentVariants")).toBe(true);
     expect(delayedDecisions.length).toBeGreaterThanOrEqual(82);
     expect(strategicCostDecisions.length).toBeGreaterThanOrEqual(12);
+    expect(operationalEffectDecisions.length).toBeGreaterThanOrEqual(8);
+  });
+
+  it("loads representative authored operation effects from content metadata", () => {
+    const content = loadContent();
+
+    expect(
+      content.decisions.find(
+        (decision) => decision.id === "vendor_swap_the_heavy_checks",
+      )?.operationEffects,
+    ).toEqual({
+      maintenanceBacklog: 16,
+      contractorDependence: 14,
+    });
+    expect(
+      content.decisions.find(
+        (decision) => decision.id === "replace_the_strike_map",
+      )?.operationEffects,
+    ).toEqual({
+      crewFatigue: 12,
+    });
   });
 
   it("loads a materially expanded multi-pack event library", () => {
