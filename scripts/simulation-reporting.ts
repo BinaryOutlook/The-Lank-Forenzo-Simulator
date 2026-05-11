@@ -67,6 +67,7 @@ export interface SimulatedRunSummary {
   roundsPlayed: number;
   surfacedDecisionIds: Set<string>;
   selectedDecisionIds: Set<string>;
+  selectedDecisionSequence: string[];
   triggeredEventIds: Set<string>;
   triggeredDelayedEventIds: Set<string>;
   triggeredHazardEventIds: Set<string>;
@@ -523,6 +524,7 @@ export function simulateBotRun(
   let run: RunState = createInitialRunState();
   const surfacedDecisionIds = new Set<string>();
   const selectedDecisionIds = new Set<string>();
+  const selectedDecisionSequence: string[] = [];
   const triggeredEventIds = new Set<string>();
   const surfacedPacks = new Set<DecisionPackId>();
   let repeatedTrayOverlap = 0;
@@ -567,6 +569,7 @@ export function simulateBotRun(
     for (const decisionId of chosenIds) {
       selectedDecisionIds.add(decisionId);
     }
+    selectedDecisionSequence.push(...chosenIds);
 
     run = resolveRound({
       ...run,
@@ -586,6 +589,7 @@ export function simulateBotRun(
     roundsPlayed,
     surfacedDecisionIds,
     selectedDecisionIds,
+    selectedDecisionSequence,
     triggeredEventIds,
     triggeredDelayedEventIds: filterEventsByKind(
       triggeredEventIds,

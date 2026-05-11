@@ -775,17 +775,26 @@ Recommended CI stages:
 
 ### 8.3 Nightly Simulation Job
 
-Add a nightly job later for deeper balance work:
+An initial nightly reporting path now exists through `npm run report:nightly`
+and `.github/workflows/nightly-simulation-report.yml`. The default profile runs
+`750` seeded simulations per archetype, or `6,000` total runs across the current
+eight scripted bots, with a `30` round cap. It uploads artifacts instead of
+failing on soft balance warnings, keeping deep diagnostics separate from fast PR
+checks.
 
-- `5,000` to `20,000` scripted runs
-- all archetype bots
-- seeded random bot
-- high-risk bot
-- stabilizer bot
-- underused-pack bot
+The current artifact set includes:
+
 - ending distribution report
 - low-confidence content report
+- low-confidence trend point
 - dominant sequence report
+
+Future extensions can still add:
+
+- seeded random bot
+- high-risk bot
+- underused-pack bot
+- larger `10,000` to `20,000` run profiles when runtime is known
 
 Dominant sequences can be scored as:
 
