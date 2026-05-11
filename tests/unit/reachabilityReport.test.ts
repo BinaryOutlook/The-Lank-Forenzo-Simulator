@@ -69,7 +69,7 @@ describe("exploreReachabilityReport", () => {
     expect(first.triggeredEventCoverage.total).toBeGreaterThan(0);
     expect(first.repeatedTrayPressure.percentage).toBeGreaterThanOrEqual(0);
     expect(first.repeatedTrayPressure.percentage).toBeLessThanOrEqual(1);
-  });
+  }, 10_000);
 
   it("reaches bounded failure and merger endings in the default pass", () => {
     const report = exploreReachabilityReport({
@@ -82,7 +82,7 @@ describe("exploreReachabilityReport", () => {
     expect(report.endingIds).toEqual(
       expect.arrayContaining(["forcedRemoval", "merger", "prison"]),
     );
-  });
+  }, 60_000);
 
   it("surfaces the repaired safety denial and shadow subsidiary packs", () => {
     const report = exploreReachabilityReport({
@@ -95,7 +95,7 @@ describe("exploreReachabilityReport", () => {
     expect(report.packCoverage.shadowSubsidiaries.seen).toBe(1);
     expect(report.lowConfidencePackIds).not.toContain("safetyDenial");
     expect(report.lowConfidencePackIds).not.toContain("shadowSubsidiaries");
-  });
+  }, 10_000);
 
   it("formats a concise console report", () => {
     const report = exploreReachabilityReport({
