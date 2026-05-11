@@ -10,5 +10,8 @@ export default defineConfig({
     testTimeout: 60_000,
     include: ["tests/unit/**/*.test.ts", "src/**/*.test.ts", "src/**/*.test.tsx"],
     exclude: ["tests/e2e/**"],
+    // Reachability diagnostics exercise broad simulation paths and can exceed
+    // Vitest's default timeout on shared CI runners.
+    testTimeout: 60_000,
   },
 });
