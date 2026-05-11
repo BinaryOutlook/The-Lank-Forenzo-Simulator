@@ -259,8 +259,8 @@ function buildDossierRecapItems(dossiers: DossierThread[]): RecapItem[] {
         : "";
 
     return {
-      title: `${formatId(summary.theme)} file`,
-      body: `The case file can tie evidence weight ${summary.evidenceWeight} and severity ${summary.severity} to ${formatId(summary.likelyExposure)}.${witnessClause}`,
+      title: formatId(summary.theme),
+      body: `${summary.caseTheory} The case file can tie evidence weight ${summary.evidenceWeight} and severity ${summary.severity} to ${formatId(summary.likelyExposure)}.${witnessClause}`,
     };
   });
 }

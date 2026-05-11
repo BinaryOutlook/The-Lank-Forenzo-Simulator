@@ -5,7 +5,10 @@
     "title": "Analyst Model Walkback",
     "body": "One optimistic spreadsheet gets replaced by another with more footnotes and less forgiveness.",
     "weight": 5,
-    "tags": ["market", "press"],
+    "tags": [
+      "market",
+      "press"
+    ],
     "impacts": {
       "marketConfidence": -5,
       "stockPrice": -4
@@ -17,7 +20,10 @@
     "title": "Call Transcript Supercut",
     "body": "A finance blog edits your quarter's bravado into a five-minute reel of contradictions.",
     "weight": 5,
-    "tags": ["market", "press"],
+    "tags": [
+      "market",
+      "press"
+    ],
     "impacts": {
       "publicAnger": 4,
       "marketConfidence": -3,
@@ -30,7 +36,10 @@
     "title": "Guidance Correction",
     "body": "The heroic call earns a follow-up filing with the emotional range of a hostage note.",
     "weight": 6,
-    "tags": ["market", "legal"],
+    "tags": [
+      "market",
+      "legal"
+    ],
     "impacts": {
       "marketConfidence": -4,
       "stockPrice": -3,
@@ -43,12 +52,23 @@
     "title": "Consulting Conflict Memo",
     "body": "An internal memo notes that the advisory contract seems remarkably well-tailored to you.",
     "weight": 7,
-    "tags": ["personal", "legal"],
+    "tags": [
+      "personal",
+      "legal"
+    ],
     "impacts": {
       "legalHeat": 8,
       "marketConfidence": -3,
       "publicAnger": 3
-    }
+    },
+    "evidence": [
+      {
+        "theme": "board_self_dealing",
+        "weight": 12,
+        "witness": "outside counsel",
+        "detail": "Conflict memo connects adviser structures to personal benefit."
+      }
+    ]
   },
   {
     "id": "invoice_rounding_pattern",
@@ -56,12 +76,23 @@
     "title": "Invoice Rounding Pattern",
     "body": "A forensic accountant notices that random-looking invoices keep rounding in your favor.",
     "weight": 7,
-    "tags": ["personal", "legal"],
+    "tags": [
+      "personal",
+      "legal"
+    ],
     "impacts": {
       "legalHeat": 7,
       "publicAnger": 4,
       "marketConfidence": -3
-    }
+    },
+    "evidence": [
+      {
+        "theme": "board_self_dealing",
+        "weight": 13,
+        "witness": "intercompany accountant",
+        "detail": "Invoice pattern shows extraction recurring below board thresholds."
+      }
+    ]
   },
   {
     "id": "suspicious_10b5_window",
@@ -69,12 +100,23 @@
     "title": "Suspicious 10b5 Window",
     "body": "The sale technically follows a plan, which only makes the timing look more cultivated.",
     "weight": 7,
-    "tags": ["stock", "legal"],
+    "tags": [
+      "stock",
+      "legal"
+    ],
     "impacts": {
       "legalHeat": 9,
       "stockPrice": -4,
       "marketConfidence": -4
-    }
+    },
+    "evidence": [
+      {
+        "theme": "insider_trading",
+        "weight": 18,
+        "witness": "brokerage compliance analyst",
+        "detail": "10b5 window timing anchors the trading chronology."
+      }
+    ]
   },
   {
     "id": "broker_chat_subpoena",
@@ -82,12 +124,23 @@
     "title": "Broker Chat Subpoena",
     "body": "The regulator asks for trader messages with the tone of someone who already read them.",
     "weight": 8,
-    "tags": ["stock", "legal"],
+    "tags": [
+      "stock",
+      "legal"
+    ],
     "impacts": {
       "legalHeat": 10,
       "stockPrice": -3,
       "marketConfidence": -3
-    }
+    },
+    "evidence": [
+      {
+        "theme": "insider_trading",
+        "weight": 18,
+        "witness": "brokerage compliance analyst",
+        "detail": "Broker chats connect private timing to public messaging."
+      }
+    ]
   },
   {
     "id": "compensation_deck_leak",
@@ -95,12 +148,29 @@
     "title": "Compensation Deck Leak",
     "body": "A slide deck comparing executive incentives to labor concessions leaves the boardroom alive.",
     "weight": 6,
-    "tags": ["personal", "press"],
+    "tags": [
+      "personal",
+      "press"
+    ],
     "impacts": {
       "publicAnger": 6,
       "marketConfidence": -2,
       "legalHeat": 3
-    }
+    },
+    "evidence": [
+      {
+        "theme": "board_self_dealing",
+        "weight": 12,
+        "witness": "board analyst",
+        "detail": "Compensation deck exposes who was protected before the collapse."
+      },
+      {
+        "theme": "insider_trading",
+        "weight": 10,
+        "witness": "compensation adviser",
+        "detail": "Compensation timing supports the stock-sale chronology."
+      }
+    ]
   },
   {
     "id": "intercompany_fee_memo",
@@ -108,11 +178,22 @@
     "title": "Intercompany Fee Memo",
     "body": "A board memo explains why the airline is paying the holding company for wisdom that looks suspiciously like your salary twice.",
     "weight": 7,
-    "tags": ["personal", "legal"],
+    "tags": [
+      "personal",
+      "legal"
+    ],
     "impacts": {
       "legalHeat": 8,
       "publicAnger": 4,
       "marketConfidence": -3
-    }
+    },
+    "evidence": [
+      {
+        "theme": "board_self_dealing",
+        "weight": 14,
+        "witness": "holding company accountant",
+        "detail": "Fee memo documents airline cash moving upstairs."
+      }
+    ]
   }
 ]

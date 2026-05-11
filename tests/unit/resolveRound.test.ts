@@ -5,6 +5,8 @@ import {
   createInitialRunState,
   resolveRound,
 } from "../../src/simulation/resolution/resolveRound";
+import { createInitialDossierState } from "../../src/simulation/dossiers/dossierState";
+import { createDefaultNetworkState } from "../../src/simulation/operations/networkState";
 import { getAvailableDecisions } from "../../src/simulation/systems/decisionEngine";
 import { applyImpactSet } from "../../src/simulation/systems/metricEffects";
 import { meetsRequirements } from "../../src/simulation/systems/requirements";
@@ -41,6 +43,8 @@ describe("resolveRound", () => {
       "labor_abuse",
       "regulatory_capture",
       "offshore_evasion",
+      "creditor_deception",
+      "board_self_dealing",
     ]);
   });
 
@@ -65,6 +69,100 @@ describe("resolveRound", () => {
         ?.evidenceWeight,
     ).toBeGreaterThan(0);
     expect(next.systemSignals?.length).toBeGreaterThan(0);
+  });
+
+  it("records severe operational cascades as caused history and dossier evidence", () => {
+    const run = createInitialRunState();
+    const operations = createDefaultNetworkState();
+    run.round = 5;
+    run.metrics.safetyIntegrity = 42;
+    operations.maintenanceBacklog = 52;
+    operations.weatherFronts = [
+      {
+        id: "front-dossier-link",
+        affectedHubIds: ["ewr", "ord"],
+        severity: 84,
+        roundsRemaining: 1,
+      },
+    ];
+    run.operations = operations;
+
+    const next = resolveRound(run);
+    const operationHistory = next.history.find(
+      (entry) => entry.operationId === "maintenance-weather-cascade",
+    );
+    const maintenanceDossier = next.dossiers?.find(
+      (thread) => thread.theme === "maintenance_fraud",
+    );
+
+    expect(operationHistory?.sourceKind).toBe("operational_cascade");
+    expect(operationHistory?.cause).toContain("Deferred maintenance");
+    expect(operationHistory?.body).toContain("Cause:");
+    expect(maintenanceDossier?.linkedEventIds).toContain(
+      "maintenance-weather-cascade",
+    );
+    expect(
+      next.systemSignals?.some((signal) =>
+        signal.body.includes("Deferred maintenance"),
+      ),
+    ).toBe(true);
+  });
+
+  it("applies a pre-ending legal consequence when a dossier crosses heavy severity", () => {
+    const seededDossiers = createInitialDossierState().map((thread) =>
+      thread.theme === "maintenance_fraud"
+        ? {
+            ...thread,
+            evidenceWeight: 46,
+            severity: 58,
+            severityBand: "medium" as const,
+            dormant: false,
+            witnesses: ["line mechanic"],
+            linkedDecisionIds: ["stretch_the_mel_clock"],
+            factionOwner: "regulators" as const,
+            nextStep: "formal investigative demand",
+          }
+        : thread,
+    );
+    const heavyRun = createInitialRunState();
+    heavyRun.dossiers = seededDossiers;
+    heavyRun.selectedDecisionIds = ["downgrade_the_inspection_memo"];
+
+    const controlRun = createInitialRunState();
+    controlRun.selectedDecisionIds = ["downgrade_the_inspection_memo"];
+
+    const heavyNext = resolveRound(heavyRun);
+    const controlNext = resolveRound(controlRun);
+
+    expect(heavyNext.metrics.legalHeat).toBeGreaterThanOrEqual(
+      controlNext.metrics.legalHeat + 2,
+    );
+    expect(heavyNext.flags).toContain("dossier:maintenance_fraud:heavy");
+    expect(
+      heavyNext.history.some(
+        (entry) =>
+          entry.source === "dossier" &&
+          entry.sourceKind === "dossier_threshold" &&
+          entry.dossierTheme === "maintenance_fraud",
+      ),
+    ).toBe(true);
+  });
+
+  it("feeds authored hazards into the active scheduler", () => {
+    const run = createInitialRunState();
+    run.round = 4;
+    run.metrics.legalHeat = 82;
+
+    const next = resolveRound(run);
+    const hazardEntry = next.history.find(
+      (entry) =>
+        entry.sourceKind === "hazard_event" &&
+        entry.scheduledEventId === "hazard_legal_heat_ig_letter",
+    );
+
+    expect(hazardEntry?.title).toBe("Inspector General Letter");
+    expect(hazardEntry?.cause).toMatch(/Legal heat/);
+    expect(next.scheduler?.cooldowns.hazard_legal_heat_ig_letter).toBe(9);
   });
 
   it("offers a curated decision tray for a fresh run", () => {
@@ -189,6 +287,45 @@ describe("resolveRound", () => {
     expect(next.endingId).toBe("extraction");
   });
 
+  it("builds dossier-specific case theory recap entries for endings", () => {
+    const run = createInitialRunState();
+    run.round = 7;
+    run.metrics.marketConfidence = 72;
+    run.metrics.stockPrice = 32;
+    run.metrics.personalWealth = 48;
+    run.metrics.legalHeat = 48;
+    run.dossiers = createInitialDossierState().map((thread) =>
+      thread.theme === "insider_trading"
+        ? {
+            ...thread,
+            evidenceWeight: 42,
+            severity: 53,
+            severityBand: "medium" as const,
+            dormant: false,
+            witnesses: ["brokerage compliance analyst"],
+            linkedDecisionIds: ["stock_sale_window"],
+            linkedEventIds: ["broker_chat_subpoena"],
+            factionOwner: "press" as const,
+            nextStep: "subpoenaed trading chronology",
+          }
+        : thread,
+    );
+    run.selectedDecisionIds = ["cash_out_and_resign"];
+
+    const next = resolveRound(run);
+
+    expect(next.status).toBe("ended");
+    expect(next.recap?.dossiers[0]).toEqual(
+      expect.objectContaining({
+        title: "Insider Trading",
+        body: expect.stringContaining("market optimism and stock-sale timing"),
+      }),
+    );
+    expect(next.recap?.dossiers[0]?.body).toContain(
+      "brokerage compliance analyst",
+    );
+  });
+
   it("uses the shared requirement evaluator for both decisions and events", () => {
     const run = createInitialRunState();
     run.round = 6;
@@ -263,7 +400,7 @@ describe("resolveRound", () => {
     expect(next.recap?.outcome[0]?.title).toBe("Why it ended");
     expect(next.recap?.dominantStrategy[0]?.title).toBe("Operational denial");
     expect(next.recap?.operations[0]?.body).toMatch(/backlog|cascade/i);
-    expect(next.recap?.dossiers[0]?.title).toMatch(/file/i);
+    expect(next.recap?.dossiers[0]?.body).toMatch(/file/i);
     expect(next.recap?.missedExitWindows.map((item) => item.title)).toContain(
       "Extraction window",
     );
