@@ -52,6 +52,7 @@ function createEmptyTrayResult(): TrayCompositionResult {
       distinctGroups: 0,
       distinctPacks: 0,
       exitPreserved: false,
+      pickReasons: [],
     },
   };
 }
