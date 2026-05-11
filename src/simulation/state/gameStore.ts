@@ -11,15 +11,8 @@ import {
   createInitialRunState,
   resolveRound,
 } from "../resolution/resolveRound";
-import {
-  defaultGameSettings,
-  normalizeGameSettings,
-} from "./settings.js";
-import type {
-  GameSettings,
-  UiDensity,
-  WallpaperPreset,
-} from "./settings.js";
+import { defaultGameSettings, normalizeGameSettings } from "./settings.js";
+import type { GameSettings, UiDensity, WallpaperPreset } from "./settings.js";
 import type {
   DecisionDefinition,
   EndingDefinition,
@@ -38,6 +31,7 @@ interface GameStoreState {
   setSoundEffectsEnabled: (enabled: boolean) => void;
   setAnimationsEnabled: (enabled: boolean) => void;
   setVisualEffectsEnabled: (enabled: boolean) => void;
+  setInteractionEffectsEnabled: (enabled: boolean) => void;
   setVisualEffectIntensity: (intensity: number) => void;
   setUiDensity: (density: UiDensity) => void;
   resetSettings: () => void;
@@ -98,6 +92,13 @@ export const useGameStore = create<GameStoreState>()(
           settings: normalizeGameSettings({
             ...state.settings,
             visualEffectsEnabled: enabled,
+          }),
+        })),
+      setInteractionEffectsEnabled: (enabled) =>
+        set((state) => ({
+          settings: normalizeGameSettings({
+            ...state.settings,
+            interactionEffectsEnabled: enabled,
           }),
         })),
       setVisualEffectIntensity: (intensity) =>

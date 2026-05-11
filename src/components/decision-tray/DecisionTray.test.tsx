@@ -1,9 +1,15 @@
-import { render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach } from "vitest";
 import { describe, expect, it, vi } from "vitest";
-import { DecisionTray } from "./DecisionTray";
-import type { DecisionDefinition } from "../../simulation/state/types";
+import { DecisionTray } from "./DecisionTray.js";
+import type { DecisionDefinition } from "../../simulation/state/types.js";
 
 const decisions: DecisionDefinition[] = [
   {
@@ -21,7 +27,7 @@ const decisions: DecisionDefinition[] = [
 ];
 
 afterEach(() => {
-  document.body.innerHTML = "";
+  cleanup();
 });
 
 describe("DecisionTray", () => {
@@ -58,5 +64,66 @@ describe("DecisionTray", () => {
     expect(
       screen.getByRole("button", { name: /tighten the screws/i }),
     ).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("marks decision and resolve controls for interaction feedback when enabled", async () => {
+    const onToggle = vi.fn();
+    const onEndTurn = vi.fn();
+
+    render(
+      <DecisionTray
+        decisions={decisions}
+        selectedDecisionIds={[]}
+        onToggle={onToggle}
+        onEndTurn={onEndTurn}
+        interactionEffectsEnabled
+      />,
+    );
+
+    const decisionButton = screen.getByRole("button", {
+      name: /tighten the screws/i,
+    });
+    fireEvent.pointerDown(decisionButton);
+
+    await waitFor(() => {
+      expect(decisionButton).toHaveAttribute(
+        "data-interaction-feedback",
+        "active",
+      );
+    });
+
+    const resolveButton = screen.getByRole("button", {
+      name: /hold the line/i,
+    });
+    fireEvent.pointerDown(resolveButton);
+
+    await waitFor(() => {
+      expect(resolveButton).toHaveAttribute(
+        "data-interaction-feedback",
+        "active",
+      );
+    });
+  });
+
+  it("does not mark extra interaction feedback when disabled", () => {
+    const onToggle = vi.fn();
+    const onEndTurn = vi.fn();
+
+    render(
+      <DecisionTray
+        decisions={decisions}
+        selectedDecisionIds={[]}
+        onToggle={onToggle}
+        onEndTurn={onEndTurn}
+        interactionEffectsEnabled={false}
+      />,
+    );
+
+    const decisionButton = screen.getByRole("button", {
+      name: /tighten the screws/i,
+    });
+    fireEvent.pointerDown(decisionButton);
+
+    expect(decisionButton).not.toHaveAttribute("data-interaction-feedback");
   });
 });
