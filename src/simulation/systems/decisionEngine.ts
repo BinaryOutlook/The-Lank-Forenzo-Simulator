@@ -43,22 +43,27 @@ export const TRAY_COMPOSER_POLICY = {
   noRepeatCandidateBonus: 10,
 } as const;
 
-export type TrayPickReasonCode =
-  | "relief"
-  | "temptation"
-  | "exit-window"
-  | "chain-continuation"
-  | "risk-penalty"
-  | "repeat-suppression"
-  | "group-diversity"
-  | "pack-diversity"
-  | "low-reachability-repair";
+export const TRAY_PICK_REASONS = [
+  "relief",
+  "temptation",
+  "exit-window",
+  "chain-continuation",
+  "risk-penalty",
+  "repeat-suppression",
+  "group-diversity",
+  "pack-diversity",
+  "low-reachability-repair",
+] as const;
+
+export type TrayPickReasonCode = (typeof TRAY_PICK_REASONS)[number];
 
 export interface TrayPickReason {
   decisionId: string;
   score: number;
   reasons: TrayPickReasonCode[];
 }
+
+export type TrayPickReasonCounts = Record<TrayPickReasonCode, number>;
 
 interface RankedDecision {
   decision: DecisionDefinition;
@@ -106,6 +111,7 @@ export interface TrayCompositionResult {
     distinctPacks: number;
     exitPreserved: boolean;
     pickReasons: TrayPickReason[];
+    reasonCounts: TrayPickReasonCounts;
   };
 }
 
@@ -115,17 +121,7 @@ const LOW_REACHABILITY_PACKS: ReadonlySet<DecisionPackId> = new Set([
   "shadowSubsidiaries",
 ]);
 
-const TRAY_PICK_REASON_ORDER: TrayPickReasonCode[] = [
-  "relief",
-  "temptation",
-  "exit-window",
-  "chain-continuation",
-  "risk-penalty",
-  "repeat-suppression",
-  "group-diversity",
-  "pack-diversity",
-  "low-reachability-repair",
-];
+const TRAY_PICK_REASON_ORDER: readonly TrayPickReasonCode[] = TRAY_PICK_REASONS;
 
 export function isDecisionEligible(
   decision: DecisionDefinition,
@@ -645,6 +641,26 @@ function createExitPickReason(entry: RankedDecision): TrayPickReason {
   };
 }
 
+export function createEmptyTrayPickReasonCounts(): TrayPickReasonCounts {
+  return Object.fromEntries(
+    TRAY_PICK_REASONS.map((reason) => [reason, 0]),
+  ) as TrayPickReasonCounts;
+}
+
+export function summarizeTrayPickReasons(
+  pickReasons: TrayPickReason[],
+): TrayPickReasonCounts {
+  const counts = createEmptyTrayPickReasonCounts();
+
+  for (const pick of pickReasons) {
+    for (const reason of pick.reasons) {
+      counts[reason] += 1;
+    }
+  }
+
+  return counts;
+}
+
 export function composeDecisionTray(
   decisions: DecisionDefinition[],
   run: RunState,
@@ -695,6 +711,7 @@ export function composeDecisionTray(
       ),
       exitPreserved,
       pickReasons,
+      reasonCounts: summarizeTrayPickReasons(pickReasons),
     },
   };
 }

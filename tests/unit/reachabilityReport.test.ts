@@ -70,6 +70,9 @@ describe("exploreReachabilityReport", () => {
     expect(first.triggeredEventCoverage.total).toBeGreaterThan(0);
     expect(first.repeatedTrayPressure.percentage).toBeGreaterThanOrEqual(0);
     expect(first.repeatedTrayPressure.percentage).toBeLessThanOrEqual(1);
+    expect(
+      Object.values(first.trayPickReasonCounts).some((count) => count > 0),
+    ).toBe(true);
   }, 10_000);
 
   it(

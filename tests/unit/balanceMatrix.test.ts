@@ -56,6 +56,9 @@ describe("buildBalanceMatrixReport", () => {
     expect(first.aggregate.repeatedTrayPressure.percentage).toBeLessThanOrEqual(
       1,
     );
+    expect(
+      first.aggregate.trayPickReasonCounts["low-reachability-repair"],
+    ).toBeGreaterThan(0);
   }, 10_000);
 
   it("reaches multiple successful exits in the default balance matrix", () => {

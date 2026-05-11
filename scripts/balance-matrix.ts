@@ -1,7 +1,13 @@
 import { pathToFileURL } from "node:url";
 import { loadContent } from "../src/simulation/content";
+import {
+  TRAY_PICK_REASONS,
+  createEmptyTrayPickReasonCounts,
+  type TrayPickReasonCounts,
+} from "../src/simulation/systems/decisionEngine";
 import type { DecisionPackId } from "../src/simulation/state/types";
 import {
+  addTrayPickReasonCounts,
   archetypePolicies,
   buildCoverageStat,
   buildRepeatedTrayPressure,
@@ -40,6 +46,7 @@ export interface ArchetypeMatrixRow {
   delayedEventCoverage: CoverageStat;
   hazardEventCoverage: CoverageStat;
   repeatedTrayPressure: RepeatedTrayPressure;
+  trayPickReasonCounts: TrayPickReasonCounts;
   packCoverage: Record<DecisionPackId, CoverageStat>;
   lowReachabilityPacks: DecisionPackId[];
   surfacedDecisionIds: string[];
@@ -66,6 +73,7 @@ export interface BalanceMatrixReport {
     delayedEventCoverage: CoverageStat;
     hazardEventCoverage: CoverageStat;
     repeatedTrayPressure: RepeatedTrayPressure;
+    trayPickReasonCounts: TrayPickReasonCounts;
     packCoverage: Record<DecisionPackId, CoverageStat>;
     lowReachabilityPacks: DecisionPackId[];
   };
@@ -85,6 +93,7 @@ export function buildBalanceMatrixReport(
   const aggregateHazardEvents = new Set<string>();
   const aggregatePackSurfaces = createPackSurfaceMap();
   const aggregateEndingCounts = createEndingCounts();
+  const aggregateTrayPickReasonCounts = createEmptyTrayPickReasonCounts();
   let aggregateRounds = 0;
   let aggregateOverlap = 0;
   let aggregateSlots = 0;
@@ -101,6 +110,10 @@ export function buildBalanceMatrixReport(
     aggregateRounds += row.averageRunLength * row.runs;
     aggregateOverlap += row.repeatedTrayPressure.overlapSlots;
     aggregateSlots += row.repeatedTrayPressure.totalSlots;
+    addTrayPickReasonCounts(
+      aggregateTrayPickReasonCounts,
+      row.trayPickReasonCounts,
+    );
 
     for (const decisionId of row.surfacedDecisionIds) {
       aggregateSurfaced.add(decisionId);
@@ -166,6 +179,7 @@ export function buildBalanceMatrixReport(
         aggregateOverlap,
         aggregateSlots,
       ),
+      trayPickReasonCounts: aggregateTrayPickReasonCounts,
       packCoverage: buildPackCoverage(aggregatePackSurfaces, archetypes.length),
       lowReachabilityPacks: getLowReachabilityPacks(
         buildPackCoverage(aggregatePackSurfaces, archetypes.length),
@@ -190,6 +204,7 @@ export function formatBalanceMatrixReport(report: BalanceMatrixReport): string {
     `Delayed events: ${formatCoverage(report.aggregate.delayedEventCoverage)}`,
     `Hazard events: ${formatCoverage(report.aggregate.hazardEventCoverage)}`,
     `Repeated-tray pressure: ${report.aggregate.repeatedTrayPressure.overlapSlots}/${report.aggregate.repeatedTrayPressure.totalSlots} (${formatPercentage(report.aggregate.repeatedTrayPressure.percentage)})`,
+    formatTrayPickReasonCounts(report.aggregate.trayPickReasonCounts),
     `Low-reachability packs: ${formatIdList(report.aggregate.lowReachabilityPacks)}`,
     "",
     "Archetypes:",
@@ -210,6 +225,7 @@ export function formatBalanceMatrixReport(report: BalanceMatrixReport): string {
       `Delayed events: ${formatCoverage(row.delayedEventCoverage)}`,
       `Hazard events: ${formatCoverage(row.hazardEventCoverage)}`,
       `Repeated-tray pressure: ${row.repeatedTrayPressure.overlapSlots}/${row.repeatedTrayPressure.totalSlots} (${formatPercentage(row.repeatedTrayPressure.percentage)})`,
+      formatTrayPickReasonCounts(row.trayPickReasonCounts),
       `Low-reachability packs: ${formatIdList(row.lowReachabilityPacks)}`,
     );
   }
@@ -229,6 +245,7 @@ function simulateArchetypeRow(
   const hazardEvents = new Set<string>();
   const packSurfaces = createPackSurfaceMap();
   const endingCounts = createEndingCounts();
+  const trayPickReasonCounts = createEmptyTrayPickReasonCounts();
   let totalRounds = 0;
   let overlap = 0;
   let slots = 0;
@@ -246,6 +263,7 @@ function simulateArchetypeRow(
     totalRounds += summary.roundsPlayed;
     overlap += summary.repeatedTrayOverlap;
     slots += summary.repeatedTraySlots;
+    addTrayPickReasonCounts(trayPickReasonCounts, summary.trayPickReasonCounts);
 
     for (const decisionId of summary.surfacedDecisionIds) {
       surfaced.add(decisionId);
@@ -293,6 +311,7 @@ function simulateArchetypeRow(
       content.hazards.length,
     ),
     repeatedTrayPressure: buildRepeatedTrayPressure(overlap, slots),
+    trayPickReasonCounts,
     packCoverage,
     lowReachabilityPacks: getLowReachabilityPacks(
       packCoverage,
@@ -363,6 +382,15 @@ function formatEndingDistribution(
 
 function formatCoverage(stat: CoverageStat): string {
   return `${stat.seen}/${stat.total} (${formatPercentage(stat.percentage)})`;
+}
+
+function formatTrayPickReasonCounts(counts: TrayPickReasonCounts): string {
+  const entries = TRAY_PICK_REASONS.filter((reason) => counts[reason] > 0).map(
+    (reason) => `${reason} ${counts[reason]}`,
+  );
+  const formatted = entries.length === 0 ? "none" : entries.join(", ");
+
+  return `Tray pick reasons: ${formatted}`;
 }
 
 function formatIdList(ids: string[]): string {

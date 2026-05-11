@@ -5,6 +5,7 @@ import {
 } from "./resolution/resolveRound.js";
 import {
   composeDecisionTray,
+  createEmptyTrayPickReasonCounts,
   type TrayCompositionResult,
 } from "./systems/decisionEngine.js";
 import {
@@ -53,6 +54,7 @@ function createEmptyTrayResult(): TrayCompositionResult {
       distinctPacks: 0,
       exitPreserved: false,
       pickReasons: [],
+      reasonCounts: createEmptyTrayPickReasonCounts(),
     },
   };
 }

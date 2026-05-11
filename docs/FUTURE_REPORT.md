@@ -266,8 +266,18 @@ Where:
    - `temptation`
    - `exit-window`
    - `chain-continuation`
+   - `risk-penalty`
+   - `repeat-suppression`
+   - `group-diversity`
    - `pack-diversity`
    - `low-reachability-repair`
+
+The diagnostics scaffold also keeps aggregate reason counts in balance and
+reachability reports. These counts are design signals, not pass/fail gates: they
+show whether the tray composer is mostly repairing urgent pressure, preserving
+strategic windows, diversifying groups/packs, suppressing repetition, or
+surfacing low-reachability content.
+
 5. Add tests that prove:
    - exit cards are preserved when eligible
    - exact previous trays do not repeat when alternatives exist

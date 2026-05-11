@@ -6,8 +6,11 @@ import {
   resolveRound,
 } from "../src/simulation/resolution/resolveRound";
 import {
-  getAvailableDecisions,
+  TRAY_PICK_REASONS,
+  composeDecisionTray,
+  createEmptyTrayPickReasonCounts,
   isDecisionEligible,
+  type TrayPickReasonCounts,
 } from "../src/simulation/systems/decisionEngine";
 import {
   canAffordResourceCosts,
@@ -73,6 +76,7 @@ export interface SimulatedRunSummary {
   triggeredHazardEventIds: Set<string>;
   surfacedPacks: Set<DecisionPackId>;
   finalFlags: Set<string>;
+  trayPickReasonCounts: TrayPickReasonCounts;
   repeatedTrayOverlap: number;
   repeatedTraySlots: number;
   finalRun: RunState;
@@ -527,22 +531,35 @@ export function simulateBotRun(
   const selectedDecisionSequence: string[] = [];
   const triggeredEventIds = new Set<string>();
   const surfacedPacks = new Set<DecisionPackId>();
+  const trayPickReasonCounts = createEmptyTrayPickReasonCounts();
   let repeatedTrayOverlap = 0;
   let repeatedTraySlots = 0;
   let previousMainTrayIds = new Set<string>();
   let roundsPlayed = 0;
 
   while (run.status === "active" && roundsPlayed < options.maxRounds) {
+    const trayComposition = composeDecisionTray(content.decisions, run);
     const tray = buildArchetypeDiagnosticTray(
-      getAvailableDecisions(content.decisions, run),
+      trayComposition.decisions,
       content.decisions,
       run,
       options.archetype,
       seedValue,
       options.runIndex,
     );
+    const diagnosticInjectionCount =
+      tray.length - trayComposition.decisions.length;
     const mainTray = tray.filter((decision) => decision.group !== "exit");
     const mainTrayIds = new Set(mainTray.map((decision) => decision.id));
+
+    addTrayPickReasonCounts(
+      trayPickReasonCounts,
+      trayComposition.diagnostics.reasonCounts,
+    );
+
+    if (diagnosticInjectionCount > 0) {
+      trayPickReasonCounts["low-reachability-repair"] += diagnosticInjectionCount;
+    }
 
     for (const decision of tray) {
       surfacedDecisionIds.add(decision.id);
@@ -603,10 +620,20 @@ export function simulateBotRun(
     ),
     surfacedPacks,
     finalFlags: new Set(run.flags),
+    trayPickReasonCounts,
     repeatedTrayOverlap,
     repeatedTraySlots,
     finalRun: run,
   };
+}
+
+export function addTrayPickReasonCounts(
+  target: TrayPickReasonCounts,
+  source: TrayPickReasonCounts,
+): void {
+  for (const reason of TRAY_PICK_REASONS) {
+    target[reason] += source[reason];
+  }
 }
 
 export function chooseArchetypeDecisions(

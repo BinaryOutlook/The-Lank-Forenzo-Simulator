@@ -5,7 +5,12 @@ import {
   createInitialRunState,
   resolveRound,
 } from "../src/simulation/resolution/resolveRound";
-import { getAvailableDecisions } from "../src/simulation/systems/decisionEngine";
+import {
+  TRAY_PICK_REASONS,
+  composeDecisionTray,
+  createEmptyTrayPickReasonCounts,
+  type TrayPickReasonCounts,
+} from "../src/simulation/systems/decisionEngine";
 import {
   canAffordResourceCosts,
   getDecisionSelectionCost,
@@ -19,6 +24,7 @@ import type {
   RunState,
 } from "../src/simulation/state/types";
 import {
+  addTrayPickReasonCounts,
   buildCoverageStat,
   buildRepeatedTrayPressure,
   formatPercentage,
@@ -88,6 +94,7 @@ export interface ReachabilityReport {
   packCoverage: Record<DecisionPackId, CoverageStat>;
   flagCoverage: CoverageStat;
   repeatedTrayPressure: RepeatedTrayPressure;
+  trayPickReasonCounts: TrayPickReasonCounts;
   lowConfidenceDecisionIds: string[];
   lowConfidenceEventIds: string[];
   lowConfidencePackIds: DecisionPackId[];
@@ -126,6 +133,7 @@ export function exploreReachabilityReport(
   let exploredStates = 0;
   let repeatedTrayOverlap = 0;
   let repeatedTraySlots = 0;
+  const trayPickReasonCounts = createEmptyTrayPickReasonCounts();
 
   context.knownStateKeys.add(frontier[0]?.stateKey ?? "");
 
@@ -138,9 +146,15 @@ export function exploreReachabilityReport(
         continue;
       }
 
-      const tray = getAvailableDecisions(content.decisions, node.run);
+      const trayComposition = composeDecisionTray(content.decisions, node.run);
+      const tray = trayComposition.decisions;
       const mainTray = tray.filter((decision) => decision.group !== "exit");
       const previousTrayIds = new Set(node.run.lastOfferedDecisionIds);
+
+      addTrayPickReasonCounts(
+        trayPickReasonCounts,
+        trayComposition.diagnostics.reasonCounts,
+      );
 
       for (const decision of tray) {
         context.surfacedDecisionIds.add(decision.id);
@@ -277,6 +291,7 @@ export function exploreReachabilityReport(
       repeatedTrayOverlap,
       repeatedTraySlots,
     ),
+    trayPickReasonCounts,
     lowConfidenceDecisionIds: content.decisions
       .filter((decision) => !context.surfacedDecisionIds.has(decision.id))
       .map((decision) => decision.id)
@@ -358,6 +373,7 @@ export function formatReachabilityReport(report: ReachabilityReport): string {
     `Endings reached: ${formatCoverage(report.endingCoverage)} (${formatIdList(report.endingIds)})`,
     `Flags reached: ${formatCoverage(report.flagCoverage)}`,
     `Repeated-tray pressure: ${report.repeatedTrayPressure.overlapSlots}/${report.repeatedTrayPressure.totalSlots} (${formatPercentage(report.repeatedTrayPressure.percentage)})`,
+    formatTrayPickReasonCounts(report.trayPickReasonCounts),
     `Low-confidence decision ids: ${formatIdList(report.lowConfidenceDecisionIds.slice(0, 24))}`,
     `Low-confidence event ids: ${formatIdList(report.lowConfidenceEventIds.slice(0, 24))}`,
     `Low-confidence packs: ${formatIdList(report.lowConfidencePackIds)}`,
@@ -639,6 +655,15 @@ function getConfidence(
 
 function formatCoverage(stat: CoverageStat): string {
   return `${stat.seen}/${stat.total} (${formatPercentage(stat.percentage)})`;
+}
+
+function formatTrayPickReasonCounts(counts: TrayPickReasonCounts): string {
+  const entries = TRAY_PICK_REASONS.filter((reason) => counts[reason] > 0).map(
+    (reason) => `${reason} ${counts[reason]}`,
+  );
+  const formatted = entries.length === 0 ? "none" : entries.join(", ");
+
+  return `Tray pick reasons: ${formatted}`;
 }
 
 function formatIdList(ids: string[]): string {

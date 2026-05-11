@@ -37,6 +37,71 @@ function decision(
 }
 
 describe("decision tray composer", () => {
+  it("annotates selected cards with category-level pick reasons", () => {
+    const run = createInitialRunState();
+    run.round = 7;
+    run.flags = ["shellCarrierLive"];
+    run.lastOfferedDecisionIds = ["stale-finance"];
+    run.metrics.airlineCash = 70;
+    run.metrics.legalHeat = 78;
+    run.metrics.safetyIntegrity = 42;
+    run.metrics.marketConfidence = 34;
+
+    const decisions: DecisionDefinition[] = [
+      decision("cash-relief", "finance", "core", { airlineCash: 50 }),
+      decision(
+        "chain-relief",
+        "legal",
+        "shadowSubsidiaries",
+        { legalHeat: -8 },
+        { requirements: { flagsAll: ["shellCarrierLive"] } },
+      ),
+      decision("tempting-extract", "extraction", "assetHarvest", {
+        personalWealth: 18,
+      }),
+      decision("safety-repair", "operations", "safetyDenial", {
+        safetyIntegrity: 10,
+      }),
+      decision("market-repair", "market", "marketTheater", {
+        marketConfidence: 10,
+      }),
+      decision("labor-fill", "labor", "laborShock", { workforceMorale: 3 }),
+      {
+        ...decision("live-exit", "exit", "executiveEscape", {}),
+        ending: "extraction",
+        requirements: { roundAtLeast: 6 },
+      },
+    ];
+
+    const result = composeDecisionTray(decisions, run);
+    const reasonsByDecision = new Map(
+      result.diagnostics.pickReasons.map((entry) => [
+        entry.decisionId,
+        entry.reasons,
+      ]),
+    );
+
+    expect(result.diagnostics.pickReasons).toHaveLength(result.decisions.length);
+    expect(reasonsByDecision.get("cash-relief")).toContain("relief");
+    expect(reasonsByDecision.get("chain-relief")).toEqual(
+      expect.arrayContaining(["relief", "chain-continuation"]),
+    );
+    expect(reasonsByDecision.get("tempting-extract")).toContain("temptation");
+    expect(reasonsByDecision.get("live-exit")).toContain("exit-window");
+    expect(result.diagnostics.reasonCounts.relief).toBeGreaterThan(0);
+    expect(result.diagnostics.reasonCounts["chain-continuation"]).toBeGreaterThan(
+      0,
+    );
+    expect(result.diagnostics.reasonCounts.temptation).toBeGreaterThan(0);
+    expect(result.diagnostics.reasonCounts["exit-window"]).toBeGreaterThan(0);
+    expect(result.diagnostics.reasonCounts["group-diversity"]).toBeGreaterThan(
+      0,
+    );
+    expect(result.diagnostics.reasonCounts["pack-diversity"]).toBeGreaterThan(
+      0,
+    );
+  });
+
   it("prefers group diversity when the eligible pool allows it", () => {
     const run = createInitialRunState();
     run.metrics.airlineCash = 80;
