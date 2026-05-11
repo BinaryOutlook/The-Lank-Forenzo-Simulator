@@ -1,0 +1,491 @@
+[
+  {
+    "id": "ramp_union_live_stream",
+    "kind": "ambient",
+    "title": "Ramp Union Live Stream",
+    "body": "A midnight ramp briefing becomes a live stream with better lighting than your investor deck.",
+    "weight": 5,
+    "tags": ["labor", "press", "operations"],
+    "requirements": {
+      "metricMax": {
+        "workforceMorale": 50
+      }
+    },
+    "impacts": {
+      "workforceMorale": -3,
+      "publicAnger": 5,
+      "marketConfidence": -3,
+      "legalHeat": 2
+    }
+  },
+  {
+    "id": "safety_audit_redlines",
+    "kind": "ambient",
+    "title": "Safety Audit Redlines",
+    "body": "The audit team leaves redlines so dense the binder looks injured.",
+    "weight": 5,
+    "tags": ["safety", "regulators", "legal"],
+    "requirements": {
+      "metricMax": {
+        "safetyIntegrity": 62
+      }
+    },
+    "impacts": {
+      "safetyIntegrity": -4,
+      "legalHeat": 5,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "hail_holdover_gridlock",
+    "kind": "ambient",
+    "title": "Hail Holdover Gridlock",
+    "body": "Weather did the opening act; thin staffing, brittle gates, and heroic denial handle the encore.",
+    "weight": 4,
+    "tags": ["weather", "operations", "service"],
+    "requirements": {
+      "roundAtLeast": 3
+    },
+    "impacts": {
+      "airlineCash": -9,
+      "publicAnger": 4,
+      "marketConfidence": -2
+    }
+  },
+  {
+    "id": "liquidity_whisper_chain",
+    "kind": "ambient",
+    "title": "Liquidity Whisper Chain",
+    "body": "One nervous lender call becomes three market rumors and a spreadsheet no one admits to forwarding.",
+    "weight": 5,
+    "tags": ["creditors", "finance", "press"],
+    "requirements": {
+      "metricMax": {
+        "creditorPatience": 48
+      }
+    },
+    "impacts": {
+      "creditorPatience": -5,
+      "marketConfidence": -4,
+      "stockPrice": -3
+    }
+  },
+  {
+    "id": "committee_calendar_notice",
+    "kind": "ambient",
+    "title": "Committee Calendar Notice",
+    "body": "A hearing placeholder lands on the public calendar before counsel has finished pretending this is routine.",
+    "weight": 4,
+    "tags": ["regulators", "legal", "press"],
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 42
+      }
+    },
+    "impacts": {
+      "legalHeat": 4,
+      "publicAnger": 3,
+      "marketConfidence": -2
+    }
+  },
+  {
+    "id": "anonymous_dropbox_ping",
+    "kind": "ambient",
+    "title": "Anonymous Dropbox Ping",
+    "body": "A reporter confirms receipt of files named with the sort of precision only an exhausted insider uses.",
+    "weight": 5,
+    "tags": ["whistleblower", "press", "legal"],
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 36
+      }
+    },
+    "impacts": {
+      "legalHeat": 5,
+      "publicAnger": 4,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "supplier_credit_hold",
+    "kind": "ambient",
+    "title": "Supplier Credit Hold",
+    "body": "A parts vendor discovers the power of saying no before the airline discovers the power of needing parts.",
+    "weight": 5,
+    "tags": ["suppliers", "operations", "finance"],
+    "requirements": {
+      "metricMax": {
+        "creditorPatience": 52
+      }
+    },
+    "impacts": {
+      "airlineCash": -7,
+      "safetyIntegrity": -3,
+      "creditorPatience": -3
+    }
+  },
+  {
+    "id": "stranded_passenger_clip",
+    "kind": "ambient",
+    "title": "Stranded Passenger Clip",
+    "body": "A gate-area video turns a route cancellation into the nation's least relaxing civics lesson.",
+    "weight": 5,
+    "tags": ["routes", "service", "press"],
+    "requirements": {
+      "metricMin": {
+        "publicAnger": 36
+      }
+    },
+    "impacts": {
+      "publicAnger": 6,
+      "marketConfidence": -4,
+      "airlineCash": -5
+    }
+  },
+  {
+    "id": "crew_app_dead_zone",
+    "kind": "ambient",
+    "title": "Crew App Dead Zone",
+    "body": "The crew app stops syncing and briefly makes everyone nostalgic for paper chaos.",
+    "weight": 4,
+    "tags": ["technology", "operations", "service"],
+    "requirements": {
+      "roundAtLeast": 2
+    },
+    "impacts": {
+      "airlineCash": -8,
+      "publicAnger": 3,
+      "workforceMorale": -3
+    }
+  },
+  {
+    "id": "board_leak_countermemo",
+    "kind": "ambient",
+    "title": "Board Leak Countermemo",
+    "body": "A director's anonymous memo denounces anonymous leaking with suspicious fluency.",
+    "weight": 4,
+    "tags": ["board", "press", "legal"],
+    "requirements": {
+      "metricMax": {
+        "marketConfidence": 54
+      }
+    },
+    "impacts": {
+      "marketConfidence": -4,
+      "legalHeat": 3,
+      "stockPrice": -2
+    }
+  },
+  {
+    "id": "airport_slot_freeze",
+    "kind": "ambient",
+    "title": "Airport Slot Freeze",
+    "body": "The airport authority calls the schedule unreliable, which is rude mostly because it is correct.",
+    "weight": 4,
+    "tags": ["airports", "operations", "creditors"],
+    "requirements": {
+      "metricMax": {
+        "creditorPatience": 46
+      }
+    },
+    "impacts": {
+      "assetValue": -10,
+      "airlineCash": -6,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "fare_sale_refund_wave",
+    "kind": "ambient",
+    "title": "Fare Sale Refund Wave",
+    "body": "The revenue team sells optimism at a discount and the refund desk receives the actual invoice.",
+    "weight": 4,
+    "tags": ["market", "service", "finance"],
+    "requirements": {
+      "metricMin": {
+        "publicAnger": 40
+      }
+    },
+    "impacts": {
+      "airlineCash": -10,
+      "marketConfidence": -2,
+      "publicAnger": 3
+    }
+  },
+  {
+    "id": "wildcat_bid_board",
+    "kind": "delayed",
+    "title": "Wildcat Bid Board",
+    "body": "Crews start trading assignments like protest pamphlets, and the system obediently records the contempt.",
+    "weight": 7,
+    "tags": ["labor", "operations"],
+    "impacts": {
+      "workforceMorale": -6,
+      "airlineCash": -8,
+      "publicAnger": 4
+    }
+  },
+  {
+    "id": "crew_base_lawsuit",
+    "kind": "delayed",
+    "title": "Crew Base Lawsuit",
+    "body": "The base closure complaint quotes your own transition FAQ with prosecutorial tenderness.",
+    "weight": 7,
+    "tags": ["labor", "legal"],
+    "impacts": {
+      "legalHeat": 7,
+      "workforceMorale": -4,
+      "publicAnger": 4
+    }
+  },
+  {
+    "id": "union_safety_petition",
+    "kind": "delayed",
+    "title": "Union Safety Petition",
+    "body": "Labor reframes the fight as passenger protection, which is inconvenient because the facts help.",
+    "weight": 7,
+    "tags": ["labor", "safety"],
+    "impacts": {
+      "legalHeat": 6,
+      "safetyIntegrity": -4,
+      "publicAnger": 5
+    }
+  },
+  {
+    "id": "red_tag_photo_dump",
+    "kind": "delayed",
+    "title": "Red-Tag Photo Dump",
+    "body": "Maintenance photos arrive online with timestamps, tail numbers, and the company's preferred excuse already disproven.",
+    "weight": 8,
+    "tags": ["safety", "press"],
+    "impacts": {
+      "safetyIntegrity": -7,
+      "legalHeat": 8,
+      "publicAnger": 6,
+      "marketConfidence": -4
+    }
+  },
+  {
+    "id": "deferred_item_binder",
+    "kind": "delayed",
+    "title": "Deferred Item Binder",
+    "body": "The deferred-maintenance log proves that temporary was less a category than a management philosophy.",
+    "weight": 8,
+    "tags": ["safety", "legal"],
+    "impacts": {
+      "safetyIntegrity": -6,
+      "legalHeat": 9,
+      "marketConfidence": -4
+    }
+  },
+  {
+    "id": "tool_room_quarantine",
+    "kind": "delayed",
+    "title": "Tool Room Quarantine",
+    "body": "An audit locks down a maintenance cage and discovers that inventory control had been mostly aspirational.",
+    "weight": 6,
+    "tags": ["safety", "operations"],
+    "impacts": {
+      "airlineCash": -10,
+      "safetyIntegrity": -5,
+      "legalHeat": 5
+    }
+  },
+  {
+    "id": "tarmac_bus_apology_loop",
+    "kind": "delayed",
+    "title": "Tarmac Bus Apology Loop",
+    "body": "Passengers tour the airport perimeter by bus while your apology email refreshes its own apology.",
+    "weight": 7,
+    "tags": ["routes", "service"],
+    "impacts": {
+      "airlineCash": -11,
+      "publicAnger": 7,
+      "marketConfidence": -4
+    }
+  },
+  {
+    "id": "storm_recovery_overtime_bill",
+    "kind": "delayed",
+    "title": "Storm Recovery Overtime Bill",
+    "body": "Weather exposed the operation; overtime invoices politely itemize what leadership removed from the budget.",
+    "weight": 6,
+    "tags": ["weather", "operations"],
+    "impacts": {
+      "airlineCash": -13,
+      "workforceMorale": -3,
+      "creditorPatience": -2
+    }
+  },
+  {
+    "id": "airport_curfew_breach",
+    "kind": "delayed",
+    "title": "Airport Curfew Breach",
+    "body": "A stranded bank of flights turns into fines, neighbor fury, and a municipal official with television makeup.",
+    "weight": 6,
+    "tags": ["airports", "legal"],
+    "impacts": {
+      "airlineCash": -9,
+      "legalHeat": 5,
+      "publicAnger": 5
+    }
+  },
+  {
+    "id": "cash_sweep_notice",
+    "kind": "delayed",
+    "title": "Cash Sweep Notice",
+    "body": "The agent bank converts patience into math and math into a very short letter.",
+    "weight": 8,
+    "tags": ["creditors", "finance"],
+    "impacts": {
+      "airlineCash": -16,
+      "creditorPatience": -8,
+      "marketConfidence": -4
+    }
+  },
+  {
+    "id": "liquidity_call_transcript",
+    "kind": "delayed",
+    "title": "Liquidity Call Transcript",
+    "body": "A creditor call leaks, and the word manageable reads differently with timestamps.",
+    "weight": 7,
+    "tags": ["creditors", "press"],
+    "impacts": {
+      "creditorPatience": -6,
+      "marketConfidence": -5,
+      "stockPrice": -4,
+      "legalHeat": 3
+    }
+  },
+  {
+    "id": "payment_processor_holdback",
+    "kind": "delayed",
+    "title": "Payment Processor Holdback",
+    "body": "The processor decides ticket revenue should spend a little time in custody before meeting the company.",
+    "weight": 7,
+    "tags": ["finance", "creditors"],
+    "impacts": {
+      "airlineCash": -18,
+      "creditorPatience": -4,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "subpoena_metadata_snag",
+    "kind": "delayed",
+    "title": "Subpoena Metadata Snag",
+    "body": "Counsel produces the files and accidentally produces the timeline hiding inside the files.",
+    "weight": 8,
+    "tags": ["regulators", "legal"],
+    "impacts": {
+      "legalHeat": 9,
+      "marketConfidence": -4,
+      "publicAnger": 4
+    }
+  },
+  {
+    "id": "hearing_chart_exhibit",
+    "kind": "delayed",
+    "title": "Hearing Chart Exhibit",
+    "body": "A staff chart makes the whole strategy legible enough for cable news to understand it.",
+    "weight": 7,
+    "tags": ["regulators", "press"],
+    "impacts": {
+      "legalHeat": 6,
+      "publicAnger": 6,
+      "marketConfidence": -4
+    }
+  },
+  {
+    "id": "remediation_deadline_receipt",
+    "kind": "delayed",
+    "title": "Remediation Deadline Receipt",
+    "body": "The agency finds the promised corrective action in a calendar invite, not on the ramp.",
+    "weight": 7,
+    "tags": ["regulators", "safety"],
+    "impacts": {
+      "legalHeat": 7,
+      "safetyIntegrity": -4,
+      "creditorPatience": -3
+    }
+  },
+  {
+    "id": "whistleblower_audio_cache",
+    "kind": "delayed",
+    "title": "Whistleblower Audio Cache",
+    "body": "The leak includes audio, which is unfair only because the room sounds exactly like the minutes said it did not.",
+    "weight": 8,
+    "tags": ["whistleblower", "press", "legal"],
+    "impacts": {
+      "legalHeat": 10,
+      "publicAnger": 7,
+      "marketConfidence": -5
+    }
+  },
+  {
+    "id": "documentary_teaser_drop",
+    "kind": "delayed",
+    "title": "Documentary Teaser Drop",
+    "body": "A streaming teaser compresses six quarters of governance failure into ninety seconds and one terrible freeze-frame.",
+    "weight": 7,
+    "tags": ["media", "press", "personal"],
+    "impacts": {
+      "publicAnger": 8,
+      "marketConfidence": -4,
+      "legalHeat": 4
+    }
+  },
+  {
+    "id": "engine_vendor_stop_ship",
+    "kind": "delayed",
+    "title": "Engine Vendor Stop-Ship",
+    "body": "The engine vendor stops pretending exposure is collectible and starts pretending the phone is broken.",
+    "weight": 7,
+    "tags": ["suppliers", "safety"],
+    "impacts": {
+      "airlineCash": -14,
+      "safetyIntegrity": -5,
+      "creditorPatience": -4
+    }
+  },
+  {
+    "id": "caterer_counterclaim",
+    "kind": "delayed",
+    "title": "Caterer Counterclaim",
+    "body": "The caterer sues for unpaid invoices and somehow becomes the most sympathetic party in aviation.",
+    "weight": 5,
+    "tags": ["suppliers", "legal"],
+    "impacts": {
+      "airlineCash": -6,
+      "legalHeat": 4,
+      "publicAnger": 2
+    }
+  },
+  {
+    "id": "crew_tracking_outage_report",
+    "kind": "delayed",
+    "title": "Crew Tracking Outage Report",
+    "body": "The outage report explains that crews were not misplaced; the database merely held competing theories of reality.",
+    "weight": 7,
+    "tags": ["technology", "operations"],
+    "impacts": {
+      "airlineCash": -12,
+      "workforceMorale": -4,
+      "publicAnger": 5,
+      "marketConfidence": -3
+    }
+  },
+  {
+    "id": "board_faction_shadow_vote",
+    "kind": "delayed",
+    "title": "Board Faction Shadow Vote",
+    "body": "A director circulates a vote count before the meeting, which is technically not a coup if everyone can read email.",
+    "weight": 6,
+    "tags": ["board", "legal"],
+    "impacts": {
+      "marketConfidence": -5,
+      "legalHeat": 5,
+      "stockPrice": -3
+    }
+  }
+]

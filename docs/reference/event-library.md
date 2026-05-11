@@ -2,10 +2,10 @@
 
 This is the documentation home for the full event library and the public-history parallels that helped shape its fallout.
 
-As of `2026-04-10`, the repo contains `132` authored events:
+As of `2026-05-11`, the repo contains `165` authored events:
 
-- `62` ambient events
-- `70` delayed events
+- `74` ambient events
+- `91` delayed events
 
 ## How to Read This
 
@@ -38,6 +38,7 @@ No event in this file should be read as:
 | `content/events/delayed_personal_market.json` | No single person; generalized scandal, compensation, suspicious-sale fallout, and intercompany-fee exposure with some Icahn-logic overlap | Analyst reversals, leak cycles, guidance corrections, and personal-paper-trail exposure | `Fictionalized composite` |
 | `content/events/delayed_regulatory.json` | Frank Lorenzo plus broader airline oversight-management and hearing fallout | Revolving-door scrutiny, scope leaks, hearing clips, consent-order breaches, and reform-office whistleblowers | `Historical tactic composite` |
 | `content/events/delayed_strategy_fallout.json` | The full `V0.3` anchor set: Stephen Wolf, Joe O'Gorman, Frank Lorenzo, Carl Icahn, ValuJet-era scrutiny, Doug Parker, and Carsten Spohr | The most explicit fallout layer for merger grooming, creditor warfare, venue shopping, labor arbitrage, safety denial, shells, and executive protection | `Historical tactic composite` |
+| `content/events/incident_variants.json` | No single company or case; broad IRL-inspired airline disruption, labor, safety, regulator, creditor, supplier, media, technology, and boardroom incident categories | Alternate narrative shells for mechanically familiar pressure: union escalation, safety audit findings, weather/airport disruption, liquidity rumors, subpoenas, whistleblower drops, supplier stoppages, route-cancellation outrage, system outages, and board faction leaks | `Fictionalized composite` |
 
 ## Pack Inventory
 
@@ -271,6 +272,46 @@ Classification: `Historical tactic composite`
 - `customs_broker_ping` - Customs Broker Ping (`delayed`; tags: `offshore`, `legal`)
 - `forum_shopping_challenge` - Forum Shopping Challenge (`delayed`; tags: `creditors`, `legal`)
 
+### `content/events/incident_variants.json`
+
+Parallel lane: no single airline, executive, disaster, or legal case; this pack is built from fictionalized incident categories that commonly pressure distressed carriers and scandal-prone corporations.
+
+Classification: `Fictionalized composite`
+
+- `ramp_union_live_stream` - Ramp Union Live Stream (`ambient`; tags: `labor`, `press`, `operations`)
+- `safety_audit_redlines` - Safety Audit Redlines (`ambient`; tags: `safety`, `regulators`, `legal`)
+- `hail_holdover_gridlock` - Hail Holdover Gridlock (`ambient`; tags: `weather`, `operations`, `service`)
+- `liquidity_whisper_chain` - Liquidity Whisper Chain (`ambient`; tags: `creditors`, `finance`, `press`)
+- `committee_calendar_notice` - Committee Calendar Notice (`ambient`; tags: `regulators`, `legal`, `press`)
+- `anonymous_dropbox_ping` - Anonymous Dropbox Ping (`ambient`; tags: `whistleblower`, `press`, `legal`)
+- `supplier_credit_hold` - Supplier Credit Hold (`ambient`; tags: `suppliers`, `operations`, `finance`)
+- `stranded_passenger_clip` - Stranded Passenger Clip (`ambient`; tags: `routes`, `service`, `press`)
+- `crew_app_dead_zone` - Crew App Dead Zone (`ambient`; tags: `technology`, `operations`, `service`)
+- `board_leak_countermemo` - Board Leak Countermemo (`ambient`; tags: `board`, `press`, `legal`)
+- `airport_slot_freeze` - Airport Slot Freeze (`ambient`; tags: `airports`, `operations`, `creditors`)
+- `fare_sale_refund_wave` - Fare Sale Refund Wave (`ambient`; tags: `market`, `service`, `finance`)
+- `wildcat_bid_board` - Wildcat Bid Board (`delayed`; tags: `labor`, `operations`)
+- `crew_base_lawsuit` - Crew Base Lawsuit (`delayed`; tags: `labor`, `legal`)
+- `union_safety_petition` - Union Safety Petition (`delayed`; tags: `labor`, `safety`)
+- `red_tag_photo_dump` - Red-Tag Photo Dump (`delayed`; tags: `safety`, `press`)
+- `deferred_item_binder` - Deferred Item Binder (`delayed`; tags: `safety`, `legal`)
+- `tool_room_quarantine` - Tool Room Quarantine (`delayed`; tags: `safety`, `operations`)
+- `tarmac_bus_apology_loop` - Tarmac Bus Apology Loop (`delayed`; tags: `routes`, `service`)
+- `storm_recovery_overtime_bill` - Storm Recovery Overtime Bill (`delayed`; tags: `weather`, `operations`)
+- `airport_curfew_breach` - Airport Curfew Breach (`delayed`; tags: `airports`, `legal`)
+- `cash_sweep_notice` - Cash Sweep Notice (`delayed`; tags: `creditors`, `finance`)
+- `liquidity_call_transcript` - Liquidity Call Transcript (`delayed`; tags: `creditors`, `press`)
+- `payment_processor_holdback` - Payment Processor Holdback (`delayed`; tags: `finance`, `creditors`)
+- `subpoena_metadata_snag` - Subpoena Metadata Snag (`delayed`; tags: `regulators`, `legal`)
+- `hearing_chart_exhibit` - Hearing Chart Exhibit (`delayed`; tags: `regulators`, `press`)
+- `remediation_deadline_receipt` - Remediation Deadline Receipt (`delayed`; tags: `regulators`, `safety`)
+- `whistleblower_audio_cache` - Whistleblower Audio Cache (`delayed`; tags: `whistleblower`, `press`, `legal`)
+- `documentary_teaser_drop` - Documentary Teaser Drop (`delayed`; tags: `media`, `press`, `personal`)
+- `engine_vendor_stop_ship` - Engine Vendor Stop-Ship (`delayed`; tags: `suppliers`, `safety`)
+- `caterer_counterclaim` - Caterer Counterclaim (`delayed`; tags: `suppliers`, `legal`)
+- `crew_tracking_outage_report` - Crew Tracking Outage Report (`delayed`; tags: `technology`, `operations`)
+- `board_faction_shadow_vote` - Board Faction Shadow Vote (`delayed`; tags: `board`, `legal`)
+
 ## Summary Judgment
 
 If the question is "are these events real, or inspired by real people and places?", the clean answer is:
@@ -278,4 +319,5 @@ If the question is "are these events real, or inspired by real people and places
 - The event library is fictional in wording and implementation.
 - Most of it is fictionalized composite material.
 - The `V0.3` delayed-fallout layer is the most consciously shaped by broad public airline-history tactics.
+- The `V0.5` incident-variant layer is category-inspired, not case-inspired: it borrows pressure shapes without reenacting named disasters, companies, or lawsuits.
 - None of it is meant to be read as a direct dramatization of one executive, one merger, one bankruptcy, or one disaster.

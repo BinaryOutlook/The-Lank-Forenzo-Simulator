@@ -32,6 +32,8 @@ import {
 } from "../operations/networkResolution";
 import {
   createInitialEventSchedulerState,
+  getEventNarrativeWeight,
+  noteEventInSchedulerState,
   resolveEventScheduler,
   scheduleEvent,
   type EventSchedulerState,
@@ -399,11 +401,13 @@ function resolveAmbientEvent(
   flags: Set<string>,
   eventCounts: Record<string, number>,
   events: EventDefinition[],
+  scheduler: EventSchedulerState,
 ): {
   metrics: RunMetrics;
   flags: Set<string>;
   history: HistoryEntry | null;
   eventId: string | null;
+  scheduler: EventSchedulerState;
 } {
   const ambientEvents = events.filter((event) => event.kind === "ambient");
   const ambientCandidates = ambientEvents.filter((event) =>
@@ -414,25 +418,41 @@ function resolveAmbientEvent(
       flags: [...flags],
     }),
   );
-
-  const pickedAmbientEvent = pickWeighted(
-    ambientCandidates,
-    (event) => {
+  const weightedCandidates = ambientCandidates
+    .map((event) => {
       const seenPenalty = eventCounts[event.id]
         ? Math.max(1, event.weight - eventCounts[event.id] * 2)
         : event.weight;
-      return seenPenalty;
-    },
+
+      return {
+        event,
+        weight: getEventNarrativeWeight(event, seenPenalty, scheduler),
+      };
+    })
+    .filter((candidate) => candidate.weight > 0);
+  const ambientPool =
+    weightedCandidates.length > 0
+      ? weightedCandidates
+      : ambientCandidates.map((event) => ({
+          event,
+          weight: eventCounts[event.id]
+            ? Math.max(1, event.weight - eventCounts[event.id] * 2)
+            : event.weight,
+        }));
+
+  const pickedAmbientEvent = pickWeighted(
+    ambientPool,
+    (candidate) => candidate.weight,
     hashNumber(
       round,
       metrics.legalHeat,
       metrics.publicAnger,
       metrics.marketConfidence,
     ),
-  );
+  )?.event;
 
   if (!pickedAmbientEvent) {
-    return { metrics, flags, history: null, eventId: null };
+    return { metrics, flags, history: null, eventId: null, scheduler };
   }
 
   const processed = processEvent(
@@ -448,6 +468,7 @@ function resolveAmbientEvent(
     flags: processed.flags,
     history: processed.history,
     eventId: pickedAmbientEvent.id,
+    scheduler: noteEventInSchedulerState(scheduler, pickedAmbientEvent),
   };
 }
 
@@ -734,6 +755,7 @@ export function resolveRound(run: RunState): RunState {
   flags = scheduledResult.flags;
   historyEntries.push(...scheduledResult.historyEntries);
   const emittedEventIds = [...scheduledResult.emittedEventIds];
+  let scheduler = scheduledResult.scheduler;
 
   if (!endingId) {
     const ambientResult = resolveAmbientEvent(
@@ -743,9 +765,11 @@ export function resolveRound(run: RunState): RunState {
       flags,
       eventCounts,
       content.events,
+      scheduler,
     );
     metrics = ambientResult.metrics;
     flags = ambientResult.flags;
+    scheduler = ambientResult.scheduler;
     if (ambientResult.history) {
       historyEntries.push(ambientResult.history);
     }
@@ -820,8 +844,8 @@ export function resolveRound(run: RunState): RunState {
     metrics,
     selectedDecisionIds: [],
     lastOfferedDecisionIds: offeredThisRound,
-    pendingEvents: mirrorPendingEvents(scheduledResult.scheduler),
-    scheduler: scheduledResult.scheduler,
+    pendingEvents: mirrorPendingEvents(scheduler),
+    scheduler,
     factions,
     operations,
     dossiers,

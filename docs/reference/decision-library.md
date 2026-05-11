@@ -2,10 +2,11 @@
 
 This is the documentation home for the full decision library and the public-history parallels that helped shape it.
 
-As of `2026-04-10`, the repo contains `100` authored decisions across `10` packs:
+As of `2026-05-11`, the repo contains `112` authored decisions across `11` packs:
 
 - `21` core decisions
 - `79` expansion decisions from `V0.3`
+- `12` incident-variant decisions from `V0.5`
 
 ## How to Read This
 
@@ -34,6 +35,7 @@ No decision in this file should be read as:
 | `content/decisions/market_theater.json` | No single person; broad investor-relations and executive-mythmaking behavior | Analyst choreography, strategic-review theater, fairness-opinion shopping, and earnings-story manipulation | `Fictionalized composite` |
 | `content/decisions/regulatory_theater.json` | Frank Lorenzo plus broader airline oversight-management and hearing-optics playbooks | Revolving-door hires, independent-review theater, consent-order delay, civic jobs optics, and procedural reform as defensive camouflage | `Historical tactic composite` |
 | `content/decisions/executive_escape.json` | Carl Icahn-style post-control extraction logic plus broader executive self-protection behavior | Indemnity walls, parachutes, suspicious sale timing, adviser paper trails, intercompany fees, and offshore preparation before collapse | `Historical tactic composite` |
+| `content/decisions/incident_variants.json` | No single company or case; broad IRL-inspired incident categories | Fictionalized choice variants for labor pressure, safety audits, maintenance deferrals, weather disruption, liquidity calls, hearings, whistleblower containment, media shaping, supplier disputes, route cancellations, technology outages, and board faction maneuvers | `Fictionalized composite` |
 
 ## Pack Inventory
 
@@ -207,6 +209,25 @@ Classification: `Historical tactic composite`
 - `wire_the_island_retainer` - Wire the Island Retainer (`extraction`; tags: `offshore`, `personal`, `escape`)
 - `borrow_against_the_parachute` - Borrow Against the Parachute (`finance`; tags: `personal`, `finance`, `debt`)
 
+### `content/decisions/incident_variants.json`
+
+Parallel lane: no single executive, carrier, incident, or case; this pack provides alternate fictionalized executive choices that can feed similar mechanical fallout through fresher headlines and option labels.
+
+Classification: `Fictionalized composite`
+
+- `rebrand_the_union_townhall` - Rebrand the Union Townhall (`labor`; tags: `labor`, `union`, `optics`)
+- `certify_the_audit_clean_room` - Certify the Audit Clean Room (`legal`; tags: `safety`, `audit`, `regulators`)
+- `defer_the_red_tag_queue` - Defer the Red-Tag Queue (`operations`; tags: `safety`, `maintenance`, `deferments`)
+- `blame_weather_then_trim_crews` - Blame Weather, Then Trim Crews (`operations`; tags: `weather`, `labor`, `cuts`)
+- `script_the_liquidity_call` - Script the Liquidity Call (`finance`; tags: `creditors`, `liquidity`, `spin`)
+- `produce_the_hearing_binders` - Produce the Hearing Binders (`legal`; tags: `regulators`, `hearing`, `paperwork`)
+- `silo_the_whistleblower_file` - Silo the Whistleblower File (`legal`; tags: `whistleblower`, `legal`, `containment`)
+- `prebrief_the_friendly_columnist` - Prebrief the Friendly Columnist (`market`; tags: `media`, `press`, `spin`)
+- `squeeze_the_engine_supplier` - Squeeze the Engine Supplier (`finance`; tags: `suppliers`, `parts`, `cash`)
+- `cancel_the_spoke_bank` - Cancel the Spoke Bank (`operations`; tags: `routes`, `service`, `cuts`)
+- `patch_the_crew_app_live` - Patch the Crew App Live (`operations`; tags: `technology`, `crew`, `systems`)
+- `split_the_board_packet` - Split the Board Packet (`market`; tags: `board`, `governance`, `spin`)
+
 ## Summary Judgment
 
 If the question is "are these decisions real, or inspired by real people and places?", the clean answer is:
@@ -214,4 +235,5 @@ If the question is "are these decisions real, or inspired by real people and pla
 - The decision library is fictional in wording and implementation.
 - The core and market-theater layers are mostly fictionalized composite material.
 - Most of the `V0.3` expansion packs were built from broad historical tactic patterns.
+- The `V0.5` incident-variant pack adds alternate option labels for familiar mechanics without tying any choice to a real carrier, executive, or case.
 - None of the cards are intended as direct depictions of one executive, one airline, one merger, or one collapse.

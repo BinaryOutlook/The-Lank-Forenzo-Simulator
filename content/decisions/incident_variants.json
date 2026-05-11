@@ -1,0 +1,327 @@
+[
+  {
+    "id": "rebrand_the_union_townhall",
+    "title": "Rebrand the Union Townhall",
+    "summary": "Turn a negotiation failure into a listening tour and hope the microphones forgive you.",
+    "group": "labor",
+    "tags": ["labor", "union", "optics"],
+    "impacts": {
+      "marketConfidence": 3,
+      "workforceMorale": -7,
+      "publicAnger": 5,
+      "legalHeat": 3
+    },
+    "requirements": {
+      "metricMax": {
+        "workforceMorale": 55
+      }
+    },
+    "delayedConsequences": [
+      {
+        "eventIds": [
+          "wildcat_bid_board",
+          "crew_base_lawsuit",
+          "union_safety_petition"
+        ],
+        "delay": 2
+      }
+    ]
+  },
+  {
+    "id": "certify_the_audit_clean_room",
+    "title": "Certify the Audit Clean Room",
+    "summary": "Build a perfect audit room around an imperfect airline and invite the regulator to admire the lighting.",
+    "group": "legal",
+    "tags": ["safety", "audit", "regulators"],
+    "impacts": {
+      "airlineCash": -8,
+      "legalHeat": -4,
+      "safetyIntegrity": 3,
+      "marketConfidence": 2
+    },
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 34
+      }
+    },
+    "delayedConsequences": [
+      {
+        "eventIds": [
+          "red_tag_photo_dump",
+          "deferred_item_binder",
+          "tool_room_quarantine"
+        ],
+        "delay": 2
+      }
+    ]
+  },
+  {
+    "id": "defer_the_red_tag_queue",
+    "title": "Defer the Red-Tag Queue",
+    "summary": "Push the maintenance queue past the reporting window and call the interval operational judgment.",
+    "group": "operations",
+    "tags": ["safety", "maintenance", "deferments"],
+    "impacts": {
+      "airlineCash": 16,
+      "safetyIntegrity": -10,
+      "legalHeat": 6,
+      "marketConfidence": 2
+    },
+    "delayedConsequences": [
+      {
+        "eventIds": [
+          "deferred_item_binder",
+          "red_tag_photo_dump",
+          "maintenance_near_miss"
+        ],
+        "delay": 2
+      }
+    ]
+  },
+  {
+    "id": "blame_weather_then_trim_crews",
+    "title": "Blame Weather, Then Trim Crews",
+    "summary": "Let the storm take the headline while staffing cuts quietly take the savings.",
+    "group": "operations",
+    "tags": ["weather", "labor", "cuts"],
+    "impacts": {
+      "airlineCash": 18,
+      "workforceSize": -180,
+      "workforceMorale": -6,
+      "publicAnger": 4,
+      "marketConfidence": 2
+    },
+    "requirements": {
+      "roundAtLeast": 2
+    },
+    "delayedConsequences": [
+      {
+        "eventIds": [
+          "tarmac_bus_apology_loop",
+          "storm_recovery_overtime_bill",
+          "airport_curfew_breach"
+        ],
+        "delay": 2
+      }
+    ]
+  },
+  {
+    "id": "script_the_liquidity_call",
+    "title": "Script the Liquidity Call",
+    "summary": "Coach treasury to sound bored while explaining why everyone should remain unpaid a little longer.",
+    "group": "finance",
+    "tags": ["creditors", "liquidity", "spin"],
+    "impacts": {
+      "airlineCash": 20,
+      "creditorPatience": -7,
+      "marketConfidence": 2,
+      "legalHeat": 3
+    },
+    "requirements": {
+      "metricMax": {
+        "creditorPatience": 54
+      }
+    },
+    "delayedConsequences": [
+      {
+        "eventIds": [
+          "cash_sweep_notice",
+          "liquidity_call_transcript",
+          "payment_processor_holdback"
+        ],
+        "delay": 2
+      }
+    ]
+  },
+  {
+    "id": "produce_the_hearing_binders",
+    "title": "Produce the Hearing Binders",
+    "summary": "Answer oversight with tabs, appendices, and the legal theory that volume equals virtue.",
+    "group": "legal",
+    "tags": ["regulators", "hearing", "paperwork"],
+    "impacts": {
+      "airlineCash": -10,
+      "legalHeat": -5,
+      "publicAnger": -2,
+      "marketConfidence": 1
+    },
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 44
+      }
+    },
+    "delayedConsequences": [
+      {
+        "eventIds": [
+          "subpoena_metadata_snag",
+          "hearing_chart_exhibit",
+          "remediation_deadline_receipt"
+        ],
+        "delay": 2
+      }
+    ]
+  },
+  {
+    "id": "silo_the_whistleblower_file",
+    "title": "Silo the Whistleblower File",
+    "summary": "Move the allegation into a privileged folder and hope the folder is more loyal than the staff.",
+    "group": "legal",
+    "tags": ["whistleblower", "legal", "containment"],
+    "impacts": {
+      "legalHeat": 6,
+      "publicAnger": 3,
+      "marketConfidence": -2,
+      "workforceMorale": -3
+    },
+    "requirements": {
+      "metricMin": {
+        "legalHeat": 32
+      }
+    },
+    "delayedConsequences": [
+      {
+        "eventIds": [
+          "whistleblower_audio_cache",
+          "documentary_teaser_drop",
+          "inspector_general_letter"
+        ],
+        "delay": 2
+      }
+    ]
+  },
+  {
+    "id": "prebrief_the_friendly_columnist",
+    "title": "Prebrief the Friendly Columnist",
+    "summary": "Feed the column before the facts arrive and call that shaping the narrative.",
+    "group": "market",
+    "tags": ["media", "press", "spin"],
+    "impacts": {
+      "marketConfidence": 6,
+      "stockPrice": 3,
+      "legalHeat": 3,
+      "publicAnger": 2
+    },
+    "requirements": {
+      "metricMin": {
+        "publicAnger": 34
+      }
+    },
+    "delayedConsequences": [
+      {
+        "eventIds": [
+          "documentary_teaser_drop",
+          "call_transcript_supercut",
+          "turnaround_story_cracks"
+        ],
+        "delay": 3
+      }
+    ]
+  },
+  {
+    "id": "squeeze_the_engine_supplier",
+    "title": "Squeeze the Engine Supplier",
+    "summary": "Threaten future business so this quarter's parts arrive cheaper, later, and angrier.",
+    "group": "finance",
+    "tags": ["suppliers", "parts", "cash"],
+    "impacts": {
+      "airlineCash": 14,
+      "creditorPatience": 2,
+      "safetyIntegrity": -5,
+      "legalHeat": 3
+    },
+    "requirements": {
+      "metricMax": {
+        "airlineCash": 260
+      }
+    },
+    "delayedConsequences": [
+      {
+        "eventIds": [
+          "engine_vendor_stop_ship",
+          "caterer_counterclaim",
+          "vendor_lien_blitz"
+        ],
+        "delay": 2
+      }
+    ]
+  },
+  {
+    "id": "cancel_the_spoke_bank",
+    "title": "Cancel the Spoke Bank",
+    "summary": "Erase a weak bank of routes and let stranded passengers discover strategic focus firsthand.",
+    "group": "operations",
+    "tags": ["routes", "service", "cuts"],
+    "impacts": {
+      "airlineCash": 24,
+      "assetValue": -12,
+      "workforceSize": -220,
+      "publicAnger": 7,
+      "marketConfidence": 3
+    },
+    "delayedConsequences": [
+      {
+        "eventIds": [
+          "tarmac_bus_apology_loop",
+          "airport_curfew_breach",
+          "regional_feed_unravels"
+        ],
+        "delay": 2
+      }
+    ]
+  },
+  {
+    "id": "patch_the_crew_app_live",
+    "title": "Patch the Crew App Live",
+    "summary": "Ship the crew-tracking patch during operations because the safer window was last quarter.",
+    "group": "operations",
+    "tags": ["technology", "crew", "systems"],
+    "impacts": {
+      "airlineCash": 10,
+      "marketConfidence": 2,
+      "workforceMorale": -5,
+      "publicAnger": 3,
+      "legalHeat": 2
+    },
+    "requirements": {
+      "roundAtLeast": 2
+    },
+    "delayedConsequences": [
+      {
+        "eventIds": [
+          "crew_tracking_outage_report",
+          "reservation_cutover_stumble",
+          "badge_access_chaos"
+        ],
+        "delay": 2
+      }
+    ]
+  },
+  {
+    "id": "split_the_board_packet",
+    "title": "Split the Board Packet",
+    "summary": "Give each faction the deck it wants and trust no one to compare page numbers.",
+    "group": "market",
+    "tags": ["board", "governance", "spin"],
+    "impacts": {
+      "marketConfidence": 5,
+      "stockPrice": 2,
+      "legalHeat": 5,
+      "publicAnger": 2
+    },
+    "requirements": {
+      "metricMax": {
+        "marketConfidence": 58
+      }
+    },
+    "delayedConsequences": [
+      {
+        "eventIds": [
+          "board_faction_shadow_vote",
+          "director_indemnity_alarm",
+          "fairness_opinion_underfire"
+        ],
+        "delay": 2
+      }
+    ]
+  }
+]
