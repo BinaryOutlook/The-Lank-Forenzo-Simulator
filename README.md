@@ -12,7 +12,8 @@ Implemented in the current build:
 - browser-native deterministic simulation loop
 - local save persistence
 - expanded multi-pack decision and event libraries with deterministic delayed-event pools
-- compiled content manifest with direct lookup maps, content hash, flag diagnostics, and pack/tag indexes
+- authored hazard rules that turn accumulated state into scheduler pressure
+- compiled content manifest with direct lookup maps, content hash, flag diagnostics, pack/tag indexes, and hazard indexes
 - set-aware decision tray composition with diversity, follow-up, exit, and repeat-suppression rules
 - v0.5 scheduler, faction memory, operational network, and dossier primitives wired into active runs
 - consumable strategic reserves for high-impact political, labor, regulatory, and executive-network actions
@@ -79,7 +80,7 @@ npm run dev
 
 Open the local Vite URL shown in the terminal.
 
-Decision and event content are assembled from validated packs under `content/decisions/` and `content/events/` through their `index.ts` files.
+Decision, event, and hazard content are assembled from validated packs under `content/decisions/`, `content/events/`, and `content/hazards/` through their `index.ts` files.
 
 About and Options are available from the app header. The About route is a lightweight secondary page for player-facing project context; it links back to the active run when one is in progress and otherwise returns to the landing screen. The current settings implementation is local-first and preset-based: wallpaper selection changes the shell background immediately, music can be toggled with a restrained Web Audio ambience, interaction cues follow the music volume and sound-effects toggle, and visual plus interaction feedback effects can be reduced or disabled for lower-end devices.
 
@@ -155,6 +156,9 @@ content/
     index.ts
     *.json
   events/
+    index.ts
+    *.json
+  hazards/
     index.ts
     *.json
   endings/

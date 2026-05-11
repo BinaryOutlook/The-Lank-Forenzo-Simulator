@@ -4,6 +4,7 @@ import type {
   decisionPackIds,
   endingIds,
   eventKinds,
+  hazardSourceFamilies,
   metricKeys,
 } from "../content/metadata";
 import type { DossierThread } from "../dossiers/dossierState";
@@ -24,6 +25,8 @@ export type DecisionGroup = (typeof decisionGroups)[number];
 export type DecisionPackId = (typeof decisionPackIds)[number];
 
 export type EventKind = (typeof eventKinds)[number];
+
+export type HazardSourceFamily = (typeof hazardSourceFamilies)[number];
 
 export interface RunMetrics {
   airlineCash: number;
@@ -96,6 +99,16 @@ export interface EndingDefinition {
   summary: string;
 }
 
+export interface HazardDefinition {
+  id: string;
+  eventId: string;
+  baseWeight: number;
+  cooldownRounds: number;
+  requirements: RequirementSpec;
+  sourceFamily: HazardSourceFamily;
+  explanation: string;
+}
+
 export interface PendingEvent {
   eventId: string;
   triggerRound: number;
@@ -161,6 +174,7 @@ export interface RunState {
 export interface ContentBundle {
   decisions: DecisionDefinition[];
   events: EventDefinition[];
+  hazards: HazardDefinition[];
   endings: EndingDefinition[];
 }
 
