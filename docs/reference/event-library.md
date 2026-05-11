@@ -20,6 +20,35 @@ No event in this file should be read as:
 - a direct retelling of a single historical incident
 - a claim that one real executive or one real airline uniquely "owns" a given event
 
+## Dossier Evidence Metadata
+
+Representative events can now carry optional `evidence` metadata. When an
+ambient, scheduled, or delayed event fires, the resolver converts that metadata
+into deterministic dossier fragments.
+
+```json
+{
+  "evidence": [
+    {
+      "theme": "insider_trading",
+      "weight": 18,
+      "witness": "brokerage compliance analyst",
+      "detail": "Broker chats connect private timing to public messaging."
+    }
+  ]
+}
+```
+
+Event-authored evidence currently strengthens these scandal trails:
+
+- maintenance and audit events feed `maintenance_fraud`
+- labor lawsuits, class actions, and arbitration feed `labor_abuse`
+- trading-window and broker-chat events feed `insider_trading`
+- review-scope, consent-order, and whistleblower events feed `regulatory_capture`
+- nominee, customs, and offshore-audit events feed `offshore_evasion`
+- covenant, forum-shopping, and processor-reserve events feed `creditor_deception`
+- compensation, indemnity, conflict, and board-vote events feed `board_self_dealing`
+
 ## Historical Parallel Matrix
 
 | Event pack | Closest public-history parallel | What we are borrowing | Framing |

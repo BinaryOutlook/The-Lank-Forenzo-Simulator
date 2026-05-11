@@ -6,7 +6,10 @@ import type {
   eventKinds,
   metricKeys,
 } from "../content/metadata";
-import type { DossierThread } from "../dossiers/dossierState";
+import type {
+  DossierTheme,
+  DossierThread,
+} from "../dossiers/dossierState";
 import type { FactionStates } from "../factions/factionState";
 import type { NetworkState } from "../operations/networkState";
 import type { EventSchedulerState } from "../scheduler/eventScheduler";
@@ -47,6 +50,13 @@ export type ImpactSet = Partial<Record<MetricKey, number>>;
 
 export type ResourceCostSet = Partial<Record<ConsumableResourceKey, number>>;
 
+export interface DossierEvidenceDefinition {
+  theme: DossierTheme;
+  weight: number;
+  witness?: string;
+  detail?: string;
+}
+
 export interface RequirementSpec {
   roundAtLeast?: number;
   roundAtMost?: number;
@@ -71,6 +81,7 @@ export interface DecisionDefinition {
   tags: string[];
   impacts: ImpactSet;
   resourceCosts?: ResourceCostSet;
+  evidence?: DossierEvidenceDefinition[];
   requirements?: RequirementSpec;
   delayedConsequences?: DelayedConsequenceRef[];
   setsFlags?: string[];
@@ -85,6 +96,7 @@ export interface EventDefinition {
   weight: number;
   tags: string[];
   impacts: ImpactSet;
+  evidence?: DossierEvidenceDefinition[];
   requirements?: RequirementSpec;
   setsFlags?: string[];
 }

@@ -2,10 +2,10 @@
 
 This is the documentation home for the full decision library and the public-history parallels that helped shape it.
 
-As of `2026-05-11`, the repo contains `112` authored decisions across `11` packs:
+As of `2026-05-11`, the repo contains `113` authored decisions across `11` packs:
 
 - `21` core decisions
-- `79` expansion decisions from `V0.3`
+- `80` expansion decisions from `V0.3`
 - `12` incident-variant decisions from `V0.5`
 
 ## How to Read This
@@ -20,6 +20,35 @@ No decision in this file should be read as:
 - a direct portrayal of a real person
 - a one-to-one recreation of a named airline move
 - a claim that one executive or one carrier uniquely "owns" a given tactic
+
+## Dossier Evidence Metadata
+
+Representative decisions can now carry optional `evidence` metadata. The runtime
+uses this field to create deterministic dossier fragments when a selected decision
+resolves.
+
+```json
+{
+  "evidence": [
+    {
+      "theme": "maintenance_fraud",
+      "weight": 14,
+      "witness": "line mechanic",
+      "detail": "Inspection memo downgrade preserves the original severity mismatch."
+    }
+  ]
+}
+```
+
+Current decision-authored evidence covers all dossier themes:
+
+- `maintenance_fraud`: maintenance reclassification, inspection downgrades, MEL stretching, red-tag deferrals.
+- `labor_abuse`: pension freezes, scope-clause tactics, seniority splits, grievance pressure.
+- `insider_trading`: stock-sale windows, repricing sales, earnings-deck timing, final cash-outs.
+- `regulatory_capture`: former-regulator hires, hearing prep, inspector rotation pressure, consent-order delay.
+- `offshore_evasion`: offshore transfer networks, adviser routing, island retainers, Nassau exit prep.
+- `creditor_deception`: ticket-float sweeps, venue shopping, cramdown term sheets.
+- `board_self_dealing`: consulting agreements, retention bonuses, indemnity walls, parachutes, split board packets.
 
 ## Historical Parallel Matrix
 

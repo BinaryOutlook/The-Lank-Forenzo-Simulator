@@ -4,14 +4,25 @@
     "title": "Invent a Capacity Discipline Story",
     "summary": "Shrink the map, raise the rhetoric, and ask the market to applaud restraint instead of retreat.",
     "group": "market",
-    "tags": ["market", "story", "capacity"],
+    "tags": [
+      "market",
+      "story",
+      "capacity"
+    ],
     "impacts": {
       "marketConfidence": 7,
       "stockPrice": 4,
       "legalHeat": 3
     },
     "delayedConsequences": [
-      { "eventIds": ["analyst_model_walkback", "turnaround_story_cracks", "earnings_guidance_correction"], "delay": 2 }
+      {
+        "eventIds": [
+          "analyst_model_walkback",
+          "turnaround_story_cracks",
+          "earnings_guidance_correction"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -19,14 +30,25 @@
     "title": "Walk the Analysts Through the Smoke",
     "summary": "Hold a detailed call full of selective detail and trust politeness to substitute for skepticism.",
     "group": "market",
-    "tags": ["market", "analysts", "spin"],
+    "tags": [
+      "market",
+      "analysts",
+      "spin"
+    ],
     "impacts": {
       "marketConfidence": 6,
       "stockPrice": 5,
       "legalHeat": 4
     },
     "delayedConsequences": [
-      { "eventIds": ["call_transcript_supercut", "analyst_model_walkback", "turnaround_story_cracks"], "delay": 2 }
+      {
+        "eventIds": [
+          "call_transcript_supercut",
+          "analyst_model_walkback",
+          "turnaround_story_cracks"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -34,14 +56,25 @@
     "title": "Announce a Strategic Review",
     "summary": "Create a process, a banker slide deck, and several months of borrowed credibility.",
     "group": "market",
-    "tags": ["market", "review", "board"],
+    "tags": [
+      "market",
+      "review",
+      "board"
+    ],
     "impacts": {
       "marketConfidence": 5,
       "creditorPatience": 4,
       "legalHeat": 3
     },
     "delayedConsequences": [
-      { "eventIds": ["merger_interest", "turnaround_story_cracks", "fairness_opinion_underfire"], "delay": 3 }
+      {
+        "eventIds": [
+          "merger_interest",
+          "turnaround_story_cracks",
+          "fairness_opinion_underfire"
+        ],
+        "delay": 3
+      }
     ]
   },
   {
@@ -49,14 +82,33 @@
     "title": "Preload the Earnings Deck",
     "summary": "Write the quarter for the headline first, then assign accounting to the clean-up crew.",
     "group": "market",
-    "tags": ["market", "earnings", "accounting"],
+    "tags": [
+      "market",
+      "earnings",
+      "accounting"
+    ],
     "impacts": {
       "marketConfidence": 8,
       "stockPrice": 6,
       "legalHeat": 5
     },
+    "evidence": [
+      {
+        "theme": "insider_trading",
+        "weight": 10,
+        "witness": "investor relations analyst",
+        "detail": "Earnings deck timing narrows the trading chronology."
+      }
+    ],
     "delayedConsequences": [
-      { "eventIds": ["earnings_guidance_correction", "call_transcript_supercut", "analyst_model_walkback"], "delay": 2 }
+      {
+        "eventIds": [
+          "earnings_guidance_correction",
+          "call_transcript_supercut",
+          "analyst_model_walkback"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -64,7 +116,11 @@
     "title": "Bury the Cuts in Synergy Language",
     "summary": "Hide the pain behind consultant nouns until the workforce realizes the grammar is lethal.",
     "group": "market",
-    "tags": ["market", "labor", "synergy"],
+    "tags": [
+      "market",
+      "labor",
+      "synergy"
+    ],
     "impacts": {
       "marketConfidence": 4,
       "stockPrice": 2,
@@ -72,7 +128,14 @@
       "legalHeat": 3
     },
     "delayedConsequences": [
-      { "eventIds": ["route_overlap_chart", "turnaround_story_cracks", "fairness_opinion_underfire"], "delay": 2 }
+      {
+        "eventIds": [
+          "route_overlap_chart",
+          "turnaround_story_cracks",
+          "fairness_opinion_underfire"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -80,7 +143,11 @@
     "title": "Float a Loyalty Spinoff",
     "summary": "Sell the market a cleaner jewel than the airline deserves and let complexity do the hiding.",
     "group": "finance",
-    "tags": ["market", "loyalty", "finance"],
+    "tags": [
+      "market",
+      "loyalty",
+      "finance"
+    ],
     "impacts": {
       "marketConfidence": 7,
       "stockPrice": 5,
@@ -91,7 +158,14 @@
       "roundAtLeast": 2
     },
     "delayedConsequences": [
-      { "eventIds": ["turnaround_story_cracks", "covenant_leak", "fairness_opinion_underfire"], "delay": 3 }
+      {
+        "eventIds": [
+          "turnaround_story_cracks",
+          "covenant_leak",
+          "fairness_opinion_underfire"
+        ],
+        "delay": 3
+      }
     ]
   },
   {
@@ -99,15 +173,34 @@
     "title": "Commission a Friendly Fairness Opinion",
     "summary": "Pay a prestigious third party to explain why your preferred outcome was inevitable and reasonable.",
     "group": "legal",
-    "tags": ["market", "legal", "board"],
+    "tags": [
+      "market",
+      "legal",
+      "board"
+    ],
     "impacts": {
       "airlineCash": -8,
       "creditorPatience": 5,
       "marketConfidence": 4,
       "legalHeat": 3
     },
+    "evidence": [
+      {
+        "theme": "board_self_dealing",
+        "weight": 12,
+        "witness": "banker associate",
+        "detail": "Opinion workpapers make the preferred outcome look preselected."
+      }
+    ],
     "delayedConsequences": [
-      { "eventIds": ["fairness_opinion_underfire", "call_transcript_supercut", "director_indemnity_alarm"], "delay": 2 }
+      {
+        "eventIds": [
+          "fairness_opinion_underfire",
+          "call_transcript_supercut",
+          "director_indemnity_alarm"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -115,14 +208,25 @@
     "title": "Seed the Turnaround Podcast",
     "summary": "Package the rot as leadership content and let the audience confuse candor with control.",
     "group": "market",
-    "tags": ["market", "press", "story"],
+    "tags": [
+      "market",
+      "press",
+      "story"
+    ],
     "impacts": {
       "marketConfidence": 4,
       "stockPrice": 3,
       "legalHeat": 2
     },
     "delayedConsequences": [
-      { "eventIds": ["call_transcript_supercut", "analyst_model_walkback", "turnaround_story_cracks"], "delay": 2 }
+      {
+        "eventIds": [
+          "call_transcript_supercut",
+          "analyst_model_walkback",
+          "turnaround_story_cracks"
+        ],
+        "delay": 2
+      }
     ]
   }
 ]
