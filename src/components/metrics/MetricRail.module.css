@@ -1,10 +1,14 @@
 .rail {
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 1rem;
   align-content: start;
   padding: 1.2rem;
   border: 1px solid var(--border);
   background: var(--panel);
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 .header {
@@ -30,7 +34,12 @@
 
 .metrics {
   display: grid;
+  align-content: start;
   gap: 0.9rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  scrollbar-width: thin;
 }
 
 .metricRow {
@@ -81,14 +90,10 @@
   background: linear-gradient(90deg, color-mix(in oklab, var(--text-muted) 32%, transparent), var(--text-muted));
 }
 
-@media (min-width: 1181px) {
-  .rail {
-    position: sticky;
-    top: calc(5.5rem + env(safe-area-inset-top));
-    max-height: calc(100svh - 6.5rem - env(safe-area-inset-top));
-    overflow-y: auto;
-    scrollbar-width: thin;
-  }
+:global([data-run-layout-mode="desktop-landscape"]) .rail,
+:global([data-run-layout-mode="tablet-landscape"]) .rail {
+  gap: 0.75rem;
+  padding: 0.95rem;
 }
 
 @media (max-width: 1180px) {
@@ -114,6 +119,15 @@
   .metricValue {
     font-size: 0.8rem;
   }
+}
+
+:global([data-run-layout-mode="tablet-landscape"]) .metrics {
+  grid-template-columns: repeat(2, minmax(6.4rem, 1fr));
+  gap: 0.55rem;
+}
+
+:global([data-run-layout-mode="tablet-landscape"]) .title {
+  font-size: 1rem;
 }
 
 @media (max-width: 520px) {

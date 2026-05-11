@@ -113,7 +113,7 @@ For the first serious browser version, the product should:
 - let factions, operations, and dossier evidence remember the style of the player's misconduct
 - provide deterministic balance and reachability tooling so content coverage problems are visible
 - support two complete visual themes without fragmenting the product
-- remain usable in responsive desktop, tablet, and phone browser layouts, including portrait play with touch controls
+- remain usable in scroll-less fitted desktop, tablet, and phone browser layouts, including portrait play with touch controls
 - provide local-first player options for presentation, audio, and graphical load
 - explain the game motivation and aviation-management satire through a lightweight secondary About page
 - remain local-first and easy to run during early development
@@ -338,6 +338,10 @@ It should contain:
 - a current narrative panel or event stack
 - an end-turn control
 
+It should behave like a fitted game interface, not a long web page. Normal play across supported desktop landscape, tablet landscape,
+tablet portrait, and phone portrait viewports should keep document-level vertical scrolling at zero. Long content should scroll inside
+explicit panels, collapse, summarize, or move behind portrait panel navigation rather than pushing the whole run page beyond the viewport.
+
 ### 11.3 Options page
 
 The Options page should:
@@ -463,10 +467,11 @@ Responsive behavior should preserve:
 - access to required round controls through touch-friendly targets
 - visibility of the board packet, major run metrics, decisions, and consequence feed
 - readable text without horizontal scrolling
+- no document-level vertical scrolling during normal run play on supported viewport projects
 - safe-area spacing for notches, browser chrome, and virtual keyboard resizing
 - the same simulation information and decision rules across device classes
 
-Portrait layouts may reorganize sections, but they must not become a separate mobile version with different gameplay advantages.
+Portrait layouts may reorganize sections into tabs, drawers, or paged panels, but they must not become a separate mobile version with different gameplay advantages.
 
 ### 13.4 Decision system
 

@@ -1,10 +1,15 @@
 .packet {
   display: grid;
   gap: 1rem;
+  align-content: start;
   padding: clamp(1rem, 1.6vw, 1.45rem);
   border: 1px solid var(--border);
   background: linear-gradient(180deg, var(--panel-strong), var(--panel));
   box-shadow: var(--shadow-ambient);
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .header {
@@ -69,6 +74,7 @@
 .signalTitle {
   margin: 0;
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
 .pressureRead {
@@ -96,6 +102,36 @@
   padding: 0.8rem;
   border: 1px solid var(--border);
   background: color-mix(in oklab, var(--panel-strong) 62%, transparent);
+  min-width: 0;
+}
+
+:global([data-run-layout-mode="desktop-landscape"]) .packet,
+:global([data-run-layout-mode="tablet-landscape"]) .packet {
+  gap: 0.8rem;
+  padding: clamp(0.85rem, 1.1vw, 1.1rem);
+}
+
+:global([data-run-layout-mode="desktop-landscape"]) .summary,
+:global([data-run-layout-mode="tablet-landscape"]) .summary,
+:global([data-run-layout-mode="desktop-landscape"]) .memoBody,
+:global([data-run-layout-mode="tablet-landscape"]) .memoBody,
+:global([data-run-layout-mode="desktop-landscape"]) .signalBody,
+:global([data-run-layout-mode="tablet-landscape"]) .signalBody {
+  line-height: 1.38;
+}
+
+:global([data-run-layout-mode="tablet-landscape"]) .columns,
+:global([data-run-layout-mode="tablet-landscape"]) .pressureGrid {
+  grid-template-columns: 1fr;
+}
+
+:global([data-run-layout-mode="tablet-landscape"]) .title {
+  font-size: clamp(1.12rem, 1.8vw, 1.3rem);
+}
+
+:global([data-run-layout-mode="tablet-landscape"]) .pressureRead {
+  gap: 0.65rem;
+  padding-top: 0.75rem;
 }
 
 @media (max-width: 900px) {

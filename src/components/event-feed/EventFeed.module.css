@@ -1,11 +1,14 @@
 .feed {
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 1rem;
   align-content: start;
   padding: 1.2rem;
   border: 1px solid var(--border);
   background: var(--panel);
+  height: 100%;
   min-height: 100%;
+  overflow: hidden;
 }
 
 .header {
@@ -30,7 +33,12 @@
 
 .list {
   display: grid;
+  align-content: start;
   gap: 0.9rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  scrollbar-width: thin;
 }
 
 .entry {
@@ -87,14 +95,24 @@
   font-size: 0.9rem;
 }
 
-@media (min-width: 1181px) {
-  .feed {
-    position: sticky;
-    top: calc(5.5rem + env(safe-area-inset-top));
-    max-height: calc(100svh - 6.5rem - env(safe-area-inset-top));
-    overflow-y: auto;
-    scrollbar-width: thin;
-  }
+:global([data-run-layout-mode="desktop-landscape"]) .feed,
+:global([data-run-layout-mode="tablet-landscape"]) .feed {
+  gap: 0.75rem;
+  padding: 0.95rem;
+}
+
+:global([data-run-layout-mode="tablet-landscape"]) .title {
+  font-size: 1.05rem;
+  line-height: 1.15;
+}
+
+:global([data-run-layout-mode="tablet-landscape"]) .list {
+  gap: 0.65rem;
+}
+
+:global([data-run-layout-mode="tablet-landscape"]) .entry {
+  gap: 0.35rem;
+  padding-top: 0.65rem;
 }
 
 @media (max-width: 520px) {

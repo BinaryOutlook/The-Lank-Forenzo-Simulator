@@ -3,6 +3,15 @@
   color: var(--text);
 }
 
+.shellRunSurface {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100vh;
+  height: 100svh;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .header {
   position: sticky;
   top: 0;
@@ -120,6 +129,27 @@
   padding: clamp(0.75rem, 2vw, 1.8rem);
 }
 
+.mainRunSurface {
+  min-height: 0;
+  overflow: hidden;
+  padding: clamp(0.55rem, 1.25vw, 1rem);
+}
+
+.mainRunSurface > * {
+  min-height: 0;
+  height: 100%;
+}
+
+.shellRunSurface .header {
+  padding-block: calc(0.65rem + env(safe-area-inset-top)) 0.65rem;
+}
+
+@supports (height: 100dvh) {
+  .shellRunSurface {
+    height: 100dvh;
+  }
+}
+
 @media (max-width: 860px) {
   .header {
     flex-direction: column;
@@ -152,18 +182,37 @@
     padding-inline: 0.75rem;
   }
 
+  .shellRunSurface .header {
+    gap: 0.55rem;
+    padding-block: calc(0.45rem + env(safe-area-inset-top)) 0.55rem;
+  }
+
   .subtitle {
     font-size: 0.68rem;
     line-height: 1.35;
+  }
+
+  .shellRunSurface .subtitle {
+    display: none;
   }
 
   .main {
     padding: 0.75rem;
   }
 
+  .mainRunSurface {
+    padding: 0.55rem;
+  }
+
   .roundBadge {
     flex-basis: 5.75rem;
     padding-inline: 0.65rem;
+  }
+
+  .shellRunSurface .roundBadge,
+  .shellRunSurface .navLink,
+  .shellRunSurface .navLinkActive {
+    min-height: 2.2rem;
   }
 
   .themeSwitch {
@@ -173,5 +222,10 @@
   .themeButton,
   .themeButtonActive {
     flex-basis: 5rem;
+  }
+
+  .shellRunSurface .themeButton,
+  .shellRunSurface .themeButtonActive {
+    min-height: 2.35rem;
   }
 }

@@ -52,6 +52,7 @@ export function AppShell() {
   const settings = useGameStore((state) => state.settings);
   const setTheme = useGameStore((state) => state.setTheme);
   const run = useGameStore((state) => state.run);
+  const isRunSurface = location.pathname === "/run" && run?.status === "active";
   const interactionEffectsEnabled =
     settings.visualEffectsEnabled && settings.interactionEffectsEnabled;
 
@@ -60,7 +61,13 @@ export function AppShell() {
   }, [location.pathname]);
 
   return (
-    <div className={`app-frame ${styles.shell}`}>
+    <div
+      className={clsx(
+        "app-frame",
+        styles.shell,
+        isRunSurface && styles.shellRunSurface,
+      )}
+    >
       <motion.header
         className={styles.header}
         initial={{ opacity: 0, y: -18 }}
@@ -113,7 +120,9 @@ export function AppShell() {
         </div>
       </motion.header>
 
-      <main className={styles.main}>
+      <main
+        className={clsx(styles.main, isRunSurface && styles.mainRunSurface)}
+      >
         <Outlet />
       </main>
     </div>

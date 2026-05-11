@@ -32,11 +32,21 @@ import styles from "./DecisionTray.module.css";
 
 interface DecisionTrayProps {
   decisions: DecisionDefinition[];
+  interactionEffectsEnabled?: boolean;
   resources: ConsumableResources;
   selectedDecisionIds: string[];
+  showControls?: boolean;
   onToggle: (decisionId: string) => void;
   onEndTurn: () => void;
-  interactionEffectsEnabled?: boolean;
+}
+
+interface QuarterControlsProps {
+  interactionEffectsEnabled: boolean;
+  resolveLabel: string;
+  selectedCost: ResourceCostSet;
+  selectedDecisionCount: number;
+  surface?: "inline" | "docked";
+  onEndTurn: () => void;
 }
 
 interface DecisionCardProps {
@@ -137,15 +147,13 @@ function DecisionCard({
 
 export function DecisionTray({
   decisions,
+  interactionEffectsEnabled = true,
   resources,
   selectedDecisionIds,
+  showControls = true,
   onToggle,
   onEndTurn,
-  interactionEffectsEnabled = true,
 }: DecisionTrayProps) {
-  const resolveFeedback = useInteractionFeedback<HTMLButtonElement>(
-    interactionEffectsEnabled,
-  );
   const resolveLabel =
     selectedDecisionIds.length > 0 ? "Resolve the quarter" : "Hold the line";
   const selectedDecisions = decisions.filter((decision) =>
@@ -153,13 +161,11 @@ export function DecisionTray({
   );
   const selectedCost = getDecisionSelectionCost(selectedDecisions);
   const projectedResources = projectResourceSpend(resources, selectedCost);
-  const handleEndTurn = () => {
-    emitInteractionCue("quarter-resolve");
-    onEndTurn();
-  };
 
   return (
-    <section className={styles.tray}>
+    <section
+      className={clsx(styles.tray, !showControls && styles.trayWithoutControls)}
+    >
       <div className={styles.header}>
         <p className={styles.eyebrow}>Decision tray</p>
         <h2 className={styles.title}>Choose where the pain goes next.</h2>
@@ -171,24 +177,15 @@ export function DecisionTray({
         selectedCost={selectedCost}
       />
 
-      <div className={styles.controls} data-testid="quarter-controls">
-        <p className={styles.selectionCount}>
-          {selectedDecisionIds.length}/2 selected
-        </p>
-        <p className={styles.selectionCost}>
-          {formatResourceCostSummary(selectedCost)}
-        </p>
-        <button
-          type="button"
-          className={clsx("interaction-feedback-control", styles.resolveButton)}
-          data-interaction-feedback={resolveFeedback.feedbackState}
-          onClick={handleEndTurn}
-          onKeyDown={resolveFeedback.onFeedbackKeyDown}
-          onPointerDown={resolveFeedback.onFeedbackPointerDown}
-        >
-          {resolveLabel}
-        </button>
-      </div>
+      {showControls ? (
+        <QuarterControls
+          interactionEffectsEnabled={interactionEffectsEnabled}
+          resolveLabel={resolveLabel}
+          selectedCost={selectedCost}
+          selectedDecisionCount={selectedDecisionIds.length}
+          onEndTurn={onEndTurn}
+        />
+      ) : null}
 
       <div className={styles.list}>
         {decisions.map((decision, index) => {
@@ -227,6 +224,48 @@ export function DecisionTray({
         })}
       </div>
     </section>
+  );
+}
+
+export function QuarterControls({
+  interactionEffectsEnabled,
+  resolveLabel,
+  selectedCost,
+  selectedDecisionCount,
+  surface = "inline",
+  onEndTurn,
+}: QuarterControlsProps) {
+  const resolveFeedback = useInteractionFeedback<HTMLButtonElement>(
+    interactionEffectsEnabled,
+  );
+  const handleEndTurn = () => {
+    emitInteractionCue("quarter-resolve");
+    onEndTurn();
+  };
+
+  return (
+    <div
+      className={clsx(
+        styles.controls,
+        surface === "docked" && styles.controlsDocked,
+      )}
+      data-testid="quarter-controls"
+    >
+      <p className={styles.selectionCount}>{selectedDecisionCount}/2 selected</p>
+      <p className={styles.selectionCost}>
+        {formatResourceCostSummary(selectedCost)}
+      </p>
+      <button
+        type="button"
+        className={clsx("interaction-feedback-control", styles.resolveButton)}
+        data-interaction-feedback={resolveFeedback.feedbackState}
+        onClick={handleEndTurn}
+        onKeyDown={resolveFeedback.onFeedbackKeyDown}
+        onPointerDown={resolveFeedback.onFeedbackPointerDown}
+      >
+        {resolveLabel}
+      </button>
+    </div>
   );
 }
 
