@@ -5,6 +5,7 @@ import {
   createInitialRunState,
   resolveRound,
 } from "../../src/simulation/resolution/resolveRound";
+import { createInitialDossierState } from "../../src/simulation/dossiers/dossierState";
 import { getAvailableDecisions } from "../../src/simulation/systems/decisionEngine";
 import { applyImpactSet } from "../../src/simulation/systems/metricEffects";
 import { meetsRequirements } from "../../src/simulation/systems/requirements";
@@ -41,6 +42,8 @@ describe("resolveRound", () => {
       "labor_abuse",
       "regulatory_capture",
       "offshore_evasion",
+      "creditor_deception",
+      "board_self_dealing",
     ]);
   });
 
@@ -67,100 +70,61 @@ describe("resolveRound", () => {
     expect(next.systemSignals?.length).toBeGreaterThan(0);
   });
 
-  it("fires an active manifest hazard deterministically with an explainable source", () => {
-    const createHazardRun = () => {
-      const run = createInitialRunState();
-      run.round = 3;
-      run.metrics.legalHeat = 70;
-      run.metrics.safetyIntegrity = 80;
-      run.metrics.workforceMorale = 70;
-      run.metrics.creditorPatience = 70;
-      run.metrics.publicAnger = 20;
-      run.metrics.marketConfidence = 60;
-      return run;
-    };
-
-    const first = resolveRound(createHazardRun());
-    const repeated = resolveRound(createHazardRun());
-    const firstHazards = first.history.filter(
-      (entry) => entry.round === 4 && entry.sourceKind === "hazard_event",
+  it("applies a pre-ending legal consequence when a dossier crosses heavy severity", () => {
+    const seededDossiers = createInitialDossierState().map((thread) =>
+      thread.theme === "maintenance_fraud"
+        ? {
+            ...thread,
+            evidenceWeight: 46,
+            severity: 58,
+            severityBand: "medium" as const,
+            dormant: false,
+            witnesses: ["line mechanic"],
+            linkedDecisionIds: ["stretch_the_mel_clock"],
+            factionOwner: "regulators" as const,
+            nextStep: "formal investigative demand",
+          }
+        : thread,
     );
-    const repeatedHazards = repeated.history.filter(
-      (entry) => entry.round === 4 && entry.sourceKind === "hazard_event",
+    const heavyRun = createInitialRunState();
+    heavyRun.dossiers = seededDossiers;
+    heavyRun.selectedDecisionIds = ["downgrade_the_inspection_memo"];
+
+    const controlRun = createInitialRunState();
+    controlRun.selectedDecisionIds = ["downgrade_the_inspection_memo"];
+
+    const heavyNext = resolveRound(heavyRun);
+    const controlNext = resolveRound(controlRun);
+
+    expect(heavyNext.metrics.legalHeat).toBeGreaterThanOrEqual(
+      controlNext.metrics.legalHeat + 2,
     );
-
-    expect(firstHazards).toHaveLength(1);
-    expect(firstHazards[0]).toMatchObject({
-      source: "event",
-      sourceKind: "hazard_event",
-      sourceLabel: "Hazard",
-      title: "Ethics Hotline Spike",
-      cause:
-        "Legal heat is high enough that internal complaints start finding outside readers.",
-    });
-    expect(repeatedHazards.map((entry) => entry.title)).toEqual(
-      firstHazards.map((entry) => entry.title),
-    );
-    expect(first.scheduler?.cooldowns["hazard-legal-pressure"]).toBe(7);
-  });
-
-  it("respects active hazard requirements and cooldowns during round resolution", () => {
-    const quietRun = createInitialRunState();
-    quietRun.round = 3;
-    quietRun.metrics.legalHeat = 20;
-    quietRun.metrics.safetyIntegrity = 80;
-    quietRun.metrics.workforceMorale = 70;
-    quietRun.metrics.creditorPatience = 70;
-    quietRun.metrics.publicAnger = 20;
-    quietRun.metrics.marketConfidence = 60;
-
-    const quietNext = resolveRound(quietRun);
-
+    expect(heavyNext.flags).toContain("dossier:maintenance_fraud:heavy");
     expect(
-      quietNext.history.some(
-        (entry) => entry.round === 4 && entry.sourceKind === "hazard_event",
-      ),
-    ).toBe(false);
-
-    const hotRun = createInitialRunState();
-    hotRun.round = 3;
-    hotRun.metrics.legalHeat = 70;
-    hotRun.metrics.safetyIntegrity = 80;
-    hotRun.metrics.workforceMorale = 70;
-    hotRun.metrics.creditorPatience = 70;
-    hotRun.metrics.publicAnger = 20;
-    hotRun.metrics.marketConfidence = 60;
-
-    const first = resolveRound(hotRun);
-    const second = resolveRound({
-      ...first,
-      metrics: {
-        ...first.metrics,
-        legalHeat: 80,
-        safetyIntegrity: 80,
-        workforceMorale: 70,
-        creditorPatience: 70,
-        publicAnger: 20,
-        marketConfidence: 60,
-      },
-    });
-
-    expect(
-      first.history.some(
+      heavyNext.history.some(
         (entry) =>
-          entry.round === 4 &&
-          entry.sourceKind === "hazard_event" &&
-          entry.title === "Ethics Hotline Spike",
+          entry.source === "dossier" &&
+          entry.sourceKind === "dossier_threshold" &&
+          entry.dossierTheme === "maintenance_fraud",
       ),
     ).toBe(true);
-    expect(
-      second.history.some(
-        (entry) =>
-          entry.round === 5 &&
-          entry.sourceKind === "hazard_event" &&
-          entry.title === "Ethics Hotline Spike",
-      ),
-    ).toBe(false);
+  });
+
+  it("feeds authored hazards into the active scheduler", () => {
+    const run = createInitialRunState();
+    run.round = 4;
+    run.metrics.legalHeat = 82;
+
+    const next = resolveRound(run);
+    const hazardEntry = next.history.find(
+      (entry) =>
+        entry.sourceKind === "hazard_event" &&
+        entry.scheduledEventId === "hazard_legal_heat_ig_letter",
+    );
+
+    expect(hazardEntry?.title).toBe("Inspector General Letter");
+    expect(hazardEntry?.cause).toMatch(/Legal heat/);
+    expect(next.scheduler?.cooldowns.hazard_legal_heat_ig_letter).toBe(9);
   });
 
   it("offers a curated decision tray for a fresh run", () => {
@@ -277,6 +241,45 @@ describe("resolveRound", () => {
 
     expect(next.status).toBe("ended");
     expect(next.endingId).toBe("extraction");
+  });
+
+  it("builds dossier-specific case theory recap entries for endings", () => {
+    const run = createInitialRunState();
+    run.round = 7;
+    run.metrics.marketConfidence = 72;
+    run.metrics.stockPrice = 32;
+    run.metrics.personalWealth = 48;
+    run.metrics.legalHeat = 48;
+    run.dossiers = createInitialDossierState().map((thread) =>
+      thread.theme === "insider_trading"
+        ? {
+            ...thread,
+            evidenceWeight: 42,
+            severity: 53,
+            severityBand: "medium" as const,
+            dormant: false,
+            witnesses: ["brokerage compliance analyst"],
+            linkedDecisionIds: ["stock_sale_window"],
+            linkedEventIds: ["broker_chat_subpoena"],
+            factionOwner: "press" as const,
+            nextStep: "subpoenaed trading chronology",
+          }
+        : thread,
+    );
+    run.selectedDecisionIds = ["cash_out_and_resign"];
+
+    const next = resolveRound(run);
+
+    expect(next.status).toBe("ended");
+    expect(next.recap?.dossiers[0]).toEqual(
+      expect.objectContaining({
+        title: "Insider Trading",
+        body: expect.stringContaining("market optimism and stock-sale timing"),
+      }),
+    );
+    expect(next.recap?.dossiers[0]?.body).toContain(
+      "brokerage compliance analyst",
+    );
   });
 
   it("uses the shared requirement evaluator for both decisions and events", () => {

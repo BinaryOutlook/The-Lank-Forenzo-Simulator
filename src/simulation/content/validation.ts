@@ -5,6 +5,11 @@ import type {
   MetricKey,
   RequirementSpec,
 } from "../state/types";
+import {
+  factionEffectDeltaBounds,
+  factionEffectKeys,
+  factionIds,
+} from "../factions/factionState.js";
 import { runMetricBounds } from "../systems/metricEffects";
 
 type ValidationSeverity = "error" | "warning";
@@ -16,6 +21,9 @@ type ValidationEntry = {
 
 type ValidationMap = Map<string, number>;
 
+const factionIdSet = new Set<string>(factionIds);
+const factionEffectKeySet = new Set<string>(factionEffectKeys);
+
 export interface ContentValidationReport {
   decisions: {
     total: number;
@@ -25,6 +33,10 @@ export interface ContentValidationReport {
   events: {
     total: number;
     byKind: ValidationMap;
+  };
+  hazards: {
+    total: number;
+    byFamily: ValidationMap;
   };
   endings: number;
   errors: ValidationEntry[];
@@ -37,6 +49,7 @@ export function validateContentBundle(
   const byPack = new Map<string, number>();
   const byGroup = new Map<string, number>();
   const byKind = new Map<string, number>();
+  const byFamily = new Map<string, number>();
   const errors: ValidationEntry[] = [];
   const warnings: ValidationEntry[] = [];
   const referencedDelayedEventIds = new Set<string>();
@@ -47,6 +60,7 @@ export function validateContentBundle(
   accumulateCounts(content.decisions, (decision) => decision.pack, byPack);
   accumulateCounts(content.decisions, (decision) => decision.group, byGroup);
   accumulateCounts(content.events, (event) => event.kind, byKind);
+  accumulateCounts(content.hazards, (hazard) => hazard.sourceFamily, byFamily);
 
   collectDuplicates(
     content.decisions,
@@ -56,12 +70,14 @@ export function validateContentBundle(
   );
   collectDuplicates(content.events, (event) => event.id, "event", errors);
   collectDuplicates(content.endings, (ending) => ending.id, "ending", errors);
+  collectDuplicates(content.hazards, (hazard) => hazard.id, "hazard", errors);
 
   const eventById = new Map(
     content.events.map((event) => [event.id, event] as const),
   );
 
   for (const decision of content.decisions) {
+    collectFactionEffectErrors(decision, "decision", errors);
     collectFlagsAndRequirements(
       decision,
       setFlags,
@@ -100,6 +116,7 @@ export function validateContentBundle(
   }
 
   for (const event of content.events) {
+    collectFactionEffectErrors(event, "event", errors);
     collectFlagsAndRequirements(
       event,
       setFlags,
@@ -107,6 +124,30 @@ export function validateContentBundle(
       referencedFlags,
       warnings,
     );
+  }
+
+  for (const hazard of content.hazards) {
+    collectFlagsAndRequirements(
+      hazard,
+      setFlags,
+      requiredFlags,
+      referencedFlags,
+      warnings,
+    );
+
+    const event = eventById.get(hazard.eventId);
+
+    if (!event) {
+      errors.push({
+        severity: "error",
+        message: `Broken hazard ref: hazard "${hazard.id}" references unknown event "${hazard.eventId}".`,
+      });
+      continue;
+    }
+
+    if (event.kind === "delayed") {
+      referencedDelayedEventIds.add(event.id);
+    }
   }
 
   const unreferencedDelayedEvents = content.events
@@ -154,6 +195,10 @@ export function validateContentBundle(
       total: content.events.length,
       byKind,
     },
+    hazards: {
+      total: content.hazards.length,
+      byFamily,
+    },
     endings: content.endings.length,
     errors,
     warnings,
@@ -172,6 +217,8 @@ export function formatContentValidationReport(
     `Decision groups: ${formatCounts(report.decisions.byGroup)}`,
     `Events: ${report.events.total}`,
     `Events by kind: ${formatCounts(report.events.byKind)}`,
+    `Hazards: ${report.hazards.total}`,
+    `Hazards by family: ${formatCounts(report.hazards.byFamily)}`,
     `Endings: ${report.endings}`,
   ];
 
@@ -227,7 +274,11 @@ function collectDuplicates<T>(
 }
 
 function collectFlagsAndRequirements(
-  item: DecisionDefinition | EventDefinition,
+  item: {
+    id: string;
+    requirements?: RequirementSpec;
+    setsFlags?: string[];
+  },
   setFlags: Set<string>,
   requiredFlags: Set<string>,
   referencedFlags: Set<string>,
@@ -257,6 +308,79 @@ function collectFlagsAndRequirements(
       severity: "warning",
       message: `Likely impossible requirements on "${item.id}": ${impossibleReasons.join("; ")}.`,
     });
+  }
+}
+
+function collectFactionEffectErrors(
+  item: DecisionDefinition | EventDefinition,
+  sourceKind: "decision" | "event",
+  errors: ValidationEntry[],
+) {
+  if (!item.factionEffects) {
+    return;
+  }
+
+  const effectsByFaction = item.factionEffects as Record<string, unknown>;
+
+  for (const [factionId, rawEffect] of Object.entries(effectsByFaction)) {
+    if (!factionIdSet.has(factionId)) {
+      errors.push({
+        severity: "error",
+        message: `Invalid faction effect: ${sourceKind} "${item.id}" references unknown faction "${factionId}".`,
+      });
+    }
+
+    if (!isRecord(rawEffect)) {
+      errors.push({
+        severity: "error",
+        message: `Invalid faction effect: ${sourceKind} "${item.id}" has a non-object effect for "${factionId}".`,
+      });
+      continue;
+    }
+
+    let numericDeltaCount = 0;
+
+    for (const [effectKey, rawDelta] of Object.entries(rawEffect)) {
+      if (effectKey === "grievance") {
+        if (typeof rawDelta !== "string" || rawDelta.length === 0) {
+          errors.push({
+            severity: "error",
+            message: `Invalid faction effect: ${sourceKind} "${item.id}" has an empty grievance for "${factionId}".`,
+          });
+        }
+        continue;
+      }
+
+      if (!factionEffectKeySet.has(effectKey)) {
+        errors.push({
+          severity: "error",
+          message: `Invalid faction effect: ${sourceKind} "${item.id}" uses unknown effect key "${effectKey}" for "${factionId}".`,
+        });
+        continue;
+      }
+
+      numericDeltaCount += 1;
+
+      if (
+        typeof rawDelta !== "number" ||
+        !Number.isFinite(rawDelta) ||
+        !Number.isInteger(rawDelta) ||
+        rawDelta < factionEffectDeltaBounds.min ||
+        rawDelta > factionEffectDeltaBounds.max
+      ) {
+        errors.push({
+          severity: "error",
+          message: `Invalid faction effect: ${sourceKind} "${item.id}" has ${effectKey}=${formatNumberForValidation(rawDelta)} for "${factionId}", outside ${factionEffectDeltaBounds.min}..${factionEffectDeltaBounds.max}.`,
+        });
+      }
+    }
+
+    if (numericDeltaCount === 0) {
+      errors.push({
+        severity: "error",
+        message: `Invalid faction effect: ${sourceKind} "${item.id}" must provide at least one numeric delta for "${factionId}".`,
+      });
+    }
   }
 }
 
@@ -310,4 +434,16 @@ function formatCounts(counts: ValidationMap): string {
 
 function formatNumber(value: number): string {
   return Number.isInteger(value) ? `${value}` : value.toFixed(2);
+}
+
+function formatNumberForValidation(value: unknown): string {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return formatNumber(value);
+  }
+
+  return JSON.stringify(value) ?? String(value);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
 }

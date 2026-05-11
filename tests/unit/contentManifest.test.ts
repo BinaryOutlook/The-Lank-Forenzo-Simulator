@@ -3,7 +3,6 @@ import {
   compileContentManifest,
   loadContentManifest,
 } from "../../src/simulation/content";
-import type { HazardRule } from "../../src/simulation/scheduler/eventScheduler.js";
 import type { ContentBundle } from "../../src/simulation/state/types";
 import { runMetricBounds } from "../../src/simulation/systems/metricEffects";
 
@@ -16,7 +15,6 @@ describe("content manifest", () => {
     expect(manifest.contentHash).toMatch(/^[a-f0-9]{8}$/);
     expect(repeatedLoad).toBe(manifest);
     expect(repeatedLoad.contentHash).toBe(manifest.contentHash);
-    expect(manifest.hazardRules.length).toBeGreaterThan(0);
 
     const decision = manifest.decisions[0];
     const event = manifest.events[0];
@@ -25,9 +23,6 @@ describe("content manifest", () => {
     expect(manifest.decisionById[decision.id]).toBe(decision);
     expect(manifest.eventById[event.id]).toBe(event);
     expect(manifest.endingById[ending.id]).toBe(ending);
-    for (const rule of manifest.hazardRules) {
-      expect(manifest.eventById[rule.eventId]?.kind).toBe("ambient");
-    }
   });
 
   it("indexes decisions by pack and events by tag using stable id lists", () => {
@@ -46,7 +41,46 @@ describe("content manifest", () => {
     expect(manifest.eventsByTag[eventTag]).toEqual(taggedEventIds);
   });
 
-  it("indexes flag producers and consumers across decisions and events", () => {
+  it("indexes hazard rules by id and source family with hash awareness", () => {
+    const manifest = loadContentManifest();
+    const firstHazard = manifest.hazards[0];
+    const familyHazards = manifest.hazards
+      .filter((hazard) => hazard.sourceFamily === firstHazard.sourceFamily)
+      .map((hazard) => hazard.id)
+      .sort((left, right) => left.localeCompare(right));
+    const original = compileContentManifest(createFixtureContent(), "fixture");
+    const tweaked = compileContentManifest(
+      {
+        ...createFixtureContent(),
+        hazards: [
+          ...createFixtureContent().hazards,
+          {
+            id: "fixture_public_anger_hazard",
+            eventId: "fixture_delayed",
+            baseWeight: 3,
+            cooldownRounds: 2,
+            sourceFamily: "publicAnger",
+            explanation: "Fixture public anger pressure.",
+            requirements: {
+              metricMin: {
+                publicAnger: 55,
+              },
+            },
+          },
+        ],
+      },
+      "fixture",
+    );
+
+    expect(manifest.hazards.length).toBeGreaterThanOrEqual(5);
+    expect(manifest.hazardById[firstHazard.id]).toBe(firstHazard);
+    expect(manifest.hazardsByFamily[firstHazard.sourceFamily]).toEqual(
+      familyHazards,
+    );
+    expect(tweaked.contentHash).not.toBe(original.contentHash);
+  });
+
+  it("indexes flag producers and consumers across decisions, events, and hazards", () => {
     const fixture = compileContentManifest(createFixtureContent(), "fixture");
 
     expect(fixture.flags).toEqual([
@@ -62,6 +96,7 @@ describe("content manifest", () => {
     ]);
     expect(fixture.flagConsumers.producedAndRequiredFlag).toEqual([
       "decision:fixture_followup",
+      "hazard:fixture_legal_hazard",
     ]);
     expect(fixture.flagConsumers.suppressedFlag).toEqual([
       "event:fixture_delayed",
@@ -102,6 +137,13 @@ describe("content manifest", () => {
     expect(
       fixture.diagnostics.some(
         (diagnostic) =>
+          diagnostic.kind === "broken-hazard-reference" &&
+          diagnostic.id === "missing_hazard_event",
+      ),
+    ).toBe(true);
+    expect(
+      fixture.diagnostics.some(
+        (diagnostic) =>
           diagnostic.kind === "likely-impossible-requirement" &&
           diagnostic.sourceId === "fixture_followup",
       ),
@@ -112,69 +154,6 @@ describe("content manifest", () => {
           diagnostic.kind === "pack-coverage" &&
           diagnostic.id === "core" &&
           diagnostic.count === 2,
-      ),
-    ).toBe(true);
-  });
-
-  it("compiles hazard rules into the manifest with deterministic diagnostics", () => {
-    const hazardRules: HazardRule[] = [
-      {
-        id: "fixture-hazard",
-        eventId: "fixture_event",
-        baseWeight: 3,
-        cooldownRounds: 2,
-        tags: ["fixture"],
-        requirements: {
-          flagsAll: ["producedAndRequiredFlag"],
-        },
-      },
-      {
-        id: "fixture-hazard",
-        eventId: "fixture_delayed",
-        baseWeight: 1,
-        cooldownRounds: 1,
-        tags: ["fixture"],
-      },
-      {
-        id: "missing-hazard-event",
-        eventId: "missing_ambient",
-        baseWeight: 1,
-        cooldownRounds: 1,
-        tags: ["fixture"],
-      },
-    ];
-
-    const fixture = compileContentManifest(
-      createFixtureContent(),
-      "fixture",
-      hazardRules,
-    );
-
-    expect(fixture.hazardRules).toEqual(hazardRules);
-    expect(fixture.flagConsumers.producedAndRequiredFlag).toContain(
-      "hazard:fixture-hazard",
-    );
-    expect(
-      fixture.diagnostics.some(
-        (diagnostic) =>
-          diagnostic.kind === "duplicate-hazard-rule" &&
-          diagnostic.id === "fixture-hazard",
-      ),
-    ).toBe(true);
-    expect(
-      fixture.diagnostics.some(
-        (diagnostic) =>
-          diagnostic.kind === "broken-hazard-reference" &&
-          diagnostic.sourceId === "fixture-hazard" &&
-          diagnostic.id === "fixture_delayed",
-      ),
-    ).toBe(true);
-    expect(
-      fixture.diagnostics.some(
-        (diagnostic) =>
-          diagnostic.kind === "broken-hazard-reference" &&
-          diagnostic.sourceId === "missing-hazard-event" &&
-          diagnostic.id === "missing_ambient",
       ),
     ).toBe(true);
   });
@@ -244,6 +223,35 @@ function createFixtureContent(): ContentBundle {
         weight: 1,
         tags: ["orphan"],
         impacts: {},
+      },
+    ],
+    hazards: [
+      {
+        id: "fixture_legal_hazard",
+        eventId: "fixture_delayed",
+        baseWeight: 5,
+        cooldownRounds: 3,
+        sourceFamily: "legalHeat",
+        explanation: "Fixture legal pressure.",
+        requirements: {
+          metricMin: {
+            legalHeat: 60,
+          },
+          flagsAll: ["producedAndRequiredFlag"],
+        },
+      },
+      {
+        id: "fixture_missing_hazard",
+        eventId: "missing_hazard_event",
+        baseWeight: 5,
+        cooldownRounds: 3,
+        sourceFamily: "dossierExposure",
+        explanation: "Fixture missing hazard event.",
+        requirements: {
+          metricMin: {
+            legalHeat: 60,
+          },
+        },
       },
     ],
     endings: [

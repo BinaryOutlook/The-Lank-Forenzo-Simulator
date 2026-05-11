@@ -1,5 +1,9 @@
 import { pickWeighted } from "../../lib/random/seeded";
-import type { EventDefinition, RequirementSpec, RunState } from "../state/types";
+import type {
+  EventDefinition,
+  HazardDefinition,
+  RunState,
+} from "../state/types";
 import { meetsRequirements } from "../systems/requirements";
 
 export type EventById = Record<string, EventDefinition>;
@@ -14,15 +18,13 @@ export interface ScheduledEvent {
   sourceRefs: string[];
 }
 
-export interface HazardRule {
-  id: string;
-  eventId: string;
-  baseWeight: number;
-  cooldownRounds: number;
-  tags: string[];
-  requirements?: RequirementSpec;
-  sourceFamily?: string;
-  explanation?: string;
+export type HazardRule = HazardDefinition;
+
+export interface ResolvedSchedulerEvent {
+  event: EventDefinition;
+  sourceKind: "guaranteed" | "hazard";
+  sourceId: string;
+  hazardRule?: HazardRule;
 }
 
 export interface EventSchedulerState {
@@ -72,25 +74,9 @@ export interface ResolveEventSchedulerInput {
 export interface ResolveEventSchedulerResult {
   state: EventSchedulerState;
   events: EventDefinition[];
-  emissions: SchedulerEmission[];
+  emittedEvents: ResolvedSchedulerEvent[];
   diagnostics: SchedulerDiagnostic[];
 }
-
-export type SchedulerEmission =
-  | {
-      kind: "guaranteed";
-      event: EventDefinition;
-      scheduledEventId: string;
-      sourceRefs: string[];
-    }
-  | {
-      kind: "hazard";
-      event: EventDefinition;
-      hazardRuleId: string;
-      sourceFamily: string;
-      explanation: string;
-      tags: string[];
-    };
 
 const DEFAULT_BUDGET: EventSchedulerBudget = {
   guaranteedEvents: 1,
@@ -182,7 +168,8 @@ export function resolveEventScheduler({
 }: ResolveEventSchedulerInput): ResolveEventSchedulerResult {
   const resolvedBudget = { ...DEFAULT_BUDGET, ...budget };
   const diagnostics: SchedulerDiagnostic[] = [];
-  const emissions: SchedulerEmission[] = [];
+  const events: EventDefinition[] = [];
+  const emittedEvents: ResolvedSchedulerEvent[] = [];
   const nextQueue: ScheduledEvent[] = [];
   const firedEventIds = { ...state.firedEventIds };
   const cooldowns = { ...state.cooldowns };
@@ -238,11 +225,11 @@ export function resolveEventScheduler({
     }
 
     guaranteedRemaining -= 1;
-    emissions.push({
-      kind: "guaranteed",
+    events.push(event);
+    emittedEvents.push({
       event,
-      scheduledEventId: scheduled.id,
-      sourceRefs: scheduled.sourceRefs,
+      sourceKind: scheduled.kind,
+      sourceId: scheduled.id,
     });
     firedEventIds[event.id] = (firedEventIds[event.id] ?? 0) + 1;
     eventMemoryState = noteEventInSchedulerState(eventMemoryState, event);
@@ -250,12 +237,7 @@ export function resolveEventScheduler({
 
   let hazardRemaining = resolvedBudget.hazardEvents;
   const hazardCandidates = hazardRules
-    .filter(
-      (rule) =>
-        hazardRemaining > 0 &&
-        (cooldowns[rule.id] ?? 0) <= run.round &&
-        meetsRequirements(rule.requirements, run),
-    )
+    .filter((rule) => hazardRemaining > 0 && (cooldowns[rule.id] ?? 0) <= run.round)
     .map((rule) => ({
       rule,
       event: eventById[rule.eventId],
@@ -277,6 +259,7 @@ export function resolveEventScheduler({
       } =>
         Boolean(candidate.event) &&
         candidate.weight > 0 &&
+        meetsRequirements(candidate.rule.requirements, run) &&
         meetsRequirements(candidate.event.requirements, run),
     );
 
@@ -288,18 +271,12 @@ export function resolveEventScheduler({
 
   if (pickedHazard && hazardRemaining > 0) {
     hazardRemaining -= 1;
-    emissions.push({
-      kind: "hazard",
+    events.push(pickedHazard.event);
+    emittedEvents.push({
       event: pickedHazard.event,
-      hazardRuleId: pickedHazard.rule.id,
-      sourceFamily:
-        pickedHazard.rule.sourceFamily ??
-        pickedHazard.rule.tags[0] ??
-        getEventNarrativeFamily(pickedHazard.event),
-      explanation:
-        pickedHazard.rule.explanation ??
-        `${getEventNarrativeFamily(pickedHazard.event)} pressure crossed an authored hazard threshold.`,
-      tags: pickedHazard.rule.tags,
+      sourceKind: "hazard",
+      sourceId: pickedHazard.rule.id,
+      hazardRule: pickedHazard.rule,
     });
     firedEventIds[pickedHazard.event.id] =
       (firedEventIds[pickedHazard.event.id] ?? 0) + 1;
@@ -312,8 +289,8 @@ export function resolveEventScheduler({
   }
 
   return {
-    events: emissions.map((emission) => emission.event),
-    emissions,
+    events,
+    emittedEvents,
     diagnostics,
     state: {
       queue: nextQueue.sort(compareScheduledEvents),

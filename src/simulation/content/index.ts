@@ -1,17 +1,18 @@
 import { allDecisions } from "../../../content/decisions";
 import rawEndings from "../../../content/endings/core.json";
 import { allEvents } from "../../../content/events";
+import { allHazards } from "../../../content/hazards";
 import {
   decisionsSchema,
   endingsSchema,
   eventsSchema,
+  hazardsSchema,
 } from "../../lib/schemas/contentSchemas";
 import type { ContentBundle } from "../state/types";
 import {
   compileContentManifest,
   type CompiledContentManifest,
 } from "./manifest";
-import { activeHazardRules } from "../scheduler/hazardRules.js";
 
 let cachedContent: ContentBundle | null = null;
 let cachedManifest: CompiledContentManifest | null = null;
@@ -24,6 +25,7 @@ export function loadContent(): ContentBundle {
   cachedContent = {
     decisions: decisionsSchema.parse(allDecisions),
     events: eventsSchema.parse(allEvents),
+    hazards: hazardsSchema.parse(allHazards),
     endings: endingsSchema.parse(rawEndings),
   };
 
@@ -35,11 +37,7 @@ export function loadContentManifest(): CompiledContentManifest {
     return cachedManifest;
   }
 
-  cachedManifest = compileContentManifest(
-    loadContent(),
-    "v0.5",
-    activeHazardRules,
-  );
+  cachedManifest = compileContentManifest(loadContent());
 
   return cachedManifest;
 }
@@ -49,4 +47,3 @@ export {
   type CompiledContentManifest,
   type ContentDiagnostic,
 } from "./manifest";
-export { activeHazardRules };

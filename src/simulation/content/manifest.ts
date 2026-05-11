@@ -1,17 +1,17 @@
 import type {
   ContentBundle,
   DecisionDefinition,
+  DossierEvidenceDefinition,
   EndingDefinition,
   EventDefinition,
+  HazardDefinition,
   MetricKey,
   RequirementSpec,
 } from "../state/types";
-import type { HazardRule } from "../scheduler/eventScheduler.js";
 import { runMetricBounds } from "../systems/metricEffects";
 
 export type ContentDiagnosticKind =
   | "duplicate-id"
-  | "duplicate-hazard-rule"
   | "broken-delayed-reference"
   | "broken-hazard-reference"
   | "unreferenced-delayed-event"
@@ -39,10 +39,13 @@ export interface CompiledContentManifest extends ContentBundle {
   decisionById: Record<string, DecisionDefinition>;
   eventById: Record<string, EventDefinition>;
   endingById: Record<string, EndingDefinition>;
+  decisionEvidenceById: Record<string, DossierEvidenceDefinition[]>;
+  eventEvidenceById: Record<string, DossierEvidenceDefinition[]>;
+  hazardById: Record<string, HazardDefinition>;
   decisionsByPack: Record<string, string[]>;
   decisionsByTag: Record<string, string[]>;
   eventsByTag: Record<string, string[]>;
-  hazardRules: HazardRule[];
+  hazardsByFamily: Record<string, string[]>;
   flags: string[];
   flagProducers: Record<string, string[]>;
   flagConsumers: Record<string, string[]>;
@@ -52,12 +55,13 @@ export interface CompiledContentManifest extends ContentBundle {
 export function compileContentManifest(
   content: ContentBundle,
   version = "v0.5",
-  hazardRules: HazardRule[] = [],
 ): CompiledContentManifest {
   const decisionById = indexById(content.decisions);
   const eventById = indexById(content.events);
   const endingById = indexById(content.endings);
-  const normalizedHazardRules = [...hazardRules];
+  const decisionEvidenceById = indexEvidence(content.decisions);
+  const eventEvidenceById = indexEvidence(content.events);
+  const hazardById = indexById(content.hazards);
   const decisionsByPack = groupIds(content.decisions, (decision) => [
     decision.pack,
   ]);
@@ -66,17 +70,16 @@ export function compileContentManifest(
     (decision) => decision.tags,
   );
   const eventsByTag = groupIds(content.events, (event) => event.tags);
+  const hazardsByFamily = groupIds(content.hazards, (hazard) => [
+    hazard.sourceFamily,
+  ]);
   const diagnostics: ContentDiagnostic[] = [
     ...findDuplicateDiagnostics(content),
     ...findDelayedEventDiagnostics(content, eventById),
-    ...findHazardRuleDiagnostics(normalizedHazardRules, eventById),
     ...findRequirementDiagnostics(content),
     ...findPackCoverageDiagnostics(decisionsByPack),
   ];
-  const { flags, flagProducers, flagConsumers } = indexFlags(
-    content,
-    normalizedHazardRules,
-  );
+  const { flags, flagProducers, flagConsumers } = indexFlags(content);
 
   diagnostics.push(...findFlagDiagnostics(flags, flagProducers, flagConsumers));
 
@@ -84,17 +87,21 @@ export function compileContentManifest(
 
   return {
     version,
-    contentHash: createContentHash(content, normalizedHazardRules),
+    contentHash: createContentHash(content),
     decisions: content.decisions,
     events: content.events,
+    hazards: content.hazards,
     endings: content.endings,
     decisionById,
     eventById,
     endingById,
+    decisionEvidenceById,
+    eventEvidenceById,
+    hazardById,
     decisionsByPack,
     decisionsByTag,
     eventsByTag,
-    hazardRules: normalizedHazardRules,
+    hazardsByFamily,
     flags,
     flagProducers,
     flagConsumers,
@@ -107,6 +114,20 @@ function indexById<T extends { id: string }>(items: T[]): Record<string, T> {
 
   for (const item of items) {
     indexed[item.id] = item;
+  }
+
+  return indexed;
+}
+
+function indexEvidence<T extends { id: string; evidence?: DossierEvidenceDefinition[] }>(
+  items: T[],
+): Record<string, DossierEvidenceDefinition[]> {
+  const indexed: Record<string, DossierEvidenceDefinition[]> = {};
+
+  for (const item of items) {
+    if (item.evidence && item.evidence.length > 0) {
+      indexed[item.id] = item.evidence;
+    }
   }
 
   return indexed;
@@ -149,6 +170,7 @@ function findDuplicateDiagnostics(content: ContentBundle): ContentDiagnostic[] {
     ...findDuplicates(content.decisions, "decision"),
     ...findDuplicates(content.events, "event"),
     ...findDuplicates(content.endings, "ending"),
+    ...findDuplicates(content.hazards, "hazard"),
   ];
 }
 
@@ -224,6 +246,26 @@ function findDelayedEventDiagnostics(
     }
   }
 
+  for (const hazard of content.hazards) {
+    const event = eventById[hazard.eventId];
+
+    if (!event) {
+      diagnostics.push({
+        kind: "broken-hazard-reference",
+        severity: "error",
+        id: hazard.eventId,
+        sourceId: hazard.id,
+        sourceKind: "hazard",
+        message: `Hazard "${hazard.id}" references unknown event "${hazard.eventId}".`,
+      });
+      continue;
+    }
+
+    if (event.kind === "delayed") {
+      referencedDelayedEventIds.add(event.id);
+    }
+  }
+
   for (const event of content.events) {
     if (event.kind === "delayed" && !referencedDelayedEventIds.has(event.id)) {
       diagnostics.push({
@@ -232,77 +274,10 @@ function findDelayedEventDiagnostics(
         id: event.id,
         sourceId: event.id,
         sourceKind: "event",
-        message: `Delayed event "${event.id}" is not referenced by a decision consequence.`,
+        message: `Delayed event "${event.id}" is not referenced by a decision consequence or hazard rule.`,
       });
     }
   }
-
-  return diagnostics;
-}
-
-function findHazardRuleDiagnostics(
-  hazardRules: HazardRule[],
-  eventById: Record<string, EventDefinition>,
-): ContentDiagnostic[] {
-  const diagnostics: ContentDiagnostic[] = [];
-  const seen = new Set<string>();
-  const duplicates = new Set<string>();
-
-  for (const rule of hazardRules) {
-    if (seen.has(rule.id)) {
-      duplicates.add(rule.id);
-    }
-    seen.add(rule.id);
-
-    const event = eventById[rule.eventId];
-
-    if (!event) {
-      diagnostics.push({
-        kind: "broken-hazard-reference",
-        severity: "error",
-        id: rule.eventId,
-        sourceId: rule.id,
-        sourceKind: "hazard",
-        message: `Hazard rule "${rule.id}" references unknown event "${rule.eventId}".`,
-      });
-      continue;
-    }
-
-    if (event.kind !== "ambient") {
-      diagnostics.push({
-        kind: "broken-hazard-reference",
-        severity: "error",
-        id: rule.eventId,
-        sourceId: rule.id,
-        sourceKind: "hazard",
-        message: `Hazard rule "${rule.id}" references non-ambient event "${rule.eventId}".`,
-      });
-    }
-
-    diagnostics.push(
-      ...getImpossibleRequirementReasons(rule.requirements).map((reason) => ({
-        kind: "likely-impossible-requirement" as const,
-        severity: "warning" as const,
-        id: rule.id,
-        sourceId: rule.id,
-        sourceKind: "hazard" as const,
-        message: `Likely impossible requirements on hazard rule "${rule.id}": ${reason}.`,
-      })),
-    );
-  }
-
-  diagnostics.push(
-    ...[...duplicates]
-      .sort((left, right) => left.localeCompare(right))
-      .map((id) => ({
-        kind: "duplicate-hazard-rule" as const,
-        severity: "error" as const,
-        id,
-        sourceId: id,
-        sourceKind: "hazard" as const,
-        message: `Duplicate hazard rule id "${id}".`,
-      })),
-  );
 
   return diagnostics;
 }
@@ -340,6 +315,19 @@ function findRequirementDiagnostics(
     );
   }
 
+  for (const hazard of content.hazards) {
+    diagnostics.push(
+      ...getImpossibleRequirementReasons(hazard.requirements).map((reason) => ({
+        kind: "likely-impossible-requirement" as const,
+        severity: "warning" as const,
+        id: hazard.id,
+        sourceId: hazard.id,
+        sourceKind: "hazard" as const,
+        message: `Likely impossible requirements on hazard "${hazard.id}": ${reason}.`,
+      })),
+    );
+  }
+
   return diagnostics;
 }
 
@@ -356,10 +344,7 @@ function findPackCoverageDiagnostics(
   }));
 }
 
-function indexFlags(
-  content: ContentBundle,
-  hazardRules: HazardRule[],
-): {
+function indexFlags(content: ContentBundle): {
   flags: string[];
   flagProducers: Record<string, string[]>;
   flagConsumers: Record<string, string[]>;
@@ -389,10 +374,10 @@ function indexFlags(
     );
   }
 
-  for (const rule of hazardRules) {
+  for (const hazard of content.hazards) {
     collectConsumedFlags(
-      `hazard:${rule.id}`,
-      rule.requirements,
+      `hazard:${hazard.id}`,
+      hazard.requirements,
       flagConsumers,
     );
   }
@@ -510,15 +495,9 @@ function getImpossibleRequirementReasons(
   return reasons;
 }
 
-function createContentHash(
-  content: ContentBundle,
-  hazardRules: HazardRule[],
-): string {
+function createContentHash(content: ContentBundle): string {
   let hash = 0x811c9dc5;
-  const input = stableStringify({
-    ...content,
-    hazardRules,
-  });
+  const input = stableStringify(content);
 
   for (let index = 0; index < input.length; index += 1) {
     hash ^= input.charCodeAt(index);

@@ -37,6 +37,71 @@ function decision(
 }
 
 describe("decision tray composer", () => {
+  it("annotates selected cards with category-level pick reasons", () => {
+    const run = createInitialRunState();
+    run.round = 7;
+    run.flags = ["shellCarrierLive"];
+    run.lastOfferedDecisionIds = ["stale-finance"];
+    run.metrics.airlineCash = 70;
+    run.metrics.legalHeat = 78;
+    run.metrics.safetyIntegrity = 42;
+    run.metrics.marketConfidence = 34;
+
+    const decisions: DecisionDefinition[] = [
+      decision("cash-relief", "finance", "core", { airlineCash: 50 }),
+      decision(
+        "chain-relief",
+        "legal",
+        "shadowSubsidiaries",
+        { legalHeat: -8 },
+        { requirements: { flagsAll: ["shellCarrierLive"] } },
+      ),
+      decision("tempting-extract", "extraction", "assetHarvest", {
+        personalWealth: 18,
+      }),
+      decision("safety-repair", "operations", "safetyDenial", {
+        safetyIntegrity: 10,
+      }),
+      decision("market-repair", "market", "marketTheater", {
+        marketConfidence: 10,
+      }),
+      decision("labor-fill", "labor", "laborShock", { workforceMorale: 3 }),
+      {
+        ...decision("live-exit", "exit", "executiveEscape", {}),
+        ending: "extraction",
+        requirements: { roundAtLeast: 6 },
+      },
+    ];
+
+    const result = composeDecisionTray(decisions, run);
+    const reasonsByDecision = new Map(
+      result.diagnostics.pickReasons.map((entry) => [
+        entry.decisionId,
+        entry.reasons,
+      ]),
+    );
+
+    expect(result.diagnostics.pickReasons).toHaveLength(result.decisions.length);
+    expect(reasonsByDecision.get("cash-relief")).toContain("relief");
+    expect(reasonsByDecision.get("chain-relief")).toEqual(
+      expect.arrayContaining(["relief", "chain-continuation"]),
+    );
+    expect(reasonsByDecision.get("tempting-extract")).toContain("temptation");
+    expect(reasonsByDecision.get("live-exit")).toContain("exit-window");
+    expect(result.diagnostics.reasonCounts.relief).toBeGreaterThan(0);
+    expect(result.diagnostics.reasonCounts["chain-continuation"]).toBeGreaterThan(
+      0,
+    );
+    expect(result.diagnostics.reasonCounts.temptation).toBeGreaterThan(0);
+    expect(result.diagnostics.reasonCounts["exit-window"]).toBeGreaterThan(0);
+    expect(result.diagnostics.reasonCounts["group-diversity"]).toBeGreaterThan(
+      0,
+    );
+    expect(result.diagnostics.reasonCounts["pack-diversity"]).toBeGreaterThan(
+      0,
+    );
+  });
+
   it("prefers group diversity when the eligible pool allows it", () => {
     const run = createInitialRunState();
     run.metrics.airlineCash = 80;
@@ -63,6 +128,34 @@ describe("decision tray composer", () => {
     expect(tray).toHaveLength(TRAY_COMPOSER_POLICY.mainTraySize);
     expect(groups.size).toBeGreaterThanOrEqual(
       TRAY_COMPOSER_POLICY.minDistinctGroups,
+    );
+  });
+
+  it("does not break the group cap just to satisfy pack diversity", () => {
+    const run = createInitialRunState();
+    run.metrics.airlineCash = 70;
+
+    const decisions: DecisionDefinition[] = [
+      decision("finance-core", "finance", "core", { airlineCash: 30 }),
+      decision("finance-creditor", "finance", "creditorWarfare", {
+        airlineCash: 28,
+      }),
+      decision("finance-assets", "finance", "assetHarvest", {
+        airlineCash: 26,
+      }),
+      decision("labor-core", "labor", "core", { workforceMorale: 2 }),
+      decision("legal-core", "legal", "core", { legalHeat: -2 }),
+      decision("market-core", "market", "core", { marketConfidence: 2 }),
+    ];
+
+    const tray = composeDecisionTray(decisions, run).decisions;
+    const financeCount = tray.filter(
+      (entry) => entry.group === "finance",
+    ).length;
+
+    expect(tray).toHaveLength(TRAY_COMPOSER_POLICY.mainTraySize);
+    expect(financeCount).toBeLessThanOrEqual(
+      TRAY_COMPOSER_POLICY.maxGroupDuplicates,
     );
   });
 
@@ -208,5 +301,28 @@ describe("decision tray composer", () => {
     );
 
     expect(second).toEqual(first);
+  });
+
+  it("uses deterministic content tie-breaking instead of input order", () => {
+    const run = createInitialRunState();
+    run.round = 3;
+
+    const decisions: DecisionDefinition[] = [
+      decision("tie-alpha", "finance", "core"),
+      decision("tie-bravo", "labor", "laborShock"),
+      decision("tie-charlie", "legal", "regulatoryTheater"),
+      decision("tie-delta", "market", "marketTheater"),
+      decision("tie-echo", "operations", "safetyDenial"),
+      decision("tie-foxtrot", "extraction", "executiveEscape"),
+    ];
+
+    const first = getAvailableDecisions(decisions, run).map(
+      (entry) => entry.id,
+    );
+    const reversed = getAvailableDecisions([...decisions].reverse(), run).map(
+      (entry) => entry.id,
+    );
+
+    expect(reversed).toEqual(first);
   });
 });

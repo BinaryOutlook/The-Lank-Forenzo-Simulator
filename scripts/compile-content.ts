@@ -16,7 +16,7 @@ export function formatCompiledContentSummary(): string {
     `Content hash: ${manifest.contentHash}`,
     `Decisions: ${manifest.decisions.length}`,
     `Events: ${manifest.events.length}`,
-    `Hazard rules: ${manifest.hazardRules.length}`,
+    `Hazards: ${manifest.hazards.length}`,
     `Endings: ${manifest.endings.length}`,
     `Flags: ${manifest.flags.length}`,
     `Diagnostics: ${errorCount} errors, ${warningCount} warnings`,
