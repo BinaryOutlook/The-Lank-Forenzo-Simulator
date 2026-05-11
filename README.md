@@ -186,6 +186,8 @@ PRDs/
     v0.4-demo.html
   v0.5/
     v0.5.md
+  v0.6/
+    v0.6.md
 tests/
   unit/
   e2e/
@@ -202,4 +204,4 @@ tests/
 - V0.5 faction hooks: [docs/reference/faction-system.md](docs/reference/faction-system.md)
 - V0.5 operational hooks: [docs/reference/operational-model.md](docs/reference/operational-model.md)
 - V0.5 dossier hooks: [docs/reference/dossier-system.md](docs/reference/dossier-system.md)
-- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md), [PRDs/v0.5/v0.5.md](PRDs/v0.5/v0.5.md)
+- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md), [PRDs/v0.5/v0.5.md](PRDs/v0.5/v0.5.md), [PRDs/v0.6/v0.6.md](PRDs/v0.6/v0.6.md)
