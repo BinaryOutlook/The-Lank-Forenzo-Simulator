@@ -104,7 +104,7 @@ npm run reachability:report
 
 `npm run simulate:runs` and `npm run balance:report` run a deterministic seeded campaign report without opening the browser. The report summarizes ending distribution, average run length, surfaced decision coverage, triggered event coverage, and repeated-tray pressure using the documented greedy pressure-relief bot.
 
-`npm run content:compile` prints the compiled manifest summary and content hash. `npm run balance:matrix` runs the v0.5 archetype matrix across extraction, merger, offshore, and stabilizer bots. `npm run reachability:report` runs the bounded reachability explorer with state abstraction and low-confidence content reporting.
+`npm run content:compile` prints the compiled manifest summary and content hash. `npm run balance:matrix` runs the archetype matrix across extraction, merger, offshore, stabilizer, safety-denial, shadow-subsidiary, creditor-trench, and regulatory-theatre bots; each archetype section includes surfaced and selected decision IDs for lane diagnostics. `npm run reachability:report` runs the bounded reachability explorer with state abstraction and low-confidence content reporting.
 
 ## Responsive Browser Play
 
