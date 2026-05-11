@@ -33,6 +33,18 @@
       "stockPrice": -6,
       "marketConfidence": -5,
       "legalHeat": 3
+    },
+    "factionEffects": {
+      "board": {
+        "trust": -4,
+        "aggression": 2,
+        "grievance": "short-seller deck reframed strategy as exposure"
+      },
+      "press": {
+        "leverage": 5,
+        "dossierWeight": 4,
+        "grievance": "chartbook gave reporters a clean narrative spine"
+      }
     }
   },
   {

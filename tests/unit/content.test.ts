@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { loadContent } from "../../src/simulation/content";
 import { validateContentBundle } from "../../src/simulation/content/validation";
 import { runMetricBounds } from "../../src/simulation/systems/metricEffects";
+import type { DecisionDefinition } from "../../src/simulation/state/types";
 
 describe("content library", () => {
   it("loads a materially expanded multi-pack decision library", () => {
@@ -39,6 +40,54 @@ describe("content library", () => {
     expect(content.events.length).toBeGreaterThanOrEqual(165);
     expect(ambientEvents.length).toBeGreaterThanOrEqual(74);
     expect(delayedEvents.length).toBeGreaterThanOrEqual(91);
+  });
+
+  it("loads representative first-pass faction effects across pressure lanes", () => {
+    const content = loadContent();
+    const decisionById = new Map(
+      content.decisions.map((decision) => [decision.id, decision]),
+    );
+    const eventById = new Map(content.events.map((event) => [event.id, event]));
+
+    expect(
+      decisionById.get("weaponize_the_scope_clause")?.factionEffects?.labor
+        ?.aggression,
+    ).toBeGreaterThan(0);
+    expect(
+      decisionById.get("downgrade_the_inspection_memo")?.factionEffects
+        ?.regulators?.dossierWeight,
+    ).toBeGreaterThan(0);
+    expect(
+      decisionById.get("wire_the_island_retainer")?.factionEffects?.press
+        ?.leverage,
+    ).toBeGreaterThan(0);
+    expect(
+      decisionById.get("preload_the_earnings_deck")?.factionEffects?.press
+        ?.dossierWeight,
+    ).toBeGreaterThan(0);
+    expect(
+      decisionById.get("amend_and_extend_ambush")?.factionEffects?.creditors
+        ?.aggression,
+    ).toBeGreaterThan(0);
+
+    expect(
+      eventById.get("ramp_union_live_stream")?.factionEffects?.labor?.cohesion,
+    ).toBeGreaterThan(0);
+    expect(
+      eventById.get("safety_audit_redlines")?.factionEffects?.regulators
+        ?.aggression,
+    ).toBeGreaterThan(0);
+    expect(
+      eventById.get("customs_attention_ping")?.factionEffects?.regulators
+        ?.dossierWeight,
+    ).toBeGreaterThan(0);
+    expect(
+      eventById.get("short_seller_chartbook")?.factionEffects?.press?.leverage,
+    ).toBeGreaterThan(0);
+    expect(
+      eventById.get("liquidity_whisper_chain")?.factionEffects?.creditors
+        ?.leverage,
+    ).toBeGreaterThan(0);
   });
 
   it("covers fictionalized incident variants across distinct pressure families", () => {
@@ -211,6 +260,50 @@ describe("content library", () => {
     expect(
       report.warnings.some((entry) =>
         entry.message.includes("Likely impossible requirements"),
+      ),
+    ).toBe(true);
+  });
+
+  it("flags invalid faction-effect IDs and out-of-bounds deltas", () => {
+    const invalidDecision = {
+      id: "invalid-faction-effect",
+      pack: "core",
+      title: "Invalid Faction Effect",
+      summary: "Fixture decision with intentionally invalid faction metadata.",
+      group: "finance",
+      tags: ["fixture"],
+      impacts: {},
+      factionEffects: {
+        investors: {
+          aggression: 4,
+        },
+        labor: {
+          aggression: 26,
+        },
+      },
+    } as unknown as DecisionDefinition;
+    const report = validateContentBundle({
+      decisions: [invalidDecision],
+      events: [],
+      endings: [
+        {
+          id: "prison",
+          title: "Prison",
+          subtitle: "Fixture",
+          summary: "Fixture ending.",
+        },
+      ],
+    });
+
+    expect(
+      report.errors.some((entry) =>
+        entry.message.includes('unknown faction "investors"'),
+      ),
+    ).toBe(true);
+    expect(
+      report.errors.some((entry) =>
+        entry.message.includes("aggression=26") &&
+        entry.message.includes("outside -25..25"),
       ),
     ).toBe(true);
   });

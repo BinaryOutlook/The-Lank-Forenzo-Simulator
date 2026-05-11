@@ -12,6 +12,20 @@
       "legalHeat": 4
     },
     "setsFlags": ["scopeWarOpen"],
+    "factionEffects": {
+      "labor": {
+        "patience": -6,
+        "aggression": 10,
+        "cohesion": 5,
+        "leverage": 3,
+        "dossierWeight": 2,
+        "grievance": "scope clause strategy hardened the grievance map"
+      },
+      "regulators": {
+        "aggression": 2,
+        "dossierWeight": 2
+      }
+    },
     "delayedConsequences": [
       { "eventIds": ["scope_clause_arbitration", "severance_injunction", "seniority_map_fight"], "delay": 2 }
     ]

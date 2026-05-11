@@ -7,7 +7,10 @@ import type {
   metricKeys,
 } from "../content/metadata";
 import type { DossierThread } from "../dossiers/dossierState";
-import type { FactionStates } from "../factions/factionState";
+import type {
+  FactionEffectSet,
+  FactionStates,
+} from "../factions/factionState.js";
 import type { NetworkState } from "../operations/networkState";
 import type { EventSchedulerState } from "../scheduler/eventScheduler";
 
@@ -74,6 +77,7 @@ export interface DecisionDefinition {
   requirements?: RequirementSpec;
   delayedConsequences?: DelayedConsequenceRef[];
   setsFlags?: string[];
+  factionEffects?: FactionEffectSet;
   ending?: EndingId;
 }
 
@@ -87,6 +91,7 @@ export interface EventDefinition {
   impacts: ImpactSet;
   requirements?: RequirementSpec;
   setsFlags?: string[];
+  factionEffects?: FactionEffectSet;
 }
 
 export interface EndingDefinition {

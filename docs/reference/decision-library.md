@@ -2,10 +2,10 @@
 
 This is the documentation home for the full decision library and the public-history parallels that helped shape it.
 
-As of `2026-05-11`, the repo contains `112` authored decisions across `11` packs:
+As of `2026-05-11`, the repo contains `113` authored decisions across `11` packs:
 
 - `21` core decisions
-- `79` expansion decisions from `V0.3`
+- `80` expansion decisions from `V0.3`
 - `12` incident-variant decisions from `V0.5`
 
 ## How to Read This
@@ -20,6 +20,29 @@ No decision in this file should be read as:
 - a direct portrayal of a real person
 - a one-to-one recreation of a named airline move
 - a claim that one executive or one carrier uniquely "owns" a given tactic
+
+## Faction Metadata Rules
+
+Decisions may include optional `factionEffects` metadata. This is the preferred way to author faction reactions; old ID/tag substring heuristics remain only as migration fallback for decisions without metadata.
+
+```json
+"factionEffects": {
+  "labor": {
+    "patience": -6,
+    "aggression": 10,
+    "cohesion": 5,
+    "grievance": "scope clause strategy hardened the grievance map"
+  }
+}
+```
+
+Rules:
+
+- Valid faction IDs are `board`, `creditors`, `labor`, `regulators`, and `press`.
+- Numeric deltas may target `patience`, `aggression`, `trust`, `cohesion`, `leverage`, or `dossierWeight`.
+- Each numeric delta must be an integer in \( -25 \le \Delta \le 25 \).
+- `grievance` is optional, but when present it should explain what the faction remembers in short reviewable language.
+- A first pass is intentionally representative, not exhaustive: labor, safety, offshore, market, and creditor lanes now have explicit examples.
 
 ## Historical Parallel Matrix
 

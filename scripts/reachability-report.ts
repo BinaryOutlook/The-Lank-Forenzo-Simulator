@@ -110,6 +110,9 @@ export function exploreReachabilityReport(
   const eventKindById = new Map(
     content.events.map((event) => [event.id, event.kind] as const),
   );
+  const decisionById = new Map(
+    content.decisions.map((decision) => [decision.id, decision] as const),
+  );
   let frontier: SearchNode[] = [
     {
       run: createInitialRunState(),
@@ -161,9 +164,7 @@ export function exploreReachabilityReport(
           selectedDecisionIds,
         });
         const selectedDecisions = selectedDecisionIds
-          .map((decisionId) =>
-            content.decisions.find((decision) => decision.id === decisionId),
-          )
+          .map((decisionId) => decisionById.get(decisionId))
           .filter((decision): decision is DecisionDefinition => Boolean(decision));
         const stateKey = abstractRunStateKey(nextRun);
         const triggeredEventIds = getTriggeredEventIds(nextRun);

@@ -5,6 +5,11 @@ import type {
   MetricKey,
   RequirementSpec,
 } from "../state/types";
+import {
+  factionEffectDeltaBounds,
+  factionEffectKeys,
+  factionIds,
+} from "../factions/factionState.js";
 import { runMetricBounds } from "../systems/metricEffects";
 
 type ValidationSeverity = "error" | "warning";
@@ -15,6 +20,9 @@ type ValidationEntry = {
 };
 
 type ValidationMap = Map<string, number>;
+
+const factionIdSet = new Set<string>(factionIds);
+const factionEffectKeySet = new Set<string>(factionEffectKeys);
 
 export interface ContentValidationReport {
   decisions: {
@@ -62,6 +70,7 @@ export function validateContentBundle(
   );
 
   for (const decision of content.decisions) {
+    collectFactionEffectErrors(decision, "decision", errors);
     collectFlagsAndRequirements(
       decision,
       setFlags,
@@ -100,6 +109,7 @@ export function validateContentBundle(
   }
 
   for (const event of content.events) {
+    collectFactionEffectErrors(event, "event", errors);
     collectFlagsAndRequirements(
       event,
       setFlags,
@@ -260,6 +270,79 @@ function collectFlagsAndRequirements(
   }
 }
 
+function collectFactionEffectErrors(
+  item: DecisionDefinition | EventDefinition,
+  sourceKind: "decision" | "event",
+  errors: ValidationEntry[],
+) {
+  if (!item.factionEffects) {
+    return;
+  }
+
+  const effectsByFaction = item.factionEffects as Record<string, unknown>;
+
+  for (const [factionId, rawEffect] of Object.entries(effectsByFaction)) {
+    if (!factionIdSet.has(factionId)) {
+      errors.push({
+        severity: "error",
+        message: `Invalid faction effect: ${sourceKind} "${item.id}" references unknown faction "${factionId}".`,
+      });
+    }
+
+    if (!isRecord(rawEffect)) {
+      errors.push({
+        severity: "error",
+        message: `Invalid faction effect: ${sourceKind} "${item.id}" has a non-object effect for "${factionId}".`,
+      });
+      continue;
+    }
+
+    let numericDeltaCount = 0;
+
+    for (const [effectKey, rawDelta] of Object.entries(rawEffect)) {
+      if (effectKey === "grievance") {
+        if (typeof rawDelta !== "string" || rawDelta.length === 0) {
+          errors.push({
+            severity: "error",
+            message: `Invalid faction effect: ${sourceKind} "${item.id}" has an empty grievance for "${factionId}".`,
+          });
+        }
+        continue;
+      }
+
+      if (!factionEffectKeySet.has(effectKey)) {
+        errors.push({
+          severity: "error",
+          message: `Invalid faction effect: ${sourceKind} "${item.id}" uses unknown effect key "${effectKey}" for "${factionId}".`,
+        });
+        continue;
+      }
+
+      numericDeltaCount += 1;
+
+      if (
+        typeof rawDelta !== "number" ||
+        !Number.isFinite(rawDelta) ||
+        !Number.isInteger(rawDelta) ||
+        rawDelta < factionEffectDeltaBounds.min ||
+        rawDelta > factionEffectDeltaBounds.max
+      ) {
+        errors.push({
+          severity: "error",
+          message: `Invalid faction effect: ${sourceKind} "${item.id}" has ${effectKey}=${formatNumberForValidation(rawDelta)} for "${factionId}", outside ${factionEffectDeltaBounds.min}..${factionEffectDeltaBounds.max}.`,
+        });
+      }
+    }
+
+    if (numericDeltaCount === 0) {
+      errors.push({
+        severity: "error",
+        message: `Invalid faction effect: ${sourceKind} "${item.id}" must provide at least one numeric delta for "${factionId}".`,
+      });
+    }
+  }
+}
+
 function getImpossibleRequirementReasons(
   requirements: RequirementSpec,
 ): string[] {
@@ -310,4 +393,16 @@ function formatCounts(counts: ValidationMap): string {
 
 function formatNumber(value: number): string {
   return Number.isInteger(value) ? `${value}` : value.toFixed(2);
+}
+
+function formatNumberForValidation(value: unknown): string {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return formatNumber(value);
+  }
+
+  return JSON.stringify(value) ?? String(value);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
 }
