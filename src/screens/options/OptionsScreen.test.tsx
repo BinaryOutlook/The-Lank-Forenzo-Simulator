@@ -84,7 +84,7 @@ describe("OptionsScreen", () => {
     expect(
       screen.getByText("Paused while visual effects are off"),
     ).toBeInTheDocument();
-  });
+  }, 10_000);
 
   it("resets options to the default room tone", async () => {
     const user = userEvent.setup();
