@@ -25,18 +25,34 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
 
   await page.getByRole("link", { name: /options/i }).click();
   await expect(
-    page.getByRole("heading", { name: /tune the room before it turns on you/i }),
+    page.getByRole("heading", {
+      name: /tune the room before it turns on you/i,
+    }),
   ).toBeVisible();
   await page.getByRole("button", { name: /runway night/i }).click();
   await expect(page.locator("html")).toHaveAttribute(
     "data-wallpaper",
     "runway-night",
   );
-  await page.getByRole("checkbox", { name: /music/i }).check();
+  await page.getByRole("checkbox", { name: /^music\b/i }).check();
   await expect(page.locator("html")).toHaveAttribute("data-music", "on");
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-sound-effects",
+    "on",
+  );
+  await page.getByRole("checkbox", { name: /sound effects/i }).uncheck();
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-sound-effects",
+    "off",
+  );
   await page.getByRole("checkbox", { name: /visual effects/i }).uncheck();
   await expect(page.locator("html")).toHaveAttribute(
     "data-visual-effects",
+    "off",
+  );
+  await page.getByRole("checkbox", { name: /interaction feedback/i }).uncheck();
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-interaction-effects",
     "off",
   );
   await page.reload();
@@ -46,8 +62,22 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
   );
   await expect(page.locator("html")).toHaveAttribute("data-music", "on");
   await expect(page.locator("html")).toHaveAttribute(
+    "data-sound-effects",
+    "off",
+  );
+  await expect(page.locator("html")).toHaveAttribute(
     "data-visual-effects",
     "off",
+  );
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-interaction-effects",
+    "off",
+  );
+  await page.getByRole("checkbox", { name: /visual effects/i }).check();
+  await page.getByRole("checkbox", { name: /interaction feedback/i }).check();
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-interaction-effects",
+    "on",
   );
   await page.getByRole("button", { name: /return to run/i }).click();
 
@@ -62,7 +92,12 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
   expect(historyCountBefore).toBeGreaterThan(0);
 
   const firstDecision = decisionTray.locator("button[aria-pressed]").first();
-  await firstDecision.press("Space");
+  await firstDecision.dispatchEvent("pointerdown");
+  await expect(firstDecision).toHaveAttribute(
+    "data-interaction-feedback",
+    "active",
+  );
+  await firstDecision.click();
   await expect(firstDecision).toHaveAttribute("aria-pressed", "true");
 
   await decisionTray
@@ -108,7 +143,9 @@ test("responsive run layout keeps touch controls and section jumps reachable", a
     await decisionTray.locator("button[aria-pressed]").first().click();
 
     await expect(controls.getByText("1/2 selected")).toBeVisible();
-    await controls.getByRole("button", { name: /resolve the quarter/i }).click();
+    await controls
+      .getByRole("button", { name: /resolve the quarter/i })
+      .click();
     await expect(page.getByText(/^R2$/).first()).toBeVisible();
   }
 });
