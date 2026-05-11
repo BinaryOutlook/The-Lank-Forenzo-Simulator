@@ -1,8 +1,11 @@
+import clsx from "clsx";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { useGameStore } from "../../simulation/state/gameStore";
-import type { ThemeName } from "../../simulation/state/types";
+import { InteractionFeedbackButton } from "../interaction/InteractionFeedbackButton.js";
+import { useInteractionFeedback } from "../interaction/useInteractionFeedback.js";
+import { useGameStore } from "../../simulation/state/gameStore.js";
+import type { ThemeName } from "../../simulation/state/types.js";
 import styles from "./AppShell.module.css";
 
 const themes: Array<{ id: ThemeName; label: string }> = [
@@ -10,11 +13,41 @@ const themes: Array<{ id: ThemeName; label: string }> = [
   { id: "armonk-blue", label: "Armonk Blue" },
 ];
 
+interface OptionsNavLinkProps {
+  interactionEffectsEnabled: boolean;
+}
+
+function OptionsNavLink({ interactionEffectsEnabled }: OptionsNavLinkProps) {
+  const feedback = useInteractionFeedback<HTMLAnchorElement>(
+    interactionEffectsEnabled,
+  );
+
+  return (
+    <NavLink
+      to="/options"
+      className={({ isActive }) =>
+        clsx(
+          "interaction-feedback-control",
+          isActive ? styles.navLinkActive : styles.navLink,
+        )
+      }
+      data-interaction-feedback={feedback.feedbackState}
+      onKeyDown={feedback.onFeedbackKeyDown}
+      onPointerDown={feedback.onFeedbackPointerDown}
+    >
+      Options
+    </NavLink>
+  );
+}
+
 export function AppShell() {
   const location = useLocation();
   const theme = useGameStore((state) => state.theme);
+  const settings = useGameStore((state) => state.settings);
   const setTheme = useGameStore((state) => state.setTheme);
   const run = useGameStore((state) => state.run);
+  const interactionEffectsEnabled =
+    settings.visualEffectsEnabled && settings.interactionEffectsEnabled;
 
   useEffect(() => {
     window.scrollTo({ behavior: "auto", left: 0, top: 0 });
@@ -32,33 +65,36 @@ export function AppShell() {
           <NavLink to="/" className={styles.brand}>
             The Lank Forenzo Simulator
           </NavLink>
-          <span className={styles.subtitle}>Board packet for a morally bankrupt turnaround</span>
+          <span className={styles.subtitle}>
+            Board packet for a morally bankrupt turnaround
+          </span>
         </div>
 
         <div className={styles.headerControls}>
-          {run?.status === "active" ? <span className={styles.roundBadge}>Round {run.round}</span> : null}
+          {run?.status === "active" ? (
+            <span className={styles.roundBadge}>Round {run.round}</span>
+          ) : null}
 
           <nav className={styles.nav} aria-label="Primary">
-            <NavLink
-              to="/options"
-              className={({ isActive }) =>
-                isActive ? styles.navLinkActive : styles.navLink
-              }
-            >
-              Options
-            </NavLink>
+            <OptionsNavLink
+              interactionEffectsEnabled={interactionEffectsEnabled}
+            />
           </nav>
 
           <div className={styles.themeSwitch} aria-label="Theme selector">
             {themes.map((entry) => (
-              <button
+              <InteractionFeedbackButton
                 key={entry.id}
-                type="button"
-                className={entry.id === theme ? styles.themeButtonActive : styles.themeButton}
+                feedbackEnabled={interactionEffectsEnabled}
+                className={
+                  entry.id === theme
+                    ? styles.themeButtonActive
+                    : styles.themeButton
+                }
                 onClick={() => setTheme(entry.id)}
               >
                 {entry.label}
-              </button>
+              </InteractionFeedbackButton>
             ))}
           </div>
         </div>

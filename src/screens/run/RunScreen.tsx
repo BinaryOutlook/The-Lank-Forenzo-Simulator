@@ -1,19 +1,51 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { BoardPacket } from "../../components/board-packet/BoardPacket";
-import { DecisionTray } from "../../components/decision-tray/DecisionTray";
-import { EventFeed } from "../../components/event-feed/EventFeed";
-import { MetricRail } from "../../components/metrics/MetricRail";
-import { useGameStore } from "../../simulation/state/gameStore";
-import { EndingScreen } from "../ending/EndingScreen";
+import { BoardPacket } from "../../components/board-packet/BoardPacket.js";
+import { DecisionTray } from "../../components/decision-tray/DecisionTray.js";
+import { EventFeed } from "../../components/event-feed/EventFeed.js";
+import { useInteractionFeedback } from "../../components/interaction/useInteractionFeedback.js";
+import { MetricRail } from "../../components/metrics/MetricRail.js";
+import { useGameStore } from "../../simulation/state/gameStore.js";
+import { EndingScreen } from "../ending/EndingScreen.js";
 import styles from "./RunScreen.module.css";
+
+interface SectionNavLinkProps {
+  href: string;
+  interactionEffectsEnabled: boolean;
+  label: string;
+}
+
+function SectionNavLink({
+  href,
+  interactionEffectsEnabled,
+  label,
+}: SectionNavLinkProps) {
+  const feedback = useInteractionFeedback<HTMLAnchorElement>(
+    interactionEffectsEnabled,
+  );
+
+  return (
+    <a
+      href={href}
+      className="interaction-feedback-control"
+      data-interaction-feedback={feedback.feedbackState}
+      onKeyDown={feedback.onFeedbackKeyDown}
+      onPointerDown={feedback.onFeedbackPointerDown}
+    >
+      {label}
+    </a>
+  );
+}
 
 export function RunScreen() {
   const navigate = useNavigate();
   const run = useGameStore((state) => state.run);
+  const settings = useGameStore((state) => state.settings);
   const availableDecisions = useGameStore((state) => state.availableDecisions);
   const toggleDecision = useGameStore((state) => state.toggleDecision);
   const endTurn = useGameStore((state) => state.endTurn);
+  const interactionEffectsEnabled =
+    settings.visualEffectsEnabled && settings.interactionEffectsEnabled;
 
   useEffect(() => {
     if (!run) {
@@ -32,10 +64,26 @@ export function RunScreen() {
   return (
     <section className={styles.layout} aria-label="Active run workspace">
       <nav className={styles.sectionNav} aria-label="Run sections">
-        <a href="#board-packet">Brief</a>
-        <a href="#run-state">State</a>
-        <a href="#decision-tray">Decisions</a>
-        <a href="#consequence-feed">Feed</a>
+        <SectionNavLink
+          href="#board-packet"
+          interactionEffectsEnabled={interactionEffectsEnabled}
+          label="Brief"
+        />
+        <SectionNavLink
+          href="#run-state"
+          interactionEffectsEnabled={interactionEffectsEnabled}
+          label="State"
+        />
+        <SectionNavLink
+          href="#decision-tray"
+          interactionEffectsEnabled={interactionEffectsEnabled}
+          label="Decisions"
+        />
+        <SectionNavLink
+          href="#consequence-feed"
+          interactionEffectsEnabled={interactionEffectsEnabled}
+          label="Feed"
+        />
       </nav>
 
       <div id="run-state" className={styles.metricsArea}>
@@ -52,6 +100,7 @@ export function RunScreen() {
           selectedDecisionIds={run.selectedDecisionIds}
           onToggle={toggleDecision}
           onEndTurn={endTurn}
+          interactionEffectsEnabled={interactionEffectsEnabled}
         />
       </div>
 
