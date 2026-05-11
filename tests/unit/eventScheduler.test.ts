@@ -67,6 +67,14 @@ describe("event scheduler", () => {
     });
 
     expect(result.events.map((event) => event.id)).toEqual(["hearing_notice"]);
+    expect(result.emissions).toEqual([
+      {
+        kind: "guaranteed",
+        event: expect.objectContaining({ id: "hearing_notice" }),
+        scheduledEventId: "schedule-1",
+        sourceRefs: [],
+      },
+    ]);
     expect(result.state.queue).toEqual([]);
     expect(result.state.firedEventIds).toEqual({ hearing_notice: 1 });
     expect(result.state.recentEventTitles).toEqual(["hearing_notice"]);
@@ -240,6 +248,17 @@ describe("event scheduler", () => {
     });
 
     expect(first.events.map((event) => event.id)).toEqual(["operations_alarm"]);
+    expect(first.emissions).toEqual([
+      {
+        kind: "hazard",
+        event: expect.objectContaining({ id: "operations_alarm" }),
+        hazardRuleId: "operations-hazard",
+        sourceFamily: "operations",
+        explanation:
+          "delayed pressure crossed an authored hazard threshold.",
+        tags: ["operations"],
+      },
+    ]);
     expect(repeated.events.map((event) => event.id)).toEqual(
       first.events.map((event) => event.id),
     );
@@ -278,5 +297,65 @@ describe("event scheduler", () => {
     expect(afterCooldown.events.map((event) => event.id)).toEqual([
       "operations_alarm",
     ]);
+  });
+
+  it("checks hazard rule requirements before event requirements", () => {
+    const blockedRun = createInitialRunState();
+    blockedRun.round = 3;
+    blockedRun.metrics.legalHeat = 20;
+    const eligibleRun = createInitialRunState();
+    eligibleRun.round = 3;
+    eligibleRun.metrics.legalHeat = 50;
+    const hazardRules: HazardRule[] = [
+      {
+        id: "legal-pressure",
+        eventId: "ethics_alarm",
+        baseWeight: 5,
+        cooldownRounds: 2,
+        tags: ["legal"],
+        requirements: {
+          metricMin: {
+            legalHeat: 44,
+          },
+        },
+        explanation: "Legal pressure crossed the authored threshold.",
+      },
+    ];
+    const eventById = indexEvents([
+      makeEvent("ethics_alarm", {
+        kind: "ambient",
+        requirements: {
+          metricMin: {
+            legalHeat: 30,
+          },
+        },
+      }),
+    ]);
+
+    const blocked = resolveEventScheduler({
+      run: blockedRun,
+      state: createInitialEventSchedulerState(),
+      eventById,
+      hazardRules,
+      seed: 11,
+      budget: { guaranteedEvents: 0, hazardEvents: 1 },
+    });
+    const eligible = resolveEventScheduler({
+      run: eligibleRun,
+      state: createInitialEventSchedulerState(),
+      eventById,
+      hazardRules,
+      seed: 11,
+      budget: { guaranteedEvents: 0, hazardEvents: 1 },
+    });
+
+    expect(blocked.events).toEqual([]);
+    expect(blocked.state.cooldowns).toEqual({});
+    expect(eligible.events.map((event) => event.id)).toEqual(["ethics_alarm"]);
+    expect(eligible.emissions[0]).toMatchObject({
+      kind: "hazard",
+      hazardRuleId: "legal-pressure",
+      explanation: "Legal pressure crossed the authored threshold.",
+    });
   });
 });

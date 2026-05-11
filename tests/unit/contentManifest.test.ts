@@ -3,6 +3,7 @@ import {
   compileContentManifest,
   loadContentManifest,
 } from "../../src/simulation/content";
+import type { HazardRule } from "../../src/simulation/scheduler/eventScheduler.js";
 import type { ContentBundle } from "../../src/simulation/state/types";
 import { runMetricBounds } from "../../src/simulation/systems/metricEffects";
 
@@ -15,6 +16,7 @@ describe("content manifest", () => {
     expect(manifest.contentHash).toMatch(/^[a-f0-9]{8}$/);
     expect(repeatedLoad).toBe(manifest);
     expect(repeatedLoad.contentHash).toBe(manifest.contentHash);
+    expect(manifest.hazardRules.length).toBeGreaterThan(0);
 
     const decision = manifest.decisions[0];
     const event = manifest.events[0];
@@ -23,6 +25,9 @@ describe("content manifest", () => {
     expect(manifest.decisionById[decision.id]).toBe(decision);
     expect(manifest.eventById[event.id]).toBe(event);
     expect(manifest.endingById[ending.id]).toBe(ending);
+    for (const rule of manifest.hazardRules) {
+      expect(manifest.eventById[rule.eventId]?.kind).toBe("ambient");
+    }
   });
 
   it("indexes decisions by pack and events by tag using stable id lists", () => {
@@ -107,6 +112,69 @@ describe("content manifest", () => {
           diagnostic.kind === "pack-coverage" &&
           diagnostic.id === "core" &&
           diagnostic.count === 2,
+      ),
+    ).toBe(true);
+  });
+
+  it("compiles hazard rules into the manifest with deterministic diagnostics", () => {
+    const hazardRules: HazardRule[] = [
+      {
+        id: "fixture-hazard",
+        eventId: "fixture_event",
+        baseWeight: 3,
+        cooldownRounds: 2,
+        tags: ["fixture"],
+        requirements: {
+          flagsAll: ["producedAndRequiredFlag"],
+        },
+      },
+      {
+        id: "fixture-hazard",
+        eventId: "fixture_delayed",
+        baseWeight: 1,
+        cooldownRounds: 1,
+        tags: ["fixture"],
+      },
+      {
+        id: "missing-hazard-event",
+        eventId: "missing_ambient",
+        baseWeight: 1,
+        cooldownRounds: 1,
+        tags: ["fixture"],
+      },
+    ];
+
+    const fixture = compileContentManifest(
+      createFixtureContent(),
+      "fixture",
+      hazardRules,
+    );
+
+    expect(fixture.hazardRules).toEqual(hazardRules);
+    expect(fixture.flagConsumers.producedAndRequiredFlag).toContain(
+      "hazard:fixture-hazard",
+    );
+    expect(
+      fixture.diagnostics.some(
+        (diagnostic) =>
+          diagnostic.kind === "duplicate-hazard-rule" &&
+          diagnostic.id === "fixture-hazard",
+      ),
+    ).toBe(true);
+    expect(
+      fixture.diagnostics.some(
+        (diagnostic) =>
+          diagnostic.kind === "broken-hazard-reference" &&
+          diagnostic.sourceId === "fixture-hazard" &&
+          diagnostic.id === "fixture_delayed",
+      ),
+    ).toBe(true);
+    expect(
+      fixture.diagnostics.some(
+        (diagnostic) =>
+          diagnostic.kind === "broken-hazard-reference" &&
+          diagnostic.sourceId === "missing-hazard-event" &&
+          diagnostic.id === "missing_ambient",
       ),
     ).toBe(true);
   });

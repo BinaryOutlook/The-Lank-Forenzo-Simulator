@@ -37,6 +37,7 @@ import {
   resolveEventScheduler,
   scheduleEvent,
   type EventSchedulerState,
+  type HazardRule,
 } from "../scheduler/eventScheduler";
 import { getImpactSetScore } from "../state/metricSemantics";
 import { getAvailableDecisions } from "../systems/decisionEngine";
@@ -382,6 +383,7 @@ function resolveScheduledEventsStep(
   eventCounts: Record<string, number>,
   scheduler: EventSchedulerState,
   eventById: Record<string, EventDefinition>,
+  hazardRules: HazardRule[],
 ): EventResolutionResult {
   let nextMetrics = metrics;
   let nextFlags = flags;
@@ -396,15 +398,16 @@ function resolveScheduledEventsStep(
     },
     state: scheduler,
     eventById,
-    hazardRules: [],
+    hazardRules,
     seed: hashNumber(round, nextMetrics.legalHeat, nextMetrics.publicAnger),
     budget: {
       guaranteedEvents: 1,
-      hazardEvents: 0,
+      hazardEvents: 1,
     },
   });
 
-  for (const event of schedulerResult.events) {
+  for (const emission of schedulerResult.emissions) {
+    const event = emission.event;
     const processed = processEvent(
       event,
       round,
@@ -414,11 +417,20 @@ function resolveScheduledEventsStep(
     );
     nextMetrics = processed.metrics;
     nextFlags = processed.flags;
-    historyEntries.push({
-      ...processed.history,
-      sourceKind: "scheduled_event",
-      scheduledEventId: event.id,
-    });
+    historyEntries.push(
+      emission.kind === "hazard"
+        ? {
+            ...processed.history,
+            sourceKind: "hazard_event",
+            sourceLabel: "Hazard",
+            cause: emission.explanation,
+          }
+        : {
+            ...processed.history,
+            sourceKind: "scheduled_event",
+            scheduledEventId: emission.scheduledEventId,
+          },
+    );
     emittedEventIds.push(event.id);
   }
 
@@ -439,6 +451,7 @@ function resolveAmbientEvent(
   eventCounts: Record<string, number>,
   events: EventDefinition[],
   scheduler: EventSchedulerState,
+  excludedEventIds: Set<string>,
 ): {
   metrics: RunMetrics;
   flags: Set<string>;
@@ -446,7 +459,9 @@ function resolveAmbientEvent(
   eventId: string | null;
   scheduler: EventSchedulerState;
 } {
-  const ambientEvents = events.filter((event) => event.kind === "ambient");
+  const ambientEvents = events.filter(
+    (event) => event.kind === "ambient" && !excludedEventIds.has(event.id),
+  );
   const ambientCandidates = ambientEvents.filter((event) =>
     meetsRequirements(event.requirements, {
       ...run,
@@ -788,6 +803,7 @@ export function resolveRound(run: RunState): RunState {
     eventCounts,
     selectedDecisionResult.scheduler,
     content.eventById,
+    content.hazardRules,
   );
   metrics = scheduledResult.metrics;
   flags = scheduledResult.flags;
@@ -804,6 +820,7 @@ export function resolveRound(run: RunState): RunState {
       eventCounts,
       content.events,
       scheduler,
+      new Set(emittedEventIds),
     );
     metrics = ambientResult.metrics;
     flags = ambientResult.flags;

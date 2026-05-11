@@ -7,6 +7,37 @@ As of `2026-05-11`, the repo contains `165` authored events:
 - `74` ambient events
 - `91` delayed events
 
+Active round resolution also compiles `5` scheduler hazard rules from
+`src/simulation/scheduler/hazardRules.ts`. These rules do **not** add new
+event definitions; they reuse existing ambient events when run-state thresholds
+make that pressure legible.
+
+## Scheduler Hazard Notes
+
+Hazards are the scheduler's state-sensitive path. Guaranteed delayed events
+still come from decision consequences, while hazard rules let worsening metrics
+promote an existing ambient event into the scheduled-event step before the
+normal ambient draw.
+
+Current guardrails:
+
+- Hazard budget is conservative: at most `1` hazard event can fire during a
+  round resolution.
+- Selection is deterministic for a fixed run state, seed, content hash, and
+  hazard-rule set.
+- Each rule carries metric requirements, a cooldown, a source family, and a
+  player-facing cause string that appears in history when the hazard fires.
+- Hazard targets must point at ambient events so the rule promotes a known
+  pressure beat rather than inventing hidden content.
+
+| Hazard rule | Target event | Source family | Requirement summary | Cooldown |
+| --- | --- | --- | --- | ---: |
+| `hazard-creditor-liquidity` | `vendor_prepay_demand` | `creditors` | Round `5+`; creditor patience at or below `32` | `3` |
+| `hazard-labor-morale` | `flight_attendant_sickout` | `labor` | Round `4+`; workforce morale at or below `36` | `3` |
+| `hazard-legal-pressure` | `ethics_hotline_spike` | `legal` | Round `4+`; legal heat at or above `68` | `3` |
+| `hazard-public-service-anger` | `stranded_passenger_clip` | `service` | Round `5+`; public anger at or above `62` and market confidence at or below `42` | `3` |
+| `hazard-safety-integrity` | `dispatcher_fatigue_warning` | `safety` | Round `4+`; safety integrity at or below `44` | `3` |
+
 ## How to Read This
 
 - `Parallel` means a broad historical rhyme, not a documentary retelling.

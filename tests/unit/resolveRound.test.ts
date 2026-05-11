@@ -67,6 +67,102 @@ describe("resolveRound", () => {
     expect(next.systemSignals?.length).toBeGreaterThan(0);
   });
 
+  it("fires an active manifest hazard deterministically with an explainable source", () => {
+    const createHazardRun = () => {
+      const run = createInitialRunState();
+      run.round = 3;
+      run.metrics.legalHeat = 70;
+      run.metrics.safetyIntegrity = 80;
+      run.metrics.workforceMorale = 70;
+      run.metrics.creditorPatience = 70;
+      run.metrics.publicAnger = 20;
+      run.metrics.marketConfidence = 60;
+      return run;
+    };
+
+    const first = resolveRound(createHazardRun());
+    const repeated = resolveRound(createHazardRun());
+    const firstHazards = first.history.filter(
+      (entry) => entry.round === 4 && entry.sourceKind === "hazard_event",
+    );
+    const repeatedHazards = repeated.history.filter(
+      (entry) => entry.round === 4 && entry.sourceKind === "hazard_event",
+    );
+
+    expect(firstHazards).toHaveLength(1);
+    expect(firstHazards[0]).toMatchObject({
+      source: "event",
+      sourceKind: "hazard_event",
+      sourceLabel: "Hazard",
+      title: "Ethics Hotline Spike",
+      cause:
+        "Legal heat is high enough that internal complaints start finding outside readers.",
+    });
+    expect(repeatedHazards.map((entry) => entry.title)).toEqual(
+      firstHazards.map((entry) => entry.title),
+    );
+    expect(first.scheduler?.cooldowns["hazard-legal-pressure"]).toBe(7);
+  });
+
+  it("respects active hazard requirements and cooldowns during round resolution", () => {
+    const quietRun = createInitialRunState();
+    quietRun.round = 3;
+    quietRun.metrics.legalHeat = 20;
+    quietRun.metrics.safetyIntegrity = 80;
+    quietRun.metrics.workforceMorale = 70;
+    quietRun.metrics.creditorPatience = 70;
+    quietRun.metrics.publicAnger = 20;
+    quietRun.metrics.marketConfidence = 60;
+
+    const quietNext = resolveRound(quietRun);
+
+    expect(
+      quietNext.history.some(
+        (entry) => entry.round === 4 && entry.sourceKind === "hazard_event",
+      ),
+    ).toBe(false);
+
+    const hotRun = createInitialRunState();
+    hotRun.round = 3;
+    hotRun.metrics.legalHeat = 70;
+    hotRun.metrics.safetyIntegrity = 80;
+    hotRun.metrics.workforceMorale = 70;
+    hotRun.metrics.creditorPatience = 70;
+    hotRun.metrics.publicAnger = 20;
+    hotRun.metrics.marketConfidence = 60;
+
+    const first = resolveRound(hotRun);
+    const second = resolveRound({
+      ...first,
+      metrics: {
+        ...first.metrics,
+        legalHeat: 80,
+        safetyIntegrity: 80,
+        workforceMorale: 70,
+        creditorPatience: 70,
+        publicAnger: 20,
+        marketConfidence: 60,
+      },
+    });
+
+    expect(
+      first.history.some(
+        (entry) =>
+          entry.round === 4 &&
+          entry.sourceKind === "hazard_event" &&
+          entry.title === "Ethics Hotline Spike",
+      ),
+    ).toBe(true);
+    expect(
+      second.history.some(
+        (entry) =>
+          entry.round === 5 &&
+          entry.sourceKind === "hazard_event" &&
+          entry.title === "Ethics Hotline Spike",
+      ),
+    ).toBe(false);
+  });
+
   it("offers a curated decision tray for a fresh run", () => {
     const run = createInitialRunState();
     const decisions = getAvailableDecisions(loadContent().decisions, run);

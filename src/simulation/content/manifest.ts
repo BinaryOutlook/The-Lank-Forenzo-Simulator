@@ -6,11 +6,14 @@ import type {
   MetricKey,
   RequirementSpec,
 } from "../state/types";
+import type { HazardRule } from "../scheduler/eventScheduler.js";
 import { runMetricBounds } from "../systems/metricEffects";
 
 export type ContentDiagnosticKind =
   | "duplicate-id"
+  | "duplicate-hazard-rule"
   | "broken-delayed-reference"
+  | "broken-hazard-reference"
   | "unreferenced-delayed-event"
   | "producer-only-flag"
   | "consumer-only-flag"
@@ -25,7 +28,7 @@ export interface ContentDiagnostic {
   id: string;
   message: string;
   sourceId?: string;
-  sourceKind?: "decision" | "event" | "ending";
+  sourceKind?: "decision" | "event" | "ending" | "hazard";
   count?: number;
   sources?: string[];
 }
@@ -39,6 +42,7 @@ export interface CompiledContentManifest extends ContentBundle {
   decisionsByPack: Record<string, string[]>;
   decisionsByTag: Record<string, string[]>;
   eventsByTag: Record<string, string[]>;
+  hazardRules: HazardRule[];
   flags: string[];
   flagProducers: Record<string, string[]>;
   flagConsumers: Record<string, string[]>;
@@ -48,10 +52,12 @@ export interface CompiledContentManifest extends ContentBundle {
 export function compileContentManifest(
   content: ContentBundle,
   version = "v0.5",
+  hazardRules: HazardRule[] = [],
 ): CompiledContentManifest {
   const decisionById = indexById(content.decisions);
   const eventById = indexById(content.events);
   const endingById = indexById(content.endings);
+  const normalizedHazardRules = [...hazardRules];
   const decisionsByPack = groupIds(content.decisions, (decision) => [
     decision.pack,
   ]);
@@ -63,10 +69,14 @@ export function compileContentManifest(
   const diagnostics: ContentDiagnostic[] = [
     ...findDuplicateDiagnostics(content),
     ...findDelayedEventDiagnostics(content, eventById),
+    ...findHazardRuleDiagnostics(normalizedHazardRules, eventById),
     ...findRequirementDiagnostics(content),
     ...findPackCoverageDiagnostics(decisionsByPack),
   ];
-  const { flags, flagProducers, flagConsumers } = indexFlags(content);
+  const { flags, flagProducers, flagConsumers } = indexFlags(
+    content,
+    normalizedHazardRules,
+  );
 
   diagnostics.push(...findFlagDiagnostics(flags, flagProducers, flagConsumers));
 
@@ -74,7 +84,7 @@ export function compileContentManifest(
 
   return {
     version,
-    contentHash: createContentHash(content),
+    contentHash: createContentHash(content, normalizedHazardRules),
     decisions: content.decisions,
     events: content.events,
     endings: content.endings,
@@ -84,6 +94,7 @@ export function compileContentManifest(
     decisionsByPack,
     decisionsByTag,
     eventsByTag,
+    hazardRules: normalizedHazardRules,
     flags,
     flagProducers,
     flagConsumers,
@@ -229,6 +240,73 @@ function findDelayedEventDiagnostics(
   return diagnostics;
 }
 
+function findHazardRuleDiagnostics(
+  hazardRules: HazardRule[],
+  eventById: Record<string, EventDefinition>,
+): ContentDiagnostic[] {
+  const diagnostics: ContentDiagnostic[] = [];
+  const seen = new Set<string>();
+  const duplicates = new Set<string>();
+
+  for (const rule of hazardRules) {
+    if (seen.has(rule.id)) {
+      duplicates.add(rule.id);
+    }
+    seen.add(rule.id);
+
+    const event = eventById[rule.eventId];
+
+    if (!event) {
+      diagnostics.push({
+        kind: "broken-hazard-reference",
+        severity: "error",
+        id: rule.eventId,
+        sourceId: rule.id,
+        sourceKind: "hazard",
+        message: `Hazard rule "${rule.id}" references unknown event "${rule.eventId}".`,
+      });
+      continue;
+    }
+
+    if (event.kind !== "ambient") {
+      diagnostics.push({
+        kind: "broken-hazard-reference",
+        severity: "error",
+        id: rule.eventId,
+        sourceId: rule.id,
+        sourceKind: "hazard",
+        message: `Hazard rule "${rule.id}" references non-ambient event "${rule.eventId}".`,
+      });
+    }
+
+    diagnostics.push(
+      ...getImpossibleRequirementReasons(rule.requirements).map((reason) => ({
+        kind: "likely-impossible-requirement" as const,
+        severity: "warning" as const,
+        id: rule.id,
+        sourceId: rule.id,
+        sourceKind: "hazard" as const,
+        message: `Likely impossible requirements on hazard rule "${rule.id}": ${reason}.`,
+      })),
+    );
+  }
+
+  diagnostics.push(
+    ...[...duplicates]
+      .sort((left, right) => left.localeCompare(right))
+      .map((id) => ({
+        kind: "duplicate-hazard-rule" as const,
+        severity: "error" as const,
+        id,
+        sourceId: id,
+        sourceKind: "hazard" as const,
+        message: `Duplicate hazard rule id "${id}".`,
+      })),
+  );
+
+  return diagnostics;
+}
+
 function findRequirementDiagnostics(
   content: ContentBundle,
 ): ContentDiagnostic[] {
@@ -278,7 +356,10 @@ function findPackCoverageDiagnostics(
   }));
 }
 
-function indexFlags(content: ContentBundle): {
+function indexFlags(
+  content: ContentBundle,
+  hazardRules: HazardRule[],
+): {
   flags: string[];
   flagProducers: Record<string, string[]>;
   flagConsumers: Record<string, string[]>;
@@ -304,6 +385,14 @@ function indexFlags(content: ContentBundle): {
     collectConsumedFlags(
       `event:${event.id}`,
       event.requirements,
+      flagConsumers,
+    );
+  }
+
+  for (const rule of hazardRules) {
+    collectConsumedFlags(
+      `hazard:${rule.id}`,
+      rule.requirements,
       flagConsumers,
     );
   }
@@ -421,9 +510,15 @@ function getImpossibleRequirementReasons(
   return reasons;
 }
 
-function createContentHash(content: ContentBundle): string {
+function createContentHash(
+  content: ContentBundle,
+  hazardRules: HazardRule[],
+): string {
   let hash = 0x811c9dc5;
-  const input = stableStringify(content);
+  const input = stableStringify({
+    ...content,
+    hazardRules,
+  });
 
   for (let index = 0; index < input.length; index += 1) {
     hash ^= input.charCodeAt(index);

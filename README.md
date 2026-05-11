@@ -14,7 +14,7 @@ Implemented in the current build:
 - expanded multi-pack decision and event libraries with deterministic delayed-event pools
 - compiled content manifest with direct lookup maps, content hash, flag diagnostics, and pack/tag indexes
 - set-aware decision tray composition with diversity, follow-up, exit, and repeat-suppression rules
-- v0.5 scheduler, faction memory, operational network, and dossier primitives wired into active runs
+- v0.5 scheduler, deterministic hazard rules, faction memory, operational network, and dossier primitives wired into active runs
 - consumable strategic reserves for high-impact political, labor, regulatory, and executive-network actions
 - post-run recap surfaces for faction pressure, operational damage, dossier trails, missed windows, and critical chains
 - personal wealth, legal heat, creditor patience, safety, market confidence, and workforce systems

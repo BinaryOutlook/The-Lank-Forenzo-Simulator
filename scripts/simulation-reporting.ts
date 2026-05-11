@@ -1,5 +1,9 @@
 import { hashNumber, hashString } from "../src/lib/random/seeded";
-import { compileContentManifest, loadContent } from "../src/simulation/content";
+import {
+  activeHazardRules,
+  compileContentManifest,
+  loadContent,
+} from "../src/simulation/content";
 import { getImpactSetScore } from "../src/simulation/state/metricSemantics";
 import {
   createInitialRunState,
@@ -508,7 +512,11 @@ export function getArgValue(
 }
 
 export function getContentHash(content: ContentBundle = loadContent()): string {
-  return compileContentManifest(content).contentHash;
+  return compileContentManifest(content, "v0.5", activeHazardRules).contentHash;
+}
+
+export function getActiveHazardEventIds(): Set<string> {
+  return new Set(activeHazardRules.map((rule) => rule.eventId));
 }
 
 export function simulateBotRun(
@@ -523,6 +531,8 @@ export function simulateBotRun(
   const surfacedDecisionIds = new Set<string>();
   const selectedDecisionIds = new Set<string>();
   const triggeredEventIds = new Set<string>();
+  const triggeredHazardEventIds = new Set<string>();
+  const hazardEventIds = getActiveHazardEventIds();
   const surfacedPacks = new Set<DecisionPackId>();
   let repeatedTrayOverlap = 0;
   let repeatedTraySlots = 0;
@@ -580,6 +590,14 @@ export function simulateBotRun(
     }
   }
 
+  for (const [eventId, count] of Object.entries(
+    run.scheduler?.firedEventIds ?? {},
+  )) {
+    if (count > 0 && hazardEventIds.has(eventId)) {
+      triggeredHazardEventIds.add(eventId);
+    }
+  }
+
   return {
     endingId: run.endingId ?? "active",
     roundsPlayed,
@@ -591,7 +609,7 @@ export function simulateBotRun(
       eventKindById,
       "delayed",
     ),
-    triggeredHazardEventIds: new Set(),
+    triggeredHazardEventIds,
     surfacedPacks,
     finalFlags: new Set(run.flags),
     repeatedTrayOverlap,

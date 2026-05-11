@@ -11,6 +11,7 @@ import {
   compileContentManifest,
   type CompiledContentManifest,
 } from "./manifest";
+import { activeHazardRules } from "../scheduler/hazardRules.js";
 
 let cachedContent: ContentBundle | null = null;
 let cachedManifest: CompiledContentManifest | null = null;
@@ -34,7 +35,11 @@ export function loadContentManifest(): CompiledContentManifest {
     return cachedManifest;
   }
 
-  cachedManifest = compileContentManifest(loadContent());
+  cachedManifest = compileContentManifest(
+    loadContent(),
+    "v0.5",
+    activeHazardRules,
+  );
 
   return cachedManifest;
 }
@@ -44,3 +49,4 @@ export {
   type CompiledContentManifest,
   type ContentDiagnostic,
 } from "./manifest";
+export { activeHazardRules };

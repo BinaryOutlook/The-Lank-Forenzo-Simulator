@@ -7,6 +7,7 @@ import {
   buildRepeatedTrayPressure,
   formatPercentage,
   getArgValue,
+  getActiveHazardEventIds,
   getContentHash,
   parsePositiveInteger,
   simulateBotRun,
@@ -76,6 +77,7 @@ export function buildBalanceMatrixReport(
 ): BalanceMatrixReport {
   const content = loadContent();
   const contentHash = getContentHash(content);
+  const activeHazardEventIds = getActiveHazardEventIds();
   const archetypes = options.archetypes ?? archetypePolicies;
   const rows: ArchetypeMatrixRow[] = [];
   const aggregateSurfaced = new Set<string>();
@@ -158,7 +160,10 @@ export function buildBalanceMatrixReport(
         aggregateDelayedEvents.size,
         content.events.filter((event) => event.kind === "delayed").length,
       ),
-      hazardEventCoverage: buildCoverageStat(aggregateHazardEvents.size, 0),
+      hazardEventCoverage: buildCoverageStat(
+        aggregateHazardEvents.size,
+        activeHazardEventIds.size,
+      ),
       repeatedTrayPressure: buildRepeatedTrayPressure(
         aggregateOverlap,
         aggregateSlots,
@@ -219,6 +224,7 @@ function simulateArchetypeRow(
   archetype: ArchetypePolicy,
 ): ArchetypeMatrixRow {
   const content = loadContent();
+  const activeHazardEventIds = getActiveHazardEventIds();
   const surfaced = new Set<string>();
   const selected = new Set<string>();
   const events = new Set<string>();
@@ -285,7 +291,10 @@ function simulateArchetypeRow(
       delayedEvents.size,
       content.events.filter((event) => event.kind === "delayed").length,
     ),
-    hazardEventCoverage: buildCoverageStat(hazardEvents.size, 0),
+    hazardEventCoverage: buildCoverageStat(
+      hazardEvents.size,
+      activeHazardEventIds.size,
+    ),
     repeatedTrayPressure: buildRepeatedTrayPressure(overlap, slots),
     packCoverage,
     lowReachabilityPacks: getLowReachabilityPacks(

@@ -23,6 +23,7 @@ import {
   buildRepeatedTrayPressure,
   formatPercentage,
   getArgValue,
+  getActiveHazardEventIds,
   getContentHash,
   parsePositiveInteger,
   type CoverageStat,
@@ -54,6 +55,7 @@ export interface NoveltyContext {
   surfacedDecisionIds: Set<string>;
   selectedDecisionIds: Set<string>;
   triggeredEventIds: Set<string>;
+  triggeredHazardEventIds: Set<string>;
   endingIds: Set<string>;
   packIds: Set<string>;
   flagIds: Set<string>;
@@ -64,6 +66,7 @@ export interface CandidateNoveltyInput {
   surfacedDecisionIds: Iterable<string>;
   selectedDecisionIds: Iterable<string>;
   triggeredEventIds: Iterable<string>;
+  triggeredHazardEventIds?: Iterable<string>;
   endingId?: string | null;
   packIds: Iterable<string>;
   flagIds: Iterable<string>;
@@ -107,6 +110,7 @@ export function exploreReachabilityReport(
   const content = options.content ?? loadContent();
   const contentHash = getContentHash(content);
   const context = createNoveltyContext();
+  const activeHazardEventIds = getActiveHazardEventIds();
   const eventKindById = new Map(
     content.events.map((event) => [event.id, event.kind] as const),
   );
@@ -167,12 +171,17 @@ export function exploreReachabilityReport(
           .filter((decision): decision is DecisionDefinition => Boolean(decision));
         const stateKey = abstractRunStateKey(nextRun);
         const triggeredEventIds = getTriggeredEventIds(nextRun);
+        const triggeredHazardEventIds = getTriggeredHazardEventIds(
+          nextRun,
+          activeHazardEventIds,
+        );
         const packIds = selectedDecisions.map((decision) => decision.pack);
         const novelty = scoreNovelty(context, {
           stateKey,
           surfacedDecisionIds: tray.map((decision) => decision.id),
           selectedDecisionIds,
           triggeredEventIds,
+          triggeredHazardEventIds,
           endingId: nextRun.endingId,
           packIds,
           flagIds: nextRun.flags,
@@ -184,6 +193,10 @@ export function exploreReachabilityReport(
 
         for (const eventId of triggeredEventIds) {
           context.triggeredEventIds.add(eventId);
+        }
+
+        for (const eventId of triggeredHazardEventIds) {
+          context.triggeredHazardEventIds.add(eventId);
         }
 
         for (const flag of nextRun.flags) {
@@ -252,7 +265,10 @@ export function exploreReachabilityReport(
       delayedEvents.size,
       content.events.filter((event) => event.kind === "delayed").length,
     ),
-    hazardEventCoverage: buildCoverageStat(0, 0),
+    hazardEventCoverage: buildCoverageStat(
+      context.triggeredHazardEventIds.size,
+      activeHazardEventIds.size,
+    ),
     endingCoverage: buildCoverageStat(context.endingIds.size, content.endings.length),
     packCoverage,
     flagCoverage: buildCoverageStat(
@@ -319,6 +335,11 @@ export function scoreNovelty(
   score += countNew(candidate.surfacedDecisionIds, context.surfacedDecisionIds) * 2;
   score += countNew(candidate.selectedDecisionIds, context.selectedDecisionIds) * 7;
   score += countNew(candidate.triggeredEventIds, context.triggeredEventIds) * 9;
+  score +=
+    countNew(
+      candidate.triggeredHazardEventIds ?? [],
+      context.triggeredHazardEventIds,
+    ) * 4;
   score += countNew(candidate.packIds, context.packIds) * 5;
   score += countNew(candidate.flagIds, context.flagIds) * 3;
 
@@ -361,6 +382,7 @@ function createNoveltyContext(): NoveltyContext {
     surfacedDecisionIds: new Set(),
     selectedDecisionIds: new Set(),
     triggeredEventIds: new Set(),
+    triggeredHazardEventIds: new Set(),
     endingIds: new Set(),
     packIds: new Set(),
     flagIds: new Set(),
@@ -430,6 +452,17 @@ function scoreBranchDecision(decision: DecisionDefinition): number {
 function getTriggeredEventIds(run: RunState): string[] {
   return Object.entries(run.eventCounts)
     .filter(([, count]) => count > 0)
+    .map(([eventId]) => eventId);
+}
+
+function getTriggeredHazardEventIds(
+  run: RunState,
+  activeHazardEventIds: Set<string>,
+): string[] {
+  return Object.entries(run.scheduler?.firedEventIds ?? {})
+    .filter(
+      ([eventId, count]) => count > 0 && activeHazardEventIds.has(eventId),
+    )
     .map(([eventId]) => eventId);
 }
 
