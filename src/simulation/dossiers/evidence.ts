@@ -90,6 +90,36 @@ const OPERATION_EVIDENCE: Record<
       detail: "Operational cascade tied deferred maintenance to a visible network failure.",
     },
   ],
+  "contractor-control-cascade": (cascade) => [
+    {
+      theme: "maintenance_fraud",
+      weight: Math.max(10, Math.round(cascade.severity / 4)),
+      witness: "contractor auditor",
+      detail: "Contractor dependence made outsourced maintenance a control failure.",
+    },
+    {
+      theme: "regulatory_capture",
+      weight: Math.max(7, Math.round(cascade.severity / 8)),
+      witness: "FAA liaison",
+      detail: "Vendor bottlenecks exposed regulator-facing maintenance gaps.",
+    },
+  ],
+  "crew-availability-cascade": (cascade) => [
+    {
+      theme: "labor_abuse",
+      weight: Math.max(10, Math.round(cascade.severity / 4)),
+      witness: "crew scheduler",
+      detail: "Crew cuts and fatigue made recovery staffing visibly brittle.",
+    },
+  ],
+  "route-stranding-cascade": (cascade) => [
+    {
+      theme: "regulatory_capture",
+      weight: Math.max(8, Math.round(cascade.severity / 5)),
+      witness: "airport authority",
+      detail: "Route cuts concentrated public disruption into stranded-spoke evidence.",
+    },
+  ],
 };
 
 export function collectEvidenceFragments(

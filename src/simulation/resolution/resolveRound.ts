@@ -4,7 +4,11 @@ import {
   pickWeighted,
   shuffleWithSeed,
 } from "../../lib/random/seeded";
-import { applyEvidenceFragments, collectEvidenceFragments, type EvidenceFragment } from "../dossiers/evidence";
+import {
+  applyEvidenceFragments,
+  collectEvidenceFragments,
+  type EvidenceFragment,
+} from "../dossiers/evidence";
 import {
   createInitialDossierState,
   getDossierCaseTheory,
@@ -320,7 +324,9 @@ function applySelectedDecisions(
       ),
     );
 
-    for (const [index, delayed] of (decision.delayedConsequences ?? []).entries()) {
+    for (const [index, delayed] of (
+      decision.delayedConsequences ?? []
+    ).entries()) {
       const eventId = pickDelayedEventId(decision.id, round, delayed);
 
       if (!eventId) {
@@ -612,7 +618,7 @@ function buildFactionSignals(intents: FactionIntent[]): BoardSignal[] {
 }
 
 function buildOperationSignals(result: NetworkQuarterResult): BoardSignal[] {
-  return result.briefingSignals.slice(0, 1).map((signal) => ({
+  return result.briefingSignals.slice(0, 2).map((signal) => ({
     title: signal.title,
     body: signal.body,
   }));
@@ -629,7 +635,9 @@ function buildFactionHistoryEntry(
   round: number,
   intents: FactionIntent[],
 ): HistoryEntry | null {
-  const [intent] = [...intents].sort((left, right) => right.urgency - left.urgency);
+  const [intent] = [...intents].sort(
+    (left, right) => right.urgency - left.urgency,
+  );
 
   if (!intent || intent.urgency < 50) {
     return null;
@@ -662,10 +670,16 @@ function buildOperationHistoryEntry(
     id: `operation-${round}-${cascade?.id ?? signal?.title ?? "read"}`,
     round,
     source: "operation",
-    sourceKind: "operational_read",
+    sourceKind: cascade ? "operational_cascade" : "operational_read",
     operationId: cascade?.id ?? "network-quarter",
-    title: cascade?.id ? formatId(cascade.id) : (signal?.title ?? "Operational read"),
-    body: cascade?.body ?? signal?.body ?? "The network absorbed the quarter without a named cascade.",
+    title: cascade?.id
+      ? formatId(cascade.id)
+      : (signal?.title ?? "Operational read"),
+    body: cascade
+      ? `${cascade.body} Cause: ${cascade.cause}`
+      : (signal?.body ??
+        "The network absorbed the quarter without a named cascade."),
+    cause: cascade?.cause,
     tone: cascade || signal?.tone === "negative" ? "negative" : "neutral",
   };
 }
@@ -858,14 +872,22 @@ function getDossierRecapBody(summary: DossierSummary): string {
 function getMissedExitWindows(run: RunState): RecapItem[] {
   const missed: RecapItem[] = [];
 
-  if (run.round >= 7 && run.metrics.marketConfidence >= 60 && run.metrics.legalHeat > 74) {
+  if (
+    run.round >= 7 &&
+    run.metrics.marketConfidence >= 60 &&
+    run.metrics.legalHeat > 74
+  ) {
     missed.push({
       title: "Extraction window",
       body: "Market belief was available, but personal exposure made the cash-out unsafe.",
     });
   }
 
-  if (run.round >= 6 && run.metrics.offshoreReadiness >= 35 && run.metrics.personalWealth < 45) {
+  if (
+    run.round >= 6 &&
+    run.metrics.offshoreReadiness >= 35 &&
+    run.metrics.personalWealth < 45
+  ) {
     missed.push({
       title: "Nassau window",
       body: "The offshore apparatus was nearly ready before personal liquidity caught up.",
