@@ -1,6 +1,6 @@
 .page {
   display: grid;
-  min-height: calc(100vh - 7rem);
+  min-height: calc(100svh - 7rem);
   align-items: center;
 }
 
@@ -33,6 +33,7 @@
   font-family: var(--font-display);
   font-size: clamp(3.3rem, 10vw, 7rem);
   line-height: 0.9;
+  overflow-wrap: anywhere;
 }
 
 .summary {
@@ -104,5 +105,45 @@
 
   .title {
     font-size: clamp(2.5rem, 13vw, 4.6rem);
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .page {
+    min-height: auto;
+    align-items: start;
+  }
+
+  .hero {
+    gap: 1rem;
+  }
+
+  .copy {
+    gap: 1rem;
+  }
+
+  .title {
+    font-size: clamp(2.25rem, 12vw, 3.2rem);
+    line-height: 0.96;
+  }
+
+  .summary {
+    font-size: 1rem;
+    line-height: 1.58;
+  }
+
+  .actions {
+    display: grid;
+  }
+
+  .primaryAction,
+  .secondaryAction {
+    width: 100%;
+    min-height: 3.35rem;
+  }
+
+  .poster {
+    padding: 0.95rem;
   }
 }

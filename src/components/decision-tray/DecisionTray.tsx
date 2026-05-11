@@ -22,28 +22,27 @@ export function DecisionTray({
   onToggle,
   onEndTurn,
 }: DecisionTrayProps) {
+  const resolveLabel =
+    selectedDecisionIds.length > 0 ? "Resolve the quarter" : "Hold the line";
+
   return (
     <section className={styles.tray}>
       <div className={styles.header}>
-        <div>
-          <p className={styles.eyebrow}>Decision tray</p>
-          <h2 className={styles.title}>Choose where the pain goes next.</h2>
-        </div>
+        <p className={styles.eyebrow}>Decision tray</p>
+        <h2 className={styles.title}>Choose where the pain goes next.</h2>
+      </div>
 
-        <div className={styles.controls}>
-          <p className={styles.selectionCount}>
-            {selectedDecisionIds.length}/2 selected
-          </p>
-          <button
-            type="button"
-            className={styles.resolveButton}
-            onClick={onEndTurn}
-          >
-            {selectedDecisionIds.length > 0
-              ? "Resolve the quarter"
-              : "Hold the line"}
-          </button>
-        </div>
+      <div className={styles.controls} data-testid="quarter-controls">
+        <p className={styles.selectionCount}>
+          {selectedDecisionIds.length}/2 selected
+        </p>
+        <button
+          type="button"
+          className={styles.resolveButton}
+          onClick={onEndTurn}
+        >
+          {resolveLabel}
+        </button>
       </div>
 
       <div className={styles.list}>

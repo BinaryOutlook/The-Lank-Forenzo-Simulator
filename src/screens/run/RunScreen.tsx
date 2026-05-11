@@ -30,11 +30,23 @@ export function RunScreen() {
   }
 
   return (
-    <section className={styles.layout}>
-      <MetricRail metrics={run.metrics} />
+    <section className={styles.layout} aria-label="Active run workspace">
+      <nav className={styles.sectionNav} aria-label="Run sections">
+        <a href="#board-packet">Brief</a>
+        <a href="#run-state">State</a>
+        <a href="#decision-tray">Decisions</a>
+        <a href="#consequence-feed">Feed</a>
+      </nav>
 
-      <div className={styles.centerColumn}>
+      <div id="run-state" className={styles.metricsArea}>
+        <MetricRail metrics={run.metrics} />
+      </div>
+
+      <div id="board-packet" className={styles.boardArea}>
         <BoardPacket run={run} />
+      </div>
+
+      <div id="decision-tray" className={styles.decisionArea}>
         <DecisionTray
           decisions={availableDecisions()}
           selectedDecisionIds={run.selectedDecisionIds}
@@ -43,7 +55,9 @@ export function RunScreen() {
         />
       </div>
 
-      <EventFeed history={run.history} />
+      <div id="consequence-feed" className={styles.feedArea}>
+        <EventFeed history={run.history} />
+      </div>
     </section>
   );
 }

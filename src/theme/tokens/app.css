@@ -1,10 +1,12 @@
 body {
   min-height: 100vh;
+  min-height: 100svh;
   background: var(--wallpaper-backdrop, var(--backdrop));
 }
 
 #root {
   min-height: 100vh;
+  min-height: 100svh;
 }
 
 :root {
@@ -22,6 +24,7 @@ body {
   position: relative;
   isolation: isolate;
   min-height: 100vh;
+  min-height: 100svh;
   background-image: var(--wallpaper-frame);
   background-position: var(--wallpaper-position);
   background-size: var(--wallpaper-size);
@@ -117,6 +120,14 @@ body {
   animation-duration: 0.001ms !important;
   animation-iteration-count: 1 !important;
   scroll-behavior: auto !important;
+}
+
+@supports (min-height: 100dvh) {
+  body,
+  #root,
+  .app-frame {
+    min-height: 100dvh;
+  }
 }
 
 .visually-hidden {

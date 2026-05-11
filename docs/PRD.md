@@ -112,6 +112,7 @@ For the first serious browser version, the product should:
 - let factions, operations, and dossier evidence remember the style of the player's misconduct
 - provide deterministic balance and reachability tooling so content coverage problems are visible
 - support two complete visual themes without fragmenting the product
+- remain usable in responsive desktop, tablet, and phone browser layouts, including portrait play with touch controls
 - provide local-first player options for presentation, audio, and graphical load
 - remain local-first and easy to run during early development
 - be maintainable enough for re-entry after long breaks
@@ -399,7 +400,7 @@ The MVP should be intentionally compact but unmistakably this game.
 - cloud saves
 - procedural story generation via LLM
 - voice acting
-- mobile-first support beyond responsive usability
+- native mobile app packaging or app-store distribution
 
 ## 13. Functional Requirements
 
@@ -428,7 +429,21 @@ The main run screen must show:
 
 The player should not need secondary screens to understand the state of the run.
 
-### 13.3 Decision system
+### 13.3 Responsive browser usability
+
+The browser UI must remain playable across conventional desktop landscape, tablet landscape, tablet portrait, and mobile phone portrait viewports.
+
+Responsive behavior should preserve:
+
+- access to required round controls through touch-friendly targets
+- visibility of the board packet, major run metrics, decisions, and consequence feed
+- readable text without horizontal scrolling
+- safe-area spacing for notches, browser chrome, and virtual keyboard resizing
+- the same simulation information and decision rules across device classes
+
+Portrait layouts may reorganize sections, but they must not become a separate mobile version with different gameplay advantages.
+
+### 13.4 Decision system
 
 - The player receives a curated set of decisions each round.
 - Decisions may have immediate and delayed consequences.
@@ -438,40 +453,40 @@ The player should not need secondary screens to understand the state of the run.
 - The decision library should be able to scale through maintainable authored packs rather than a single indefinitely growing file.
 - Tray curation should balance state relevance with visible variety so a round does not collapse into repetitive same-group cards.
 
-### 13.4 Consequence system
+### 13.5 Consequence system
 
 - The game must resolve consequences after player decisions.
 - Consequences can affect multiple systems at once.
 - Consequences should be capable of returning in later rounds.
 - The game should support authored delayed fallout tied to past decisions.
 
-### 13.5 Personal extraction
+### 13.6 Personal extraction
 
 - The player must have ways to increase personal wealth separate from airline wealth.
 - The player must be able to profit from stock exits, executive compensation, or side-channel extraction.
 - Personal enrichment must carry legal and reputational risk when appropriate.
 
-### 13.6 Legal pressure
+### 13.7 Legal pressure
 
 - Legal heat must be an explicit meter or status system.
 - Heat should rise from aggressive, deceptive, or reckless behavior.
 - Heat should influence events, investigations, and end states.
 - High heat must create real pressure, not cosmetic warnings.
 
-### 13.7 Endgame behavior
+### 13.8 Endgame behavior
 
 - The game must support voluntary exit attempts before total collapse.
 - Exit opportunities should depend on the current state of wealth, heat, and market conditions.
 - The player should sometimes have to decide between one more profitable turn and immediate escape.
 
-### 13.8 Theme behavior
+### 13.9 Theme behavior
 
 - Theme switching must be available from the product shell.
 - Theme switching must persist across sessions.
 - Theme changes must not alter gameplay behavior.
 - Both themes must remain fully usable across the whole app.
 
-### 13.9 Save behavior
+### 13.10 Save behavior
 
 - The product must autosave after major state changes or at end of round.
 - The player must be able to abandon a run and return later.
