@@ -524,6 +524,8 @@ tests/
 
 ### Module responsibilities
 
+- `simulation/runtime`: public runtime facade for React, scripts, replay
+  tooling, and high-level tests
 - `simulation/state`: canonical game state and serialization
 - `simulation/systems`: economy, legal, labor, market, and extraction rules
 - `simulation/resolution`: end-of-round order of operations
@@ -533,6 +535,24 @@ tests/
 - `lib/storage`: save persistence and migration helpers
 
 This structure keeps the simulation testable and the browser UI clean.
+
+### Simulation Runtime API
+
+The canonical public simulation boundary is exported from
+`src/simulation/index.ts`:
+
+```ts
+interface SimulationRuntime {
+  createInitialRun(input?: InitialRunInput): RunState;
+  getAvailableDecisions(run: RunState): TrayCompositionResult;
+  toggleDecision(run: RunState, decisionId: string): RunState;
+  resolveRound(run: RunState): RunState;
+  getEnding(run: RunState): EndingDefinition | null;
+}
+```
+
+Use this facade when a caller needs to drive gameplay. Import lower-level
+systems only for focused unit tests, diagnostics, or content analysis.
 
 ## Resolution Order
 

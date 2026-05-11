@@ -145,6 +145,8 @@ src/
     about/
     options/
   simulation/
+    index.ts
+    runtime.ts
     content/
     dossiers/
     factions/
@@ -209,6 +211,12 @@ tests/
   unit/
   e2e/
 ```
+
+`src/simulation/index.ts` is the public simulation entry point. It exposes
+`simulationRuntime` plus named helpers for creating runs, composing available
+decision trays, toggling selections, resolving rounds, and looking up endings.
+React, scripts, replay tooling, and high-level tests should prefer that facade
+unless they are intentionally testing lower-level systems.
 
 ## Documentation
 
