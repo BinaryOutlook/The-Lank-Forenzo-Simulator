@@ -21,6 +21,35 @@ No decision in this file should be read as:
 - a one-to-one recreation of a named airline move
 - a claim that one executive or one carrier uniquely "owns" a given tactic
 
+## Dossier Evidence Metadata
+
+Representative decisions can now carry optional `evidence` metadata. The runtime
+uses this field to create deterministic dossier fragments when a selected decision
+resolves.
+
+```json
+{
+  "evidence": [
+    {
+      "theme": "maintenance_fraud",
+      "weight": 14,
+      "witness": "line mechanic",
+      "detail": "Inspection memo downgrade preserves the original severity mismatch."
+    }
+  ]
+}
+```
+
+Current decision-authored evidence covers all dossier themes:
+
+- `maintenance_fraud`: maintenance reclassification, inspection downgrades, MEL stretching, red-tag deferrals.
+- `labor_abuse`: pension freezes, scope-clause tactics, seniority splits, grievance pressure.
+- `insider_trading`: stock-sale windows, repricing sales, earnings-deck timing, final cash-outs.
+- `regulatory_capture`: former-regulator hires, hearing prep, inspector rotation pressure, consent-order delay.
+- `offshore_evasion`: offshore transfer networks, adviser routing, island retainers, Nassau exit prep.
+- `creditor_deception`: ticket-float sweeps, venue shopping, cramdown term sheets.
+- `board_self_dealing`: consulting agreements, retention bonuses, indemnity walls, parachutes, split board packets.
+
 ## Faction Metadata Rules
 
 Decisions and events may include optional `factionEffects` metadata. This is the

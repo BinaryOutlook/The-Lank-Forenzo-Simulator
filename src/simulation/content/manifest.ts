@@ -1,6 +1,7 @@
 import type {
   ContentBundle,
   DecisionDefinition,
+  DossierEvidenceDefinition,
   EndingDefinition,
   EventDefinition,
   HazardDefinition,
@@ -38,6 +39,8 @@ export interface CompiledContentManifest extends ContentBundle {
   decisionById: Record<string, DecisionDefinition>;
   eventById: Record<string, EventDefinition>;
   endingById: Record<string, EndingDefinition>;
+  decisionEvidenceById: Record<string, DossierEvidenceDefinition[]>;
+  eventEvidenceById: Record<string, DossierEvidenceDefinition[]>;
   hazardById: Record<string, HazardDefinition>;
   decisionsByPack: Record<string, string[]>;
   decisionsByTag: Record<string, string[]>;
@@ -56,6 +59,8 @@ export function compileContentManifest(
   const decisionById = indexById(content.decisions);
   const eventById = indexById(content.events);
   const endingById = indexById(content.endings);
+  const decisionEvidenceById = indexEvidence(content.decisions);
+  const eventEvidenceById = indexEvidence(content.events);
   const hazardById = indexById(content.hazards);
   const decisionsByPack = groupIds(content.decisions, (decision) => [
     decision.pack,
@@ -90,6 +95,8 @@ export function compileContentManifest(
     decisionById,
     eventById,
     endingById,
+    decisionEvidenceById,
+    eventEvidenceById,
     hazardById,
     decisionsByPack,
     decisionsByTag,
@@ -107,6 +114,20 @@ function indexById<T extends { id: string }>(items: T[]): Record<string, T> {
 
   for (const item of items) {
     indexed[item.id] = item;
+  }
+
+  return indexed;
+}
+
+function indexEvidence<T extends { id: string; evidence?: DossierEvidenceDefinition[] }>(
+  items: T[],
+): Record<string, DossierEvidenceDefinition[]> {
+  const indexed: Record<string, DossierEvidenceDefinition[]> = {};
+
+  for (const item of items) {
+    if (item.evidence && item.evidence.length > 0) {
+      indexed[item.id] = item.evidence;
+    }
   }
 
   return indexed;

@@ -7,7 +7,10 @@ import type {
   hazardSourceFamilies,
   metricKeys,
 } from "../content/metadata";
-import type { DossierThread } from "../dossiers/dossierState";
+import type {
+  DossierTheme,
+  DossierThread,
+} from "../dossiers/dossierState";
 import type {
   FactionEffectSet,
   FactionStates,
@@ -53,6 +56,13 @@ export type ImpactSet = Partial<Record<MetricKey, number>>;
 
 export type ResourceCostSet = Partial<Record<ConsumableResourceKey, number>>;
 
+export interface DossierEvidenceDefinition {
+  theme: DossierTheme;
+  weight: number;
+  witness?: string;
+  detail?: string;
+}
+
 export interface OperationEffectSet {
   maintenanceBacklog?: number;
   contractorDependence?: number;
@@ -87,6 +97,7 @@ export interface DecisionDefinition {
   tags: string[];
   impacts: ImpactSet;
   resourceCosts?: ResourceCostSet;
+  evidence?: DossierEvidenceDefinition[];
   operationEffects?: OperationEffectSet;
   requirements?: RequirementSpec;
   delayedConsequences?: DelayedConsequenceRef[];
@@ -103,6 +114,7 @@ export interface EventDefinition {
   weight: number;
   tags: string[];
   impacts: ImpactSet;
+  evidence?: DossierEvidenceDefinition[];
   requirements?: RequirementSpec;
   setsFlags?: string[];
   factionEffects?: FactionEffectSet;

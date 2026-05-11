@@ -5,7 +5,10 @@
     "title": "Slot Auction Humiliation",
     "body": "The market assigns a brutally honest price to the pieces you claimed were strategic.",
     "weight": 6,
-    "tags": ["operations", "assets"],
+    "tags": [
+      "operations",
+      "assets"
+    ],
     "impacts": {
       "assetValue": -18,
       "marketConfidence": -4,
@@ -18,7 +21,10 @@
     "title": "Regional Feed Unravels",
     "body": "The hub closure leaves feeder traffic wandering the system like lost luggage with passengers attached.",
     "weight": 6,
-    "tags": ["operations", "service"],
+    "tags": [
+      "operations",
+      "service"
+    ],
     "impacts": {
       "airlineCash": -13,
       "marketConfidence": -4,
@@ -31,12 +37,23 @@
     "title": "Maintenance Paper Trail",
     "body": "Deferred line items become a chronological essay on intent.",
     "weight": 8,
-    "tags": ["safety", "legal"],
+    "tags": [
+      "safety",
+      "legal"
+    ],
     "impacts": {
       "legalHeat": 9,
       "marketConfidence": -4,
       "safetyIntegrity": -5
-    }
+    },
+    "evidence": [
+      {
+        "theme": "maintenance_fraud",
+        "weight": 16,
+        "witness": "maintenance planner",
+        "detail": "Paper trail links safety decisions across quarters."
+      }
+    ]
   },
   {
     "id": "faa_ramp_audit",
@@ -44,12 +61,23 @@
     "title": "FAA Ramp Audit",
     "body": "Inspectors arrive with clipboards, patience, and a very poor sense of humor.",
     "weight": 8,
-    "tags": ["safety", "legal"],
+    "tags": [
+      "safety",
+      "legal"
+    ],
     "impacts": {
       "legalHeat": 8,
       "safetyIntegrity": -4,
       "marketConfidence": -3
-    }
+    },
+    "evidence": [
+      {
+        "theme": "maintenance_fraud",
+        "weight": 12,
+        "witness": "ramp inspector",
+        "detail": "Ramp audit validates the maintenance risk chronology."
+      }
+    ]
   },
   {
     "id": "lessor_step_in_clause",
@@ -57,7 +85,10 @@
     "title": "Lessor Step-In Clause",
     "body": "The aircraft buyer remembers the contract includes rights that become active when you start looking fragile.",
     "weight": 7,
-    "tags": ["finance", "assets"],
+    "tags": [
+      "finance",
+      "assets"
+    ],
     "impacts": {
       "airlineCash": -18,
       "creditorPatience": -3,
@@ -70,7 +101,10 @@
     "title": "Lease Reserve True-Up",
     "body": "Cash saved on presentation day comes back as a less photogenic reserve call.",
     "weight": 6,
-    "tags": ["finance", "creditors"],
+    "tags": [
+      "finance",
+      "creditors"
+    ],
     "impacts": {
       "airlineCash": -16,
       "marketConfidence": -2,
@@ -83,12 +117,23 @@
     "title": "Covenant Leak",
     "body": "Someone passes the lender terms to the press and the missing adjectives are not flattering.",
     "weight": 7,
-    "tags": ["creditors", "press"],
+    "tags": [
+      "creditors",
+      "press"
+    ],
     "impacts": {
       "creditorPatience": -7,
       "marketConfidence": -4,
       "legalHeat": 3
-    }
+    },
+    "evidence": [
+      {
+        "theme": "creditor_deception",
+        "weight": 12,
+        "witness": "lender analyst",
+        "detail": "Covenant leak lets creditors compare private warnings with public optimism."
+      }
+    ]
   },
   {
     "id": "distressed_debt_pack_hunt",
@@ -96,7 +141,10 @@
     "title": "Distressed Debt Pack Hunt",
     "body": "The friendliest creditors sell to the kind of fund that introduces itself with a deadline.",
     "weight": 7,
-    "tags": ["creditors", "finance"],
+    "tags": [
+      "creditors",
+      "finance"
+    ],
     "impacts": {
       "creditorPatience": -6,
       "debt": 12,
@@ -109,7 +157,10 @@
     "title": "Reservation Cutover Stumble",
     "body": "The newly monetized booking stack misses a beat and suddenly every airport screen is arguing with yesterday.",
     "weight": 6,
-    "tags": ["operations", "service"],
+    "tags": [
+      "operations",
+      "service"
+    ],
     "impacts": {
       "airlineCash": -13,
       "marketConfidence": -4,
@@ -122,11 +173,22 @@
     "title": "Card Processor Reserve Call",
     "body": "The acquiring bank decides forward bookings look less like revenue and more like collateral it should hold itself.",
     "weight": 7,
-    "tags": ["finance", "creditors"],
+    "tags": [
+      "finance",
+      "creditors"
+    ],
     "impacts": {
       "airlineCash": -19,
       "creditorPatience": -3,
       "marketConfidence": -2
-    }
+    },
+    "evidence": [
+      {
+        "theme": "creditor_deception",
+        "weight": 10,
+        "witness": "card processor analyst",
+        "detail": "Processor reserve demand tracks ticket-float stress."
+      }
+    ]
   }
 ]

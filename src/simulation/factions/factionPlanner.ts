@@ -78,6 +78,7 @@ function updateBoard(
     dossierWeight:
       faction.dossierWeight +
       (input.evidenceHints?.insider_trading ?? 0) * 0.2 +
+      (input.evidenceHints?.board_self_dealing ?? 0) * 0.4 +
       riskyExitSignals.length * 2,
     recentGrievances: mergeRecentGrievances(
       faction.recentGrievances,
@@ -102,16 +103,23 @@ function updateCreditors(
     "vendor",
     "reserve",
   ]);
+  const creditorEvidence = input.evidenceHints?.creditor_deception ?? 0;
 
   const updated = {
     ...faction,
     patience: faction.patience - cashStress - debtStress - creditorSignals.length * 3,
     aggression:
-      faction.aggression + cashStress + debtStress + creditorSignals.length * 4,
+      faction.aggression +
+      cashStress +
+      debtStress +
+      creditorSignals.length * 4 +
+      Math.round(creditorEvidence / 2),
     leverage:
       faction.leverage +
       (input.metrics.creditorPatience < 35 ? 6 : 0) +
-      creditorSignals.length * 2,
+      creditorSignals.length * 2 +
+      Math.round(creditorEvidence / 3),
+    dossierWeight: faction.dossierWeight + creditorEvidence,
     recentGrievances: mergeRecentGrievances(
       faction.recentGrievances,
       creditorSignals,
@@ -162,7 +170,8 @@ function updateRegulators(
 ): FactionState {
   const evidence =
     (input.evidenceHints?.maintenance_fraud ?? 0) +
-    (input.evidenceHints?.regulatory_capture ?? 0);
+    (input.evidenceHints?.regulatory_capture ?? 0) +
+    Math.round((input.evidenceHints?.creditor_deception ?? 0) / 2);
   const heatStress = input.metrics.legalHeat >= 58 ? 8 : 0;
   const regulatorSignals = collectMatchingSignals(input, [
     "inspection",
@@ -203,7 +212,9 @@ function updatePress(
   const evidence =
     (input.evidenceHints?.insider_trading ?? 0) +
     (input.evidenceHints?.offshore_evasion ?? 0) +
-    (input.evidenceHints?.labor_abuse ?? 0);
+    (input.evidenceHints?.labor_abuse ?? 0) +
+    (input.evidenceHints?.board_self_dealing ?? 0) +
+    Math.round((input.evidenceHints?.creditor_deception ?? 0) / 2);
   const pressSignals = collectMatchingSignals(input, [
     "leak",
     "deck",

@@ -1,6 +1,7 @@
 import { pathToFileURL } from "node:url";
 import { hashNumber, hashString, shuffleWithSeed } from "../src/lib/random/seeded";
 import { loadContent } from "../src/simulation/content";
+import { dossierThemes } from "../src/simulation/content/metadata";
 import {
   createInitialRunState,
   resolveRound,
@@ -564,6 +565,12 @@ function getKnownFlagIds(content: ContentBundle): Set<string> {
 
     for (const flag of hazard.requirements.flagsNone ?? []) {
       flags.add(flag);
+    }
+  }
+
+  for (const theme of dossierThemes) {
+    for (const band of ["light", "medium", "heavy", "terminal"] as const) {
+      flags.add(`dossier:${theme}:${band}`);
     }
   }
 

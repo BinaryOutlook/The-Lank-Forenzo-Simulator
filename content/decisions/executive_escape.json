@@ -4,7 +4,11 @@
     "title": "Backdate the Retention Bonus",
     "summary": "Reward yourself for staying inside the building you are actively hollowing out.",
     "group": "extraction",
-    "tags": ["personal", "compensation", "board"],
+    "tags": [
+      "personal",
+      "compensation",
+      "board"
+    ],
     "impacts": {
       "airlineCash": -12,
       "personalWealth": 10,
@@ -12,8 +16,23 @@
       "publicAnger": 5,
       "legalHeat": 5
     },
+    "evidence": [
+      {
+        "theme": "board_self_dealing",
+        "weight": 15,
+        "witness": "compensation committee aide",
+        "detail": "Backdated bonus paperwork ties the board process to personal protection."
+      }
+    ],
     "delayedConsequences": [
-      { "eventIds": ["compensation_deck_leak", "executive_perk_backlash", "chauffeur_receipt_dump"], "delay": 2 }
+      {
+        "eventIds": [
+          "compensation_deck_leak",
+          "executive_perk_backlash",
+          "chauffeur_receipt_dump"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -21,15 +40,34 @@
     "title": "Harden the Indemnity Wall",
     "summary": "Strengthen your personal legal bunker before anyone else notices the sirens are for them too.",
     "group": "legal",
-    "tags": ["personal", "legal", "protection"],
+    "tags": [
+      "personal",
+      "legal",
+      "protection"
+    ],
     "impacts": {
       "airlineCash": -10,
       "personalWealth": 5,
       "creditorPatience": 3,
       "legalHeat": 4
     },
+    "evidence": [
+      {
+        "theme": "board_self_dealing",
+        "weight": 12,
+        "witness": "outside counsel",
+        "detail": "Indemnity edits show personal exposure driving board process."
+      }
+    ],
     "delayedConsequences": [
-      { "eventIds": ["director_indemnity_alarm", "fairness_opinion_underfire", "compensation_deck_leak"], "delay": 2 }
+      {
+        "eventIds": [
+          "director_indemnity_alarm",
+          "fairness_opinion_underfire",
+          "compensation_deck_leak"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -37,20 +75,39 @@
     "title": "Sell Before the Reprice",
     "summary": "Hit the bid while the quarter still looks respectable and let everyone else discover the timing later.",
     "group": "extraction",
-    "tags": ["personal", "stock", "timing"],
+    "tags": [
+      "personal",
+      "stock",
+      "timing"
+    ],
     "impacts": {
       "personalWealth": 16,
       "stockPrice": -5,
       "marketConfidence": -4,
       "legalHeat": 8
     },
+    "evidence": [
+      {
+        "theme": "insider_trading",
+        "weight": 16,
+        "witness": "brokerage compliance analyst",
+        "detail": "Sale timing precedes the repricing everyone else must absorb."
+      }
+    ],
     "requirements": {
       "metricMin": {
         "stockPrice": 22
       }
     },
     "delayedConsequences": [
-      { "eventIds": ["suspicious_10b5_window", "broker_chat_subpoena", "insider_trade_whispers"], "delay": 2 }
+      {
+        "eventIds": [
+          "suspicious_10b5_window",
+          "broker_chat_subpoena",
+          "insider_trade_whispers"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -58,15 +115,40 @@
     "title": "Route the Bonus Through Advisers",
     "summary": "Let a respectable layer of consultants carry the money until it remembers whose it is.",
     "group": "extraction",
-    "tags": ["personal", "consulting", "offshore"],
+    "tags": [
+      "personal",
+      "consulting",
+      "offshore"
+    ],
     "impacts": {
       "airlineCash": -10,
       "personalWealth": 9,
       "offshoreReadiness": 5,
       "legalHeat": 7
     },
+    "evidence": [
+      {
+        "theme": "board_self_dealing",
+        "weight": 8,
+        "witness": "adviser billing clerk",
+        "detail": "Adviser invoices blur executive pay and corporate services."
+      },
+      {
+        "theme": "offshore_evasion",
+        "weight": 12,
+        "witness": "trust administrator",
+        "detail": "Consultant routing introduces an offshore handoff."
+      }
+    ],
     "delayedConsequences": [
-      { "eventIds": ["consulting_conflict_memo", "invoice_rounding_pattern", "shell_invoice_exposed"], "delay": 2 }
+      {
+        "eventIds": [
+          "consulting_conflict_memo",
+          "invoice_rounding_pattern",
+          "shell_invoice_exposed"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -74,7 +156,11 @@
     "title": "Invoice the OpCo from Upstairs",
     "summary": "Bill the airline from the holding company and call the tribute strategic services.",
     "group": "finance",
-    "tags": ["personal", "fees", "finance"],
+    "tags": [
+      "personal",
+      "fees",
+      "finance"
+    ],
     "impacts": {
       "airlineCash": -14,
       "personalWealth": 12,
@@ -82,11 +168,26 @@
       "legalHeat": 8,
       "publicAnger": 4
     },
+    "evidence": [
+      {
+        "theme": "board_self_dealing",
+        "weight": 13,
+        "witness": "intercompany accountant",
+        "detail": "Upstairs invoices convert airline stress into executive-side revenue."
+      }
+    ],
     "requirements": {
       "roundAtLeast": 4
     },
     "delayedConsequences": [
-      { "eventIds": ["intercompany_fee_memo", "consulting_conflict_memo", "invoice_rounding_pattern"], "delay": 2 }
+      {
+        "eventIds": [
+          "intercompany_fee_memo",
+          "consulting_conflict_memo",
+          "invoice_rounding_pattern"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -94,19 +195,40 @@
     "title": "Sign the Golden Parachute",
     "summary": "Make sure there is a premium exit plan for at least one person involved in this mess.",
     "group": "legal",
-    "tags": ["personal", "board", "exit"],
+    "tags": [
+      "personal",
+      "board",
+      "exit"
+    ],
     "impacts": {
       "airlineCash": -8,
       "personalWealth": 7,
       "publicAnger": 6,
       "legalHeat": 4
     },
+    "evidence": [
+      {
+        "theme": "board_self_dealing",
+        "weight": 12,
+        "witness": "compensation committee aide",
+        "detail": "Exit package survives while other stakeholders absorb losses."
+      }
+    ],
     "requirements": {
       "roundAtLeast": 3
     },
-    "setsFlags": ["goldenParachuteSigned"],
+    "setsFlags": [
+      "goldenParachuteSigned"
+    ],
     "delayedConsequences": [
-      { "eventIds": ["compensation_deck_leak", "director_indemnity_alarm", "consulting_conflict_memo"], "delay": 2 }
+      {
+        "eventIds": [
+          "compensation_deck_leak",
+          "director_indemnity_alarm",
+          "consulting_conflict_memo"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -114,7 +236,11 @@
     "title": "Prearrange the Resignation Memo",
     "summary": "Draft the noble exit statement now so the only surprise later is your timing.",
     "group": "market",
-    "tags": ["personal", "resignation", "optics"],
+    "tags": [
+      "personal",
+      "resignation",
+      "optics"
+    ],
     "impacts": {
       "marketConfidence": 4,
       "creditorPatience": 4,
@@ -122,10 +248,19 @@
       "legalHeat": 3
     },
     "requirements": {
-      "flagsAll": ["goldenParachuteSigned"]
+      "flagsAll": [
+        "goldenParachuteSigned"
+      ]
     },
     "delayedConsequences": [
-      { "eventIds": ["director_indemnity_alarm", "turnaround_story_cracks", "compensation_deck_leak"], "delay": 2 }
+      {
+        "eventIds": [
+          "director_indemnity_alarm",
+          "turnaround_story_cracks",
+          "compensation_deck_leak"
+        ],
+        "delay": 2
+      }
     ]
   },
   {
@@ -133,13 +268,36 @@
     "title": "Wire the Island Retainer",
     "summary": "Pay the offshore professionals before you need them and before they start asking harder questions.",
     "group": "extraction",
-    "tags": ["offshore", "personal", "escape"],
+    "tags": [
+      "offshore",
+      "personal",
+      "escape"
+    ],
     "impacts": {
       "airlineCash": -12,
       "personalWealth": 7,
       "offshoreReadiness": 10,
       "legalHeat": 6
     },
+    "evidence": [
+      {
+        "theme": "offshore_evasion",
+        "weight": 14,
+        "witness": "island counsel",
+        "detail": "Retainer shows the offshore exit was prepared before it was needed."
+      }
+    ],
+    "delayedConsequences": [
+      {
+        "eventIds": [
+          "offshore_auditor_ping",
+          "nominee_director_jitters",
+          "correspondent_bank_query",
+          "customs_broker_ping"
+        ],
+        "delay": 3
+      }
+    ],
     "factionEffects": {
       "board": {
         "patience": -4,
@@ -156,17 +314,18 @@
         "leverage": 4,
         "dossierWeight": 5
       }
-    },
-    "delayedConsequences": [
-      { "eventIds": ["offshore_auditor_ping", "nominee_director_jitters", "correspondent_bank_query", "customs_broker_ping"], "delay": 3 }
-    ]
+    }
   },
   {
     "id": "borrow_against_the_parachute",
     "title": "Borrow Against the Parachute",
     "summary": "Turn your future exit package into present liquidity because discretion is easier when funded.",
     "group": "finance",
-    "tags": ["personal", "finance", "debt"],
+    "tags": [
+      "personal",
+      "finance",
+      "debt"
+    ],
     "impacts": {
       "airlineCash": 14,
       "personalWealth": 6,
@@ -174,10 +333,19 @@
       "legalHeat": 5
     },
     "requirements": {
-      "flagsAll": ["goldenParachuteSigned"]
+      "flagsAll": [
+        "goldenParachuteSigned"
+      ]
     },
     "delayedConsequences": [
-      { "eventIds": ["director_indemnity_alarm", "compensation_deck_leak", "covenant_leak"], "delay": 2 }
+      {
+        "eventIds": [
+          "director_indemnity_alarm",
+          "compensation_deck_leak",
+          "covenant_leak"
+        ],
+        "delay": 2
+      }
     ]
   }
 ]

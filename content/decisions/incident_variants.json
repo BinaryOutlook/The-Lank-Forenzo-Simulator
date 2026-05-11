@@ -4,13 +4,25 @@
     "title": "Rebrand the Union Townhall",
     "summary": "Turn a negotiation failure into a listening tour and hope the microphones forgive you.",
     "group": "labor",
-    "tags": ["labor", "union", "optics"],
+    "tags": [
+      "labor",
+      "union",
+      "optics"
+    ],
     "impacts": {
       "marketConfidence": 3,
       "workforceMorale": -7,
       "publicAnger": 5,
       "legalHeat": 3
     },
+    "evidence": [
+      {
+        "theme": "labor_abuse",
+        "weight": 9,
+        "witness": "union comms lead",
+        "detail": "Townhall optics preserve management spin against labor evidence."
+      }
+    ],
     "requirements": {
       "metricMax": {
         "workforceMorale": 55
@@ -32,13 +44,25 @@
     "title": "Certify the Audit Clean Room",
     "summary": "Build a perfect audit room around an imperfect airline and invite the regulator to admire the lighting.",
     "group": "legal",
-    "tags": ["safety", "audit", "regulators"],
+    "tags": [
+      "safety",
+      "audit",
+      "regulators"
+    ],
     "impacts": {
       "airlineCash": -8,
       "legalHeat": -4,
       "safetyIntegrity": 3,
       "marketConfidence": 2
     },
+    "evidence": [
+      {
+        "theme": "regulatory_capture",
+        "weight": 10,
+        "witness": "audit room coordinator",
+        "detail": "Clean-room staging narrows the view regulators receive."
+      }
+    ],
     "requirements": {
       "metricMin": {
         "legalHeat": 34
@@ -60,17 +84,25 @@
     "title": "Defer the Red-Tag Queue",
     "summary": "Push the maintenance queue past the reporting window and call the interval operational judgment.",
     "group": "operations",
-    "tags": ["safety", "maintenance", "deferments"],
+    "tags": [
+      "safety",
+      "maintenance",
+      "deferments"
+    ],
     "impacts": {
       "airlineCash": 16,
       "safetyIntegrity": -10,
       "legalHeat": 6,
       "marketConfidence": 2
     },
-    "operationEffects": {
-      "maintenanceBacklog": 14,
-      "contractorDependence": 4
-    },
+    "evidence": [
+      {
+        "theme": "maintenance_fraud",
+        "weight": 14,
+        "witness": "line mechanic",
+        "detail": "Red-tag queue deferral leaves dated maintenance exceptions."
+      }
+    ],
     "delayedConsequences": [
       {
         "eventIds": [
@@ -80,25 +112,28 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "maintenanceBacklog": 14,
+      "contractorDependence": 4
+    }
   },
   {
     "id": "blame_weather_then_trim_crews",
     "title": "Blame Weather, Then Trim Crews",
     "summary": "Let the storm take the headline while staffing cuts quietly take the savings.",
     "group": "operations",
-    "tags": ["weather", "labor", "cuts"],
+    "tags": [
+      "weather",
+      "labor",
+      "cuts"
+    ],
     "impacts": {
       "airlineCash": 18,
       "workforceSize": -180,
       "workforceMorale": -6,
       "publicAnger": 4,
       "marketConfidence": 2
-    },
-    "operationEffects": {
-      "crewFatigue": 8,
-      "serviceDisruption": 2,
-      "weatherExposure": 10
     },
     "requirements": {
       "roundAtLeast": 2
@@ -112,14 +147,23 @@
         ],
         "delay": 2
       }
-    ]
+    ],
+    "operationEffects": {
+      "crewFatigue": 8,
+      "serviceDisruption": 2,
+      "weatherExposure": 10
+    }
   },
   {
     "id": "script_the_liquidity_call",
     "title": "Script the Liquidity Call",
     "summary": "Coach treasury to sound bored while explaining why everyone should remain unpaid a little longer.",
     "group": "finance",
-    "tags": ["creditors", "liquidity", "spin"],
+    "tags": [
+      "creditors",
+      "liquidity",
+      "spin"
+    ],
     "impacts": {
       "airlineCash": 20,
       "creditorPatience": -7,
@@ -147,13 +191,25 @@
     "title": "Produce the Hearing Binders",
     "summary": "Answer oversight with tabs, appendices, and the legal theory that volume equals virtue.",
     "group": "legal",
-    "tags": ["regulators", "hearing", "paperwork"],
+    "tags": [
+      "regulators",
+      "hearing",
+      "paperwork"
+    ],
     "impacts": {
       "airlineCash": -10,
       "legalHeat": -5,
       "publicAnger": -2,
       "marketConfidence": 1
     },
+    "evidence": [
+      {
+        "theme": "regulatory_capture",
+        "weight": 10,
+        "witness": "committee staffer",
+        "detail": "Binder volume becomes a strategy for obscuring core facts."
+      }
+    ],
     "requirements": {
       "metricMin": {
         "legalHeat": 44
@@ -175,13 +231,25 @@
     "title": "Silo the Whistleblower File",
     "summary": "Move the allegation into a privileged folder and hope the folder is more loyal than the staff.",
     "group": "legal",
-    "tags": ["whistleblower", "legal", "containment"],
+    "tags": [
+      "whistleblower",
+      "legal",
+      "containment"
+    ],
     "impacts": {
       "legalHeat": 6,
       "publicAnger": 3,
       "marketConfidence": -2,
       "workforceMorale": -3
     },
+    "evidence": [
+      {
+        "theme": "regulatory_capture",
+        "weight": 12,
+        "witness": "whistleblower counsel",
+        "detail": "Privilege silo shows containment before investigation."
+      }
+    ],
     "requirements": {
       "metricMin": {
         "legalHeat": 32
@@ -203,7 +271,11 @@
     "title": "Prebrief the Friendly Columnist",
     "summary": "Feed the column before the facts arrive and call that shaping the narrative.",
     "group": "market",
-    "tags": ["media", "press", "spin"],
+    "tags": [
+      "media",
+      "press",
+      "spin"
+    ],
     "impacts": {
       "marketConfidence": 6,
       "stockPrice": 3,
@@ -231,7 +303,11 @@
     "title": "Squeeze the Engine Supplier",
     "summary": "Threaten future business so this quarter's parts arrive cheaper, later, and angrier.",
     "group": "finance",
-    "tags": ["suppliers", "parts", "cash"],
+    "tags": [
+      "suppliers",
+      "parts",
+      "cash"
+    ],
     "impacts": {
       "airlineCash": 14,
       "creditorPatience": 2,
@@ -259,7 +335,11 @@
     "title": "Cancel the Spoke Bank",
     "summary": "Erase a weak bank of routes and let stranded passengers discover strategic focus firsthand.",
     "group": "operations",
-    "tags": ["routes", "service", "cuts"],
+    "tags": [
+      "routes",
+      "service",
+      "cuts"
+    ],
     "impacts": {
       "airlineCash": 24,
       "assetValue": -12,
@@ -283,7 +363,11 @@
     "title": "Patch the Crew App Live",
     "summary": "Ship the crew-tracking patch during operations because the safer window was last quarter.",
     "group": "operations",
-    "tags": ["technology", "crew", "systems"],
+    "tags": [
+      "technology",
+      "crew",
+      "systems"
+    ],
     "impacts": {
       "airlineCash": 10,
       "marketConfidence": 2,
@@ -310,13 +394,25 @@
     "title": "Split the Board Packet",
     "summary": "Give each faction the deck it wants and trust no one to compare page numbers.",
     "group": "market",
-    "tags": ["board", "governance", "spin"],
+    "tags": [
+      "board",
+      "governance",
+      "spin"
+    ],
     "impacts": {
       "marketConfidence": 5,
       "stockPrice": 2,
       "legalHeat": 5,
       "publicAnger": 2
     },
+    "evidence": [
+      {
+        "theme": "board_self_dealing",
+        "weight": 12,
+        "witness": "board secretary",
+        "detail": "Mismatched board packets reveal selective disclosure."
+      }
+    ],
     "requirements": {
       "metricMax": {
         "marketConfidence": 58

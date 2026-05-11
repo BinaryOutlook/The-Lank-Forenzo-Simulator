@@ -72,12 +72,12 @@ This is enough content for meaningful replay variety. The problem is not raw vol
   - `active`: `0/1600` runs, or `0.0%`
   - `bahamas`: `200/1600` runs, or `12.5%`
   - `extraction`: `117/1600` runs, or `7.3%`
-  - `forcedRemoval`: `242/1600` runs, or `15.1%`
+  - `forcedRemoval`: `200/1600` runs, or `12.5%`
   - `merger`: `200/1600` runs, or `12.5%`
-  - `prison`: `841/1600` runs, or `52.6%`
-- Surfaced decisions: `54/113`, or `47.8%`
-- Selected decisions: `43/113`, or `38.1%`
-- Triggered events: `74/165`, or `44.8%`
+  - `prison`: `883/1600` runs, or `55.2%`
+- Surfaced decisions: `52/113`, or `46.0%`
+- Selected decisions: `42/113`, or `37.2%`
+- Triggered events: `75/165`, or `45.5%`
 - Delayed events: `28/91`, or `30.8%`
 - Low-reachability packs: `incidentVariants`
 
@@ -85,8 +85,8 @@ This is enough content for meaningful replay variety. The problem is not raw vol
 
 - Surfaced decisions: `55/113`, or `48.7%`
 - Selected decisions: `55/113`, or `48.7%`
-- Triggered events: `115/165`, or `69.7%`
-- Delayed events: `45/91`, or `49.5%`
+- Triggered events: `111/165`, or `67.3%`
+- Delayed events: `43/91`, or `47.3%`
 - Endings reached: `5/5`, or `100.0%` (`bahamas`, `extraction`, `forcedRemoval`, `merger`, `prison`)
 - Low-confidence packs: none
 

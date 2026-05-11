@@ -7,8 +7,12 @@ import {
 import { applyEvidenceFragments, collectEvidenceFragments, type EvidenceFragment } from "../dossiers/evidence";
 import {
   createInitialDossierState,
+  getDossierCaseTheory,
+  getDossierSeverityBand,
+  normalizeDossierState,
   summarizeDossiers,
   type DossierSummary,
+  type DossierSeverityBand,
   type DossierTheme,
   type DossierThread,
 } from "../dossiers/dossierState";
@@ -563,7 +567,7 @@ function getRunOperations(run: RunState): NetworkState {
 }
 
 function getRunDossiers(run: RunState): DossierThread[] {
-  return run.dossiers ?? createInitialDossierState();
+  return normalizeDossierState(run.dossiers);
 }
 
 function summarizeEvidenceHints(
@@ -688,6 +692,114 @@ function buildDossierHistoryEntry(
   };
 }
 
+function buildDossierThresholdEntries(input: {
+  round: number;
+  previous: DossierThread[];
+  current: DossierThread[];
+}): {
+  impacts: ImpactSet;
+  flags: string[];
+  historyEntries: HistoryEntry[];
+} {
+  const previousByTheme = Object.fromEntries(
+    input.previous.map((thread) => [thread.theme, thread]),
+  ) as Partial<Record<DossierTheme, DossierThread>>;
+  const impacts: ImpactSet = {};
+  const flags: string[] = [];
+  const historyEntries: HistoryEntry[] = [];
+  let strongestLegalHeatImpact = 0;
+
+  for (const thread of input.current) {
+    const previousBand =
+      previousByTheme[thread.theme]?.severityBand ??
+      getDossierSeverityBand(previousByTheme[thread.theme]?.evidenceWeight ?? 0);
+    const currentBand = getDossierSeverityBand(thread.evidenceWeight);
+
+    if (!isThresholdEscalation(previousBand, currentBand)) {
+      continue;
+    }
+
+    const impact = getDossierThresholdImpact(currentBand);
+
+    if (impact.legalHeat) {
+      strongestLegalHeatImpact = Math.max(
+        strongestLegalHeatImpact,
+        impact.legalHeat,
+      );
+    }
+
+    flags.push(`dossier:${thread.theme}:${currentBand}`);
+    historyEntries.push({
+      id: `dossier-threshold-${thread.theme}-${currentBand}-${input.round}`,
+      round: input.round,
+      source: "dossier",
+      sourceKind: "dossier_threshold",
+      dossierTheme: thread.theme,
+      title: `${formatId(thread.theme)} dossier turns ${currentBand}`,
+      body: `${thread.nextStep} is now live. ${getDossierRecapBody({
+        theme: thread.theme,
+        severity: thread.severity,
+        evidenceWeight: thread.evidenceWeight,
+        severityBand: currentBand,
+        likelyExposure:
+          thread.linkedEventIds.at(-1) ??
+          thread.linkedDecisionIds.at(-1) ??
+          "unfiled evidence",
+        witnesses: thread.witnesses,
+        factionOwner: thread.factionOwner,
+        nextStep: thread.nextStep,
+        caseTheory: getDossierCaseTheory(thread.theme),
+      })}`,
+      tone: "negative",
+    });
+  }
+
+  if (strongestLegalHeatImpact > 0) {
+    impacts.legalHeat = strongestLegalHeatImpact;
+  }
+
+  return { impacts, flags, historyEntries };
+}
+
+function isThresholdEscalation(
+  previous: DossierSeverityBand,
+  current: DossierSeverityBand,
+): boolean {
+  return getSeverityRank(current) >= getSeverityRank("medium") &&
+    getSeverityRank(current) > getSeverityRank(previous);
+}
+
+function getSeverityRank(severityBand: DossierSeverityBand): number {
+  switch (severityBand) {
+    case "dormant":
+      return 0;
+    case "light":
+      return 1;
+    case "medium":
+      return 2;
+    case "heavy":
+      return 3;
+    case "terminal":
+      return 4;
+  }
+}
+
+function getDossierThresholdImpact(
+  severityBand: DossierSeverityBand,
+): ImpactSet {
+  switch (severityBand) {
+    case "terminal":
+      return { legalHeat: 4 };
+    case "heavy":
+      return { legalHeat: 2 };
+    case "medium":
+      return { legalHeat: 1 };
+    case "light":
+    case "dormant":
+      return {};
+  }
+}
+
 function buildRunRecap(input: {
   run: RunState;
   endingId: EndingId;
@@ -710,7 +822,7 @@ function buildRunRecap(input: {
     }));
   const dossierItems = summarizeDossiers(input.dossiers, 2).map((summary) => ({
     title: formatId(summary.theme),
-    body: `Evidence weight ${summary.evidenceWeight}; likely exposure ${formatId(summary.likelyExposure)}.`,
+    body: getDossierRecapBody(summary),
   }));
   const operationItems: RecapItem[] = [
     {
@@ -732,6 +844,15 @@ function buildRunRecap(input: {
       body: "Selected in the final resolved quarter.",
     })),
   };
+}
+
+function getDossierRecapBody(summary: DossierSummary): string {
+  const witnessText =
+    summary.witnesses.length > 0
+      ? ` Witnesses: ${summary.witnesses.slice(0, 3).join(", ")}.`
+      : "";
+
+  return `${summary.caseTheory} Evidence weight ${summary.evidenceWeight} (${summary.severityBand}); likely exposure ${formatId(summary.likelyExposure)}. ${formatId(summary.factionOwner)} is pushing the next step: ${summary.nextStep}.${witnessText}`;
 }
 
 function getMissedExitWindows(run: RunState): RecapItem[] {
@@ -785,6 +906,8 @@ export function resolveRound(run: RunState): RunState {
     selectedDecisionIds,
     emittedEventIds: [],
     factionIntents: [],
+    decisionEvidenceById: content.decisionEvidenceById,
+    eventEvidenceById: content.eventEvidenceById,
   });
   let operations = applyNetworkDecisionEffects(getRunOperations(run), {
     selectedDecisions: selectedDecisionResult.executedDecisions,
@@ -865,6 +988,9 @@ export function resolveRound(run: RunState): RunState {
     selectedDecisionIds: [],
     emittedEventIds,
     factionIntents,
+    operationCascades: operationResult.cascades,
+    decisionEvidenceById: content.decisionEvidenceById,
+    eventEvidenceById: content.eventEvidenceById,
   });
   factions = updateFactionStates(factions, {
     metrics,
@@ -876,7 +1002,8 @@ export function resolveRound(run: RunState): RunState {
       content.eventById,
     ),
   });
-  const dossiers = applyEvidenceFragments(getRunDossiers(run), [
+  const previousDossiers = getRunDossiers(run);
+  const dossiers = applyEvidenceFragments(previousDossiers, [
     ...initialEvidence,
     ...followOnEvidence,
   ]);
@@ -887,10 +1014,22 @@ export function resolveRound(run: RunState): RunState {
     historyEntries.push(dossierHistory);
   }
 
-  if (!endingId && dossierSummaries[0]?.evidenceWeight >= 48) {
-    metrics = applyImpactSet(metrics, {
-      legalHeat: 1,
-    });
+  const dossierThresholds = buildDossierThresholdEntries({
+    round,
+    previous: previousDossiers,
+    current: dossiers,
+  });
+
+  if (Object.keys(dossierThresholds.impacts).length > 0) {
+    metrics = applyImpactSet(metrics, dossierThresholds.impacts);
+  }
+
+  for (const flag of dossierThresholds.flags) {
+    flags.add(flag);
+  }
+
+  if (dossierThresholds.historyEntries.length > 0) {
+    historyEntries.push(...dossierThresholds.historyEntries);
   }
 
   if (!endingId) {

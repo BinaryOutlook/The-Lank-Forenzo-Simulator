@@ -3,6 +3,7 @@ import {
   consumableResourceKeys,
   decisionGroups,
   decisionPackIds,
+  dossierThemes,
   endingIds,
   eventKinds,
   hazardSourceFamilies,
@@ -128,6 +129,15 @@ const delayedConsequenceSchema = z
       "Delayed consequence entries must provide exactly one of eventId or eventIds.",
   });
 
+const evidenceFragmentSchema = z
+  .object({
+    theme: z.enum(dossierThemes),
+    weight: z.number().int().positive(),
+    witness: z.string().optional(),
+    detail: z.string().optional(),
+  })
+  .strict();
+
 export const decisionSchema = z
   .object({
     id: z.string(),
@@ -138,6 +148,7 @@ export const decisionSchema = z
     tags: z.array(z.string()).min(1),
     impacts: metricRecordSchema,
     resourceCosts: resourceCostSchema.optional(),
+    evidence: z.array(evidenceFragmentSchema).optional(),
     operationEffects: operationEffectSchema.optional(),
     requirements: requirementSchema.optional(),
     delayedConsequences: z.array(delayedConsequenceSchema).optional(),
@@ -156,6 +167,7 @@ export const eventSchema = z
     weight: z.number().int().positive(),
     tags: z.array(z.string()).min(1),
     impacts: metricRecordSchema,
+    evidence: z.array(evidenceFragmentSchema).optional(),
     requirements: requirementSchema.optional(),
     setsFlags: z.array(z.string()).optional(),
     factionEffects: factionEffectSetSchema.optional(),

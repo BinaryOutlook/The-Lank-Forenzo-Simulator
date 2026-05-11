@@ -54,6 +54,16 @@ export const decisionPackIds = [
 
 export const eventKinds = ["ambient", "delayed"] as const;
 
+export const dossierThemes = [
+  "insider_trading",
+  "maintenance_fraud",
+  "labor_abuse",
+  "regulatory_capture",
+  "offshore_evasion",
+  "creditor_deception",
+  "board_self_dealing",
+] as const;
+
 export const hazardSourceFamilies = [
   "legalHeat",
   "safetyDecay",

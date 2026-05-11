@@ -5,12 +5,23 @@
     "title": "Whistleblower Letter",
     "body": "A recently terminated operations manager leaves a detailed packet with a reporter and two senators.",
     "weight": 8,
-    "tags": ["labor", "legal"],
+    "tags": [
+      "labor",
+      "legal"
+    ],
     "impacts": {
       "legalHeat": 10,
       "publicAnger": 7,
       "marketConfidence": -4
-    }
+    },
+    "evidence": [
+      {
+        "theme": "labor_abuse",
+        "weight": 10,
+        "witness": "whistleblower counsel",
+        "detail": "Letter converts workplace pressure into a preserved allegation."
+      }
+    ]
   },
   {
     "id": "pension_class_action",
@@ -18,12 +29,23 @@
     "title": "Pension Class Action",
     "body": "Retirees organize faster than counsel expected and the complaint reads like a campaign document.",
     "weight": 7,
-    "tags": ["labor", "legal"],
+    "tags": [
+      "labor",
+      "legal"
+    ],
     "impacts": {
       "legalHeat": 8,
       "publicAnger": 9,
       "creditorPatience": -4
-    }
+    },
+    "evidence": [
+      {
+        "theme": "labor_abuse",
+        "weight": 12,
+        "witness": "benefits analyst",
+        "detail": "Class action organizes the promise-book evidence."
+      }
+    ]
   },
   {
     "id": "hub_delay_cascade",
@@ -31,7 +53,10 @@
     "title": "Delay Cascade",
     "body": "Closing a hub cleaned up the map on paper. In reality, crews are now sleeping in the wrong cities.",
     "weight": 6,
-    "tags": ["operations", "service"],
+    "tags": [
+      "operations",
+      "service"
+    ],
     "impacts": {
       "airlineCash": -14,
       "marketConfidence": -5,
@@ -44,7 +69,10 @@
     "title": "Leaseback Bill Shock",
     "body": "The elegant fleet trade becomes a monthly obligation with teeth.",
     "weight": 6,
-    "tags": ["finance", "assets"],
+    "tags": [
+      "finance",
+      "assets"
+    ],
     "impacts": {
       "airlineCash": -20,
       "creditorPatience": -3
@@ -56,13 +84,24 @@
     "title": "Maintenance Near Miss",
     "body": "No one dies, which is the best case anyone in leadership can honestly claim.",
     "weight": 9,
-    "tags": ["safety", "legal"],
+    "tags": [
+      "safety",
+      "legal"
+    ],
     "impacts": {
       "safetyIntegrity": -10,
       "legalHeat": 14,
       "marketConfidence": -7,
       "publicAnger": 9
-    }
+    },
+    "evidence": [
+      {
+        "theme": "maintenance_fraud",
+        "weight": 14,
+        "witness": "line mechanic",
+        "detail": "Near miss links deferred maintenance to public safety exposure."
+      }
+    ]
   },
   {
     "id": "contractor_walkout",
@@ -70,7 +109,10 @@
     "title": "Contractor Walkout",
     "body": "The cheap replacement labor discovers it is being treated like disposable avionics foam.",
     "weight": 5,
-    "tags": ["labor", "operations"],
+    "tags": [
+      "labor",
+      "operations"
+    ],
     "impacts": {
       "airlineCash": -11,
       "workforceMorale": -5,
@@ -83,12 +125,23 @@
     "title": "Creditor Revolt",
     "body": "A lender syndicate stops laughing at the threats and starts lawyering up.",
     "weight": 8,
-    "tags": ["creditors", "legal"],
+    "tags": [
+      "creditors",
+      "legal"
+    ],
     "impacts": {
       "creditorPatience": -12,
       "legalHeat": 6,
       "marketConfidence": -5
-    }
+    },
+    "evidence": [
+      {
+        "theme": "creditor_deception",
+        "weight": 10,
+        "witness": "creditor committee analyst",
+        "detail": "Revolt shows lenders comparing notes against the company story."
+      }
+    ]
   },
   {
     "id": "shell_invoice_exposed",
@@ -96,12 +149,23 @@
     "title": "Shell Invoice Exposed",
     "body": "One invoice contains just enough sloppiness to make the whole arrangement look intentional.",
     "weight": 8,
-    "tags": ["personal", "legal"],
+    "tags": [
+      "personal",
+      "legal"
+    ],
     "impacts": {
       "legalHeat": 11,
       "marketConfidence": -5,
       "publicAnger": 6
-    }
+    },
+    "evidence": [
+      {
+        "theme": "board_self_dealing",
+        "weight": 14,
+        "witness": "holding company accountant",
+        "detail": "Invoice exposure ties personal extraction to operating-company cash."
+      }
+    ]
   },
   {
     "id": "insider_trade_whispers",
@@ -109,12 +173,23 @@
     "title": "Insider Trade Whispers",
     "body": "The tape looked clean until someone plotted your disposition window over the call transcript.",
     "weight": 7,
-    "tags": ["stock", "legal"],
+    "tags": [
+      "stock",
+      "legal"
+    ],
     "impacts": {
       "legalHeat": 12,
       "stockPrice": -5,
       "marketConfidence": -6
-    }
+    },
+    "evidence": [
+      {
+        "theme": "insider_trading",
+        "weight": 15,
+        "witness": "brokerage compliance analyst",
+        "detail": "Whispers harden around suspicious stock-sale timing."
+      }
+    ]
   },
   {
     "id": "executive_perk_backlash",
@@ -122,7 +197,10 @@
     "title": "Executive Perk Backlash",
     "body": "The retention memo circulates next to photos of furloughed crews on local news.",
     "weight": 5,
-    "tags": ["personal", "press"],
+    "tags": [
+      "personal",
+      "press"
+    ],
     "impacts": {
       "publicAnger": 8,
       "marketConfidence": -3,
@@ -135,12 +213,17 @@
     "title": "Merger Interest",
     "body": "A larger carrier likes your slots, dislikes your balance sheet, and thinks both problems are manageable.",
     "weight": 4,
-    "tags": ["merger", "board"],
+    "tags": [
+      "merger",
+      "board"
+    ],
     "impacts": {
       "marketConfidence": 5,
       "creditorPatience": 5
     },
-    "setsFlags": ["mergerOffer"]
+    "setsFlags": [
+      "mergerOffer"
+    ]
   },
   {
     "id": "offshore_auditor_ping",
@@ -148,11 +231,22 @@
     "title": "Offshore Auditor Ping",
     "body": "A compliance team asks a small question with the terrifying shape of a much larger one.",
     "weight": 6,
-    "tags": ["offshore", "legal"],
+    "tags": [
+      "offshore",
+      "legal"
+    ],
     "impacts": {
       "legalHeat": 7,
       "offshoreReadiness": -4
-    }
+    },
+    "evidence": [
+      {
+        "theme": "offshore_evasion",
+        "weight": 12,
+        "witness": "trust administrator",
+        "detail": "Auditor request connects offshore structure to airline funds."
+      }
+    ]
   },
   {
     "id": "analyst_relief_rally",
@@ -160,7 +254,10 @@
     "title": "Analyst Relief Rally",
     "body": "A brokerage mistakes brutality for discipline and calls the turnaround credible.",
     "weight": 4,
-    "tags": ["market", "positive"],
+    "tags": [
+      "market",
+      "positive"
+    ],
     "requirements": {
       "metricMin": {
         "marketConfidence": 50
@@ -177,7 +274,10 @@
     "title": "Union Picket Lines",
     "body": "The workers you reduced to a line item decide to become scenery on every camera shot.",
     "weight": 6,
-    "tags": ["labor", "press"],
+    "tags": [
+      "labor",
+      "press"
+    ],
     "requirements": {
       "metricMax": {
         "workforceMorale": 45
@@ -195,7 +295,10 @@
     "title": "Airport Authority Warning",
     "body": "A major airport reminds you that gate access is not a birthright.",
     "weight": 5,
-    "tags": ["operations", "creditors"],
+    "tags": [
+      "operations",
+      "creditors"
+    ],
     "requirements": {
       "metricMax": {
         "creditorPatience": 40
@@ -213,7 +316,10 @@
     "title": "Tabloid Profile",
     "body": "The feature intended to crown you a genius instead becomes a gallery of expensive dinners and moral vacancy.",
     "weight": 4,
-    "tags": ["press", "personal"],
+    "tags": [
+      "press",
+      "personal"
+    ],
     "requirements": {
       "metricMin": {
         "legalHeat": 35
@@ -231,7 +337,10 @@
     "title": "Board Revolt",
     "body": "Directors like cruelty in the abstract. They like subpoenas much less.",
     "weight": 7,
-    "tags": ["board", "legal"],
+    "tags": [
+      "board",
+      "legal"
+    ],
     "requirements": {
       "metricMin": {
         "legalHeat": 70
@@ -239,7 +348,9 @@
       "metricMax": {
         "marketConfidence": 48
       },
-      "flagsNone": ["scapegoatUsed"]
+      "flagsNone": [
+        "scapegoatUsed"
+      ]
     },
     "impacts": {
       "marketConfidence": -5,
@@ -252,7 +363,10 @@
     "title": "Quiet Quarter",
     "body": "Against all probability, nothing explodes this month and the numbers briefly resemble a strategy.",
     "weight": 3,
-    "tags": ["positive", "ops"],
+    "tags": [
+      "positive",
+      "ops"
+    ],
     "requirements": {
       "metricMin": {
         "safetyIntegrity": 65
