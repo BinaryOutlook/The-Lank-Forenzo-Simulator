@@ -21,6 +21,7 @@ Implemented in the current build:
 - multiple endings, including merger, extraction, prison, and Bahamas escape
 - two first-class themes: `Earth` and `Armonk Blue`
 - responsive desktop, tablet, and phone browser layouts with touch-friendly run controls
+- a standalone About page that frames the aviation satire, motivation, and design intent without interrupting play
 - an accessible Options page with locally persisted wallpaper presets, audio controls, UI density, animation, graphical-effect, interaction-feedback, and interaction sound-cue settings
 - unit tests, content validation, build checks, seeded balance tooling, reachability tooling, and a Playwright smoke test
 
@@ -77,7 +78,7 @@ Open the local Vite URL shown in the terminal.
 
 Decision and event content are assembled from validated packs under `content/decisions/` and `content/events/` through their `index.ts` files.
 
-Options are available from the app header. The current settings implementation is local-first and preset-based: wallpaper selection changes the shell background immediately, music can be toggled with a restrained Web Audio ambience, interaction cues follow the music volume and sound-effects toggle, and visual plus interaction feedback effects can be reduced or disabled for lower-end devices.
+About and Options are available from the app header. The About route is a lightweight secondary page for player-facing project context; it links back to the active run when one is in progress and otherwise returns to the landing screen. The current settings implementation is local-first and preset-based: wallpaper selection changes the shell background immediately, music can be toggled with a restrained Web Audio ambience, interaction cues follow the music volume and sound-effects toggle, and visual plus interaction feedback effects can be reduced or disabled for lower-end devices.
 
 ## Scripts
 
@@ -127,6 +128,7 @@ src/
   app/
   components/
   screens/
+    about/
     options/
   simulation/
     content/

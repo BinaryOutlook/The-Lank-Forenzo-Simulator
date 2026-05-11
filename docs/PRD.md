@@ -114,6 +114,7 @@ For the first serious browser version, the product should:
 - support two complete visual themes without fragmenting the product
 - remain usable in responsive desktop, tablet, and phone browser layouts, including portrait play with touch controls
 - provide local-first player options for presentation, audio, and graphical load
+- explain the game motivation and aviation-management satire through a lightweight secondary About page
 - remain local-first and easy to run during early development
 - be maintainable enough for re-entry after long breaks
 
@@ -334,7 +335,17 @@ The Options page should:
 - favor clean preset-based controls before advanced customization
 - keep the game readable when effects or animation are reduced
 
-### 11.4 Decision tray
+### 11.4 About page
+
+The About page should:
+
+- be reachable from the top-bar About link
+- remain separate from the primary landing and run flow
+- explain why the game exists, its aviation-management lens, and its satirical design intent
+- preserve the same theme tokens, spacing language, and responsive behavior as the rest of the app shell
+- provide clear, lightweight navigation back to the active run or landing screen
+
+### 11.5 Decision tray
 
 This surface should present the player's actionable choices for the round.
 
@@ -345,7 +356,7 @@ It must prioritize:
 - hierarchy of importance
 - fast scanning
 
-### 11.5 Event and consequence feed
+### 11.6 Event and consequence feed
 
 The player needs a place where the world answers back.
 
@@ -358,7 +369,7 @@ This surface should display:
 - board reactions
 - legal escalations
 
-### 11.6 Endgame and outcome screens
+### 11.7 Endgame and outcome screens
 
 The game must make final outcomes feel authored and consequential, not like score dialogs.
 
@@ -620,6 +631,8 @@ src/
     landing/
     run/
     ending/
+    options/
+    about/
   components/
     shell/
     board-packet/

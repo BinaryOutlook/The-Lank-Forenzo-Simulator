@@ -48,6 +48,7 @@
 
 .nav {
   display: inline-flex;
+  flex-wrap: wrap;
 }
 
 .navLink,
@@ -67,6 +68,15 @@
 .navLinkActive {
   border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
   color: var(--text);
+}
+
+.navLink:focus-visible,
+.navLinkActive:focus-visible,
+.themeButton:focus-visible,
+.themeButtonActive:focus-visible {
+  outline: none;
+  border-color: color-mix(in oklab, var(--accent) 58%, var(--border));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
 }
 
 .roundBadge {
