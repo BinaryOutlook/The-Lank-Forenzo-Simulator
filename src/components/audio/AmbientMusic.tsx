@@ -1,28 +1,12 @@
 import { useEffect, useRef } from "react";
 import { useGameStore } from "../../simulation/state/gameStore.js";
+import { createBrowserAudioContext } from "./webAudio.js";
 
 interface AmbientMusicGraph {
   context: AudioContext;
   filter: BiquadFilterNode;
   gain: GainNode;
   oscillators: OscillatorNode[];
-}
-
-type AudioContextConstructor = new () => AudioContext;
-
-interface WebAudioWindow extends Window {
-  AudioContext?: AudioContextConstructor;
-  webkitAudioContext?: AudioContextConstructor;
-}
-
-function getAudioContextConstructor(): AudioContextConstructor | null {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  const audioWindow = window as WebAudioWindow;
-
-  return audioWindow.AudioContext ?? audioWindow.webkitAudioContext ?? null;
 }
 
 function getMusicGain(volume: number): number {
@@ -40,14 +24,13 @@ function setGraphVolume(graph: AmbientMusicGraph, volume: number): void {
 }
 
 function createAmbientGraph(volume: number): AmbientMusicGraph | null {
-  const AudioContextConstructor = getAudioContextConstructor();
+  const context = createBrowserAudioContext();
 
-  if (!AudioContextConstructor) {
+  if (!context) {
     return null;
   }
 
   try {
-    const context = new AudioContextConstructor();
     const filter = context.createBiquadFilter();
     const gain = context.createGain();
     const frequencies = [82.41, 123.47, 164.81];
@@ -79,6 +62,8 @@ function createAmbientGraph(volume: number): AmbientMusicGraph | null {
       oscillators,
     };
   } catch {
+    void context.close().catch(() => undefined);
+
     return null;
   }
 }

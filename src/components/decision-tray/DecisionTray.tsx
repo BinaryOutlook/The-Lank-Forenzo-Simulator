@@ -5,7 +5,9 @@ import {
   getImpactPreview,
   metricLabels,
 } from "../../lib/formatters.js";
+import { emitInteractionCue } from "../audio/interactionAudioEvents.js";
 import { useInteractionFeedback } from "../interaction/useInteractionFeedback.js";
+import type { InteractionCueName } from "../audio/interactionAudioEvents.js";
 import { getImpactTone } from "../../simulation/state/metricSemantics.js";
 import type { DecisionDefinition } from "../../simulation/state/types.js";
 import styles from "./DecisionTray.module.css";
@@ -23,6 +25,7 @@ interface DecisionCardProps {
   index: number;
   interactionEffectsEnabled: boolean;
   selected: boolean;
+  selectedDecisionCount: number;
   onToggle: (decisionId: string) => void;
 }
 
@@ -31,12 +34,26 @@ function DecisionCard({
   index,
   interactionEffectsEnabled,
   selected,
+  selectedDecisionCount,
   onToggle,
 }: DecisionCardProps) {
   const feedback = useInteractionFeedback<HTMLButtonElement>(
     interactionEffectsEnabled,
   );
   const preview = getImpactPreview(decision.impacts);
+  const handleToggle = () => {
+    const cue: InteractionCueName | null = selected
+      ? "decision-deselect"
+      : selectedDecisionCount < 2
+        ? "decision-select"
+        : null;
+
+    if (cue) {
+      emitInteractionCue(cue);
+    }
+
+    onToggle(decision.id);
+  };
 
   return (
     <motion.button
@@ -48,7 +65,7 @@ function DecisionCard({
       )}
       data-interaction-feedback={feedback.feedbackState}
       aria-pressed={selected}
-      onClick={() => onToggle(decision.id)}
+      onClick={handleToggle}
       onKeyDown={feedback.onFeedbackKeyDown}
       onPointerDown={feedback.onFeedbackPointerDown}
       initial={{ opacity: 0, y: 18 }}
@@ -101,6 +118,10 @@ export function DecisionTray({
   );
   const resolveLabel =
     selectedDecisionIds.length > 0 ? "Resolve the quarter" : "Hold the line";
+  const handleEndTurn = () => {
+    emitInteractionCue("quarter-resolve");
+    onEndTurn();
+  };
 
   return (
     <section className={styles.tray}>
@@ -117,7 +138,7 @@ export function DecisionTray({
           type="button"
           className={clsx("interaction-feedback-control", styles.resolveButton)}
           data-interaction-feedback={resolveFeedback.feedbackState}
-          onClick={onEndTurn}
+          onClick={handleEndTurn}
           onKeyDown={resolveFeedback.onFeedbackKeyDown}
           onPointerDown={resolveFeedback.onFeedbackPointerDown}
         >
@@ -136,6 +157,7 @@ export function DecisionTray({
               index={index}
               interactionEffectsEnabled={interactionEffectsEnabled}
               selected={selected}
+              selectedDecisionCount={selectedDecisionIds.length}
               onToggle={onToggle}
             />
           );

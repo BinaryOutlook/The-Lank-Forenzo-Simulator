@@ -34,8 +34,17 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
     "data-wallpaper",
     "runway-night",
   );
-  await page.getByRole("checkbox", { name: /music/i }).check();
+  await page.getByRole("checkbox", { name: /^music\b/i }).check();
   await expect(page.locator("html")).toHaveAttribute("data-music", "on");
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-sound-effects",
+    "on",
+  );
+  await page.getByRole("checkbox", { name: /sound effects/i }).uncheck();
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-sound-effects",
+    "off",
+  );
   await page.getByRole("checkbox", { name: /visual effects/i }).uncheck();
   await expect(page.locator("html")).toHaveAttribute(
     "data-visual-effects",
@@ -52,6 +61,10 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
     "runway-night",
   );
   await expect(page.locator("html")).toHaveAttribute("data-music", "on");
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-sound-effects",
+    "off",
+  );
   await expect(page.locator("html")).toHaveAttribute(
     "data-visual-effects",
     "off",
