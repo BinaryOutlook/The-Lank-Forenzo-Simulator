@@ -162,6 +162,7 @@ docs/
   PRD.md
   TECHNICAL_BRIEF.md
   FUTURE_REPORT.md
+  FUTURE_REPORT_IMPLEMENTATION_PLAN.md
   reference/
     decision-library.md
     dossier-system.md
@@ -198,6 +199,7 @@ tests/
 - Product requirements: [docs/PRD.md](docs/PRD.md)
 - Systems and design brief: [docs/TECHNICAL_BRIEF.md](docs/TECHNICAL_BRIEF.md)
 - Future report and technical roadmap: [docs/FUTURE_REPORT.md](docs/FUTURE_REPORT.md)
+- Future Report implementation plan and child issue map: [docs/FUTURE_REPORT_IMPLEMENTATION_PLAN.md](docs/FUTURE_REPORT_IMPLEMENTATION_PLAN.md)
 - Expansion and systems roadmap: [idea.md](idea.md)
 - Decision library and historical parallels: [docs/reference/decision-library.md](docs/reference/decision-library.md)
 - Event library and historical parallels: [docs/reference/event-library.md](docs/reference/event-library.md)
