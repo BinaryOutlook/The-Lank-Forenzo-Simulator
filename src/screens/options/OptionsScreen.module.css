@@ -1,0 +1,316 @@
+.page {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(18rem, 0.7fr);
+  gap: 1rem;
+  align-items: end;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--panel-strong), var(--panel));
+  box-shadow: var(--shadow-ambient);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--accent-strong);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0.35rem 0 0;
+  max-width: 12ch;
+  font-family: var(--font-display);
+  font-size: clamp(2.3rem, 5vw, 4.8rem);
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+}
+
+.summary,
+.sectionDescription,
+.choiceDescription,
+.controlDescription {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.summary {
+  max-width: 34rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.35fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.sections {
+  display: grid;
+  gap: 1rem;
+}
+
+.section,
+.preview {
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1rem, 1.6vw, 1.35rem);
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.sectionHeader {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.sectionTitle,
+.previewTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  letter-spacing: 0;
+  line-height: 1.08;
+}
+
+.sectionTitle {
+  font-size: clamp(1.25rem, 1.7vw, 1.75rem);
+}
+
+.previewTitle {
+  font-size: 1.25rem;
+}
+
+.choiceGrid,
+.wallpaperGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.choiceCard,
+.wallpaperCard {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--panel-strong) 54%, transparent);
+  text-align: left;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.choiceCard:hover,
+.wallpaperCard:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in oklab, var(--accent) 34%, var(--border));
+}
+
+.choiceCard:focus-visible,
+.wallpaperCard:focus-visible,
+.primaryAction:focus-visible,
+.secondaryAction:focus-visible {
+  outline: none;
+  border-color: color-mix(in oklab, var(--accent) 58%, var(--border));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+}
+
+.choiceCardActive,
+.wallpaperCardActive {
+  border-color: var(--accent);
+  background: color-mix(in oklab, var(--panel) 76%, var(--accent-soft));
+}
+
+.choiceLabel,
+.controlTitle {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.choiceDescription,
+.controlDescription {
+  font-size: 0.9rem;
+}
+
+.wallpaperCard {
+  grid-template-rows: auto auto 1fr;
+}
+
+.wallpaperSwatch {
+  display: block;
+  min-height: 4.2rem;
+  margin-bottom: 0.2rem;
+  border: 1px solid var(--border);
+  background: var(--panel-strong);
+}
+
+.wallpaperSwatch[data-wallpaper-preview="executive-grid"] {
+  background-image:
+    linear-gradient(to right, var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px),
+    radial-gradient(circle at 20% 20%, var(--accent-soft), transparent 45%);
+  background-size:
+    18px 18px,
+    18px 18px,
+    auto;
+}
+
+.wallpaperSwatch[data-wallpaper-preview="runway-night"] {
+  background-image:
+    linear-gradient(115deg, transparent 43%, var(--accent-soft) 44% 46%, transparent 47%),
+    linear-gradient(65deg, transparent 48%, color-mix(in oklab, var(--accent) 40%, transparent) 49% 50%, transparent 51%),
+    radial-gradient(circle at 70% 30%, var(--accent-soft), transparent 42%);
+  background-size: auto;
+}
+
+.wallpaperSwatch[data-wallpaper-preview="audit-room"] {
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--text-muted) 18%, transparent) 0 1px,
+      transparent 1px 13px
+    ),
+    linear-gradient(90deg, transparent 0 22%, var(--accent-soft) 22% 23%, transparent 23%);
+}
+
+.wallpaperSwatch[data-wallpaper-preview="clean-boardroom"] {
+  background:
+    radial-gradient(circle at top right, var(--accent-soft), transparent 44%),
+    color-mix(in oklab, var(--panel-strong) 72%, var(--canvas));
+}
+
+.toggleRow,
+.rangeRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--border);
+}
+
+.toggleRow > span,
+.rangeHeader > span {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.toggleRow input {
+  width: 2.8rem;
+  height: 1.35rem;
+  accent-color: var(--accent);
+}
+
+.rangeRow {
+  display: grid;
+}
+
+.rangeHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+}
+
+.rangeRow input {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.output {
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+}
+
+.controlMuted {
+  opacity: 0.58;
+}
+
+.preview {
+  position: sticky;
+  top: 6rem;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--panel-strong) 75%, transparent), var(--panel)),
+    var(--panel);
+  box-shadow: var(--shadow-ambient);
+}
+
+.previewList {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.previewList div {
+  display: grid;
+  gap: 0.25rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.previewList dt {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.previewList dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  line-height: 1.35;
+}
+
+.previewActions {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.primaryAction,
+.secondaryAction {
+  min-height: 2.9rem;
+  padding: 0 1rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+}
+
+.primaryAction {
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+  background: var(--accent);
+  color: var(--canvas);
+  font-weight: 700;
+}
+
+@media (max-width: 1120px) {
+  .layout,
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .preview {
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .choiceGrid,
+  .wallpaperGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .toggleRow {
+    align-items: start;
+  }
+}

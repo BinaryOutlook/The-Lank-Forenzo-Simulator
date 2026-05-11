@@ -2,7 +2,7 @@
 
 Status: Foundation reset
 Owner: BinaryOutlook
-Last updated: 2026-04-17
+Last updated: 2026-05-11
 Project phase: Clean-slate browser reboot
 
 ## 1. Purpose
@@ -112,6 +112,7 @@ For the first serious browser version, the product should:
 - let factions, operations, and dossier evidence remember the style of the player's misconduct
 - provide deterministic balance and reachability tooling so content coverage problems are visible
 - support two complete visual themes without fragmenting the product
+- provide local-first player options for presentation, audio, and graphical load
 - remain local-first and easy to run during early development
 - be maintainable enough for re-entry after long breaks
 
@@ -286,6 +287,16 @@ Both themes must:
 - preserve readability, hierarchy, and accessibility
 - feel intentionally authored, not simply dark mode versus light mode
 
+### 10.4 Player options requirements
+
+Player-facing options should be local-first and incremental:
+
+- theme and wallpaper choices should update the shell immediately
+- wallpaper support may begin with curated presets before full file uploads
+- music and sound-effect controls should persist without causing browser audio errors
+- animation and graphical-effect controls should let lower-end devices reduce ornamentation
+- defaults should preserve the authored boardroom atmosphere out of the box
+
 ## 11. Core Product Surface
 
 The first release should include the following screens or panels.
@@ -311,7 +322,17 @@ It should contain:
 - a current narrative panel or event stack
 - an end-turn control
 
-### 11.3 Decision tray
+### 11.3 Options page
+
+The Options page should:
+
+- be reachable from the game shell
+- expose theme, wallpaper, audio, general UI, and graphical-effect settings
+- persist preferences locally where browser storage is available
+- favor clean preset-based controls before advanced customization
+- keep the game readable when effects or animation are reduced
+
+### 11.4 Decision tray
 
 This surface should present the player's actionable choices for the round.
 
@@ -322,7 +343,7 @@ It must prioritize:
 - hierarchy of importance
 - fast scanning
 
-### 11.4 Event and consequence feed
+### 11.5 Event and consequence feed
 
 The player needs a place where the world answers back.
 
@@ -335,7 +356,7 @@ This surface should display:
 - board reactions
 - legal escalations
 
-### 11.5 Endgame and outcome screens
+### 11.6 Endgame and outcome screens
 
 The game must make final outcomes feel authored and consequential, not like score dialogs.
 
