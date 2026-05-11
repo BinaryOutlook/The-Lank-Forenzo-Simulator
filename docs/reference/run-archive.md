@@ -204,6 +204,35 @@ Archive IDs can use `crypto.randomUUID()` when available. A fallback can combine
 `endedAt`, `ending.id`, and `content.hash`; it only needs uniqueness, not
 simulation determinism.
 
+## Capture And Idempotency Notes
+
+The future archive service should treat capture as a best-effort side effect of
+an already-ended run:
+
+1. `resolveRound` ends the run and produces `run.endingId` plus recap data.
+2. The ending screen renders from the ended run, regardless of archive storage
+   availability.
+3. A small archive service derives the archive entry from `RunState` and the
+   resolved ending definition.
+4. Storage upserts the archive entry and any compact list data needed by the
+   archive index.
+5. The UI can then show a quiet "saved on this device" confirmation, with
+   archive navigation or seed-copy actions only when those capabilities exist.
+
+Archive writes must never block ending display, `clearRun()`, start-new-run
+flows, or active-save hydration. IndexedDB quota errors, private-browser
+limitations, and corrupt archive records should degrade into a non-blocking
+archive warning rather than a failed game ending.
+
+Duplicate records are the main capture risk because the ending screen can
+rerender or hydrate after refresh. The preferred implementation is to generate
+one `archiveId` when a run reaches `ended`, persist that id on the ended run, and
+upsert the same archive record on repeated visits. If the active `RunState` does
+not yet have stable run ids or replay seeds, an interim fingerprint can combine
+`contentHash`, `endingId`, `round`, final metrics, selected decisions, and the
+last history entry id. That fingerprint is less expressive than a true session
+id, but it keeps duplicate capture bounded until replay metadata lands.
+
 ## IndexedDB Shape
 
 Use one database so future local-only features have a clear home.
