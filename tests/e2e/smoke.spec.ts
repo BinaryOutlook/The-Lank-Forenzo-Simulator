@@ -36,11 +36,19 @@ async function showRunPanel(page: Page, panelName: string) {
 
 test("landing screen starts a run and advances a quarter", async ({ page }) => {
   await page.goto("/");
+  const primaryNav = page.getByRole("navigation", { name: "Primary" });
+
+  await expect(primaryNav.getByRole("link")).toHaveText([
+    "Run",
+    "About",
+    "Options",
+  ]);
+  await expect(primaryNav.getByRole("link", { name: "Run" })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: /run the airline badly on purpose/i }),
   ).toBeVisible();
 
-  await page.getByRole("link", { name: /about/i }).click();
+  await primaryNav.getByRole("link", { name: "About" }).click();
   await expect(
     page.getByRole("heading", {
       name: /aviation management, viewed from the executive escape hatch/i,
@@ -125,7 +133,7 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
     "data-interaction-effects",
     "on",
   );
-  await page.getByRole("button", { name: /return to run/i }).click();
+  await primaryNav.getByRole("link", { name: "Run" }).click();
 
   await showRunPanel(page, "Feed");
   const decisionTray = page
