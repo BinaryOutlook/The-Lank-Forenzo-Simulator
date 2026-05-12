@@ -41,9 +41,32 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
   await expect(primaryNav.getByRole("link")).toHaveText([
     "Run",
     "About",
+    "Tutorial",
     "Options",
   ]);
   await expect(primaryNav.getByRole("link", { name: "Run" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: /run the airline badly on purpose/i }),
+  ).toBeVisible();
+
+  await primaryNav.getByRole("link", { name: "Tutorial" }).click();
+  await expect(
+    page.getByRole("heading", {
+      name: /learn the loop before the creditors do/i,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: /leave rich before the bill comes due/i,
+    }),
+  ).toBeVisible();
+  await page.reload();
+  await expect(
+    page.getByRole("heading", {
+      name: /learn the loop before the creditors do/i,
+    }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: /return home/i }).click();
   await expect(
     page.getByRole("heading", { name: /run the airline badly on purpose/i }),
   ).toBeVisible();
@@ -77,7 +100,7 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
     "armonk-blue",
   );
 
-  await page.getByRole("link", { name: /options/i }).click();
+  await primaryNav.getByRole("link", { name: "Options" }).click();
   await expect(
     page.getByRole("heading", {
       name: /tune the room before it turns on you/i,

@@ -16,6 +16,7 @@ const themes: Array<{ id: ThemeName; label: string }> = [
 const primaryNavItems: Array<{ label: string; to: string }> = [
   { label: "Run", to: "/run" },
   { label: "About", to: "/about" },
+  { label: "Tutorial", to: "/tutorial" },
   { label: "Options", to: "/options" },
 ];
 

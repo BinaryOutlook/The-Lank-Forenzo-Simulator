@@ -5,6 +5,7 @@ import { LandingScreen } from "../screens/landing/LandingScreen.js";
 import { OptionsScreen } from "../screens/options/OptionsScreen.js";
 import { AboutScreen } from "../screens/about/AboutScreen.js";
 import { RunScreen } from "../screens/run/RunScreen.js";
+import { TutorialScreen } from "../screens/tutorial/TutorialScreen.js";
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
       {
         path: "about",
         element: <AboutScreen />,
+      },
+      {
+        path: "tutorial",
+        element: <TutorialScreen />,
       },
       {
         path: "ending",
