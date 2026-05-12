@@ -24,6 +24,7 @@ The number should match or clearly map to the `FR-0001` style ID in [`../MASTER_
 3. Add or update the matching row in [`../MASTER_ROADMAP_TABLE.md`](../MASTER_ROADMAP_TABLE.md).
 4. Set the status honestly. Use `Needs Clarification` or `Needs Architecture Review` when the work is not ready.
 5. Promote to GitHub issue only after the queue decision says it is actionable.
+6. After issue -> PR -> merge to `main`, move the completed record to [`../archive/`](../archive/) during post-merge audit.
 
 ## Brief Quality Bar
 
