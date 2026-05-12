@@ -2,7 +2,7 @@
 
 Status: Foundation reset
 Owner: BinaryOutlook
-Last updated: 2026-05-11
+Last updated: 2026-05-12
 Project phase: Clean-slate browser reboot
 
 ## 1. Purpose
@@ -116,6 +116,7 @@ For the first serious browser version, the product should:
 - remain usable in scroll-less fitted desktop, tablet, and phone browser layouts, including portrait play with touch controls
 - provide local-first player options for presentation, audio, and graphical load
 - explain the game motivation and aviation-management satire through a lightweight secondary About page
+- teach first-time players the objective, interaction model, run flow, key concepts, and run UI through a dedicated Tutorial page
 - remain local-first and easy to run during early development
 - be maintainable enough for re-entry after long breaks
 
@@ -317,10 +318,11 @@ Player-facing options should be local-first and incremental:
 
 The first release should include the following screens or panels.
 
-The top navigation should keep `Run`, `About`, and `Options` in a stable,
-always-visible primary menu wherever the app shell is shown. `Run` is the
-fixed return path to the active gameplay surface; `About` and `Options` should
-retain their existing relative order and secondary-page behavior.
+The top navigation should keep `Run`, `About`, `Tutorial`, and `Options` in a
+stable, always-visible primary menu wherever the app shell is shown. `Run` is
+the fixed return path to the active gameplay surface; `About`, `Tutorial`, and
+`Options` should retain their existing relative order and secondary-page
+behavior.
 
 ### 11.1 Landing screen
 
@@ -367,7 +369,19 @@ The About page should:
 - preserve the same theme tokens, spacing language, and responsive behavior as the rest of the app shell
 - provide clear, lightweight navigation back to the active run or landing screen
 
-### 11.5 Decision tray
+### 11.5 Tutorial page
+
+The Tutorial page should:
+
+- be reachable from a stable `/tutorial` route and a visible top-bar Tutorial link beside About
+- remain separate from the primary landing and run flow
+- explain the core objective in plain language: keep the airline credible long enough to reach a voluntary exit before automatic failure
+- teach the practical loop of reading the situation, choosing decisions, resolving a quarter, interpreting state changes, handling hazards or scandals, and reaching an ending
+- introduce key concepts such as two ledgers, factions, dossier evidence, strategic reserves, hazards, endings, and recap information
+- identify the main run UI areas a new player will encounter
+- preserve the same theme tokens, spacing language, and responsive behavior as the rest of the app shell
+
+### 11.6 Decision tray
 
 This surface should present the player's actionable choices for the round.
 
@@ -378,7 +392,7 @@ It must prioritize:
 - hierarchy of importance
 - fast scanning
 
-### 11.6 Event and consequence feed
+### 11.7 Event and consequence feed
 
 The player needs a place where the world answers back.
 
@@ -391,7 +405,7 @@ This surface should display:
 - board reactions
 - legal escalations
 
-### 11.7 Endgame and outcome screens
+### 11.8 Endgame and outcome screens
 
 The game must make final outcomes feel authored and consequential, not like score dialogs.
 

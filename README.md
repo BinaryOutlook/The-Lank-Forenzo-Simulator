@@ -24,6 +24,7 @@ Implemented in the current build:
 - two first-class themes: `Earth` and `Armonk Blue`
 - scroll-less fitted run layouts for desktop landscape, tablet landscape, tablet portrait, and phone portrait browser play
 - a standalone About page that frames the aviation satire, motivation, and design intent without interrupting play
+- a dedicated Tutorial page that teaches the objective, interaction model, run flow, key concepts, and run UI before a first playthrough
 - an accessible Options page with locally persisted wallpaper presets, audio controls, UI density, animation, graphical-effect, interaction-feedback, and interaction sound-cue settings
 - unit tests, content validation, build checks, seeded balance tooling, nightly report artifacts, reachability tooling, and a Playwright smoke test
 
@@ -84,7 +85,7 @@ Open the local Vite URL shown in the terminal.
 
 Decision, event, and hazard content are assembled from validated packs under `content/decisions/`, `content/events/`, and `content/hazards/` through their `index.ts` files.
 
-Run, About, and Options are available from the app header in a stable primary-navigation order. Run is the fixed top-bar destination for the active gameplay surface, while About remains a lightweight secondary page for player-facing project context and links back to the active run when one is in progress. The current settings implementation is local-first and preset-based: wallpaper selection changes the shell background immediately, music can be toggled with a restrained Web Audio ambience, interaction cues follow the music volume and sound-effects toggle, and visual plus interaction feedback effects can be reduced or disabled for lower-end devices.
+Run, About, Tutorial, and Options are available from the app header in a stable primary-navigation order. Run is the fixed top-bar destination for the active gameplay surface, while About remains a lightweight secondary page for player-facing project context. The Tutorial route (`/tutorial`) is a first-run guide for the objective, controls, run flow, key concepts, UI areas, and practical tips. About and Tutorial can both return to an active run when one is in progress. The current settings implementation is local-first and preset-based: wallpaper selection changes the shell background immediately, music can be toggled with a restrained Web Audio ambience, interaction cues follow the music volume and sound-effects toggle, and visual plus interaction feedback effects can be reduced or disabled for lower-end devices.
 
 ## Scripts
 
@@ -150,6 +151,7 @@ src/
   screens/
     about/
     options/
+    tutorial/
   simulation/
     index.ts
     runtime.ts
@@ -215,6 +217,8 @@ PRDs/
     v0.5.md
   v0.6/
     v0.6.md
+  v0.7/
+    v0.7.md
 tests/
   unit/
   e2e/

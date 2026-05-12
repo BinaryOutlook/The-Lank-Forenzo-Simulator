@@ -14,6 +14,7 @@ function renderAppShell(initialEntry: string) {
           <Route index element={<h1>Landing route</h1>} />
           <Route path="run" element={<h1>Primary run workspace</h1>} />
           <Route path="about" element={<h1>About route</h1>} />
+          <Route path="tutorial" element={<h1>Tutorial route</h1>} />
           <Route path="options" element={<h1>Options route</h1>} />
         </Route>
       </Routes>
@@ -36,7 +37,7 @@ afterEach(() => {
 });
 
 describe("AppShell", () => {
-  it("keeps the run destination fixed before About and Options", () => {
+  it("keeps the fixed Run destination before About, Tutorial, and Options", () => {
     renderAppShell("/options");
 
     const primaryNavigation = screen.getByRole("navigation", {
@@ -47,11 +48,13 @@ describe("AppShell", () => {
     expect(primaryLinks.map((link) => link.textContent)).toEqual([
       "Run",
       "About",
+      "Tutorial",
       "Options",
     ]);
     expect(primaryLinks.map((link) => link.getAttribute("href"))).toEqual([
       "/run",
       "/about",
+      "/tutorial",
       "/options",
     ]);
   });
@@ -60,7 +63,7 @@ describe("AppShell", () => {
     const user = userEvent.setup();
 
     useGameStore.getState().startNewRun();
-    renderAppShell("/about");
+    renderAppShell("/tutorial");
 
     const primaryNavigation = screen.getByRole("navigation", {
       name: /primary/i,

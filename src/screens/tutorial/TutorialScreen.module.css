@@ -1,0 +1,300 @@
+.page {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero,
+.panel,
+.callout {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-ambient);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(18rem, 0.7fr);
+  gap: 1rem;
+  align-items: end;
+  padding: clamp(1.1rem, 2.4vw, 1.75rem);
+  background: linear-gradient(180deg, var(--panel-strong), var(--panel));
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--accent-strong);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0.35rem 0 0;
+  max-width: 12ch;
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 5.6vw, 5rem);
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+  text-wrap: balance;
+}
+
+.heroCopy,
+.mainColumn,
+.sideColumn,
+.panel,
+.callout {
+  display: grid;
+  gap: 1rem;
+}
+
+.summary,
+.bodyCopy,
+.bulletList,
+.step span span,
+.conceptCard p,
+.uiList dd,
+.tipList {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.summary {
+  max-width: 38rem;
+  font-size: 1.02rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 1rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+}
+
+.primaryAction {
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+  background: var(--accent);
+  color: var(--canvas);
+  font-weight: 700;
+}
+
+.primaryAction:focus-visible,
+.secondaryAction:focus-visible,
+.conceptCard:focus-within {
+  outline: none;
+  border-color: color-mix(in oklab, var(--accent) 58%, var(--border));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.38fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.panel,
+.callout {
+  padding: clamp(1rem, 1.8vw, 1.45rem);
+  background: var(--panel);
+}
+
+.callout {
+  background:
+    linear-gradient(
+      155deg,
+      color-mix(in oklab, var(--panel-strong) 82%, transparent),
+      var(--panel)
+    ),
+    var(--panel);
+}
+
+.sideColumn {
+  position: sticky;
+  top: 6rem;
+}
+
+.sectionTitle,
+.sideTitle,
+.conceptCard h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  letter-spacing: 0;
+  line-height: 1.08;
+}
+
+.sectionTitle {
+  font-size: clamp(1.45rem, 2vw, 2.1rem);
+}
+
+.sideTitle {
+  font-size: clamp(1.25rem, 1.7vw, 1.75rem);
+}
+
+.bulletList,
+.tipList {
+  display: grid;
+  gap: 0.7rem;
+  padding-left: 1.15rem;
+}
+
+.bulletList li::marker,
+.tipList li::marker {
+  color: var(--accent-strong);
+}
+
+.stepList {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: start;
+  padding: 0.9rem;
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--panel-strong) 48%, transparent);
+}
+
+.stepNumber {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  min-width: 2rem;
+  height: 2rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 45%, var(--border));
+  color: var(--accent-strong);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+
+.step strong,
+.step span span {
+  display: block;
+}
+
+.step strong {
+  margin-bottom: 0.25rem;
+  color: var(--text);
+}
+
+.conceptGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.conceptCard {
+  display: grid;
+  gap: 0.55rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--panel-strong) 54%, transparent);
+}
+
+.conceptCard h3 {
+  font-size: 1.08rem;
+}
+
+.uiList {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.uiItem {
+  display: grid;
+  gap: 0.25rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.uiItem dt {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.uiItem dd {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 1040px) {
+  .hero,
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    max-width: 14ch;
+  }
+
+  .sideColumn {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .conceptGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .page {
+    gap: 0.75rem;
+  }
+
+  .hero,
+  .panel,
+  .callout {
+    padding: 0.95rem;
+  }
+
+  .title {
+    font-size: clamp(2.05rem, 12vw, 3.1rem);
+    line-height: 0.98;
+  }
+
+  .summary,
+  .bodyCopy,
+  .bulletList,
+  .step span span,
+  .conceptCard p,
+  .uiList dd,
+  .tipList {
+    line-height: 1.55;
+  }
+
+  .actions {
+    display: grid;
+  }
+
+  .primaryAction,
+  .secondaryAction {
+    width: 100%;
+    min-height: 3.35rem;
+  }
+
+  .step {
+    grid-template-columns: 1fr;
+  }
+}
