@@ -43,7 +43,8 @@ function getAdjacentPanelId(
 ): RunPanelId {
   const currentIndex = runPanels.findIndex((panel) => panel.id === panelId);
   const offset = direction === "next" ? 1 : -1;
-  const nextIndex = (currentIndex + offset + runPanels.length) % runPanels.length;
+  const nextIndex =
+    (currentIndex + offset + runPanels.length) % runPanels.length;
 
   return runPanels[nextIndex].id;
 }
@@ -142,7 +143,9 @@ export function RunScreen() {
   );
   const selectedCost = getDecisionSelectionCost(selectedDecisions);
   const resolveLabel =
-    run.selectedDecisionIds.length > 0 ? "Resolve the quarter" : "Hold the line";
+    run.selectedDecisionIds.length > 0
+      ? "Resolve the quarter"
+      : "Hold the line";
   const handleEndTurn = () => {
     endTurn();
 
@@ -170,11 +173,7 @@ export function RunScreen() {
       aria-label="Active run workspace"
     >
       {isPortraitLayout ? (
-        <nav
-          className={styles.panelNav}
-          role="tablist"
-          aria-label="Run panels"
-        >
+        <nav className={styles.panelNav} role="tablist" aria-label="Run panels">
           {runPanels.map((panel) => (
             <PanelNavButton
               key={panel.id}
@@ -222,6 +221,7 @@ export function RunScreen() {
         tabIndex={isPortraitLayout ? 0 : undefined}
       >
         <DecisionTray
+          decisionSelectionHref="/run/decisions"
           decisions={decisions}
           interactionEffectsEnabled={interactionEffectsEnabled}
           resources={run.resources}

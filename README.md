@@ -15,6 +15,7 @@ Implemented in the current build:
 - authored hazard rules that turn accumulated state into scheduler pressure
 - compiled content manifest with direct lookup maps, content hash, flag diagnostics, pack/tag indexes, and hazard indexes
 - set-aware decision tray composition with diversity, follow-up, exit, and repeat-suppression rules
+- a dedicated decision-selection view for roomy round-option comparison before resolving a quarter
 - v0.5 scheduler, faction memory, operational network, and dossier primitives wired into active runs
 - consumable strategic reserves for high-impact political, labor, regulatory, and executive-network actions
 - structured post-run case summaries for outcome causes, dominant strategy, faction pressure, operational cascades, dossier files, missed windows, and final decision chains
@@ -34,7 +35,7 @@ There have been decades of airline and air-management games, but most define man
 
 You are not playing as a meticulous operator trying to build the best airline. You are playing from the macro level, managing the distance between two ledgers: the company and yourself. The airline can be failing while you are still winning, and that split is the product's core lens for every system, screen, and decision.
 
-Each round presents a board packet, a curated decision tray, and a consequence feed. The question is not how to optimize routes or tune fleet utilization. The question is how long you can keep the company just credible enough to keep extracting value before creditors, regulators, workers, and the market close in.
+Each round presents a board packet, a curated decision tray, a dedicated decision-selection view, and a consequence feed. The question is not how to optimize routes or tune fleet utilization. The question is how long you can keep the company just credible enough to keep extracting value before creditors, regulators, workers, and the market close in.
 
 Strategic actions can now draw from three limited reserves: strategic cash, personal assets, and public relations capital. Expensive plays such as regulator influence, union-conflict maneuvers, lobbying, merger backchannels, and offshore networking show their reserve costs in the decision tray before they can be queued.
 
@@ -85,7 +86,7 @@ Open the local Vite URL shown in the terminal.
 
 Decision, event, and hazard content are assembled from validated packs under `content/decisions/`, `content/events/`, and `content/hazards/` through their `index.ts` files.
 
-Run, About, Tutorial, and Options are available from the app header in a stable primary-navigation order. Run is the fixed top-bar destination for the active gameplay surface, while About remains a lightweight secondary page for player-facing project context. The Tutorial route (`/tutorial`) is a first-run guide for the objective, controls, run flow, key concepts, UI areas, and practical tips. About and Tutorial can both return to an active run when one is in progress. The current settings implementation is local-first and preset-based: wallpaper selection changes the shell background immediately, music can be toggled with a restrained Web Audio ambience, interaction cues follow the music volume and sound-effects toggle, and visual plus interaction feedback effects can be reduced or disabled for lower-end devices.
+Run, About, Tutorial, and Options are available from the app header in a stable primary-navigation order. Run is the fixed top-bar destination for the active gameplay surface, while the dedicated decision-selection route (`/run/decisions`) is entered from the run screen when the player wants more space to compare the five round options. About remains a lightweight secondary page for player-facing project context. The Tutorial route (`/tutorial`) is a first-run guide for the objective, controls, run flow, key concepts, UI areas, and practical tips. About and Tutorial can both return to an active run when one is in progress. The current settings implementation is local-first and preset-based: wallpaper selection changes the shell background immediately, music can be toggled with a restrained Web Audio ambience, interaction cues follow the music volume and sound-effects toggle, and visual plus interaction feedback effects can be reduced or disabled for lower-end devices.
 
 ## Scripts
 
@@ -125,6 +126,7 @@ The run screen is designed as a fitted app surface across desktop landscape, tab
 
 - Desktop and tablet landscape use dense command-center grids with internal panel scrolling instead of document scrolling.
 - Very wide desktop windows promote the decision tray into a full-width lower deck so the actionable choices use the extra horizontal space.
+- The dedicated `/run/decisions` phase relaxes the fitted-board compression with a responsive card grid and persistent selection controls for deliberate comparison.
 - Tablet and phone portrait use explicit Brief, State, Decisions, and Feed panels with a segmented tab bar.
 - Portrait quarter controls live in a persistent bottom control surface, so resolving a quarter stays reachable while inspecting any panel.
 - Viewport safe-area and dynamic-height CSS are used so browser chrome and virtual keyboards are less likely to cover critical controls.
@@ -150,6 +152,7 @@ src/
   components/
   screens/
     about/
+    decision-selection/
     options/
     tutorial/
   simulation/
@@ -245,4 +248,4 @@ unless they are intentionally testing lower-level systems.
 - V0.5 dossier hooks: [docs/reference/dossier-system.md](docs/reference/dossier-system.md)
 - Nightly simulation reporting: [docs/reference/nightly-simulation-reporting.md](docs/reference/nightly-simulation-reporting.md)
 - Local-first run archive design: [docs/reference/run-archive.md](docs/reference/run-archive.md)
-- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md), [PRDs/v0.5/v0.5.md](PRDs/v0.5/v0.5.md), [PRDs/v0.6/v0.6.md](PRDs/v0.6/v0.6.md)
+- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md), [PRDs/v0.5/v0.5.md](PRDs/v0.5/v0.5.md), [PRDs/v0.6/v0.6.md](PRDs/v0.6/v0.6.md), [PRDs/v0.7/v0.7.md](PRDs/v0.7/v0.7.md), [PRDs/v0.8/v0.8.md](PRDs/v0.8/v0.8.md)

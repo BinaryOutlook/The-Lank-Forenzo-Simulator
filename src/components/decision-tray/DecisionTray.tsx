@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import clsx from "clsx";
+import { Link } from "react-router-dom";
 import {
   formatDelta,
   getImpactPreview,
@@ -31,11 +32,17 @@ import { useInteractionFeedback } from "../interaction/useInteractionFeedback.js
 import styles from "./DecisionTray.module.css";
 
 interface DecisionTrayProps {
+  decisionSelectionHref?: string;
+  decisionSelectionLabel?: string;
   decisions: DecisionDefinition[];
+  eyebrow?: string;
   interactionEffectsEnabled?: boolean;
   resources: ConsumableResources;
   selectedDecisionIds: string[];
   showControls?: boolean;
+  summary?: string;
+  surface?: "embedded" | "selection";
+  title?: string;
   onToggle: (decisionId: string) => void;
   onEndTurn: () => void;
 }
@@ -108,10 +115,16 @@ function DecisionCard({
     >
       <div className={styles.cardHeader}>
         <span className={styles.group}>{decision.group}</span>
-        <span className={styles.tags}>
-          {decision.tags.slice(0, 2).join(" / ")}
+        <span
+          className={clsx(
+            styles.selectionBadge,
+            selected && styles.selectionBadgeSelected,
+          )}
+        >
+          {selected ? "Queued" : disabled ? "Unavailable" : "Available"}
         </span>
       </div>
+      <p className={styles.tags}>{decision.tags.slice(0, 2).join(" / ")}</p>
 
       <div className={styles.cardBody}>
         <h3 className={styles.cardTitle}>{decision.title}</h3>
@@ -133,7 +146,8 @@ function DecisionCard({
                 styles.previewNeutral,
             )}
           >
-            {metricLabels[entry.metric]} {formatDelta(entry.metric, entry.delta)}
+            {metricLabels[entry.metric]}{" "}
+            {formatDelta(entry.metric, entry.delta)}
           </span>
         ))}
       </div>
@@ -146,14 +160,23 @@ function DecisionCard({
 }
 
 export function DecisionTray({
+  decisionSelectionHref,
+  decisionSelectionLabel = "Open dedicated decision view",
   decisions,
+  eyebrow = "Decision tray",
   interactionEffectsEnabled = true,
   resources,
   selectedDecisionIds,
   showControls = true,
+  summary,
+  surface = "embedded",
+  title = "Choose where the pain goes next.",
   onToggle,
   onEndTurn,
 }: DecisionTrayProps) {
+  const detailFeedback = useInteractionFeedback<HTMLAnchorElement>(
+    interactionEffectsEnabled && Boolean(decisionSelectionHref),
+  );
   const resolveLabel =
     selectedDecisionIds.length > 0 ? "Resolve the quarter" : "Hold the line";
   const selectedDecisions = decisions.filter((decision) =>
@@ -164,11 +187,29 @@ export function DecisionTray({
 
   return (
     <section
-      className={clsx(styles.tray, !showControls && styles.trayWithoutControls)}
+      className={clsx(
+        styles.tray,
+        surface === "selection" && styles.traySelectionView,
+        !showControls && styles.trayWithoutControls,
+      )}
     >
       <div className={styles.header}>
-        <p className={styles.eyebrow}>Decision tray</p>
-        <h2 className={styles.title}>Choose where the pain goes next.</h2>
+        <div className={styles.headerCopy}>
+          <p className={styles.eyebrow}>{eyebrow}</p>
+          <h2 className={styles.title}>{title}</h2>
+          {summary ? <p className={styles.summary}>{summary}</p> : null}
+        </div>
+        {decisionSelectionHref ? (
+          <Link
+            className={clsx("interaction-feedback-control", styles.phaseLink)}
+            data-interaction-feedback={detailFeedback.feedbackState}
+            to={decisionSelectionHref}
+            onKeyDown={detailFeedback.onFeedbackKeyDown}
+            onPointerDown={detailFeedback.onFeedbackPointerDown}
+          >
+            {decisionSelectionLabel}
+          </Link>
+        ) : null}
       </div>
 
       <ResourceLedger
@@ -251,7 +292,9 @@ export function QuarterControls({
       )}
       data-testid="quarter-controls"
     >
-      <p className={styles.selectionCount}>{selectedDecisionCount}/2 selected</p>
+      <p className={styles.selectionCount}>
+        {selectedDecisionCount}/2 selected
+      </p>
       <p className={styles.selectionCost}>
         {formatResourceCostSummary(selectedCost)}
       </p>

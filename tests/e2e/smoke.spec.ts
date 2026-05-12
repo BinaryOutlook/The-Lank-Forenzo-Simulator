@@ -170,12 +170,26 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
   expect(historyCountBefore).toBeGreaterThan(0);
 
   await showRunPanel(page, "Decisions");
-  const firstDecision = decisionTray.locator("button[aria-pressed]").first();
+  await decisionTray
+    .getByRole("link", { name: /open dedicated decision view/i })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: /select the quarter's damage/i }),
+  ).toBeVisible();
+  await expect(page.getByText("0/2 selected")).toBeVisible();
+
+  const firstDecision = page.locator("button[aria-pressed]").first();
   await firstDecision.dispatchEvent("pointerdown");
   await expect(firstDecision).toHaveAttribute(
     "data-interaction-feedback",
     "active",
   );
+  await firstDecision.click();
+  await expect(firstDecision).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText("1/2 selected")).toBeVisible();
+  await firstDecision.click();
+  await expect(firstDecision).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByText("0/2 selected")).toBeVisible();
   await firstDecision.click();
   await expect(firstDecision).toHaveAttribute("aria-pressed", "true");
 
@@ -208,9 +222,7 @@ test("responsive run layout keeps touch controls and portrait panels reachable",
     await expect(
       runPanels.getByRole("tab", { name: /decisions/i }),
     ).toBeVisible();
-    await expect(
-      runPanels.getByRole("tab", { name: /state/i }),
-    ).toBeVisible();
+    await expect(runPanels.getByRole("tab", { name: /state/i })).toBeVisible();
   } else {
     await expect(runPanels).toBeHidden();
   }
