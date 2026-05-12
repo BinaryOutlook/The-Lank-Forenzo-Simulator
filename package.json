@@ -13,6 +13,8 @@
     "test:e2e": "playwright test",
     "format": "prettier --write .",
     "check": "npm run lint && npm run typecheck && npm run test",
+    "roadmap:generate": "node --import tsx scripts/generate-roadmap-table.ts generate",
+    "roadmap:check": "node --import tsx scripts/generate-roadmap-table.ts check",
     "content:compile": "node --import tsx scripts/compile-content.ts",
     "content:validate": "node --import tsx scripts/validate-content.ts",
     "simulate:runs": "node --import tsx scripts/simulate-runs.ts",

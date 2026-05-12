@@ -1,3 +1,21 @@
+---
+id: FR-0014
+title: Font compatibility and expanded options
+status: Candidate Brief
+category: Frontend / platform compatibility
+reward: Keeps the game's visual identity consistent across Windows 10, Windows 11, and modern macOS without harming performance.
+effort: M
+technical_difficulty: Medium
+conflict_risk: Low
+core_system_risk: Low
+dependencies: [Font inventory, platform test access, current typography tokens]
+parallelism_class: Yellow
+priority: P1
+github_issue: null
+owner: null
+last_decision: Keep in roadmap. Should include fallback stacks, option expansion, and platform checks before implementation.
+---
+
 # Candidate Issue: Font Compatibility and Expanded Options
 
 ## Summary

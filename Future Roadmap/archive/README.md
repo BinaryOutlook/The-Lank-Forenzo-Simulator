@@ -3,7 +3,7 @@
 Status: Historical record store for completed, rejected, or superseded roadmap work
 Last updated: 2026-05-12
 
-This folder keeps finished roadmap documentation out of the active master table without losing the audit trail. Think of it as the receipt drawer after a table has been served: the active queue stays readable, and future maintainers can still reconstruct what happened.
+This folder keeps finished roadmap documentation out of the active generated master table without losing the audit trail. The active queue stays readable, and future maintainers can still reconstruct what happened.
 
 ## What Belongs Here
 
@@ -13,9 +13,9 @@ Archive records belong here when a roadmap item is:
 - rejected after review
 - superseded by a newer candidate
 - split into successor candidates
-- moved out of the active table after post-merge audit
+- moved out of active issue briefs after post-merge audit
 
-Do not archive active work. A candidate still waiting, blocked, under review, or in progress belongs in [`../MASTER_ROADMAP_TABLE.md`](../MASTER_ROADMAP_TABLE.md).
+Do not archive active work. A candidate still waiting, blocked, under review, or in progress belongs in [`../issue-briefs/`](../issue-briefs/) so it can appear in the generated [`../MASTER_ROADMAP_TABLE.md`](../MASTER_ROADMAP_TABLE.md).
 
 ## Archive Timing
 
@@ -28,7 +28,8 @@ candidate brief
 -> merge to main
 -> post-merge audit
 -> archive record
--> remove or compact active-table row
+-> move or compact active brief
+-> regenerate master table
 ```
 
 For rejected or superseded work, replace the issue or PR steps with the review decision that closed the candidate.

@@ -1,3 +1,21 @@
+---
+id: FR-0017
+title: Unionization mechanics exploration
+status: Needs Architecture Review
+category: Gameplay systems / historical texture
+reward: Adds historically grounded labor pressure through events or global state, enriching aviation-era strategy choices.
+effort: L
+technical_difficulty: High
+conflict_risk: High
+core_system_risk: High
+dependencies: [Product scope decision, faction/global-state design, event authoring model, balance review]
+parallelism_class: Orange
+priority: P2
+github_issue: null
+owner: null
+last_decision: Explore design first. New mechanic may affect global state and event structure; should be designed before any implementation issue is opened.
+---
+
 # Candidate Issue: Unionization Mechanics Exploration
 
 ## Summary
