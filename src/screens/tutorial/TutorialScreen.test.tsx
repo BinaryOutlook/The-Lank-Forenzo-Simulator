@@ -42,7 +42,7 @@ describe("TutorialScreen", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        name: /click decisions, then resolve the quarter/i,
+        name: /read, choose, then resolve the quarter/i,
       }),
     ).toBeInTheDocument();
     expect(
@@ -63,11 +63,11 @@ describe("TutorialScreen", () => {
       screen.getByText(/merger, personal extraction, or Bahamas escape/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/select up to two decision cards per round/i),
+      screen.getByText(/select two decision cards per round/i),
     ).toBeInTheDocument();
     expect(screen.getByText(/dossier weight makes legal/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/portrait layouts, controls stay reachable/i),
+      screen.getByText(/end-round review lives in the resolve phase/i),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /start a new run/i }),

@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>V0.8 Demo Reference: Phase-Based Round Flow</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #050d09;
+        --panel: rgba(12, 24, 19, 0.94);
+        --panel-strong: rgba(19, 37, 30, 0.98);
+        --border: rgba(119, 157, 135, 0.28);
+        --text: #edf4ef;
+        --muted: #aebbb2;
+        --accent: #65eca0;
+        --warning: #f2c96f;
+        --danger: #ff9278;
+        --blue: #8cc8ff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        background:
+          radial-gradient(circle at 12% 0%, rgba(101, 236, 160, 0.16), transparent 34%),
+          linear-gradient(180deg, #050d09 0%, #08130e 48%, #040806 100%);
+        color: var(--text);
+      }
+
+      main {
+        width: min(1180px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 34px 0 52px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 860px;
+        font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
+        font-size: clamp(32px, 4vw, 56px);
+        line-height: 0.98;
+        letter-spacing: -0.04em;
+      }
+
+      h2 {
+        font-size: clamp(22px, 2vw, 30px);
+      }
+
+      h3 {
+        font-size: 17px;
+      }
+
+      p,
+      li {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .eyebrow {
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .lede {
+        max-width: 860px;
+        font-size: 18px;
+      }
+
+      .panel,
+      .phase,
+      .decision,
+      .modal {
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, var(--panel-strong), var(--panel));
+        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.22);
+      }
+
+      .panel {
+        padding: 22px;
+      }
+
+      .phase-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin: 24px 0;
+      }
+
+      .phase {
+        min-height: 250px;
+        padding: 18px;
+        position: relative;
+      }
+
+      .phase::before {
+        content: attr(data-step);
+        display: inline-grid;
+        width: 34px;
+        height: 34px;
+        margin-bottom: 16px;
+        place-items: center;
+        border: 1px solid rgba(101, 236, 160, 0.38);
+        color: var(--accent);
+        font-weight: 800;
+      }
+
+      .phase strong {
+        color: var(--text);
+      }
+
+      .phase ul {
+        margin: 12px 0 0;
+        padding-left: 18px;
+      }
+
+      .phase li + li {
+        margin-top: 6px;
+      }
+
+      .flow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin: 18px 0 28px;
+      }
+
+      .flow span {
+        flex: 1;
+        border: 1px solid var(--border);
+        padding: 12px;
+        text-align: center;
+        color: var(--text);
+        background: rgba(101, 236, 160, 0.08);
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .flow b {
+        color: var(--accent);
+      }
+
+      .mock-grid {
+        display: grid;
+        grid-template-columns: 0.85fr 1.15fr;
+        gap: 18px;
+        margin-top: 18px;
+      }
+
+      .decision-stack {
+        display: grid;
+        gap: 12px;
+      }
+
+      .decision {
+        padding: 14px;
+      }
+
+      .decision.selected {
+        border-color: rgba(101, 236, 160, 0.72);
+        box-shadow: inset 0 0 0 1px rgba(101, 236, 160, 0.24);
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .chip {
+        border: 1px solid rgba(174, 187, 178, 0.24);
+        padding: 5px 8px;
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+      }
+
+      .chip.good {
+        border-color: rgba(101, 236, 160, 0.42);
+        color: var(--accent);
+      }
+
+      .chip.warn {
+        border-color: rgba(242, 201, 111, 0.44);
+        color: var(--warning);
+      }
+
+      .chip.bad {
+        border-color: rgba(255, 146, 120, 0.44);
+        color: var(--danger);
+      }
+
+      .modal {
+        align-self: start;
+        padding: 18px;
+      }
+
+      .modal-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .button {
+        border: 1px solid rgba(101, 236, 160, 0.5);
+        background: rgba(101, 236, 160, 0.12);
+        color: var(--text);
+        padding: 10px 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .button.secondary {
+        border-color: var(--border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+      }
+
+      .note {
+        border-left: 3px solid var(--blue);
+        margin-top: 18px;
+        padding: 12px 14px;
+        background: rgba(140, 200, 255, 0.08);
+      }
+
+      @media (max-width: 820px) {
+        main {
+          width: min(100% - 20px, 640px);
+          padding-top: 24px;
+        }
+
+        .phase-grid,
+        .mock-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .flow {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .flow b {
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">V0.8 design reference</p>
+      <h1>Phase the quarter. Do not crush the quarter.</h1>
+      <p class="lede">
+        This reference captures the revised round-flow direction: keep the game
+        severe and app-like, but stop requiring every board read, decision card,
+        consequence, and resolve control to fight inside one permanent frame.
+      </p>
+
+      <section class="panel" aria-labelledby="flow-title">
+        <h2 id="flow-title">Durable round flow</h2>
+        <div class="flow" aria-label="Round phase order">
+          <span>Read / Board Packet</span>
+          <b aria-hidden="true">→</b>
+          <span>Choose Plays</span>
+          <b aria-hidden="true">→</b>
+          <span>Resolve / End Round</span>
+        </div>
+        <p>
+          Routes, internal view state, or a phase component are all acceptable if
+          the player always understands where they are and how to return before
+          final confirmation.
+        </p>
+      </section>
+
+      <section class="phase-grid" aria-label="Round phase responsibilities">
+        <article class="phase" data-step="01">
+          <h3>Read / Board Packet</h3>
+          <p><strong>Purpose:</strong> understand the quarter before choosing plays.</p>
+          <ul>
+            <li>Board packet and pressure read</li>
+            <li>Company and personal ledgers</li>
+            <li>Reserve balances and recent fallout</li>
+          </ul>
+        </article>
+        <article class="phase" data-step="02">
+          <h3>Choose Plays</h3>
+          <p><strong>Purpose:</strong> compare all available decisions deliberately.</p>
+          <ul>
+            <li>Readable costs and consequence chips</li>
+            <li>Clear selected and unselected states</li>
+            <li>Persistent selected-count feedback</li>
+          </ul>
+        </article>
+        <article class="phase" data-step="03">
+          <h3>Resolve / End Round</h3>
+          <p><strong>Purpose:</strong> confirm complete selections or recover cleanly.</p>
+          <ul>
+            <li>Short selected-play summary</li>
+            <li>Missing-selection recovery path</li>
+            <li>Resolve only after explicit confirmation</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="panel" aria-labelledby="modal-title">
+        <h2 id="modal-title">Confirmation is not the choice surface</h2>
+        <div class="mock-grid">
+          <div class="decision-stack" aria-label="Decision-selection reference">
+            <article class="decision selected">
+              <h3>Leaseback Theater</h3>
+              <p>Convert asset credibility into short-term liquidity while hiding future obligations.</p>
+              <div class="chips">
+                <span class="chip good">Selected</span>
+                <span class="chip warn">Costs PR capital</span>
+                <span class="chip bad">Raises heat</span>
+              </div>
+            </article>
+            <article class="decision">
+              <h3>Union Containment Memo</h3>
+              <p>Spend reserves to delay labor action, but create a paper trail.</p>
+              <div class="chips">
+                <span class="chip">Available</span>
+                <span class="chip warn">Strategic cash</span>
+                <span class="chip bad">Dossier risk</span>
+              </div>
+            </article>
+            <article class="decision selected">
+              <h3>Regulator Courtesy Call</h3>
+              <p>Pull the investigation into softer procedural fog for one more quarter.</p>
+              <div class="chips">
+                <span class="chip good">Selected</span>
+                <span class="chip warn">Personal assets</span>
+              </div>
+            </article>
+          </div>
+          <aside class="modal" aria-label="End-round modal reference">
+            <p class="eyebrow">End round</p>
+            <h3>2/2 plays selected</h3>
+            <p>
+              The modal seals the decision. It summarizes the selected plays and
+              asks for confirmation; it does not ask the player to compare the full
+              tray again.
+            </p>
+            <div class="modal-actions">
+              <span class="button">Resolve quarter</span>
+              <span class="button secondary">Return to choices</span>
+            </div>
+          </aside>
+        </div>
+        <p class="note">
+          If selections are incomplete, this same confirmation layer should name
+          the missing count and send the player back to Choose Plays without
+          clearing existing selections.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

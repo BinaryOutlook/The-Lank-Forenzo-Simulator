@@ -23,6 +23,15 @@
 
 .header {
   grid-area: header;
+  display: grid;
+  gap: 0.85rem;
+  align-content: start;
+  min-width: 0;
+}
+
+.headerCopy {
+  display: grid;
+  gap: 0.35rem;
   min-width: 0;
 }
 
@@ -41,6 +50,40 @@
   font-size: clamp(1.3rem, 2vw, 2rem);
 }
 
+.summary {
+  max-width: 58rem;
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.phaseLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 2.65rem;
+  padding: 0 0.85rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 44%, var(--border));
+  background: color-mix(in oklab, var(--accent-soft) 54%, transparent);
+  color: var(--accent-strong);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.phaseLink:focus-visible {
+  outline: none;
+  border-color: color-mix(in oklab, var(--accent) 60%, var(--border));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+}
+
 .controls {
   grid-area: controls;
   display: grid;
@@ -50,15 +93,22 @@
 }
 
 .selectionCount,
-.selectionCost {
+.selectionCost,
+.selectionHelper {
   margin: 0;
   color: var(--text-muted);
   font-size: 0.85rem;
 }
 
-.selectionCost {
+.selectionCost,
+.selectionHelper {
   max-width: 20rem;
   text-align: right;
+}
+
+.selectionHelper {
+  font-size: 0.78rem;
+  line-height: 1.35;
 }
 
 .resolveButton {
@@ -85,7 +135,8 @@
 }
 
 .controlsDocked .selectionCount,
-.controlsDocked .selectionCost {
+.controlsDocked .selectionCost,
+.controlsDocked .selectionHelper {
   max-width: none;
   text-align: center;
 }
@@ -98,6 +149,13 @@
 .resolveButton:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 26%, transparent);
+}
+
+.resolveButton:disabled {
+  cursor: not-allowed;
+  border-color: var(--border);
+  background: color-mix(in oklab, var(--panel-strong) 80%, var(--text) 8%);
+  color: var(--text-muted);
 }
 
 .resourceLedger {
@@ -209,6 +267,32 @@
   letter-spacing: 0.08em;
 }
 
+.tags {
+  margin: 0;
+}
+
+.selectionBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.65rem;
+  padding: 0 0.55rem;
+  border: 1px solid color-mix(in oklab, var(--border) 88%, var(--text) 12%);
+  background: color-mix(in oklab, var(--panel-strong) 80%, transparent);
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.selectionBadgeSelected {
+  border-color: color-mix(in oklab, var(--accent) 66%, var(--border));
+  background: color-mix(in oklab, var(--accent-soft) 82%, var(--panel));
+  color: var(--accent-strong);
+}
+
 .cardBody {
   display: grid;
   gap: 0.45rem;
@@ -301,10 +385,117 @@
     transform: translateY(-1px);
   }
 
+  .phaseLink:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in oklab, var(--accent) 58%, var(--border));
+    background: color-mix(in oklab, var(--accent-soft) 70%, transparent);
+  }
+
   .card:not(:disabled):hover {
     transform: translateY(-2px);
     border-color: color-mix(in oklab, var(--accent) 35%, var(--border));
   }
+}
+
+.traySelectionView {
+  grid-template-areas:
+    "header controls"
+    "resources controls"
+    "list list";
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.34fr);
+  grid-template-rows: auto auto auto;
+  gap: clamp(1rem, 2vw, 1.4rem);
+  height: auto;
+  overflow: visible;
+}
+
+.traySelectionView .header {
+  padding: clamp(1rem, 1.8vw, 1.35rem);
+  border: 1px solid color-mix(in oklab, var(--border) 86%, var(--accent) 14%);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in oklab, var(--panel-strong) 86%, transparent),
+      color-mix(in oklab, var(--panel) 88%, transparent)
+    ),
+    var(--panel);
+  box-shadow: var(--shadow-ambient);
+}
+
+.traySelectionView .title {
+  max-width: 16ch;
+  font-size: clamp(2rem, 5vw, 4.9rem);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.traySelectionView .summary {
+  font-size: 1rem;
+}
+
+.traySelectionView .controls {
+  position: sticky;
+  top: calc(5.25rem + env(safe-area-inset-top));
+  z-index: 4;
+  justify-items: stretch;
+  align-self: start;
+  padding: 0.85rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 44%, var(--border));
+  background: color-mix(in oklab, var(--panel-strong) 94%, transparent);
+  box-shadow: var(--shadow-ambient);
+  backdrop-filter: blur(16px);
+}
+
+.traySelectionView .selectionCount {
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+}
+
+.traySelectionView .selectionCost {
+  max-width: none;
+  text-align: left;
+}
+
+.traySelectionView .resolveButton {
+  width: 100%;
+  min-height: 3.25rem;
+}
+
+.traySelectionView .resourceLedger {
+  align-items: center;
+  min-height: 8rem;
+}
+
+.traySelectionView .list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 23rem), 1fr));
+  align-items: stretch;
+  gap: clamp(0.85rem, 1.4vw, 1.15rem);
+  overflow: visible;
+  padding-right: 0;
+}
+
+.traySelectionView .card {
+  height: 100%;
+  min-height: 24rem;
+  padding: clamp(1rem, 1.4vw, 1.25rem);
+}
+
+.traySelectionView .cardTitle {
+  font-size: clamp(1.2rem, 1.7vw, 1.45rem);
+}
+
+.traySelectionView .cardSummary {
+  font-size: 0.98rem;
+}
+
+.traySelectionView .previewPositive,
+.traySelectionView .previewNegative,
+.traySelectionView .previewNeutral {
+  min-height: 2.15rem;
+  line-height: 1.2;
+  white-space: normal;
 }
 
 @media (min-width: 1600px) {
@@ -447,7 +638,8 @@
     text-align: center;
   }
 
-  .controls .selectionCost {
+  .controls .selectionCost,
+  .controls .selectionHelper {
     max-width: none;
     text-align: center;
   }
@@ -459,6 +651,32 @@
 
   .resourceLedger {
     grid-template-columns: 1fr;
+  }
+
+  .traySelectionView {
+    grid-template-areas:
+      "header"
+      "controls"
+      "resources"
+      "list";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+  }
+
+  .traySelectionView .controls {
+    top: calc(7.5rem + env(safe-area-inset-top));
+  }
+
+  .traySelectionView .title {
+    max-width: 100%;
+  }
+
+  .traySelectionView .resourceLedger {
+    min-height: 0;
+  }
+
+  .traySelectionView .card {
+    min-height: 0;
   }
 }
 
@@ -491,6 +709,32 @@
 
 :global([data-run-layout-mode="tablet-landscape"]) .cardSummary {
   line-height: 1.38;
+}
+
+:global([data-round-phase="choose"][data-run-layout-mode="desktop-landscape"])
+  .list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(18rem, 1fr));
+  align-content: start;
+}
+
+:global([data-round-phase="choose"][data-run-layout-mode="desktop-landscape"])
+  .card {
+  height: 100%;
+}
+
+:global([data-round-phase="choose"][data-run-layout-mode="tablet-landscape"])
+  .list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(14rem, 1fr));
+  align-content: start;
+}
+
+@media (min-width: 1600px) {
+  :global([data-round-phase="choose"][data-run-layout-mode="desktop-landscape"])
+    .list {
+    grid-template-columns: repeat(3, minmax(18rem, 1fr));
+  }
 }
 
 @media (max-width: 520px) {
@@ -532,10 +776,23 @@
     min-height: 2.1rem;
     white-space: normal;
   }
+
+  .traySelectionView .controls {
+    top: calc(9.25rem + env(safe-area-inset-top));
+  }
 }
 
 :global([data-run-layout-mode="portrait-panels"]) .tray {
   gap: 0.7rem;
+  grid-template-rows: auto auto auto;
+  height: auto;
+  overflow: visible;
+}
+
+:global([data-run-layout-mode="portrait-panels"]) .list {
+  min-height: auto;
+  overflow: visible;
+  padding-right: 0;
 }
 
 :global([data-run-layout-mode="portrait-panels"]) .title {
@@ -575,6 +832,8 @@
   padding: 0.55rem;
 }
 
-:global([data-run-layout-mode="portrait-panels"]) .controlsDocked .resolveButton {
+:global([data-run-layout-mode="portrait-panels"])
+  .controlsDocked
+  .resolveButton {
   min-height: 3rem;
 }

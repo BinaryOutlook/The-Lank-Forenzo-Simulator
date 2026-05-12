@@ -1,111 +1,322 @@
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BoardPacket } from "../../components/board-packet/BoardPacket.js";
+import { emitInteractionCue } from "../../components/audio/interactionAudioEvents.js";
 import {
   DecisionTray,
   QuarterControls,
+  REQUIRED_ROUND_DECISION_COUNT,
 } from "../../components/decision-tray/DecisionTray.js";
 import { EventFeed } from "../../components/event-feed/EventFeed.js";
+import { InteractionFeedbackButton } from "../../components/interaction/InteractionFeedbackButton.js";
 import { useInteractionFeedback } from "../../components/interaction/useInteractionFeedback.js";
 import { MetricRail } from "../../components/metrics/MetricRail.js";
-import { getDecisionSelectionCost } from "../../simulation/systems/consumables.js";
+import {
+  canAffordResourceCosts,
+  formatResourceCostSummary,
+  getDecisionResourceCosts,
+  getDecisionSelectionCost,
+} from "../../simulation/systems/consumables.js";
 import { useGameStore } from "../../simulation/state/gameStore.js";
+import type { DecisionDefinition } from "../../simulation/state/types.js";
 import { EndingScreen } from "../ending/EndingScreen.js";
+import {
+  EndRoundDialog,
+  type EndRoundDialogMode,
+} from "./EndRoundDialog.js";
 import styles from "./RunScreen.module.css";
+import {
+  getNextRoundPhase,
+  getRoundPhaseIndex,
+  getRoundResolveLabel,
+  isRoundPhaseReachable,
+  roundPhaseConfigs,
+  validateRoundSelection,
+} from "./roundFlow.js";
+import type { RoundPhase, RoundSelectionValidation } from "./roundFlow.js";
 import { useRunLayoutMode } from "./runLayoutMode.js";
 
-type RunPanelId = "brief" | "state" | "decisions" | "feed";
-
-interface RunPanelConfig {
-  id: RunPanelId;
-  label: string;
-}
-
-const runPanels: RunPanelConfig[] = [
-  { id: "brief", label: "Brief" },
-  { id: "state", label: "State" },
-  { id: "decisions", label: "Decisions" },
-  { id: "feed", label: "Feed" },
-];
-
-interface PanelNavButtonProps {
+interface PhaseNavButtonProps {
   active: boolean;
+  disabled: boolean;
+  furthestPhase: RoundPhase;
   interactionEffectsEnabled: boolean;
-  label: string;
-  panelId: RunPanelId;
-  onActivate: (panelId: RunPanelId) => void;
+  phase: RoundPhase;
+  onActivate: (phase: RoundPhase) => void;
 }
 
-function getAdjacentPanelId(
-  panelId: RunPanelId,
+interface RoundPhaseHeaderProps {
+  activePhase: RoundPhase;
+  furthestPhase: RoundPhase;
+  interactionEffectsEnabled: boolean;
+  round: number;
+  selectedDecisionCount: number;
+  selectionValidation: RoundSelectionValidation;
+  onActivatePhase: (phase: RoundPhase) => void;
+}
+
+interface PhaseActionBarProps {
+  body: string;
+  interactionEffectsEnabled: boolean;
+  primaryDisabled?: boolean;
+  primaryLabel: string;
+  secondaryLabel?: string;
+  title: string;
+  onPrimary: () => void;
+  onSecondary?: () => void;
+}
+
+interface ResolveDocketProps {
+  selectedCostSummary: string;
+  selectedDecisions: DecisionDefinition[];
+  selectionValidation: RoundSelectionValidation;
+}
+
+function getAdjacentReachablePhase(
+  phase: RoundPhase,
+  furthestPhase: RoundPhase,
   direction: "next" | "previous",
-): RunPanelId {
-  const currentIndex = runPanels.findIndex((panel) => panel.id === panelId);
+): RoundPhase {
+  const reachablePhases = roundPhaseConfigs
+    .map((config) => config.id)
+    .filter((phaseId) => isRoundPhaseReachable(phaseId, furthestPhase));
+  const currentIndex = reachablePhases.findIndex(
+    (phaseId) => phaseId === phase,
+  );
+  const safeCurrentIndex = currentIndex >= 0 ? currentIndex : 0;
   const offset = direction === "next" ? 1 : -1;
-  const nextIndex = (currentIndex + offset + runPanels.length) % runPanels.length;
+  const nextIndex =
+    (safeCurrentIndex + offset + reachablePhases.length) %
+    reachablePhases.length;
 
-  return runPanels[nextIndex].id;
+  return reachablePhases[nextIndex];
 }
 
-function PanelNavButton({
+function focusPhaseTab(phase: RoundPhase) {
+  window.requestAnimationFrame(() => {
+    document.getElementById(`round-phase-tab-${phase}`)?.focus();
+  });
+}
+
+function PhaseNavButton({
   active,
+  disabled,
+  furthestPhase,
   interactionEffectsEnabled,
-  label,
-  panelId,
+  phase,
   onActivate,
-}: PanelNavButtonProps) {
+}: PhaseNavButtonProps) {
+  const config = roundPhaseConfigs.find((entry) => entry.id === phase);
   const feedback = useInteractionFeedback<HTMLButtonElement>(
-    interactionEffectsEnabled,
+    interactionEffectsEnabled && !disabled,
   );
-  const activate = (nextPanelId: RunPanelId) => {
-    onActivate(nextPanelId);
-    window.requestAnimationFrame(() => {
-      document.getElementById(`run-tab-${nextPanelId}`)?.focus();
-    });
+  const activate = (nextPhase: RoundPhase) => {
+    onActivate(nextPhase);
+    focusPhaseTab(nextPhase);
   };
+
+  if (!config) {
+    return null;
+  }
 
   return (
     <button
-      id={`run-tab-${panelId}`}
+      id={`round-phase-tab-${phase}`}
       type="button"
       role="tab"
-      aria-controls={`run-panel-${panelId}`}
+      aria-controls={`round-phase-panel-${phase}`}
       aria-selected={active}
-      tabIndex={active ? 0 : -1}
       className={clsx(
         "interaction-feedback-control",
-        active ? styles.panelTabActive : styles.panelTab,
+        active ? styles.phaseTabActive : styles.phaseTab,
       )}
       data-interaction-feedback={feedback.feedbackState}
-      onClick={() => activate(panelId)}
+      disabled={disabled}
+      tabIndex={active ? 0 : -1}
+      onClick={() => activate(phase)}
       onKeyDown={(event) => {
         feedback.onFeedbackKeyDown(event);
 
         if (event.key === "ArrowRight") {
           event.preventDefault();
-          activate(getAdjacentPanelId(panelId, "next"));
+          activate(getAdjacentReachablePhase(phase, furthestPhase, "next"));
         }
 
         if (event.key === "ArrowLeft") {
           event.preventDefault();
-          activate(getAdjacentPanelId(panelId, "previous"));
+          activate(getAdjacentReachablePhase(phase, furthestPhase, "previous"));
         }
 
         if (event.key === "Home") {
           event.preventDefault();
-          activate(runPanels[0].id);
+          activate("read");
         }
 
-        if (event.key === "End") {
+        if (
+          event.key === "End" &&
+          isRoundPhaseReachable("resolve", furthestPhase)
+        ) {
           event.preventDefault();
-          activate(runPanels[runPanels.length - 1].id);
+          activate("resolve");
         }
       }}
       onPointerDown={feedback.onFeedbackPointerDown}
     >
-      {label}
+      <span className={styles.phaseStep}>{config.step}</span>
+      <span className={styles.phaseLabel}>{config.label}</span>
+      <span className={styles.phaseDescription}>{config.description}</span>
     </button>
+  );
+}
+
+function RoundPhaseHeader({
+  activePhase,
+  furthestPhase,
+  interactionEffectsEnabled,
+  round,
+  selectedDecisionCount,
+  selectionValidation,
+  onActivatePhase,
+}: RoundPhaseHeaderProps) {
+  return (
+    <header className={styles.flowHeader}>
+      <div className={styles.flowTitleBlock}>
+        <p className={styles.eyebrow}>Round {round} control flow</p>
+        <p className={styles.flowTitle}>Read. Choose. Resolve.</p>
+      </div>
+
+      <nav className={styles.phaseNav} role="tablist" aria-label="Round phases">
+        {roundPhaseConfigs.map((phase) => (
+          <PhaseNavButton
+            key={phase.id}
+            active={activePhase === phase.id}
+            disabled={!isRoundPhaseReachable(phase.id, furthestPhase)}
+            furthestPhase={furthestPhase}
+            interactionEffectsEnabled={interactionEffectsEnabled}
+            phase={phase.id}
+            onActivate={onActivatePhase}
+          />
+        ))}
+      </nav>
+
+      <aside className={styles.flowStatus} aria-label="Selection validity">
+        <span className={styles.statusCount}>
+          {selectedDecisionCount}/{REQUIRED_ROUND_DECISION_COUNT} selected
+        </span>
+        <strong className={styles.statusLabel}>
+          {selectionValidation.statusLabel}
+        </strong>
+        <span className={styles.statusGuidance}>
+          {selectionValidation.guidance}
+        </span>
+      </aside>
+    </header>
+  );
+}
+
+function PhaseActionBar({
+  body,
+  interactionEffectsEnabled,
+  primaryDisabled = false,
+  primaryLabel,
+  secondaryLabel,
+  title,
+  onPrimary,
+  onSecondary,
+}: PhaseActionBarProps) {
+  return (
+    <div className={styles.phaseActionBar}>
+      <div className={styles.phaseActionCopy}>
+        <p className={styles.eyebrow}>Phase order</p>
+        <h2 className={styles.actionTitle}>{title}</h2>
+        <p className={styles.actionBody}>{body}</p>
+      </div>
+
+      <div className={styles.phaseActionControls}>
+        {secondaryLabel && onSecondary ? (
+          <InteractionFeedbackButton
+            feedbackEnabled={interactionEffectsEnabled}
+            className={styles.secondaryAction}
+            onClick={onSecondary}
+          >
+            {secondaryLabel}
+          </InteractionFeedbackButton>
+        ) : null}
+        <InteractionFeedbackButton
+          feedbackEnabled={interactionEffectsEnabled}
+          className={styles.primaryAction}
+          disabled={primaryDisabled}
+          onClick={onPrimary}
+        >
+          {primaryLabel}
+        </InteractionFeedbackButton>
+      </div>
+    </div>
+  );
+}
+
+function ResolveDocket({
+  selectedCostSummary,
+  selectedDecisions,
+  selectionValidation,
+}: ResolveDocketProps) {
+  return (
+    <section
+      className={styles.resolveDocket}
+      aria-labelledby="resolve-docket-title"
+    >
+      <div className={styles.resolveHeader}>
+        <p className={styles.eyebrow}>Resolve / End Round</p>
+        <h2 id="resolve-docket-title" className={styles.resolveTitle}>
+          Confirm the paper trail before it becomes history.
+        </h2>
+        <p className={styles.resolveSummary}>{selectionValidation.guidance}</p>
+      </div>
+
+      <div className={styles.resolveMetaGrid}>
+        <div className={styles.resolveMetaItem}>
+          <span>Queued plays</span>
+          <strong>
+            {selectedDecisions.length}/{REQUIRED_ROUND_DECISION_COUNT}
+          </strong>
+        </div>
+        <div className={styles.resolveMetaItem}>
+          <span>Reserve impact</span>
+          <strong>{selectedCostSummary}</strong>
+        </div>
+        <div className={styles.resolveMetaItem}>
+          <span>Validation</span>
+          <strong>{selectionValidation.statusLabel}</strong>
+        </div>
+      </div>
+
+      {selectedDecisions.length > 0 ? (
+        <div className={styles.resolveList}>
+          {selectedDecisions.map((decision) => (
+            <article key={decision.id} className={styles.resolveCard}>
+              <div className={styles.resolveCardHeader}>
+                <span>{decision.group}</span>
+                <span>{decision.tags.slice(0, 2).join(" / ")}</span>
+              </div>
+              <h3>{decision.title}</h3>
+              <p>{decision.summary}</p>
+              <span className={styles.resolveCost}>
+                {formatResourceCostSummary(getDecisionResourceCosts(decision))}
+              </span>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <article className={styles.emptyDocket}>
+          <h3>No executive plays queued yet.</h3>
+          <p>
+            The quarter review will route you back to the decision docket until
+            the required plays are locked.
+          </p>
+        </article>
+      )}
+    </section>
   );
 }
 
@@ -117,16 +328,32 @@ export function RunScreen() {
   const toggleDecision = useGameStore((state) => state.toggleDecision);
   const endTurn = useGameStore((state) => state.endTurn);
   const layoutMode = useRunLayoutMode();
-  const [activePanel, setActivePanel] = useState<RunPanelId>("brief");
+  const [activePhase, setActivePhase] = useState<RoundPhase>("read");
+  const [furthestPhase, setFurthestPhase] = useState<RoundPhase>("read");
+  const [endRoundDialogMode, setEndRoundDialogMode] =
+    useState<EndRoundDialogMode | null>(null);
   const interactionEffectsEnabled =
     settings.visualEffectsEnabled && settings.interactionEffectsEnabled;
-  const isPortraitLayout = layoutMode === "portrait-panels";
 
   useEffect(() => {
     if (!run) {
       navigate("/", { replace: true });
     }
   }, [navigate, run]);
+
+  useEffect(() => {
+    setActivePhase("read");
+    setFurthestPhase("read");
+  }, [run?.round]);
+
+  const decisions = availableDecisions();
+  const selectedDecisions = useMemo(
+    () =>
+      decisions.filter((decision) =>
+        run?.selectedDecisionIds.includes(decision.id),
+      ),
+    [decisions, run?.selectedDecisionIds],
+  );
 
   if (!run) {
     return null;
@@ -136,125 +363,257 @@ export function RunScreen() {
     return <EndingScreen />;
   }
 
-  const decisions = availableDecisions();
-  const selectedDecisions = decisions.filter((decision) =>
-    run.selectedDecisionIds.includes(decision.id),
-  );
   const selectedCost = getDecisionSelectionCost(selectedDecisions);
-  const resolveLabel =
-    run.selectedDecisionIds.length > 0 ? "Resolve the quarter" : "Hold the line";
-  const handleEndTurn = () => {
-    endTurn();
-
-    if (isPortraitLayout) {
-      setActivePanel("feed");
-    }
-  };
-  const panelVisibility = runPanels.reduce<Record<RunPanelId, boolean>>(
-    (visibility, panel) => ({
-      ...visibility,
-      [panel.id]: !isPortraitLayout || activePanel === panel.id,
-    }),
-    {
-      brief: false,
-      decisions: false,
-      feed: false,
-      state: false,
-    },
+  const missingDecisionCount = Math.max(
+    0,
+    REQUIRED_ROUND_DECISION_COUNT - selectedDecisions.length,
   );
+  const recoveryOptions = decisions
+    .filter((decision) => {
+      if (run.selectedDecisionIds.includes(decision.id)) {
+        return false;
+      }
+
+      const candidateCost = getDecisionSelectionCost([
+        ...selectedDecisions,
+        decision,
+      ]);
+
+      return canAffordResourceCosts(run.resources, candidateCost);
+    })
+    .slice(0, 3);
+  const selectionValidation = validateRoundSelection({
+    resources: run.resources,
+    selectedCost,
+    selectedDecisionCount: run.selectedDecisionIds.length,
+  });
+  const resolveLabel = getRoundResolveLabel();
+  const selectedCostSummary = formatResourceCostSummary(selectedCost);
+  const canReviewResolution =
+    run.selectedDecisionIds.length <= REQUIRED_ROUND_DECISION_COUNT &&
+    canAffordResourceCosts(run.resources, selectedCost);
+  const activatePhase = (nextPhase: RoundPhase) => {
+    if (!isRoundPhaseReachable(nextPhase, furthestPhase)) {
+      return;
+    }
+
+    setActivePhase(nextPhase);
+    setFurthestPhase((currentPhase) =>
+      getRoundPhaseIndex(nextPhase) > getRoundPhaseIndex(currentPhase)
+        ? nextPhase
+        : currentPhase,
+    );
+  };
+  const advancePhase = () => activatePhase(getNextRoundPhase(activePhase));
+  const restoreEndRoundControlFocus = () => {
+    window.requestAnimationFrame(() => {
+      document
+        .querySelector<HTMLButtonElement>("[data-end-round-control='true']")
+        ?.focus();
+    });
+  };
+  const focusDecisionSelection = () => {
+    activatePhase("choose");
+
+    window.requestAnimationFrame(() => {
+      const decisionPanel = document.getElementById("run-panel-decisions");
+      const firstOpenDecision =
+        decisionPanel?.querySelector<HTMLButtonElement>(
+          "button[aria-pressed='false']:not(:disabled)",
+        ) ??
+        decisionPanel?.querySelector<HTMLButtonElement>(
+          "button[aria-pressed]:not(:disabled)",
+        );
+
+      firstOpenDecision?.focus();
+    });
+  };
+  const closeEndRoundDialog = () => {
+    setEndRoundDialogMode(null);
+    restoreEndRoundControlFocus();
+  };
+  const reviewIncompleteSelections = () => {
+    setEndRoundDialogMode(null);
+    focusDecisionSelection();
+  };
+  const handleEndRoundRequest = () => {
+    if (activePhase !== "resolve") {
+      activatePhase(activePhase === "read" ? "choose" : "resolve");
+      return;
+    }
+
+    setEndRoundDialogMode(
+      selectedDecisions.length >= REQUIRED_ROUND_DECISION_COUNT
+        ? "complete"
+        : "incomplete",
+    );
+  };
+  const handleConfirmEndTurn = () => {
+    setEndRoundDialogMode(null);
+    emitInteractionCue("quarter-resolve");
+    endTurn();
+  };
 
   return (
     <section
       className={styles.layout}
       data-run-layout-mode={layoutMode}
+      data-round-phase={activePhase}
       aria-label="Active run workspace"
     >
-      {isPortraitLayout ? (
-        <nav
-          className={styles.panelNav}
-          role="tablist"
-          aria-label="Run panels"
+      <RoundPhaseHeader
+        activePhase={activePhase}
+        furthestPhase={furthestPhase}
+        interactionEffectsEnabled={interactionEffectsEnabled}
+        round={run.round}
+        selectedDecisionCount={run.selectedDecisionIds.length}
+        selectionValidation={selectionValidation}
+        onActivatePhase={activatePhase}
+      />
+
+      <div className={styles.phaseBody}>
+        <div
+          id="round-phase-panel-read"
+          className={styles.phasePanel}
+          role="tabpanel"
+          aria-labelledby="round-phase-tab-read"
+          hidden={activePhase !== "read"}
         >
-          {runPanels.map((panel) => (
-            <PanelNavButton
-              key={panel.id}
-              active={activePanel === panel.id}
+          <div className={styles.readPhase}>
+            <div className={styles.readGrid}>
+              <div
+                id="run-panel-brief"
+                className={clsx(styles.panel, styles.boardArea)}
+                data-testid="run-panel-brief"
+              >
+                <BoardPacket run={run} />
+              </div>
+
+              <div
+                id="run-panel-state"
+                className={clsx(styles.panel, styles.metricsArea)}
+                data-testid="run-panel-state"
+              >
+                <MetricRail metrics={run.metrics} />
+              </div>
+
+              <div
+                id="run-panel-feed"
+                className={clsx(styles.panel, styles.feedArea)}
+                data-testid="run-panel-feed"
+              >
+                <EventFeed history={run.history} />
+              </div>
+            </div>
+
+            <PhaseActionBar
+              body="The board packet is the read phase: inspect the current ledger, pressure signals, and recent consequences before opening the decision docket."
               interactionEffectsEnabled={interactionEffectsEnabled}
-              label={panel.label}
-              panelId={panel.id}
-              onActivate={setActivePanel}
+              primaryLabel="Choose plays"
+              title="Move from reading into decision selection."
+              onPrimary={advancePhase}
             />
-          ))}
-        </nav>
-      ) : null}
-
-      <div
-        id="run-panel-state"
-        className={clsx(styles.panel, styles.metricsArea)}
-        role={isPortraitLayout ? "tabpanel" : undefined}
-        aria-labelledby={isPortraitLayout ? "run-tab-state" : undefined}
-        data-testid="run-panel-state"
-        hidden={!panelVisibility.state}
-        tabIndex={isPortraitLayout ? 0 : undefined}
-      >
-        <MetricRail metrics={run.metrics} />
-      </div>
-
-      <div
-        id="run-panel-brief"
-        className={clsx(styles.panel, styles.boardArea)}
-        role={isPortraitLayout ? "tabpanel" : undefined}
-        aria-labelledby={isPortraitLayout ? "run-tab-brief" : undefined}
-        data-testid="run-panel-brief"
-        hidden={!panelVisibility.brief}
-        tabIndex={isPortraitLayout ? 0 : undefined}
-      >
-        <BoardPacket run={run} />
-      </div>
-
-      <div
-        id="run-panel-decisions"
-        className={clsx(styles.panel, styles.decisionArea)}
-        role={isPortraitLayout ? "tabpanel" : undefined}
-        aria-labelledby={isPortraitLayout ? "run-tab-decisions" : undefined}
-        data-testid="run-panel-decisions"
-        hidden={!panelVisibility.decisions}
-        tabIndex={isPortraitLayout ? 0 : undefined}
-      >
-        <DecisionTray
-          decisions={decisions}
-          interactionEffectsEnabled={interactionEffectsEnabled}
-          resources={run.resources}
-          selectedDecisionIds={run.selectedDecisionIds}
-          showControls={!isPortraitLayout}
-          onToggle={toggleDecision}
-          onEndTurn={handleEndTurn}
-        />
-      </div>
-
-      <div
-        id="run-panel-feed"
-        className={clsx(styles.panel, styles.feedArea)}
-        role={isPortraitLayout ? "tabpanel" : undefined}
-        aria-labelledby={isPortraitLayout ? "run-tab-feed" : undefined}
-        data-testid="run-panel-feed"
-        hidden={!panelVisibility.feed}
-        tabIndex={isPortraitLayout ? 0 : undefined}
-      >
-        <EventFeed history={run.history} />
-      </div>
-
-      {isPortraitLayout ? (
-        <div className={styles.persistentControls}>
-          <QuarterControls
-            interactionEffectsEnabled={interactionEffectsEnabled}
-            resolveLabel={resolveLabel}
-            selectedCost={selectedCost}
-            selectedDecisionCount={run.selectedDecisionIds.length}
-            surface="docked"
-            onEndTurn={handleEndTurn}
-          />
+          </div>
         </div>
+
+        <div
+          id="round-phase-panel-choose"
+          className={styles.phasePanel}
+          role="tabpanel"
+          aria-labelledby="round-phase-tab-choose"
+          hidden={activePhase !== "choose"}
+        >
+          <div className={styles.choosePhase}>
+            <div
+              id="run-panel-decisions"
+              className={clsx(styles.panel, styles.decisionArea)}
+              data-testid="run-panel-decisions"
+            >
+              <DecisionTray
+                decisionSelectionHref="/run/decisions"
+                decisions={decisions}
+                interactionEffectsEnabled={interactionEffectsEnabled}
+                resources={run.resources}
+                selectedDecisionIds={run.selectedDecisionIds}
+                showControls={false}
+                onToggle={toggleDecision}
+                onEndTurn={handleEndRoundRequest}
+              />
+            </div>
+
+            <PhaseActionBar
+              body="Use the full docket surface to queue no more than two plays. End-round resolution stays locked behind the review phase."
+              interactionEffectsEnabled={interactionEffectsEnabled}
+              primaryDisabled={!canReviewResolution}
+              primaryLabel="Review resolution"
+              secondaryLabel="Back to board packet"
+              title={selectionValidation.statusLabel}
+              onPrimary={advancePhase}
+              onSecondary={() => activatePhase("read")}
+            />
+          </div>
+        </div>
+
+        <div
+          id="round-phase-panel-resolve"
+          className={styles.phasePanel}
+          role="tabpanel"
+          aria-labelledby="round-phase-tab-resolve"
+          hidden={activePhase !== "resolve"}
+        >
+          <div className={styles.resolvePhase}>
+            <ResolveDocket
+              selectedCostSummary={selectedCostSummary}
+              selectedDecisions={selectedDecisions}
+              selectionValidation={selectionValidation}
+            />
+
+            <aside className={styles.resolveControls}>
+              <div className={styles.resolveControlCopy}>
+                <p className={styles.eyebrow}>Final control</p>
+                <h2>End-round is live only here.</h2>
+                <p>
+                  Resolve advances the same simulation path as before; this
+                  phase only makes the confirmation explicit.
+                </p>
+              </div>
+
+              <QuarterControls
+                disabled={!canReviewResolution || activePhase !== "resolve"}
+                helperText={selectionValidation.guidance}
+                interactionEffectsEnabled={interactionEffectsEnabled}
+                resolveLabel={resolveLabel}
+                resolveCue={null}
+                selectedCost={selectedCost}
+                selectedDecisionCount={run.selectedDecisionIds.length}
+                surface="docked"
+                onEndTurn={handleEndRoundRequest}
+              />
+
+              <InteractionFeedbackButton
+                feedbackEnabled={interactionEffectsEnabled}
+                className={styles.secondaryAction}
+                onClick={() => activatePhase("choose")}
+              >
+                Amend selected plays
+              </InteractionFeedbackButton>
+            </aside>
+          </div>
+        </div>
+      </div>
+
+      {endRoundDialogMode ? (
+        <EndRoundDialog
+          interactionEffectsEnabled={interactionEffectsEnabled}
+          missingDecisionCount={missingDecisionCount}
+          mode={endRoundDialogMode}
+          recoveryOptions={recoveryOptions}
+          selectedCost={selectedCost}
+          selectedDecisions={selectedDecisions}
+          onConfirm={handleConfirmEndTurn}
+          onDismiss={closeEndRoundDialog}
+          onReviewChoices={reviewIncompleteSelections}
+        />
       ) : null}
     </section>
   );

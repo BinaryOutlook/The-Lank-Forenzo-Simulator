@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import clsx from "clsx";
+import { Link } from "react-router-dom";
 import {
   formatDelta,
   getImpactPreview,
@@ -30,19 +31,31 @@ import type { InteractionCueName } from "../audio/interactionAudioEvents.js";
 import { useInteractionFeedback } from "../interaction/useInteractionFeedback.js";
 import styles from "./DecisionTray.module.css";
 
+export const REQUIRED_ROUND_DECISION_COUNT = 2;
+
 interface DecisionTrayProps {
+  decisionSelectionHref?: string;
+  decisionSelectionLabel?: string;
   decisions: DecisionDefinition[];
+  eyebrow?: string;
   interactionEffectsEnabled?: boolean;
   resources: ConsumableResources;
+  resolveCue?: InteractionCueName | null;
   selectedDecisionIds: string[];
   showControls?: boolean;
+  summary?: string;
+  surface?: "embedded" | "selection";
+  title?: string;
   onToggle: (decisionId: string) => void;
   onEndTurn: () => void;
 }
 
 interface QuarterControlsProps {
+  disabled?: boolean;
+  helperText?: string;
   interactionEffectsEnabled: boolean;
   resolveLabel: string;
+  resolveCue?: InteractionCueName | null;
   selectedCost: ResourceCostSet;
   selectedDecisionCount: number;
   surface?: "inline" | "docked";
@@ -77,7 +90,7 @@ function DecisionCard({
   const handleToggle = () => {
     const cue: InteractionCueName | null = selected
       ? "decision-deselect"
-      : selectedDecisionCount < 2
+      : selectedDecisionCount < REQUIRED_ROUND_DECISION_COUNT
         ? "decision-select"
         : null;
 
@@ -108,10 +121,16 @@ function DecisionCard({
     >
       <div className={styles.cardHeader}>
         <span className={styles.group}>{decision.group}</span>
-        <span className={styles.tags}>
-          {decision.tags.slice(0, 2).join(" / ")}
+        <span
+          className={clsx(
+            styles.selectionBadge,
+            selected && styles.selectionBadgeSelected,
+          )}
+        >
+          {selected ? "Queued" : disabled ? "Unavailable" : "Available"}
         </span>
       </div>
+      <p className={styles.tags}>{decision.tags.slice(0, 2).join(" / ")}</p>
 
       <div className={styles.cardBody}>
         <h3 className={styles.cardTitle}>{decision.title}</h3>
@@ -133,7 +152,8 @@ function DecisionCard({
                 styles.previewNeutral,
             )}
           >
-            {metricLabels[entry.metric]} {formatDelta(entry.metric, entry.delta)}
+            {metricLabels[entry.metric]}{" "}
+            {formatDelta(entry.metric, entry.delta)}
           </span>
         ))}
       </div>
@@ -146,16 +166,25 @@ function DecisionCard({
 }
 
 export function DecisionTray({
+  decisionSelectionHref,
+  decisionSelectionLabel = "Open dedicated decision view",
   decisions,
+  eyebrow = "Decision tray",
   interactionEffectsEnabled = true,
   resources,
+  resolveCue,
   selectedDecisionIds,
   showControls = true,
+  summary,
+  surface = "embedded",
+  title = "Choose where the pain goes next.",
   onToggle,
   onEndTurn,
 }: DecisionTrayProps) {
-  const resolveLabel =
-    selectedDecisionIds.length > 0 ? "Resolve the quarter" : "Hold the line";
+  const detailFeedback = useInteractionFeedback<HTMLAnchorElement>(
+    interactionEffectsEnabled && Boolean(decisionSelectionHref),
+  );
+  const resolveLabel = "End quarter";
   const selectedDecisions = decisions.filter((decision) =>
     selectedDecisionIds.includes(decision.id),
   );
@@ -164,11 +193,29 @@ export function DecisionTray({
 
   return (
     <section
-      className={clsx(styles.tray, !showControls && styles.trayWithoutControls)}
+      className={clsx(
+        styles.tray,
+        surface === "selection" && styles.traySelectionView,
+        !showControls && styles.trayWithoutControls,
+      )}
     >
       <div className={styles.header}>
-        <p className={styles.eyebrow}>Decision tray</p>
-        <h2 className={styles.title}>Choose where the pain goes next.</h2>
+        <div className={styles.headerCopy}>
+          <p className={styles.eyebrow}>{eyebrow}</p>
+          <h2 className={styles.title}>{title}</h2>
+          {summary ? <p className={styles.summary}>{summary}</p> : null}
+        </div>
+        {decisionSelectionHref ? (
+          <Link
+            className={clsx("interaction-feedback-control", styles.phaseLink)}
+            data-interaction-feedback={detailFeedback.feedbackState}
+            to={decisionSelectionHref}
+            onKeyDown={detailFeedback.onFeedbackKeyDown}
+            onPointerDown={detailFeedback.onFeedbackPointerDown}
+          >
+            {decisionSelectionLabel}
+          </Link>
+        ) : null}
       </div>
 
       <ResourceLedger
@@ -181,6 +228,7 @@ export function DecisionTray({
         <QuarterControls
           interactionEffectsEnabled={interactionEffectsEnabled}
           resolveLabel={resolveLabel}
+          resolveCue={resolveCue}
           selectedCost={selectedCost}
           selectedDecisionCount={selectedDecisionIds.length}
           onEndTurn={onEndTurn}
@@ -199,7 +247,8 @@ export function DecisionTray({
             candidateCost,
           );
           const selectionLimitReached =
-            !selected && selectedDecisionIds.length >= 2;
+            !selected &&
+            selectedDecisionIds.length >= REQUIRED_ROUND_DECISION_COUNT;
           const disabled =
             selectionLimitReached ||
             (!selected && !canAffordResourceCosts(resources, candidateCost));
@@ -228,18 +277,28 @@ export function DecisionTray({
 }
 
 export function QuarterControls({
+  disabled = false,
+  helperText,
   interactionEffectsEnabled,
   resolveLabel,
+  resolveCue = "quarter-resolve",
   selectedCost,
   selectedDecisionCount,
   surface = "inline",
   onEndTurn,
 }: QuarterControlsProps) {
   const resolveFeedback = useInteractionFeedback<HTMLButtonElement>(
-    interactionEffectsEnabled,
+    interactionEffectsEnabled && !disabled,
   );
   const handleEndTurn = () => {
-    emitInteractionCue("quarter-resolve");
+    if (disabled) {
+      return;
+    }
+
+    if (resolveCue) {
+      emitInteractionCue(resolveCue);
+    }
+
     onEndTurn();
   };
 
@@ -251,14 +310,21 @@ export function QuarterControls({
       )}
       data-testid="quarter-controls"
     >
-      <p className={styles.selectionCount}>{selectedDecisionCount}/2 selected</p>
+      <p className={styles.selectionCount}>
+        {selectedDecisionCount}/{REQUIRED_ROUND_DECISION_COUNT} selected
+      </p>
       <p className={styles.selectionCost}>
         {formatResourceCostSummary(selectedCost)}
       </p>
+      {helperText ? (
+        <p className={styles.selectionHelper}>{helperText}</p>
+      ) : null}
       <button
         type="button"
         className={clsx("interaction-feedback-control", styles.resolveButton)}
         data-interaction-feedback={resolveFeedback.feedbackState}
+        data-end-round-control="true"
+        disabled={disabled}
         onClick={handleEndTurn}
         onKeyDown={resolveFeedback.onFeedbackKeyDown}
         onPointerDown={resolveFeedback.onFeedbackPointerDown}

@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { AppShell } from "../components/shell/AppShell.js";
+import { DecisionSelectionScreen } from "../screens/decision-selection/DecisionSelectionScreen.js";
 import { EndingScreen } from "../screens/ending/EndingScreen.js";
 import { LandingScreen } from "../screens/landing/LandingScreen.js";
 import { OptionsScreen } from "../screens/options/OptionsScreen.js";
@@ -19,6 +20,10 @@ export const router = createBrowserRouter([
       {
         path: "run",
         element: <RunScreen />,
+      },
+      {
+        path: "run/decisions",
+        element: <DecisionSelectionScreen />,
       },
       {
         path: "options",

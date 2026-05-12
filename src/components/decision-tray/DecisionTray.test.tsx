@@ -135,7 +135,7 @@ describe("DecisionTray", () => {
       );
       await user.click(
         screen.getByRole("button", {
-          name: /resolve the quarter/i,
+          name: /end quarter/i,
         }),
       );
 
@@ -177,7 +177,7 @@ describe("DecisionTray", () => {
     });
 
     const resolveButton = screen.getByRole("button", {
-      name: /hold the line/i,
+      name: /end quarter/i,
     });
     fireEvent.pointerDown(resolveButton);
 

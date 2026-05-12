@@ -19,19 +19,61 @@ async function expectNoDocumentVerticalOverflow(page: Page) {
   expect(overflow.scrollY).toBe(0);
 }
 
-function usesPortraitPanels(page: Page): boolean {
-  const viewport = page.viewportSize();
-
-  return Boolean(
-    viewport && (viewport.height > viewport.width || viewport.width <= 860),
-  );
+async function showRoundPhase(page: Page, phaseName: string | RegExp) {
+  await page.getByRole("tab", { name: phaseName }).click();
+  await expect(page.getByRole("tabpanel", { name: phaseName })).toBeVisible();
 }
 
-async function showRunPanel(page: Page, panelName: string) {
-  if (usesPortraitPanels(page)) {
-    await page.getByRole("tab", { name: panelName }).click();
-    await expect(page.getByRole("tabpanel", { name: panelName })).toBeVisible();
-  }
+async function chooseFirstPlayAndReview(page: Page) {
+  await showRoundPhase(page, /choose plays/i);
+  await page
+    .getByRole("link", { name: /open dedicated decision view/i })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: /select the quarter's damage/i }),
+  ).toBeVisible();
+  await expect(page.getByText("0/2 selected")).toBeVisible();
+  const expandedDecision = page.locator("button[aria-pressed]").first();
+  await expandedDecision.click();
+  await expect(expandedDecision).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText("1/2 selected")).toBeVisible();
+  await expandedDecision.click();
+  await expect(expandedDecision).toHaveAttribute("aria-pressed", "false");
+  await page.getByRole("link", { name: /return to board/i }).click();
+  await showRoundPhase(page, /choose plays/i);
+
+  const firstDecision = page.locator("button[aria-pressed]").first();
+  await firstDecision.dispatchEvent("pointerdown");
+  await expect(firstDecision).toHaveAttribute(
+    "data-interaction-feedback",
+    "active",
+  );
+  await firstDecision.click();
+  await expect(firstDecision).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: /review resolution/i }).click();
+  await expect(page.getByRole("tabpanel", { name: /resolve/i })).toBeVisible();
+}
+
+async function selectNextOpenDecision(page: Page) {
+  const selectedDecisions = page.locator("button[aria-pressed='true']");
+  const selectedCountBefore = await selectedDecisions.count();
+  const decision = page
+    .locator("button[aria-pressed='false']:not(:disabled)")
+    .first();
+
+  await decision.click();
+  await expect(selectedDecisions).toHaveCount(selectedCountBefore + 1);
+}
+
+async function confirmQuarterResolution(page: Page) {
+  await page
+    .getByTestId("quarter-controls")
+    .getByRole("button", { name: /end quarter/i })
+    .click();
+  await expect(
+    page.getByRole("dialog", { name: /seal the quarter/i }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: /resolve quarter/i }).click();
 }
 
 test("landing screen starts a run and advances a quarter", async ({ page }) => {
@@ -88,6 +130,12 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
       name: /temporary credibility is still the most valuable asset/i,
     }),
   ).toBeVisible();
+  const phaseNav = page.getByRole("tablist", { name: /round phases/i });
+  await expect(phaseNav.getByRole("tab", { name: /read/i })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await expect(phaseNav.getByRole("tab", { name: /resolve/i })).toBeDisabled();
 
   await page.getByRole("button", { name: /armonk blue/i }).click();
   await expect(page.locator("html")).toHaveAttribute(
@@ -158,82 +206,70 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
   );
   await primaryNav.getByRole("link", { name: "Run" }).click();
 
-  await showRunPanel(page, "Feed");
-  const decisionTray = page
-    .getByRole("heading", { name: /choose where the pain goes next/i })
-    .locator("xpath=ancestor::section[1]");
   const consequenceFeed = page
     .getByRole("heading", { name: /the world answers back/i })
     .locator("xpath=ancestor::section[1]");
-
   const historyCountBefore = await consequenceFeed.locator("article").count();
   expect(historyCountBefore).toBeGreaterThan(0);
 
-  await showRunPanel(page, "Decisions");
-  const firstDecision = decisionTray.locator("button[aria-pressed]").first();
-  await firstDecision.dispatchEvent("pointerdown");
-  await expect(firstDecision).toHaveAttribute(
-    "data-interaction-feedback",
-    "active",
-  );
-  await firstDecision.click();
-  await expect(firstDecision).toHaveAttribute("aria-pressed", "true");
-
+  await chooseFirstPlayAndReview(page);
+  const controls = page.getByTestId("quarter-controls");
+  await expect(controls).toBeVisible();
   await page
     .getByTestId("quarter-controls")
-    .getByRole("button", { name: /resolve the quarter/i })
+    .getByRole("button", { name: /end quarter/i })
     .click();
+  await expect(
+    page.getByRole("dialog", { name: /the tray is not locked yet/i }),
+  ).toBeVisible();
+  await expect(page.getByText(/1 choice still required/i)).toBeVisible();
+  await page.getByRole("button", { name: /back to decision tray/i }).click();
 
-  await showRunPanel(page, "Feed");
+  await selectNextOpenDecision(page);
+  await expect(page.getByText("2/2 plays ready").first()).toBeVisible();
+  await page.getByRole("button", { name: /review resolution/i }).click();
+  await confirmQuarterResolution(page);
+
   await expect(consequenceFeed.getByText(/^R2$/).first()).toBeVisible();
   await expect
     .poll(async () => consequenceFeed.locator("article").count())
     .toBeGreaterThan(historyCountBefore);
 });
 
-test("responsive run layout keeps touch controls and portrait panels reachable", async ({
+test("responsive round phases keep choice and resolution controls reachable", async ({
   page,
 }) => {
   await page.goto("/");
   await page.getByRole("button", { name: /start a new run/i }).click();
 
-  const viewport = page.viewportSize();
-  const isPortrait = Boolean(
-    viewport && (viewport.height > viewport.width || viewport.width <= 860),
-  );
-  const runPanels = page.getByRole("tablist", { name: /run panels/i });
+  const roundPhases = page.getByRole("tablist", { name: /round phases/i });
+  await expect(roundPhases).toBeVisible();
+  await expect(roundPhases.getByRole("tab", { name: /read/i })).toBeVisible();
+  await expect(
+    roundPhases.getByRole("tab", { name: /choose plays/i }),
+  ).toBeVisible();
+  await expect(
+    roundPhases.getByRole("tab", { name: /resolve/i }),
+  ).toBeDisabled();
 
-  if (isPortrait) {
-    await expect(runPanels).toBeVisible();
-    await expect(
-      runPanels.getByRole("tab", { name: /decisions/i }),
-    ).toBeVisible();
-    await expect(
-      runPanels.getByRole("tab", { name: /state/i }),
-    ).toBeVisible();
-  } else {
-    await expect(runPanels).toBeHidden();
-  }
-
-  if (isPortrait) {
-    await runPanels.getByRole("tab", { name: /decisions/i }).click();
-    await expect(
-      page.getByRole("tabpanel", { name: /decisions/i }),
-    ).toBeVisible();
-  }
+  await showRoundPhase(page, /choose plays/i);
+  await expect(
+    page.getByRole("heading", { name: /choose where the pain goes next/i }),
+  ).toBeVisible();
+  await page.locator("button[aria-pressed]").first().click();
+  await expect(page.getByText("1 choice pending").first()).toBeVisible();
+  await selectNextOpenDecision(page);
+  await expect(page.getByText("2/2 plays ready").first()).toBeVisible();
+  await page.getByRole("button", { name: /review resolution/i }).click();
 
   const controls = page.getByTestId("quarter-controls");
-
   await expect(controls).toBeVisible();
-  await expect(controls.getByText("0/2 selected")).toBeVisible();
-  await page.locator("button[aria-pressed]").first().click();
-
-  await expect(controls.getByText("1/2 selected")).toBeVisible();
-  await controls.getByRole("button", { name: /resolve the quarter/i }).click();
+  await expect(controls.getByText("2/2 selected")).toBeVisible();
+  await confirmQuarterResolution(page);
   await expect(page.getByText(/^R2$/).first()).toBeVisible();
 });
 
-test("run screen is a fitted app surface across supported viewport projects", async ({
+test("run screen is a fitted phased app surface across supported viewport projects", async ({
   page,
 }) => {
   await page.goto("/");
@@ -245,64 +281,51 @@ test("run screen is a fitted app surface across supported viewport projects", as
   ).toBeVisible();
   await expectNoDocumentVerticalOverflow(page);
 
-  const viewport = page.viewportSize();
-  const isPortrait = Boolean(
-    viewport && (viewport.height > viewport.width || viewport.width <= 860),
+  const tabs = page.getByRole("tablist", { name: /round phases/i });
+  await expect(tabs).toBeVisible();
+  await expect(tabs.getByRole("tab", { name: /read/i })).toHaveAttribute(
+    "aria-selected",
+    "true",
   );
+  await expect(
+    page.getByRole("heading", { name: /two ledgers/i }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: /the world answers back/i }),
+  ).toBeVisible();
 
-  if (isPortrait) {
-    const tabs = page.getByRole("tablist", { name: /run panels/i });
-    await expect(tabs).toBeVisible();
-
-    for (const panelName of ["Brief", "State", "Decisions", "Feed"]) {
-      await tabs.getByRole("tab", { name: panelName }).click();
-      await expect(
-        page.getByRole("tabpanel", { name: panelName }),
-      ).toBeVisible();
-      await expectNoDocumentVerticalOverflow(page);
-    }
-  } else {
-    await expect(
-      page.getByRole("heading", {
-        name: /temporary credibility is still the most valuable asset/i,
-      }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: /two ledgers/i }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: /choose where the pain goes next/i }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: /the world answers back/i }),
-    ).toBeVisible();
-  }
-
-  if (isPortrait) {
-    await page.getByRole("tab", { name: "Decisions" }).click();
-  }
-
-  const controls = page.getByTestId("quarter-controls");
-  await expect(controls).toBeVisible();
-  await expect(controls.getByText("0/2 selected")).toBeVisible();
+  await showRoundPhase(page, /choose plays/i);
+  await expectNoDocumentVerticalOverflow(page);
+  await expect(
+    page.getByRole("heading", { name: /choose where the pain goes next/i }),
+  ).toBeVisible();
 
   await page.locator("button[aria-pressed]").first().click();
-  await expect(controls.getByText("1/2 selected")).toBeVisible();
+  await expect(page.getByText("1 choice pending").first()).toBeVisible();
+  await selectNextOpenDecision(page);
+  await expect(page.getByText("2/2 plays ready").first()).toBeVisible();
   await expectNoDocumentVerticalOverflow(page);
 
-  await controls.getByRole("button", { name: /resolve the quarter/i }).click();
+  await page.getByRole("button", { name: /review resolution/i }).click();
+  await expect(page.getByRole("tabpanel", { name: /resolve/i })).toBeVisible();
+  await expect(page.getByTestId("quarter-controls")).toBeVisible();
+  await expectNoDocumentVerticalOverflow(page);
+
+  await confirmQuarterResolution(page);
   await expect(page.getByText(/^R2$/).first()).toBeVisible();
+  await expect(tabs.getByRole("tab", { name: /read/i })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
   await expectNoDocumentVerticalOverflow(page);
 
-  if (isPortrait) {
-    await page.getByRole("tab", { name: "Feed" }).click();
-    await expect(page.getByRole("tabpanel", { name: "Feed" })).toBeVisible();
-    await page.getByRole("tab", { name: "Decisions" }).click();
-  }
-
+  await showRoundPhase(page, /choose plays/i);
   await page.locator("button[aria-pressed]").first().click();
-  await expect(controls.getByText("1/2 selected")).toBeVisible();
-  await controls.getByRole("button", { name: /resolve the quarter/i }).click();
+  await expect(page.getByText("1 choice pending").first()).toBeVisible();
+  await selectNextOpenDecision(page);
+  await expect(page.getByText("2/2 plays ready").first()).toBeVisible();
+  await page.getByRole("button", { name: /review resolution/i }).click();
+  await confirmQuarterResolution(page);
   await expect(page.getByText(/^R3$/).first()).toBeVisible();
   await expectNoDocumentVerticalOverflow(page);
 });
