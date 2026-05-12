@@ -84,7 +84,7 @@ Open the local Vite URL shown in the terminal.
 
 Decision, event, and hazard content are assembled from validated packs under `content/decisions/`, `content/events/`, and `content/hazards/` through their `index.ts` files.
 
-About and Options are available from the app header. The About route is a lightweight secondary page for player-facing project context; it links back to the active run when one is in progress and otherwise returns to the landing screen. The current settings implementation is local-first and preset-based: wallpaper selection changes the shell background immediately, music can be toggled with a restrained Web Audio ambience, interaction cues follow the music volume and sound-effects toggle, and visual plus interaction feedback effects can be reduced or disabled for lower-end devices.
+Run, About, and Options are available from the app header in a stable primary-navigation order. Run is the fixed top-bar destination for the active gameplay surface, while About remains a lightweight secondary page for player-facing project context and links back to the active run when one is in progress. The current settings implementation is local-first and preset-based: wallpaper selection changes the shell background immediately, music can be toggled with a restrained Web Audio ambience, interaction cues follow the music volume and sound-effects toggle, and visual plus interaction feedback effects can be reduced or disabled for lower-end devices.
 
 ## Scripts
 

@@ -317,6 +317,11 @@ Player-facing options should be local-first and incremental:
 
 The first release should include the following screens or panels.
 
+The top navigation should keep `Run`, `About`, and `Options` in a stable,
+always-visible primary menu wherever the app shell is shown. `Run` is the
+fixed return path to the active gameplay surface; `About` and `Options` should
+retain their existing relative order and secondary-page behavior.
+
 ### 11.1 Landing screen
 
 The landing screen should:

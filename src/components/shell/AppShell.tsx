@@ -13,6 +13,12 @@ const themes: Array<{ id: ThemeName; label: string }> = [
   { id: "armonk-blue", label: "Armonk Blue" },
 ];
 
+const primaryNavItems: Array<{ label: string; to: string }> = [
+  { label: "Run", to: "/run" },
+  { label: "About", to: "/about" },
+  { label: "Options", to: "/options" },
+];
+
 interface HeaderNavLinkProps {
   interactionEffectsEnabled: boolean;
   label: string;
@@ -89,16 +95,14 @@ export function AppShell() {
           ) : null}
 
           <nav className={styles.nav} aria-label="Primary">
-            <HeaderNavLink
-              to="/about"
-              label="About"
-              interactionEffectsEnabled={interactionEffectsEnabled}
-            />
-            <HeaderNavLink
-              to="/options"
-              label="Options"
-              interactionEffectsEnabled={interactionEffectsEnabled}
-            />
+            {primaryNavItems.map((item) => (
+              <HeaderNavLink
+                key={item.to}
+                to={item.to}
+                label={item.label}
+                interactionEffectsEnabled={interactionEffectsEnabled}
+              />
+            ))}
           </nav>
 
           <div className={styles.themeSwitch} aria-label="Theme selector">
