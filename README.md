@@ -23,13 +23,14 @@ Implemented in the current build:
 - shared metric-semantics rules so inverse-pressure indicators such as `legalHeat`, `publicAnger`, and `debt` read correctly
 - multiple endings, including merger, extraction, prison, and Bahamas escape
 - two first-class themes: `Earth` and `Armonk Blue`
+- explicit read, choose, and resolve round phases so the board packet, decision tray, and end-round confirmation have separate breathing room
 - responsive fitted run layouts for desktop landscape, tablet landscape, tablet portrait, and phone portrait browser play
 - a standalone About page that frames the aviation satire, motivation, and design intent without interrupting play
 - a dedicated Tutorial page that teaches the objective, interaction model, run flow, key concepts, and run UI before a first playthrough
 - an accessible Options page with locally persisted wallpaper presets, audio controls, UI density, animation, graphical-effect, interaction-feedback, and interaction sound-cue settings
 - unit tests, content validation, build checks, seeded balance tooling, nightly report artifacts, reachability tooling, and a Playwright smoke test
 
-Documented next UX direction:
+Round-flow UX:
 
 - `V0.8` shifts round UX toward explicit Read / Board Packet, Choose Plays, and Resolve / End Round phases so decision comparison no longer has to fight every other run panel in one strict frame.
 

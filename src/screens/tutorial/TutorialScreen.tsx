@@ -7,16 +7,16 @@ import styles from "./TutorialScreen.module.css";
 
 const runFlowSteps = [
   {
-    title: "Read the board packet",
-    body: "Start each round by checking the brief: it summarizes the current corporate story, where pressure is gathering, and which exit windows may be opening.",
+    title: "Read / Board Packet",
+    body: "Start each round in the read phase: inspect the current corporate story, the run state, pressure signals, and recent consequences.",
   },
   {
-    title: "Pick up to two decisions",
-    body: "Choose the cards that best fit your plan. A card can buy time, raise personal wealth, calm a faction, or quietly create tomorrow's scandal.",
+    title: "Choose Plays",
+    body: "Move into the choice phase and queue up to two cards. A card can buy time, raise personal wealth, calm a faction, or quietly create tomorrow's scandal.",
   },
   {
-    title: "Watch the state move",
-    body: "After resolving the quarter, metrics, reserves, faction pressure, operational fragility, and dossier evidence all update from your choices and queued fallout.",
+    title: "Resolve / End Round",
+    body: "Review the selected-play docket or hold-the-line posture, then resolve the quarter. Metrics, reserves, faction pressure, operational fragility, and dossier evidence update from your choices and queued fallout.",
   },
   {
     title: "Handle delayed trouble",
@@ -57,24 +57,28 @@ const keyConcepts = [
 
 const uiAreas = [
   {
-    title: "Brief panel",
-    body: "Your fast read on the quarter's story, urgent risks, and executive posture.",
+    title: "Phase rail",
+    body: "The explicit Read / Board Packet, Choose Plays, and Resolve / End Round sequence for the current quarter.",
+  },
+  {
+    title: "Read / Board Packet",
+    body: "Your fast read on the quarter's story, urgent risks, run state, consequence feed, and executive posture.",
   },
   {
     title: "State and metric rail",
     body: "The live scorecard for money, confidence, legal heat, safety, labor, creditors, and market credibility.",
   },
   {
-    title: "Decision tray",
-    body: "The actionable card set for the round. Check impacts, costs, requirements, and delayed consequences before selecting.",
+    title: "Choose Plays surface",
+    body: "The dedicated actionable card set for the round. Check impacts, costs, requirements, and delayed consequences before selecting.",
   },
   {
     title: "Consequence feed",
     body: "The running log of events, faction responses, delayed fallout, and previous quarter results.",
   },
   {
-    title: "Quarter controls",
-    body: "Your selection counter and resolve button. On portrait layouts, controls stay reachable while panels move behind tabs.",
+    title: "Resolve controls",
+    body: "Your selection counter, validation copy, confirmation docket, and resolve button. End-round control lives in the resolve phase.",
   },
   {
     title: "Ending recap",
@@ -174,7 +178,7 @@ export function TutorialScreen() {
           <section className={styles.panel} aria-labelledby="controls-title">
             <p className={styles.eyebrow}>Controls</p>
             <h2 id="controls-title" className={styles.sectionTitle}>
-              Click decisions, then resolve the quarter.
+              Read, choose, then resolve the quarter.
             </h2>
             <ul className={styles.bulletList}>
               <li>
@@ -186,12 +190,17 @@ export function TutorialScreen() {
                 as the main board packet.
               </li>
               <li>
+                Use the phase rail to read the packet, open the dedicated Choose
+                Plays surface, then review the resolve docket.
+              </li>
+              <li>
                 Select up to two decision cards per round. Selected cards show a
                 pressed state before you commit.
               </li>
               <li>
-                Resolve the quarter when ready. The feed reports what happened,
-                and the next decision tray reflects the new state.
+                Resolve the quarter from the resolve phase when ready. The feed
+                reports what happened, and the next decision tray reflects the
+                new state.
               </li>
             </ul>
           </section>

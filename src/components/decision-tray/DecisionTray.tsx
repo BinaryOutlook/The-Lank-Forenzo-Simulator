@@ -48,6 +48,8 @@ interface DecisionTrayProps {
 }
 
 interface QuarterControlsProps {
+  disabled?: boolean;
+  helperText?: string;
   interactionEffectsEnabled: boolean;
   resolveLabel: string;
   selectedCost: ResourceCostSet;
@@ -269,6 +271,8 @@ export function DecisionTray({
 }
 
 export function QuarterControls({
+  disabled = false,
+  helperText,
   interactionEffectsEnabled,
   resolveLabel,
   selectedCost,
@@ -277,9 +281,13 @@ export function QuarterControls({
   onEndTurn,
 }: QuarterControlsProps) {
   const resolveFeedback = useInteractionFeedback<HTMLButtonElement>(
-    interactionEffectsEnabled,
+    interactionEffectsEnabled && !disabled,
   );
   const handleEndTurn = () => {
+    if (disabled) {
+      return;
+    }
+
     emitInteractionCue("quarter-resolve");
     onEndTurn();
   };
@@ -298,10 +306,14 @@ export function QuarterControls({
       <p className={styles.selectionCost}>
         {formatResourceCostSummary(selectedCost)}
       </p>
+      {helperText ? (
+        <p className={styles.selectionHelper}>{helperText}</p>
+      ) : null}
       <button
         type="button"
         className={clsx("interaction-feedback-control", styles.resolveButton)}
         data-interaction-feedback={resolveFeedback.feedbackState}
+        disabled={disabled}
         onClick={handleEndTurn}
         onKeyDown={resolveFeedback.onFeedbackKeyDown}
         onPointerDown={resolveFeedback.onFeedbackPointerDown}
