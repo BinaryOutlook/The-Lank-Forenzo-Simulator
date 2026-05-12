@@ -5,6 +5,10 @@
 Design note for implementation planning. No runtime archive is implemented in
 issue #31; the current local save behavior remains unchanged.
 
+> Planning workflow note: future archive implementation work should enter
+> [`Future Roadmap/`](../../Future%20Roadmap/) as a candidate brief before a
+> new GitHub issue is opened.
+
 ## Why This Exists
 
 The archive turns completed runs into a local scandal shelf: post-run recaps,

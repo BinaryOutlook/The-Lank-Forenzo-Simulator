@@ -136,6 +136,12 @@ GitHub Actions runs the CI workflow in `.github/workflows/ci.yml` on pull reques
 
 After the core gate passes, CI runs the lightweight balance and reachability diagnostics (`npm run balance:matrix` and `npm run reachability:report`) and uploads their console output as the `simulation-diagnostics` artifact. The existing Playwright smoke suite (`npm run test:e2e`) also runs on normal PRs across the configured Chromium viewport projects; long nightly-style simulation sweeps are intentionally out of scope for standard PR CI.
 
+## Planning and Issue Workflow
+
+Project planning now flows through [`Future Roadmap/`](Future%20Roadmap/README.md) before it becomes active GitHub work. Raw ideas, refactors, feature requests, and agent tasks should become candidate issue briefs first; promoted GitHub issues are reserved for scoped, prioritized, reviewable work.
+
+Agents should not freely implement from scattered TODOs, historical plans, or roadmap prose. Before opening or working on broad issues, check [`Future Roadmap/MASTER_ROADMAP_TABLE.md`](Future%20Roadmap/MASTER_ROADMAP_TABLE.md), respect the listed parallelism class, and send high-conflict or core-system work through architecture review before promotion.
+
 ## Responsive Browser Play
 
 The run experience is designed as a fitted app surface across desktop landscape, tablet landscape, tablet portrait, and mobile portrait browser viewports. Earlier layout work targeted zero document-level overflow; the revised round-flow direction keeps that discipline for shell and critical controls while relaxing the idea that every task must be simultaneously visible.
@@ -163,6 +169,11 @@ Theme references live in [`Themes/Earth.md`](Themes/Earth.md) and [`Themes/Armon
   workflows/
     ci.yml
     nightly-simulation-report.yml
+Future Roadmap/
+  README.md
+  MASTER_ROADMAP_TABLE.md
+  ISSUE_BRIEF_TEMPLATE.md
+  issue-briefs/
 idea.md
 public/
   favicon.svg
@@ -264,12 +275,13 @@ unless they are intentionally testing lower-level systems.
 
 ## Documentation
 
+- Future Roadmap workflow and candidate queue: [Future Roadmap/README.md](Future%20Roadmap/README.md), [Future Roadmap/MASTER_ROADMAP_TABLE.md](Future%20Roadmap/MASTER_ROADMAP_TABLE.md)
 - Product requirements: [docs/PRD.md](docs/PRD.md)
 - Systems and design brief: [docs/TECHNICAL_BRIEF.md](docs/TECHNICAL_BRIEF.md)
-- Future report and technical roadmap: [docs/FUTURE_REPORT.md](docs/FUTURE_REPORT.md)
+- Future report and technical rationale: [docs/FUTURE_REPORT.md](docs/FUTURE_REPORT.md)
 - Future package boundary ADR: [docs/decisions/ADR-001-prepare-future-package-boundaries.md](docs/decisions/ADR-001-prepare-future-package-boundaries.md)
-- Future Report implementation plan and child issue map: [docs/FUTURE_REPORT_IMPLEMENTATION_PLAN.md](docs/FUTURE_REPORT_IMPLEMENTATION_PLAN.md)
-- Expansion and systems roadmap: [idea.md](idea.md)
+- Historical Future Report promoted-issue map: [docs/FUTURE_REPORT_IMPLEMENTATION_PLAN.md](docs/FUTURE_REPORT_IMPLEMENTATION_PLAN.md)
+- Historical expansion draft: [idea.md](idea.md)
 - Decision library and historical parallels: [docs/reference/decision-library.md](docs/reference/decision-library.md)
 - Event library and historical parallels: [docs/reference/event-library.md](docs/reference/event-library.md)
 - V0.5 faction hooks: [docs/reference/faction-system.md](docs/reference/faction-system.md)

@@ -1,10 +1,12 @@
 # Future Report: The Lank Forenzo Simulator
 
-Status: Forward-looking technical and product report  
-Owner: BinaryOutlook  
-Last updated: 2026-05-11  
+Status: Forward-looking technical and product report
+Owner: BinaryOutlook
+Last updated: 2026-05-12
 Audience: future maintainers, designers, simulation engineers, and agents re-entering the project
-Implementation plan: [`docs/FUTURE_REPORT_IMPLEMENTATION_PLAN.md`](FUTURE_REPORT_IMPLEMENTATION_PLAN.md)
+Historical implementation plan: [`docs/FUTURE_REPORT_IMPLEMENTATION_PLAN.md`](FUTURE_REPORT_IMPLEMENTATION_PLAN.md)
+
+> Planning workflow note: candidate work is now centralized in [`Future Roadmap/`](../Future%20Roadmap/). This report remains strategic product and technical rationale; it is not the active pre-issue queue.
 
 ## 1. Executive Thesis
 
@@ -822,7 +824,7 @@ Where \(q\) is a decision sequence prefix.
 
 ## 9. Versioned Implementation Plan
 
-The issue-by-issue execution map for this section lives in [`FUTURE_REPORT_IMPLEMENTATION_PLAN.md`](FUTURE_REPORT_IMPLEMENTATION_PLAN.md). Use that plan for current tracker boundaries, dependencies, and per-milestone exit gates; use this report for product and technical rationale.
+The historical issue-by-issue execution map for this section lives in [`FUTURE_REPORT_IMPLEMENTATION_PLAN.md`](FUTURE_REPORT_IMPLEMENTATION_PLAN.md). Use it to understand prior tracker boundaries, dependencies, and per-milestone exit gates. Use [`Future Roadmap/`](../Future%20Roadmap/) for new candidate work and promotion decisions.
 
 ### 9.1 V0.6: Balance And Reachability Repair
 
@@ -957,6 +959,7 @@ Use this testing scale:
 
 Update:
 
+- `Future Roadmap/` for candidate work before GitHub issue promotion.
 - `docs/PRD.md` for durable product direction changes.
 - `PRDs/vX.Y/vX.Y.md` for major iteration work.
 - `README.md` for setup, commands, structure, and important docs.
@@ -1009,6 +1012,8 @@ Mitigation:
 - Keep migration behavior-neutral.
 
 ## 12. Highest-Value Next Steps
+
+Historical sequencing note: the list below explains strategic order. New work derived from it should enter [`Future Roadmap/`](../Future%20Roadmap/) as a candidate brief before anyone opens a GitHub issue or starts implementation.
 
 The best immediate sequence is:
 

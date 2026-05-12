@@ -1,5 +1,7 @@
 # idea.md - The Master Expansion Document
 
+> Planning workflow note: this is a historical expansion draft and reference document. Candidate work is now centralized in [`Future Roadmap/`](Future%20Roadmap/); do not convert ideas from this file directly into GitHub issues or implementation work without a candidate brief and master-table decision.
+
 ## Ground Truth Snapshot
 
 This document is intentionally anchored to the code and documentation currently in the repository, not to a hypothetical future version of the game.
