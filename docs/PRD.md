@@ -22,8 +22,11 @@ This document is intentionally greenfield. It does not preserve old implementati
 It does not replace:
 
 - `README.md` for repo overview and setup
+- `Future Roadmap/` for candidate work before GitHub issues
 - `docs/TECHNICAL_BRIEF.md` for deeper design and systems reasoning
 - `PRDs/vX.Y/` for iteration-specific delivery packets
+
+Planning workflow note: candidate work is centralized in [`Future Roadmap/`](../Future%20Roadmap/). This PRD defines durable product direction; it does not turn ideas directly into active implementation tasks.
 
 ## 2. Product Summary
 
@@ -758,6 +761,11 @@ content/
 docs/
   PRD.md
   TECHNICAL_BRIEF.md
+Future Roadmap/
+  README.md
+  MASTER_ROADMAP_TABLE.md
+  ISSUE_BRIEF_TEMPLATE.md
+  issue-briefs/
 PRDs/
   v0.1/
 ```

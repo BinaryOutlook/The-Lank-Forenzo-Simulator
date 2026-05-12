@@ -1,19 +1,23 @@
 # Future Report Implementation Plan
 
-Status: Agent-ready roadmap breakdown
+Status: Historical promoted-issue map; superseded for new candidate work
 Owner: BinaryOutlook
-Last updated: 2026-05-11
+Last updated: 2026-05-12
 Parent issue: [#17](https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/17)
 Source report: [`docs/FUTURE_REPORT.md`](FUTURE_REPORT.md)
 
+> Planning workflow note: candidate work is now centralized in [`Future Roadmap/`](../Future%20Roadmap/). This document is preserved as the historical breakdown of Future Report work that was already mapped into GitHub issues. Do not use it as the current source of truth for creating new issues.
+
 ## 1. Purpose
 
-This plan turns the Future Report into sequenced implementation work. It is the
-bridge between the broad roadmap and focused GitHub issues that agents can pick
-up without rediscovering the whole design space.
+This plan originally turned the Future Report into sequenced implementation
+work. It remains useful for understanding why the historical issue slices
+existed, but new ideas now move through `Future Roadmap/` as candidate briefs
+before they are promoted to GitHub issues.
 
 It does not replace:
 
+- [`Future Roadmap/`](../Future%20Roadmap/) for candidate work, promotion decisions, priority, and parallelism class
 - [`docs/PRD.md`](PRD.md) for durable product direction
 - [`docs/TECHNICAL_BRIEF.md`](TECHNICAL_BRIEF.md) for system reasoning
 - versioned PRDs under [`PRDs/`](../PRDs/) for milestone-specific acceptance
@@ -49,11 +53,13 @@ Roadmap work must also obey these guardrails:
    content authoring rules change.
 7. Use reports and tests to make balance claims falsifiable.
 
-## 3. Canonical Roadmap Issue Map
+## 3. Historical Promoted Issue Map
 
-The following issues are the canonical slices derived from the Future Report.
-GitHub remains the source of truth for live status, but this table records the
-intended ownership boundary and why each issue exists.
+The following issues were the original slices derived from the Future Report.
+GitHub remains the source of truth for their live or historical status, but new
+candidate work should be recorded in
+[`Future Roadmap/MASTER_ROADMAP_TABLE.md`](../Future%20Roadmap/MASTER_ROADMAP_TABLE.md)
+before promotion.
 
 | Issue | Milestone | Workstream | Intended outcome | Required evidence |
 | --- | --- | --- | --- | --- |
@@ -193,10 +199,15 @@ Exit gate:
 | Simulation public API | Package-boundary preparation | Package seams should follow a proven API, not the other way around. |
 | Fast CI gates | Nightly simulation reporting | Nightly jobs should supplement, not replace, fast PR checks. |
 
-## 6. Agent-Ready Issue Template
+## 6. Historical Agent-Ready Issue Template
 
-Each roadmap issue should be small enough for one focused PR. Use this structure
-when creating or refining child issues:
+The lightweight template below is preserved for interpreting older issues.
+For new candidate work, use
+[`Future Roadmap/ISSUE_BRIEF_TEMPLATE.md`](../Future%20Roadmap/ISSUE_BRIEF_TEMPLATE.md)
+and update
+[`Future Roadmap/MASTER_ROADMAP_TABLE.md`](../Future%20Roadmap/MASTER_ROADMAP_TABLE.md).
+
+Each promoted issue should still be small enough for one focused PR:
 
 ```markdown
 ## Goal
@@ -240,6 +251,8 @@ One or two sentences describing the player, tooling, or architecture outcome.
 | CI/tooling | Minimum gate plus local command dry run | Green GitHub Actions run after push. |
 
 ## 8. Parent Issue Definition Of Done
+
+This definition of done is historical for issue #17.
 
 Issue [#17](https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/17)
 is complete when:
