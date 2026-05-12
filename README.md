@@ -28,7 +28,7 @@ Implemented in the current build:
 - responsive fitted run layouts for desktop landscape, tablet landscape, tablet portrait, and phone portrait browser play
 - a standalone About page that frames the aviation satire, motivation, and design intent without interrupting play
 - a dedicated Tutorial page that teaches the objective, interaction model, run flow, key concepts, and run UI before a first playthrough
-- an accessible Options page with locally persisted wallpaper presets, audio controls, UI density, animation, graphical-effect, interaction-feedback, and interaction sound-cue settings
+- an accessible Options page with locally persisted theme, font, wallpaper, audio, UI density, animation, graphical-effect, interaction-feedback, and interaction sound-cue settings
 - unit tests, content validation, build checks, seeded balance tooling, nightly report artifacts, reachability tooling, and a Playwright smoke test
 
 Round-flow UX:
@@ -163,6 +163,8 @@ The run experience is designed as a fitted app surface across desktop landscape,
 - `Armonk Blue`: bright, procedural, boardroom-clean surfaces with IBM-style blue authority
 
 Theme references live in [`Themes/Earth.md`](Themes/Earth.md) and [`Themes/Armonk-Blue.md`](Themes/Armonk-Blue.md).
+
+Typography uses system-safe fallback stacks for Windows 10, Windows 11, and modern macOS. The Options page exposes `Theme Default`, `System UI`, and `Ledger Mono` font presets without runtime web-font downloads.
 
 ## Project Layout
 

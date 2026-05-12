@@ -57,6 +57,7 @@ describe("AppShell", () => {
       "/tutorial",
       "/options",
     ]);
+    expect(screen.queryByLabelText(/theme selector/i)).not.toBeInTheDocument();
   });
 
   it("returns players to the run route from secondary pages", async () => {

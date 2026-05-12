@@ -47,6 +47,11 @@ describe("OptionsScreen", () => {
       }),
     );
     await user.click(
+      screen.getByRole("button", {
+        name: /ledger mono/i,
+      }),
+    );
+    await user.click(
       screen.getByRole("checkbox", {
         name: /^music\b/i,
       }),
@@ -72,6 +77,7 @@ describe("OptionsScreen", () => {
 
     expect(useGameStore.getState().settings).toMatchObject({
       wallpaper: "runway-night",
+      fontPreset: "ledger",
       uiDensity: "compact",
       musicEnabled: true,
       musicVolume: 65,

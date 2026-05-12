@@ -19,6 +19,7 @@ export function AppProviders({ children }: PropsWithChildren) {
 
     root.dataset.theme = theme;
     root.dataset.wallpaper = settings.wallpaper;
+    root.dataset.fontPreset = settings.fontPreset;
     root.dataset.music = settings.musicEnabled ? "on" : "off";
     root.dataset.soundEffects = settings.soundEffectsEnabled ? "on" : "off";
     root.dataset.animations = settings.animationsEnabled ? "on" : "off";
@@ -36,6 +37,7 @@ export function AppProviders({ children }: PropsWithChildren) {
 
     return () => {
       delete root.dataset.wallpaper;
+      delete root.dataset.fontPreset;
       delete root.dataset.music;
       delete root.dataset.soundEffects;
       delete root.dataset.animations;

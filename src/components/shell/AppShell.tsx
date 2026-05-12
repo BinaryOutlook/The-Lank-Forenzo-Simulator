@@ -2,16 +2,9 @@ import clsx from "clsx";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { InteractionFeedbackButton } from "../interaction/InteractionFeedbackButton.js";
 import { useInteractionFeedback } from "../interaction/useInteractionFeedback.js";
 import { useGameStore } from "../../simulation/state/gameStore.js";
-import type { ThemeName } from "../../simulation/state/types.js";
 import styles from "./AppShell.module.css";
-
-const themes: Array<{ id: ThemeName; label: string }> = [
-  { id: "earth", label: "Earth" },
-  { id: "armonk-blue", label: "Armonk Blue" },
-];
 
 const primaryNavItems: Array<{ label: string; to: string }> = [
   { label: "Run", to: "/run" },
@@ -55,9 +48,7 @@ function HeaderNavLink({
 
 export function AppShell() {
   const location = useLocation();
-  const theme = useGameStore((state) => state.theme);
   const settings = useGameStore((state) => state.settings);
-  const setTheme = useGameStore((state) => state.setTheme);
   const run = useGameStore((state) => state.run);
   const isRunSurface = location.pathname === "/run" && run?.status === "active";
   const interactionEffectsEnabled =
@@ -105,23 +96,6 @@ export function AppShell() {
               />
             ))}
           </nav>
-
-          <div className={styles.themeSwitch} aria-label="Theme selector">
-            {themes.map((entry) => (
-              <InteractionFeedbackButton
-                key={entry.id}
-                feedbackEnabled={interactionEffectsEnabled}
-                className={
-                  entry.id === theme
-                    ? styles.themeButtonActive
-                    : styles.themeButton
-                }
-                onClick={() => setTheme(entry.id)}
-              >
-                {entry.label}
-              </InteractionFeedbackButton>
-            ))}
-          </div>
         </div>
       </motion.header>
 

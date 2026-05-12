@@ -7,12 +7,17 @@ export const wallpaperPresetIds = [
 
 export type WallpaperPreset = (typeof wallpaperPresetIds)[number];
 
+export const fontPresetIds = ["theme", "system", "ledger"] as const;
+
+export type FontPreset = (typeof fontPresetIds)[number];
+
 export const uiDensityIds = ["standard", "compact"] as const;
 
 export type UiDensity = (typeof uiDensityIds)[number];
 
 export interface GameSettings {
   wallpaper: WallpaperPreset;
+  fontPreset: FontPreset;
   musicEnabled: boolean;
   musicVolume: number;
   soundEffectsEnabled: boolean;
@@ -25,6 +30,7 @@ export interface GameSettings {
 
 export const defaultGameSettings: GameSettings = {
   wallpaper: "executive-grid",
+  fontPreset: "theme",
   musicEnabled: false,
   musicVolume: 35,
   soundEffectsEnabled: true,
@@ -43,6 +49,12 @@ function isWallpaperPreset(value: unknown): value is WallpaperPreset {
   return (
     typeof value === "string" &&
     wallpaperPresetIds.includes(value as WallpaperPreset)
+  );
+}
+
+function isFontPreset(value: unknown): value is FontPreset {
+  return (
+    typeof value === "string" && fontPresetIds.includes(value as FontPreset)
   );
 }
 
@@ -71,6 +83,9 @@ export function normalizeGameSettings(value: unknown): GameSettings {
     wallpaper: isWallpaperPreset(value.wallpaper)
       ? value.wallpaper
       : defaultGameSettings.wallpaper,
+    fontPreset: isFontPreset(value.fontPreset)
+      ? value.fontPreset
+      : defaultGameSettings.fontPreset,
     musicEnabled: parseBoolean(
       value.musicEnabled,
       defaultGameSettings.musicEnabled,

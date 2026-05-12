@@ -7,7 +7,12 @@ import {
 } from "../../lib/storage/save.js";
 import { simulationRuntime } from "../runtime.js";
 import { defaultGameSettings, normalizeGameSettings } from "./settings.js";
-import type { GameSettings, UiDensity, WallpaperPreset } from "./settings.js";
+import type {
+  FontPreset,
+  GameSettings,
+  UiDensity,
+  WallpaperPreset,
+} from "./settings.js";
 import type {
   DecisionDefinition,
   EndingDefinition,
@@ -21,6 +26,7 @@ interface GameStoreState {
   run: RunState | null;
   setTheme: (theme: ThemeName) => void;
   setWallpaper: (wallpaper: WallpaperPreset) => void;
+  setFontPreset: (fontPreset: FontPreset) => void;
   setMusicEnabled: (enabled: boolean) => void;
   setMusicVolume: (volume: number) => void;
   setSoundEffectsEnabled: (enabled: boolean) => void;
@@ -52,6 +58,13 @@ export const useGameStore = create<GameStoreState>()(
           settings: normalizeGameSettings({
             ...state.settings,
             wallpaper,
+          }),
+        })),
+      setFontPreset: (fontPreset) =>
+        set((state) => ({
+          settings: normalizeGameSettings({
+            ...state.settings,
+            fontPreset,
           }),
         })),
       setMusicEnabled: (enabled) =>

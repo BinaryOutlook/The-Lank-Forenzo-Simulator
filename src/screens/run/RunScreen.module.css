@@ -474,14 +474,14 @@
 }
 
 .layout[data-run-layout-mode="portrait-panels"] .phaseNav {
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.3rem;
   padding: 0.3rem;
 }
 
 .layout[data-run-layout-mode="portrait-panels"] .phaseTab,
 .layout[data-run-layout-mode="portrait-panels"] .phaseTabActive {
-  min-height: 2.9rem;
+  min-height: 2.75rem;
   padding: 0.5rem;
 }
 
@@ -562,6 +562,50 @@
 @media (max-width: 640px) {
   .layout {
     --run-layout-gap: 0.5rem;
+  }
+
+  .layout[data-run-layout-mode="portrait-panels"] {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .layout[data-run-layout-mode="portrait-panels"] .flowHeader {
+    gap: 0.4rem;
+  }
+
+  .layout[data-run-layout-mode="portrait-panels"] .phaseNav {
+    gap: 0.25rem;
+    padding: 0.25rem;
+  }
+
+  .layout[data-run-layout-mode="portrait-panels"] .phaseTab,
+  .layout[data-run-layout-mode="portrait-panels"] .phaseTabActive {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 2.3rem;
+    padding: 0.42rem 0.34rem;
+    text-align: center;
+  }
+
+  .layout[data-run-layout-mode="portrait-panels"] .phaseStep {
+    display: none;
+  }
+
+  .layout[data-run-layout-mode="portrait-panels"] .phaseLabel {
+    font-size: 0.64rem;
+  }
+
+  .layout[data-run-layout-mode="portrait-panels"] .flowStatus {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.35rem 0.5rem;
+  }
+
+  .layout[data-run-layout-mode="portrait-panels"] .statusGuidance {
+    display: none;
+  }
+
+  .layout[data-run-layout-mode="portrait-panels"] .statusLabel {
+    font-size: 0.92rem;
+    text-align: right;
   }
 
   .phaseLabel {

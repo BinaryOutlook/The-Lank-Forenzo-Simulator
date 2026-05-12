@@ -400,12 +400,14 @@ The product should still feel like an app under glass. The app shell, phase navi
 
 Responsive layouts may use internal panel scrolling, paged panels, drawers, or route-like phase surfaces. They should avoid horizontal overflow, hidden required controls, and document-level scrolling that makes the shell feel like an article. If a narrow viewport needs vertical breathing room for decision comparison, the preferred answer is a dedicated phase surface with clear controls, not a return to cramped all-at-once compression.
 
+Small-screen run surfaces should favor compact navigation, reduced supporting copy, and stable controls before shrinking everything indiscriminately. The phase header may collapse descriptions on phone-sized viewports as long as Read, Choose, Resolve, selection count, and end-round recovery remain obvious.
+
 ### 11.3 Options page
 
 The Options page should:
 
 - be reachable from the game shell
-- expose theme, wallpaper, audio, general UI, graphical-effect, and interaction-feedback settings
+- expose theme, font, wallpaper, audio, general UI, graphical-effect, and interaction-feedback settings
 - persist preferences locally where browser storage is available
 - favor clean preset-based controls before advanced customization
 - keep the game readable when effects or animation are reduced
@@ -627,6 +629,7 @@ Portrait layouts may reorganize sections into tabs, drawers, or paged panels, bu
 
 - The interface must remain keyboard-usable.
 - Color choices in both themes must preserve contrast and legibility.
+- Font stacks must degrade intentionally across Windows 10, Windows 11, and modern macOS without requiring runtime web-font downloads.
 - Critical information must not rely on color alone.
 
 ### 14.5 Testability

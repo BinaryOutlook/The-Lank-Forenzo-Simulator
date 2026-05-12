@@ -137,23 +137,22 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
   );
   await expect(phaseNav.getByRole("tab", { name: /resolve/i })).toBeDisabled();
 
-  await page.getByRole("button", { name: /armonk blue/i }).click();
-  await expect(page.locator("html")).toHaveAttribute(
-    "data-theme",
-    "armonk-blue",
-  );
-  await page.reload();
-  await expect(page.locator("html")).toHaveAttribute(
-    "data-theme",
-    "armonk-blue",
-  );
-
   await primaryNav.getByRole("link", { name: "Options" }).click();
   await expect(
     page.getByRole("heading", {
       name: /tune the room before it turns on you/i,
     }),
   ).toBeVisible();
+  await page.getByRole("button", { name: /armonk blue/i }).click();
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-theme",
+    "armonk-blue",
+  );
+  await page.getByRole("button", { name: /ledger mono/i }).click();
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-font-preset",
+    "ledger",
+  );
   await page.getByRole("button", { name: /runway night/i }).click();
   await expect(page.locator("html")).toHaveAttribute(
     "data-wallpaper",
@@ -184,6 +183,14 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute(
     "data-wallpaper",
     "runway-night",
+  );
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-theme",
+    "armonk-blue",
+  );
+  await expect(page.locator("html")).toHaveAttribute(
+    "data-font-preset",
+    "ledger",
   );
   await expect(page.locator("html")).toHaveAttribute("data-music", "on");
   await expect(page.locator("html")).toHaveAttribute(
