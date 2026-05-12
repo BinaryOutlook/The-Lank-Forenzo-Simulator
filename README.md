@@ -145,6 +145,15 @@ Theme references live in [`Themes/Earth.md`](Themes/Earth.md) and [`Themes/Armon
     ci.yml
     nightly-simulation-report.yml
 idea.md
+public/
+  favicon.svg
+  favicon.ico
+  site.webmanifest
+  brand/
+    lank-forenzo-mark.svg
+    app-icon-*.png
+    apple-touch-icon.png
+    favicon-*.png
 src/
   app/
   components/

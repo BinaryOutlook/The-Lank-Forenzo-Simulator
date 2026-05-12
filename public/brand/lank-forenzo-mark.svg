@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title>The Lank Forenzo Simulator icon</title>
+  <desc>Two ledger-like columns forming an abstract aircraft tail crossed by a restrained green extraction line.</desc>
+  <rect width="512" height="512" fill="#070807" />
+  <g transform="translate(256 256) scale(1.14) translate(-256 -256)">
+    <path d="M158 150 222 118v276h-64z" fill="#d8d8d0" />
+    <path d="M256 92 326 130v264h-70z" fill="#bfc2bd" />
+    <path d="M222 118h34v276h-34z" fill="#070807" />
+    <path d="M118 356 386 174l20 30-268 182z" fill="#74a66a" />
+  </g>
+</svg>
