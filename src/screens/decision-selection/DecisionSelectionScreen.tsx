@@ -1,10 +1,22 @@
 import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { DecisionTray } from "../../components/decision-tray/DecisionTray.js";
+import { emitInteractionCue } from "../../components/audio/interactionAudioEvents.js";
+import {
+  DecisionTray,
+  REQUIRED_ROUND_DECISION_COUNT,
+} from "../../components/decision-tray/DecisionTray.js";
 import { useInteractionFeedback } from "../../components/interaction/useInteractionFeedback.js";
+import {
+  canAffordResourceCosts,
+  getDecisionSelectionCost,
+} from "../../simulation/systems/consumables.js";
 import { useGameStore } from "../../simulation/state/gameStore.js";
 import { EndingScreen } from "../ending/EndingScreen.js";
+import {
+  EndRoundDialog,
+  type EndRoundDialogMode,
+} from "../run/EndRoundDialog.js";
 import styles from "./DecisionSelectionScreen.module.css";
 
 export function DecisionSelectionScreen() {
@@ -14,6 +26,8 @@ export function DecisionSelectionScreen() {
   const availableDecisions = useGameStore((state) => state.availableDecisions);
   const toggleDecision = useGameStore((state) => state.toggleDecision);
   const endTurn = useGameStore((state) => state.endTurn);
+  const [endRoundDialogMode, setEndRoundDialogMode] =
+    useState<EndRoundDialogMode | null>(null);
   const interactionEffectsEnabled =
     settings.visualEffectsEnabled && settings.interactionEffectsEnabled;
   const backLinkFeedback = useInteractionFeedback<HTMLAnchorElement>(
@@ -35,7 +49,60 @@ export function DecisionSelectionScreen() {
   }
 
   const decisions = availableDecisions();
-  const handleEndTurn = () => {
+  const selectedDecisions = decisions.filter((decision) =>
+    run.selectedDecisionIds.includes(decision.id),
+  );
+  const selectedCost = getDecisionSelectionCost(selectedDecisions);
+  const missingDecisionCount = Math.max(
+    0,
+    REQUIRED_ROUND_DECISION_COUNT - selectedDecisions.length,
+  );
+  const recoveryOptions = decisions
+    .filter((decision) => {
+      if (run.selectedDecisionIds.includes(decision.id)) {
+        return false;
+      }
+
+      const candidateCost = getDecisionSelectionCost([
+        ...selectedDecisions,
+        decision,
+      ]);
+
+      return canAffordResourceCosts(run.resources, candidateCost);
+    })
+    .slice(0, 3);
+  const restoreEndRoundControlFocus = () => {
+    window.requestAnimationFrame(() => {
+      document
+        .querySelector<HTMLButtonElement>("[data-end-round-control='true']")
+        ?.focus();
+    });
+  };
+  const focusDecisionSelection = () => {
+    setEndRoundDialogMode(null);
+
+    window.requestAnimationFrame(() => {
+      document
+        .querySelector<HTMLButtonElement>(
+          "button[aria-pressed='false']:not(:disabled)",
+        )
+        ?.focus();
+    });
+  };
+  const closeEndRoundDialog = () => {
+    setEndRoundDialogMode(null);
+    restoreEndRoundControlFocus();
+  };
+  const handleEndRoundRequest = () => {
+    setEndRoundDialogMode(
+      selectedDecisions.length >= REQUIRED_ROUND_DECISION_COUNT
+        ? "complete"
+        : "incomplete",
+    );
+  };
+  const handleConfirmEndTurn = () => {
+    setEndRoundDialogMode(null);
+    emitInteractionCue("quarter-resolve");
     endTurn();
     navigate("/run");
   };
@@ -79,8 +146,23 @@ export function DecisionSelectionScreen() {
         surface="selection"
         title="Compare every option before the minutes harden."
         onToggle={toggleDecision}
-        onEndTurn={handleEndTurn}
+        resolveCue={null}
+        onEndTurn={handleEndRoundRequest}
       />
+
+      {endRoundDialogMode ? (
+        <EndRoundDialog
+          interactionEffectsEnabled={interactionEffectsEnabled}
+          missingDecisionCount={missingDecisionCount}
+          mode={endRoundDialogMode}
+          recoveryOptions={recoveryOptions}
+          selectedCost={selectedCost}
+          selectedDecisions={selectedDecisions}
+          onConfirm={handleConfirmEndTurn}
+          onDismiss={closeEndRoundDialog}
+          onReviewChoices={focusDecisionSelection}
+        />
+      ) : null}
     </section>
   );
 }

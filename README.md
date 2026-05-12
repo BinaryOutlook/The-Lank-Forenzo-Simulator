@@ -24,6 +24,7 @@ Implemented in the current build:
 - multiple endings, including merger, extraction, prison, and Bahamas escape
 - two first-class themes: `Earth` and `Armonk Blue`
 - explicit read, choose, and resolve round phases so the board packet, decision tray, and end-round confirmation have separate breathing room
+- an end-round review dialog that confirms complete selections and routes incomplete trays back to decision selection
 - responsive fitted run layouts for desktop landscape, tablet landscape, tablet portrait, and phone portrait browser play
 - a standalone About page that frames the aviation satire, motivation, and design intent without interrupting play
 - a dedicated Tutorial page that teaches the objective, interaction model, run flow, key concepts, and run UI before a first playthrough

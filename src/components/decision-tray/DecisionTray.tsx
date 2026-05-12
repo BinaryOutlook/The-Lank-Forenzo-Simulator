@@ -31,6 +31,8 @@ import type { InteractionCueName } from "../audio/interactionAudioEvents.js";
 import { useInteractionFeedback } from "../interaction/useInteractionFeedback.js";
 import styles from "./DecisionTray.module.css";
 
+export const REQUIRED_ROUND_DECISION_COUNT = 2;
+
 interface DecisionTrayProps {
   decisionSelectionHref?: string;
   decisionSelectionLabel?: string;
@@ -38,6 +40,7 @@ interface DecisionTrayProps {
   eyebrow?: string;
   interactionEffectsEnabled?: boolean;
   resources: ConsumableResources;
+  resolveCue?: InteractionCueName | null;
   selectedDecisionIds: string[];
   showControls?: boolean;
   summary?: string;
@@ -52,6 +55,7 @@ interface QuarterControlsProps {
   helperText?: string;
   interactionEffectsEnabled: boolean;
   resolveLabel: string;
+  resolveCue?: InteractionCueName | null;
   selectedCost: ResourceCostSet;
   selectedDecisionCount: number;
   surface?: "inline" | "docked";
@@ -86,7 +90,7 @@ function DecisionCard({
   const handleToggle = () => {
     const cue: InteractionCueName | null = selected
       ? "decision-deselect"
-      : selectedDecisionCount < 2
+      : selectedDecisionCount < REQUIRED_ROUND_DECISION_COUNT
         ? "decision-select"
         : null;
 
@@ -168,6 +172,7 @@ export function DecisionTray({
   eyebrow = "Decision tray",
   interactionEffectsEnabled = true,
   resources,
+  resolveCue,
   selectedDecisionIds,
   showControls = true,
   summary,
@@ -179,8 +184,7 @@ export function DecisionTray({
   const detailFeedback = useInteractionFeedback<HTMLAnchorElement>(
     interactionEffectsEnabled && Boolean(decisionSelectionHref),
   );
-  const resolveLabel =
-    selectedDecisionIds.length > 0 ? "Resolve the quarter" : "Hold the line";
+  const resolveLabel = "End quarter";
   const selectedDecisions = decisions.filter((decision) =>
     selectedDecisionIds.includes(decision.id),
   );
@@ -224,6 +228,7 @@ export function DecisionTray({
         <QuarterControls
           interactionEffectsEnabled={interactionEffectsEnabled}
           resolveLabel={resolveLabel}
+          resolveCue={resolveCue}
           selectedCost={selectedCost}
           selectedDecisionCount={selectedDecisionIds.length}
           onEndTurn={onEndTurn}
@@ -242,7 +247,8 @@ export function DecisionTray({
             candidateCost,
           );
           const selectionLimitReached =
-            !selected && selectedDecisionIds.length >= 2;
+            !selected &&
+            selectedDecisionIds.length >= REQUIRED_ROUND_DECISION_COUNT;
           const disabled =
             selectionLimitReached ||
             (!selected && !canAffordResourceCosts(resources, candidateCost));
@@ -275,6 +281,7 @@ export function QuarterControls({
   helperText,
   interactionEffectsEnabled,
   resolveLabel,
+  resolveCue = "quarter-resolve",
   selectedCost,
   selectedDecisionCount,
   surface = "inline",
@@ -288,7 +295,10 @@ export function QuarterControls({
       return;
     }
 
-    emitInteractionCue("quarter-resolve");
+    if (resolveCue) {
+      emitInteractionCue(resolveCue);
+    }
+
     onEndTurn();
   };
 
@@ -301,7 +311,7 @@ export function QuarterControls({
       data-testid="quarter-controls"
     >
       <p className={styles.selectionCount}>
-        {selectedDecisionCount}/2 selected
+        {selectedDecisionCount}/{REQUIRED_ROUND_DECISION_COUNT} selected
       </p>
       <p className={styles.selectionCost}>
         {formatResourceCostSummary(selectedCost)}
@@ -313,6 +323,7 @@ export function QuarterControls({
         type="button"
         className={clsx("interaction-feedback-control", styles.resolveButton)}
         data-interaction-feedback={resolveFeedback.feedbackState}
+        data-end-round-control="true"
         disabled={disabled}
         onClick={handleEndTurn}
         onKeyDown={resolveFeedback.onFeedbackKeyDown}

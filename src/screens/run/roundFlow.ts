@@ -29,6 +29,8 @@ interface RoundSelectionValidationInput {
   selectedDecisionCount: number;
 }
 
+const requiredRoundDecisionCount = 2;
+
 export const roundPhaseConfigs: RoundPhaseConfig[] = [
   {
     id: "read",
@@ -82,8 +84,8 @@ export function isRoundPhaseReachable(
   return getRoundPhaseIndex(furthestPhase) >= getRoundPhaseIndex("choose");
 }
 
-export function getRoundResolveLabel(selectedDecisionCount: number): string {
-  return selectedDecisionCount > 0 ? "Resolve the quarter" : "Hold the line";
+export function getRoundResolveLabel(): string {
+  return "End quarter";
 }
 
 export function validateRoundSelection({
@@ -91,7 +93,7 @@ export function validateRoundSelection({
   selectedCost,
   selectedDecisionCount,
 }: RoundSelectionValidationInput): RoundSelectionValidation {
-  if (selectedDecisionCount > 2) {
+  if (selectedDecisionCount > requiredRoundDecisionCount) {
     return {
       valid: false,
       statusLabel: "Selection overflow",
@@ -114,18 +116,24 @@ export function validateRoundSelection({
     };
   }
 
-  if (selectedDecisionCount === 0) {
+  if (selectedDecisionCount < requiredRoundDecisionCount) {
+    const missingDecisionCount =
+      requiredRoundDecisionCount - selectedDecisionCount;
+
     return {
       valid: true,
-      statusLabel: "Hold posture ready",
-      guidance:
-        "No plays are queued. Resolution will pass the quarter without a new executive action.",
+      statusLabel: `${missingDecisionCount} choice${
+        missingDecisionCount === 1 ? "" : "s"
+      } pending`,
+      guidance: `${missingDecisionCount} more choice${
+        missingDecisionCount === 1 ? "" : "s"
+      } required before the quarter can resolve.`,
     };
   }
 
   return {
     valid: true,
-    statusLabel: `${selectedDecisionCount}/2 plays ready`,
+    statusLabel: `${selectedDecisionCount}/${requiredRoundDecisionCount} plays ready`,
     guidance: "Queued plays satisfy the selection and reserve checks.",
   };
 }

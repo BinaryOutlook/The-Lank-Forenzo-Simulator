@@ -2,15 +2,18 @@ import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BoardPacket } from "../../components/board-packet/BoardPacket.js";
+import { emitInteractionCue } from "../../components/audio/interactionAudioEvents.js";
 import {
   DecisionTray,
   QuarterControls,
+  REQUIRED_ROUND_DECISION_COUNT,
 } from "../../components/decision-tray/DecisionTray.js";
 import { EventFeed } from "../../components/event-feed/EventFeed.js";
 import { InteractionFeedbackButton } from "../../components/interaction/InteractionFeedbackButton.js";
 import { useInteractionFeedback } from "../../components/interaction/useInteractionFeedback.js";
 import { MetricRail } from "../../components/metrics/MetricRail.js";
 import {
+  canAffordResourceCosts,
   formatResourceCostSummary,
   getDecisionResourceCosts,
   getDecisionSelectionCost,
@@ -18,6 +21,10 @@ import {
 import { useGameStore } from "../../simulation/state/gameStore.js";
 import type { DecisionDefinition } from "../../simulation/state/types.js";
 import { EndingScreen } from "../ending/EndingScreen.js";
+import {
+  EndRoundDialog,
+  type EndRoundDialogMode,
+} from "./EndRoundDialog.js";
 import styles from "./RunScreen.module.css";
 import {
   getNextRoundPhase,
@@ -195,7 +202,7 @@ function RoundPhaseHeader({
 
       <aside className={styles.flowStatus} aria-label="Selection validity">
         <span className={styles.statusCount}>
-          {selectedDecisionCount}/2 selected
+          {selectedDecisionCount}/{REQUIRED_ROUND_DECISION_COUNT} selected
         </span>
         <strong className={styles.statusLabel}>
           {selectionValidation.statusLabel}
@@ -270,7 +277,9 @@ function ResolveDocket({
       <div className={styles.resolveMetaGrid}>
         <div className={styles.resolveMetaItem}>
           <span>Queued plays</span>
-          <strong>{selectedDecisions.length}/2</strong>
+          <strong>
+            {selectedDecisions.length}/{REQUIRED_ROUND_DECISION_COUNT}
+          </strong>
         </div>
         <div className={styles.resolveMetaItem}>
           <span>Reserve impact</span>
@@ -300,11 +309,10 @@ function ResolveDocket({
         </div>
       ) : (
         <article className={styles.emptyDocket}>
-          <h3>No executive plays queued.</h3>
+          <h3>No executive plays queued yet.</h3>
           <p>
-            Holding the line still advances the quarter. The simulation will
-            resolve background pressure, scheduled events, and state drift with
-            the same deterministic rules.
+            The quarter review will route you back to the decision docket until
+            the required plays are locked.
           </p>
         </article>
       )}
@@ -322,6 +330,8 @@ export function RunScreen() {
   const layoutMode = useRunLayoutMode();
   const [activePhase, setActivePhase] = useState<RoundPhase>("read");
   const [furthestPhase, setFurthestPhase] = useState<RoundPhase>("read");
+  const [endRoundDialogMode, setEndRoundDialogMode] =
+    useState<EndRoundDialogMode | null>(null);
   const interactionEffectsEnabled =
     settings.visualEffectsEnabled && settings.interactionEffectsEnabled;
 
@@ -354,13 +364,34 @@ export function RunScreen() {
   }
 
   const selectedCost = getDecisionSelectionCost(selectedDecisions);
+  const missingDecisionCount = Math.max(
+    0,
+    REQUIRED_ROUND_DECISION_COUNT - selectedDecisions.length,
+  );
+  const recoveryOptions = decisions
+    .filter((decision) => {
+      if (run.selectedDecisionIds.includes(decision.id)) {
+        return false;
+      }
+
+      const candidateCost = getDecisionSelectionCost([
+        ...selectedDecisions,
+        decision,
+      ]);
+
+      return canAffordResourceCosts(run.resources, candidateCost);
+    })
+    .slice(0, 3);
   const selectionValidation = validateRoundSelection({
     resources: run.resources,
     selectedCost,
     selectedDecisionCount: run.selectedDecisionIds.length,
   });
-  const resolveLabel = getRoundResolveLabel(run.selectedDecisionIds.length);
+  const resolveLabel = getRoundResolveLabel();
   const selectedCostSummary = formatResourceCostSummary(selectedCost);
+  const canReviewResolution =
+    run.selectedDecisionIds.length <= REQUIRED_ROUND_DECISION_COUNT &&
+    canAffordResourceCosts(run.resources, selectedCost);
   const activatePhase = (nextPhase: RoundPhase) => {
     if (!isRoundPhaseReachable(nextPhase, furthestPhase)) {
       return;
@@ -374,16 +405,52 @@ export function RunScreen() {
     );
   };
   const advancePhase = () => activatePhase(getNextRoundPhase(activePhase));
-  const handleEndTurn = () => {
+  const restoreEndRoundControlFocus = () => {
+    window.requestAnimationFrame(() => {
+      document
+        .querySelector<HTMLButtonElement>("[data-end-round-control='true']")
+        ?.focus();
+    });
+  };
+  const focusDecisionSelection = () => {
+    activatePhase("choose");
+
+    window.requestAnimationFrame(() => {
+      const decisionPanel = document.getElementById("run-panel-decisions");
+      const firstOpenDecision =
+        decisionPanel?.querySelector<HTMLButtonElement>(
+          "button[aria-pressed='false']:not(:disabled)",
+        ) ??
+        decisionPanel?.querySelector<HTMLButtonElement>(
+          "button[aria-pressed]:not(:disabled)",
+        );
+
+      firstOpenDecision?.focus();
+    });
+  };
+  const closeEndRoundDialog = () => {
+    setEndRoundDialogMode(null);
+    restoreEndRoundControlFocus();
+  };
+  const reviewIncompleteSelections = () => {
+    setEndRoundDialogMode(null);
+    focusDecisionSelection();
+  };
+  const handleEndRoundRequest = () => {
     if (activePhase !== "resolve") {
       activatePhase(activePhase === "read" ? "choose" : "resolve");
       return;
     }
 
-    if (!selectionValidation.valid) {
-      return;
-    }
-
+    setEndRoundDialogMode(
+      selectedDecisions.length >= REQUIRED_ROUND_DECISION_COUNT
+        ? "complete"
+        : "incomplete",
+    );
+  };
+  const handleConfirmEndTurn = () => {
+    setEndRoundDialogMode(null);
+    emitInteractionCue("quarter-resolve");
     endTurn();
   };
 
@@ -470,14 +537,14 @@ export function RunScreen() {
                 selectedDecisionIds={run.selectedDecisionIds}
                 showControls={false}
                 onToggle={toggleDecision}
-                onEndTurn={handleEndTurn}
+                onEndTurn={handleEndRoundRequest}
               />
             </div>
 
             <PhaseActionBar
               body="Use the full docket surface to queue no more than two plays. End-round resolution stays locked behind the review phase."
               interactionEffectsEnabled={interactionEffectsEnabled}
-              primaryDisabled={!selectionValidation.valid}
+              primaryDisabled={!canReviewResolution}
               primaryLabel="Review resolution"
               secondaryLabel="Back to board packet"
               title={selectionValidation.statusLabel}
@@ -512,16 +579,15 @@ export function RunScreen() {
               </div>
 
               <QuarterControls
-                disabled={
-                  !selectionValidation.valid || activePhase !== "resolve"
-                }
+                disabled={!canReviewResolution || activePhase !== "resolve"}
                 helperText={selectionValidation.guidance}
                 interactionEffectsEnabled={interactionEffectsEnabled}
                 resolveLabel={resolveLabel}
+                resolveCue={null}
                 selectedCost={selectedCost}
                 selectedDecisionCount={run.selectedDecisionIds.length}
                 surface="docked"
-                onEndTurn={handleEndTurn}
+                onEndTurn={handleEndRoundRequest}
               />
 
               <InteractionFeedbackButton
@@ -535,6 +601,20 @@ export function RunScreen() {
           </div>
         </div>
       </div>
+
+      {endRoundDialogMode ? (
+        <EndRoundDialog
+          interactionEffectsEnabled={interactionEffectsEnabled}
+          missingDecisionCount={missingDecisionCount}
+          mode={endRoundDialogMode}
+          recoveryOptions={recoveryOptions}
+          selectedCost={selectedCost}
+          selectedDecisions={selectedDecisions}
+          onConfirm={handleConfirmEndTurn}
+          onDismiss={closeEndRoundDialog}
+          onReviewChoices={reviewIncompleteSelections}
+        />
+      ) : null}
     </section>
   );
 }

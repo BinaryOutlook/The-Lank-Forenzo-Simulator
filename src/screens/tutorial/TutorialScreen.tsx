@@ -12,11 +12,11 @@ const runFlowSteps = [
   },
   {
     title: "Choose Plays",
-    body: "Move into the choice phase and queue up to two cards. A card can buy time, raise personal wealth, calm a faction, or quietly create tomorrow's scandal.",
+    body: "Move into the choice phase and queue two cards. A card can buy time, raise personal wealth, calm a faction, or quietly create tomorrow's scandal.",
   },
   {
     title: "Resolve / End Round",
-    body: "Review the selected-play docket or hold-the-line posture, then resolve the quarter. Metrics, reserves, faction pressure, operational fragility, and dossier evidence update from your choices and queued fallout.",
+    body: "Review the selected-play docket, then use the quarter dialog to catch missing choices or confirm the pair. Metrics, reserves, faction pressure, operational fragility, and dossier evidence update from your choices and queued fallout.",
   },
   {
     title: "Handle delayed trouble",
@@ -78,7 +78,7 @@ const uiAreas = [
   },
   {
     title: "Resolve controls",
-    body: "Your selection counter, validation copy, confirmation docket, and resolve button. End-round control lives in the resolve phase.",
+    body: "Your selection counter, validation copy, confirmation docket, and end-quarter button. End-round review lives in the resolve phase.",
   },
   {
     title: "Ending recap",
@@ -194,13 +194,13 @@ export function TutorialScreen() {
                 Plays surface, then review the resolve docket.
               </li>
               <li>
-                Select up to two decision cards per round. Selected cards show a
+                Select two decision cards per round. Selected cards show a
                 pressed state before you commit.
               </li>
               <li>
-                Resolve the quarter from the resolve phase when ready. The feed
-                reports what happened, and the next decision tray reflects the
-                new state.
+                End the quarter from the resolve phase when ready. The review
+                dialog catches missing choices or confirms the pair before the
+                feed reports fallout.
               </li>
             </ul>
           </section>

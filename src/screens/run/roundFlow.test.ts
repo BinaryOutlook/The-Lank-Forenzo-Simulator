@@ -21,8 +21,8 @@ describe("round flow helpers", () => {
     expect(isRoundPhaseReachable("resolve", "choose")).toBe(true);
   });
 
-  it("treats holding the line as a valid deterministic resolution", () => {
-    expect(getRoundResolveLabel(0)).toBe("Hold the line");
+  it("tracks incomplete selections without blocking review", () => {
+    expect(getRoundResolveLabel()).toBe("End quarter");
     expect(
       validateRoundSelection({
         resources: initialConsumableResources,
@@ -31,9 +31,8 @@ describe("round flow helpers", () => {
       }),
     ).toEqual({
       valid: true,
-      statusLabel: "Hold posture ready",
-      guidance:
-        "No plays are queued. Resolution will pass the quarter without a new executive action.",
+      statusLabel: "2 choices pending",
+      guidance: "2 more choices required before the quarter can resolve.",
     });
   });
 
