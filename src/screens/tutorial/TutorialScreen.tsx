@@ -11,8 +11,8 @@ const runFlowSteps = [
     body: "Start each round by checking the brief: it summarizes the current corporate story, where pressure is gathering, and which exit windows may be opening.",
   },
   {
-    title: "Pick up to two decisions",
-    body: "Choose the cards that best fit your plan. A card can buy time, raise personal wealth, calm a faction, or quietly create tomorrow's scandal.",
+    title: "Pick two decisions",
+    body: "Choose the pair of cards that best fits your plan. A card can buy time, raise personal wealth, calm a faction, or quietly create tomorrow's scandal.",
   },
   {
     title: "Watch the state move",
@@ -174,7 +174,7 @@ export function TutorialScreen() {
           <section className={styles.panel} aria-labelledby="controls-title">
             <p className={styles.eyebrow}>Controls</p>
             <h2 id="controls-title" className={styles.sectionTitle}>
-              Click decisions, then resolve the quarter.
+              Click two decisions, then review the quarter.
             </h2>
             <ul className={styles.bulletList}>
               <li>
@@ -186,12 +186,12 @@ export function TutorialScreen() {
                 as the main board packet.
               </li>
               <li>
-                Select up to two decision cards per round. Selected cards show a
+                Select two decision cards per round. Selected cards show a
                 pressed state before you commit.
               </li>
               <li>
-                Resolve the quarter when ready. The feed reports what happened,
-                and the next decision tray reflects the new state.
+                End the quarter when ready. The review dialog catches missing
+                choices or confirms the pair before the feed reports fallout.
               </li>
             </ul>
           </section>

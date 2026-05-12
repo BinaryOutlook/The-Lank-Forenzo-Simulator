@@ -2,16 +2,25 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BoardPacket } from "../../components/board-packet/BoardPacket.js";
+import { emitInteractionCue } from "../../components/audio/interactionAudioEvents.js";
 import {
   DecisionTray,
   QuarterControls,
+  REQUIRED_ROUND_DECISION_COUNT,
 } from "../../components/decision-tray/DecisionTray.js";
 import { EventFeed } from "../../components/event-feed/EventFeed.js";
 import { useInteractionFeedback } from "../../components/interaction/useInteractionFeedback.js";
 import { MetricRail } from "../../components/metrics/MetricRail.js";
-import { getDecisionSelectionCost } from "../../simulation/systems/consumables.js";
+import {
+  canAffordResourceCosts,
+  getDecisionSelectionCost,
+} from "../../simulation/systems/consumables.js";
 import { useGameStore } from "../../simulation/state/gameStore.js";
 import { EndingScreen } from "../ending/EndingScreen.js";
+import {
+  EndRoundDialog,
+  type EndRoundDialogMode,
+} from "./EndRoundDialog.js";
 import styles from "./RunScreen.module.css";
 import { useRunLayoutMode } from "./runLayoutMode.js";
 
@@ -118,6 +127,8 @@ export function RunScreen() {
   const endTurn = useGameStore((state) => state.endTurn);
   const layoutMode = useRunLayoutMode();
   const [activePanel, setActivePanel] = useState<RunPanelId>("brief");
+  const [endRoundDialogMode, setEndRoundDialogMode] =
+    useState<EndRoundDialogMode | null>(null);
   const interactionEffectsEnabled =
     settings.visualEffectsEnabled && settings.interactionEffectsEnabled;
   const isPortraitLayout = layoutMode === "portrait-panels";
@@ -141,9 +152,66 @@ export function RunScreen() {
     run.selectedDecisionIds.includes(decision.id),
   );
   const selectedCost = getDecisionSelectionCost(selectedDecisions);
-  const resolveLabel =
-    run.selectedDecisionIds.length > 0 ? "Resolve the quarter" : "Hold the line";
-  const handleEndTurn = () => {
+  const missingDecisionCount = Math.max(
+    0,
+    REQUIRED_ROUND_DECISION_COUNT - selectedDecisions.length,
+  );
+  const recoveryOptions = decisions
+    .filter((decision) => {
+      if (run.selectedDecisionIds.includes(decision.id)) {
+        return false;
+      }
+
+      const candidateCost = getDecisionSelectionCost([
+        ...selectedDecisions,
+        decision,
+      ]);
+
+      return canAffordResourceCosts(run.resources, candidateCost);
+    })
+    .slice(0, 3);
+  const resolveLabel = "End quarter";
+  const restoreEndRoundControlFocus = () => {
+    window.requestAnimationFrame(() => {
+      document
+        .querySelector<HTMLButtonElement>("[data-end-round-control='true']")
+        ?.focus();
+    });
+  };
+  const focusDecisionSelection = () => {
+    setActivePanel("decisions");
+
+    window.requestAnimationFrame(() => {
+      const decisionPanel = document.getElementById("run-panel-decisions");
+      const firstOpenDecision =
+        decisionPanel?.querySelector<HTMLButtonElement>(
+          "button[aria-pressed='false']:not(:disabled)",
+        ) ??
+        decisionPanel?.querySelector<HTMLButtonElement>(
+          "button[aria-pressed]:not(:disabled)",
+        );
+
+      firstOpenDecision?.focus();
+    });
+  };
+  const closeEndRoundDialog = () => {
+    setEndRoundDialogMode(null);
+    restoreEndRoundControlFocus();
+  };
+  const reviewIncompleteSelections = () => {
+    setEndRoundDialogMode(null);
+    focusDecisionSelection();
+  };
+  const handleEndRoundRequest = () => {
+    setEndRoundDialogMode(
+      selectedDecisions.length >= REQUIRED_ROUND_DECISION_COUNT
+        ? "complete"
+        : "incomplete",
+    );
+  };
+  const handleConfirmEndTurn = () => {
+    setEndRoundDialogMode(null);
+    emitInteractionCue("quarter-resolve");
     endTurn();
 
     if (isPortraitLayout) {
@@ -225,10 +293,11 @@ export function RunScreen() {
           decisions={decisions}
           interactionEffectsEnabled={interactionEffectsEnabled}
           resources={run.resources}
+          resolveCue={null}
           selectedDecisionIds={run.selectedDecisionIds}
           showControls={!isPortraitLayout}
           onToggle={toggleDecision}
-          onEndTurn={handleEndTurn}
+          onEndTurn={handleEndRoundRequest}
         />
       </div>
 
@@ -249,12 +318,27 @@ export function RunScreen() {
           <QuarterControls
             interactionEffectsEnabled={interactionEffectsEnabled}
             resolveLabel={resolveLabel}
+            resolveCue={null}
             selectedCost={selectedCost}
             selectedDecisionCount={run.selectedDecisionIds.length}
             surface="docked"
-            onEndTurn={handleEndTurn}
+            onEndTurn={handleEndRoundRequest}
           />
         </div>
+      ) : null}
+
+      {endRoundDialogMode ? (
+        <EndRoundDialog
+          interactionEffectsEnabled={interactionEffectsEnabled}
+          missingDecisionCount={missingDecisionCount}
+          mode={endRoundDialogMode}
+          recoveryOptions={recoveryOptions}
+          selectedCost={selectedCost}
+          selectedDecisions={selectedDecisions}
+          onConfirm={handleConfirmEndTurn}
+          onDismiss={closeEndRoundDialog}
+          onReviewChoices={reviewIncompleteSelections}
+        />
       ) : null}
     </section>
   );

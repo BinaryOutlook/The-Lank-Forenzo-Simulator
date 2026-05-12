@@ -34,6 +34,28 @@ async function showRunPanel(page: Page, panelName: string) {
   }
 }
 
+async function selectNextOpenDecision(page: Page) {
+  const selectedDecisions = page.locator("button[aria-pressed='true']");
+  const selectedCountBefore = await selectedDecisions.count();
+  const decision = page
+    .locator("button[aria-pressed='false']:not(:disabled)")
+    .first();
+
+  await decision.click();
+  await expect(selectedDecisions).toHaveCount(selectedCountBefore + 1);
+}
+
+async function confirmQuarterResolution(page: Page) {
+  await page
+    .getByTestId("quarter-controls")
+    .getByRole("button", { name: /end quarter/i })
+    .click();
+  await expect(
+    page.getByRole("dialog", { name: /seal the quarter/i }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: /resolve quarter/i }).click();
+}
+
 test("landing screen starts a run and advances a quarter", async ({ page }) => {
   await page.goto("/");
   const primaryNav = page.getByRole("navigation", { name: "Primary" });
@@ -179,10 +201,17 @@ test("landing screen starts a run and advances a quarter", async ({ page }) => {
   await firstDecision.click();
   await expect(firstDecision).toHaveAttribute("aria-pressed", "true");
 
-  await page
-    .getByTestId("quarter-controls")
-    .getByRole("button", { name: /resolve the quarter/i })
-    .click();
+  const controls = page.getByTestId("quarter-controls");
+  await controls.getByRole("button", { name: /end quarter/i }).click();
+  await expect(
+    page.getByRole("dialog", { name: /the tray is not locked yet/i }),
+  ).toBeVisible();
+  await expect(page.getByText(/1 choice still required/i)).toBeVisible();
+  await page.getByRole("button", { name: /back to decision tray/i }).click();
+
+  await selectNextOpenDecision(page);
+  await expect(controls.getByText("2/2 selected")).toBeVisible();
+  await confirmQuarterResolution(page);
 
   await showRunPanel(page, "Feed");
   await expect(consequenceFeed.getByText(/^R2$/).first()).toBeVisible();
@@ -226,10 +255,11 @@ test("responsive run layout keeps touch controls and portrait panels reachable",
 
   await expect(controls).toBeVisible();
   await expect(controls.getByText("0/2 selected")).toBeVisible();
-  await page.locator("button[aria-pressed]").first().click();
-
+  await selectNextOpenDecision(page);
   await expect(controls.getByText("1/2 selected")).toBeVisible();
-  await controls.getByRole("button", { name: /resolve the quarter/i }).click();
+  await selectNextOpenDecision(page);
+  await expect(controls.getByText("2/2 selected")).toBeVisible();
+  await confirmQuarterResolution(page);
   await expect(page.getByText(/^R2$/).first()).toBeVisible();
 });
 
@@ -286,11 +316,13 @@ test("run screen is a fitted app surface across supported viewport projects", as
   await expect(controls).toBeVisible();
   await expect(controls.getByText("0/2 selected")).toBeVisible();
 
-  await page.locator("button[aria-pressed]").first().click();
+  await selectNextOpenDecision(page);
   await expect(controls.getByText("1/2 selected")).toBeVisible();
+  await selectNextOpenDecision(page);
+  await expect(controls.getByText("2/2 selected")).toBeVisible();
   await expectNoDocumentVerticalOverflow(page);
 
-  await controls.getByRole("button", { name: /resolve the quarter/i }).click();
+  await confirmQuarterResolution(page);
   await expect(page.getByText(/^R2$/).first()).toBeVisible();
   await expectNoDocumentVerticalOverflow(page);
 
@@ -300,9 +332,11 @@ test("run screen is a fitted app surface across supported viewport projects", as
     await page.getByRole("tab", { name: "Decisions" }).click();
   }
 
-  await page.locator("button[aria-pressed]").first().click();
+  await selectNextOpenDecision(page);
   await expect(controls.getByText("1/2 selected")).toBeVisible();
-  await controls.getByRole("button", { name: /resolve the quarter/i }).click();
+  await selectNextOpenDecision(page);
+  await expect(controls.getByText("2/2 selected")).toBeVisible();
+  await confirmQuarterResolution(page);
   await expect(page.getByText(/^R3$/).first()).toBeVisible();
   await expectNoDocumentVerticalOverflow(page);
 });
