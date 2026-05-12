@@ -345,9 +345,17 @@ It should contain:
 - a current narrative panel or event stack
 - an end-turn control
 
+The run screen should organize each round as an explicit sequence:
+
+1. **Read / Board Packet**: inspect the situation, pressure reads, run state, and consequence feed.
+2. **Choose Plays**: use a dedicated decision-selection surface for the available plays and reserve checks.
+3. **Resolve / End Round**: confirm the queued actions or hold-the-line posture, then advance the deterministic simulation.
+
+The end-turn control belongs to the resolve phase. Selection validation should stay visible throughout the phase rail, but it must not force the decision tray to share the same cramped visual frame as every surrounding panel.
+
 It should behave like a fitted game interface, not a long web page. Normal play across supported desktop landscape, tablet landscape,
 tablet portrait, and phone portrait viewports should keep document-level vertical scrolling at zero. Long content should scroll inside
-explicit panels, collapse, summarize, or move behind portrait panel navigation rather than pushing the whole run page beyond the viewport.
+explicit panels or phase bodies, collapse, summarize, or move behind focused phase navigation rather than pushing the whole run page beyond the viewport.
 
 ### 11.3 Options page
 
@@ -485,12 +493,13 @@ Responsive behavior should preserve:
 
 - access to required round controls through touch-friendly targets
 - visibility of the board packet, major run metrics, decisions, and consequence feed
+- the explicit read → choose → resolve phase order without changing simulation rules
 - readable text without horizontal scrolling
 - no document-level vertical scrolling during normal run play on supported viewport projects
 - safe-area spacing for notches, browser chrome, and virtual keyboard resizing
 - the same simulation information and decision rules across device classes
 
-Portrait layouts may reorganize sections into tabs, drawers, or paged panels, but they must not become a separate mobile version with different gameplay advantages.
+Portrait layouts may reorganize sections into phase bodies, tabs, drawers, or paged panels, but they must not become a separate mobile version with different gameplay advantages.
 
 ### 13.4 Decision system
 

@@ -42,7 +42,7 @@ describe("TutorialScreen", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
-        name: /click decisions, then resolve the quarter/i,
+        name: /read, choose, then resolve the quarter/i,
       }),
     ).toBeInTheDocument();
     expect(
@@ -67,7 +67,7 @@ describe("TutorialScreen", () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/dossier weight makes legal/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/portrait layouts, controls stay reachable/i),
+      screen.getByText(/end-round control lives in the resolve phase/i),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /start a new run/i }),

@@ -1,11 +1,182 @@
 .layout {
-  --run-layout-gap: clamp(0.5rem, 0.8vw, 0.8rem);
+  --run-layout-gap: clamp(0.5rem, 0.8vw, 0.85rem);
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: var(--run-layout-gap);
   min-width: 0;
   min-height: 0;
   height: 100%;
   overflow: hidden;
+}
+
+.flowHeader {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.62fr) minmax(0, 1.5fr) minmax(
+      14rem,
+      0.72fr
+    );
+  gap: var(--run-layout-gap);
+  align-items: stretch;
+  min-width: 0;
+}
+
+.flowTitleBlock,
+.flowStatus,
+.phaseActionBar,
+.resolveDocket,
+.resolveControls {
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--panel) 90%, transparent);
+  box-shadow: var(--shadow-ambient);
+}
+
+.flowTitleBlock {
+  display: grid;
+  align-content: center;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 0.85rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--accent-strong);
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.flowTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 1vw + 0.95rem, 1.72rem);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.phaseNav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 0.35rem;
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--panel-strong) 82%, transparent);
+}
+
+.phaseTab,
+.phaseTabActive {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.2rem 0.55rem;
+  align-content: center;
+  min-width: 0;
+  min-height: 4.65rem;
+  padding: 0.65rem;
+  border: 1px solid color-mix(in oklab, var(--border) 88%, transparent);
+  color: var(--text-muted);
+  text-align: left;
+  background: color-mix(in oklab, var(--panel) 82%, transparent);
+}
+
+.phaseTabActive {
+  border-color: color-mix(in oklab, var(--accent) 58%, var(--border));
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--accent-soft) 74%, var(--panel)),
+    color-mix(in oklab, var(--panel) 86%, transparent)
+  );
+  color: var(--text);
+}
+
+.phaseTab:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.phaseTab:focus-visible,
+.phaseTabActive:focus-visible,
+.primaryAction:focus-visible,
+.secondaryAction:focus-visible {
+  outline: none;
+  border-color: color-mix(in oklab, var(--accent) 60%, var(--border));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+}
+
+.phaseStep {
+  grid-row: span 2;
+  color: var(--accent-strong);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.12em;
+}
+
+.phaseLabel {
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 0.77rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.phaseDescription {
+  grid-column: 2;
+  min-width: 0;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.flowStatus {
+  display: grid;
+  align-content: center;
+  gap: 0.28rem;
+  min-width: 0;
+  padding: 0.85rem;
+}
+
+.statusCount,
+.statusGuidance {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.statusCount {
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.statusLabel {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1.05;
+}
+
+.phaseBody,
+.phasePanel,
+.readPhase,
+.choosePhase,
+.resolvePhase {
+  min-width: 0;
+  min-height: 0;
+}
+
+.phaseBody {
+  display: grid;
+  overflow: hidden;
+}
+
+.phasePanel {
+  display: grid;
+  overflow: hidden;
+}
+
+.phasePanel[hidden] {
+  display: none;
 }
 
 .panel {
@@ -14,139 +185,411 @@
   overflow: hidden;
 }
 
-.panel[hidden] {
-  display: none;
+.boardArea,
+.decisionArea {
+  display: grid;
 }
 
-.metricsArea {
-  grid-area: metrics;
+.readPhase,
+.choosePhase {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: var(--run-layout-gap);
+}
+
+.readGrid {
+  display: grid;
+  grid-template-areas:
+    "board metrics"
+    "board feed";
+  grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.72fr);
+  grid-template-rows: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: var(--run-layout-gap);
+  min-width: 0;
+  min-height: 0;
 }
 
 .boardArea {
   grid-area: board;
 }
 
-.decisionArea {
-  grid-area: decisions;
+.metricsArea {
+  grid-area: metrics;
 }
 
 .feedArea {
   grid-area: feed;
 }
 
-.boardArea,
 .decisionArea {
-  display: grid;
+  min-height: 0;
 }
 
-.panelNav {
-  grid-area: nav;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.35rem;
-  min-width: 0;
-  padding: 0.3rem;
-  border: 1px solid var(--border);
-  background: color-mix(in oklab, var(--panel) 88%, transparent);
-}
-
-.panelTab,
-.panelTabActive {
-  display: inline-flex;
+.phaseActionBar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
   align-items: center;
-  justify-content: center;
   min-width: 0;
-  min-height: 2.65rem;
-  padding: 0 0.55rem;
-  border: 1px solid color-mix(in oklab, var(--border) 88%, transparent);
+  padding: 0.85rem;
+}
+
+.phaseActionCopy {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.actionTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 0.55vw + 0.92rem, 1.35rem);
+  line-height: 1.05;
+}
+
+.actionBody {
+  margin: 0;
+  max-width: 68rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.phaseActionControls {
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.primaryAction,
+.secondaryAction {
+  min-height: 2.85rem;
+  padding: 0 1rem;
+  border: 1px solid var(--border);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.primaryAction {
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+  background: var(--accent);
+  color: var(--canvas);
+}
+
+.secondaryAction {
+  background: color-mix(in oklab, var(--panel-strong) 86%, transparent);
+  color: var(--text-muted);
+}
+
+.primaryAction:disabled {
+  cursor: not-allowed;
+  border-color: var(--border);
+  background: color-mix(in oklab, var(--panel-strong) 82%, var(--text) 8%);
+  color: var(--text-muted);
+}
+
+.resolvePhase {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 0.42fr);
+  gap: var(--run-layout-gap);
+}
+
+.resolveDocket {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 1rem;
+  min-width: 0;
+  min-height: 0;
+  padding: clamp(1rem, 1.4vw, 1.35rem);
+  overflow: hidden;
+}
+
+.resolveHeader {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.resolveTitle,
+.resolveControlCopy h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1.2vw + 1rem, 2rem);
+  line-height: 1.02;
+}
+
+.resolveSummary,
+.resolveControlCopy p,
+.emptyDocket p,
+.resolveCard p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.resolveMetaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.resolveMetaItem {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid color-mix(in oklab, var(--border) 88%, var(--accent) 12%);
+  background: color-mix(in oklab, var(--panel-strong) 72%, transparent);
+}
+
+.resolveMetaItem span,
+.resolveCardHeader,
+.resolveCost {
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.08em;
-  line-height: 1.1;
   text-transform: uppercase;
+}
+
+.resolveMetaItem strong {
+  min-width: 0;
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+.resolveList {
+  display: grid;
+  align-content: start;
+  gap: 0.85rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  scrollbar-width: thin;
+}
+
+.resolveCard,
+.emptyDocket {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
   background: color-mix(in oklab, var(--panel-strong) 68%, transparent);
 }
 
-.panelTabActive {
-  border-color: color-mix(in oklab, var(--accent) 58%, var(--border));
-  background: color-mix(in oklab, var(--accent-soft) 72%, var(--panel));
-  color: var(--text);
+.resolveCardHeader {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.65rem;
 }
 
-.panelTab:focus-visible,
-.panelTabActive:focus-visible,
-.panel[tabindex="0"]:focus-visible {
-  outline: none;
-  border-color: color-mix(in oklab, var(--accent) 60%, var(--border));
-  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+.resolveCard h3,
+.emptyDocket h3 {
+  margin: 0;
+  font-size: 1.1rem;
 }
 
-.persistentControls {
-  grid-area: controls;
+.resolveCost {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 1.8rem;
+  align-items: center;
+  padding: 0 0.65rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 38%, var(--border));
+  background: color-mix(in oklab, var(--accent-soft) 64%, transparent);
+  color: var(--accent-strong);
+  font-weight: 700;
+}
+
+.resolveControls {
+  display: grid;
+  align-content: start;
+  gap: 0.85rem;
   min-width: 0;
+  min-height: 0;
+  padding: 0.9rem;
 }
 
-.layout[data-run-layout-mode="desktop-landscape"] {
-  grid-template-areas:
-    "metrics board feed"
-    "metrics decisions feed";
-  grid-template-columns:
-    minmax(13.5rem, 0.76fr)
-    minmax(0, 1.8fr)
-    minmax(14rem, 0.78fr);
-  grid-template-rows: minmax(0, 0.94fr) minmax(0, 1.06fr);
+.resolveControlCopy {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.resolveControls .secondaryAction {
+  width: 100%;
 }
 
 @media (min-width: 1600px) {
-  .layout[data-run-layout-mode="desktop-landscape"] {
-    grid-template-areas:
-      "metrics board feed"
-      "decisions decisions decisions";
-    grid-template-columns:
-      minmax(17rem, 0.92fr)
-      minmax(32rem, 1.7fr)
-      minmax(17rem, 0.92fr);
-    grid-template-rows: minmax(18.5rem, 0.46fr) minmax(0, 0.54fr);
+  .readGrid {
+    grid-template-areas: "board metrics feed";
+    grid-template-columns: minmax(32rem, 1.5fr) minmax(17rem, 0.72fr) minmax(
+        17rem,
+        0.72fr
+      );
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .resolveList {
+    grid-template-columns: repeat(2, minmax(18rem, 1fr));
   }
 }
 
-.layout[data-run-layout-mode="tablet-landscape"] {
-  grid-template-areas:
-    "board metrics"
-    "decisions feed";
-  grid-template-columns: minmax(0, 1.34fr) minmax(17rem, 0.9fr);
-  grid-template-rows: minmax(0, 0.88fr) minmax(0, 1.12fr);
+.layout[data-run-layout-mode="tablet-landscape"] .flowHeader {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.layout[data-run-layout-mode="tablet-landscape"] .flowTitleBlock {
+  display: none;
+}
+
+.layout[data-run-layout-mode="tablet-landscape"] .readGrid {
+  grid-template-columns: minmax(0, 1.2fr) minmax(16rem, 0.82fr);
+}
+
+.layout[data-run-layout-mode="tablet-landscape"] .phaseTab,
+.layout[data-run-layout-mode="tablet-landscape"] .phaseTabActive {
+  min-height: 3.85rem;
+}
+
+.layout[data-run-layout-mode="tablet-landscape"] .phaseDescription {
+  display: none;
+}
+
+.layout[data-run-layout-mode="tablet-landscape"] .resolvePhase {
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 0.45fr);
 }
 
 .layout[data-run-layout-mode="portrait-panels"] {
-  grid-template-areas:
-    "nav"
-    "active"
-    "controls";
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .flowHeader {
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .flowTitleBlock {
+  display: none;
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .phaseNav {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.3rem;
+  padding: 0.3rem;
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .phaseTab,
+.layout[data-run-layout-mode="portrait-panels"] .phaseTabActive {
+  min-height: 2.9rem;
+  padding: 0.5rem;
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .phaseDescription {
+  display: none;
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .flowStatus {
+  padding: 0.7rem;
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .readPhase,
+.layout[data-run-layout-mode="portrait-panels"] .choosePhase,
+.layout[data-run-layout-mode="portrait-panels"] .resolvePhase {
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .choosePhase {
+  grid-template-rows: auto auto;
+  align-content: start;
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .readGrid {
+  grid-template-areas:
+    "board"
+    "metrics"
+    "feed";
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  overflow: visible;
 }
 
 .layout[data-run-layout-mode="portrait-panels"] .panel {
-  grid-area: active;
+  overflow: visible;
 }
 
-@media (max-width: 520px) {
+.layout[data-run-layout-mode="portrait-panels"] .decisionArea {
+  min-height: auto;
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .phaseActionBar {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.7rem;
+  background: color-mix(in oklab, var(--panel-strong) 94%, transparent);
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .phaseActionControls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .primaryAction,
+.layout[data-run-layout-mode="portrait-panels"] .secondaryAction {
+  width: 100%;
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .resolvePhase {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .resolveDocket {
+  overflow: visible;
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .resolveMetaGrid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.layout[data-run-layout-mode="portrait-panels"] .resolveControls {
+  position: sticky;
+  bottom: 0;
+  background: color-mix(in oklab, var(--panel-strong) 94%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+@media (max-width: 640px) {
   .layout {
     --run-layout-gap: 0.5rem;
   }
 
-  .panelNav {
-    gap: 0.25rem;
-    padding: 0.25rem;
+  .phaseLabel {
+    font-size: 0.68rem;
   }
 
-  .panelTab,
-  .panelTabActive {
-    min-height: 2.5rem;
-    padding-inline: 0.35rem;
+  .phaseStep,
+  .statusCount,
+  .statusGuidance,
+  .eyebrow {
     font-size: 0.66rem;
-    letter-spacing: 0.05em;
+  }
+
+  .flowStatus,
+  .phaseActionBar,
+  .resolveControls {
+    padding: 0.65rem;
+  }
+
+  .actionBody,
+  .resolveSummary,
+  .resolveControlCopy p,
+  .emptyDocket p,
+  .resolveCard p {
+    font-size: 0.92rem;
+  }
+
+  .resolveDocket {
+    padding: 0.85rem;
   }
 }

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>V0.8 Explicit Round Flow Demo</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --canvas: #111512;
+        --panel: #182019;
+        --panel-strong: #202920;
+        --border: #3d4a3d;
+        --text: #edf2e8;
+        --muted: #a8b2a1;
+        --accent: #9fb36c;
+      }
+
+      body {
+        margin: 0;
+        background: var(--canvas);
+        color: var(--text);
+        font-family: Inter, system-ui, sans-serif;
+      }
+
+      main {
+        display: grid;
+        min-height: 100vh;
+        gap: 0.75rem;
+        padding: 1rem;
+        box-sizing: border-box;
+      }
+
+      .phase-rail,
+      .surface,
+      .footer {
+        border: 1px solid var(--border);
+        background: var(--panel);
+      }
+
+      .phase-rail {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.4rem;
+        padding: 0.4rem;
+      }
+
+      .phase {
+        min-height: 4rem;
+        padding: 0.7rem;
+        border: 1px solid var(--border);
+        background: var(--panel-strong);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.8rem;
+      }
+
+      .phase strong {
+        display: block;
+        margin-top: 0.35rem;
+        color: var(--accent);
+        font-size: 1rem;
+      }
+
+      .surface {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 0.6fr);
+        gap: 0.75rem;
+        padding: 0.75rem;
+      }
+
+      .packet,
+      .side,
+      .choice,
+      .resolve {
+        min-height: 12rem;
+        border: 1px solid var(--border);
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.025);
+      }
+
+      .choice {
+        grid-column: 1 / -1;
+      }
+
+      .footer {
+        padding: 0.85rem;
+        color: var(--muted);
+      }
+
+      @media (max-width: 780px) {
+        .phase-rail,
+        .surface {
+          grid-template-columns: 1fr;
+        }
+
+        .choice {
+          grid-column: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main aria-label="V0.8 round flow layout sketch">
+      <section class="phase-rail" aria-label="Round phases">
+        <div class="phase">01<strong>Read / Board Packet</strong></div>
+        <div class="phase">02<strong>Choose Plays</strong></div>
+        <div class="phase">03<strong>Resolve / End Round</strong></div>
+      </section>
+      <section class="surface">
+        <article class="packet">
+          Read phase: board packet, pressure read, run state, and consequence
+          feed.
+        </article>
+        <aside class="side">
+          Validation remains visible without stealing the decision surface.
+        </aside>
+        <article class="choice">
+          Choose phase: decision cards get a dedicated docket with reserve
+          checks.
+        </article>
+        <article class="resolve">
+          Resolve phase: selected plays or hold-the-line posture are confirmed
+          before advancing.
+        </article>
+      </section>
+      <footer class="footer">
+        The visual target remains severe, ledger-like, institutional, and tense.
+      </footer>
+    </main>
+  </body>
+</html>

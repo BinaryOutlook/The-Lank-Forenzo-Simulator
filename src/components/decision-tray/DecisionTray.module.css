@@ -50,15 +50,22 @@
 }
 
 .selectionCount,
-.selectionCost {
+.selectionCost,
+.selectionHelper {
   margin: 0;
   color: var(--text-muted);
   font-size: 0.85rem;
 }
 
-.selectionCost {
+.selectionCost,
+.selectionHelper {
   max-width: 20rem;
   text-align: right;
+}
+
+.selectionHelper {
+  font-size: 0.78rem;
+  line-height: 1.35;
 }
 
 .resolveButton {
@@ -85,7 +92,8 @@
 }
 
 .controlsDocked .selectionCount,
-.controlsDocked .selectionCost {
+.controlsDocked .selectionCost,
+.controlsDocked .selectionHelper {
   max-width: none;
   text-align: center;
 }
@@ -98,6 +106,13 @@
 .resolveButton:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 26%, transparent);
+}
+
+.resolveButton:disabled {
+  cursor: not-allowed;
+  border-color: var(--border);
+  background: color-mix(in oklab, var(--panel-strong) 80%, var(--text) 8%);
+  color: var(--text-muted);
 }
 
 .resourceLedger {
@@ -447,7 +462,8 @@
     text-align: center;
   }
 
-  .controls .selectionCost {
+  .controls .selectionCost,
+  .controls .selectionHelper {
     max-width: none;
     text-align: center;
   }
@@ -493,6 +509,32 @@
   line-height: 1.38;
 }
 
+:global([data-round-phase="choose"][data-run-layout-mode="desktop-landscape"])
+  .list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(18rem, 1fr));
+  align-content: start;
+}
+
+:global([data-round-phase="choose"][data-run-layout-mode="desktop-landscape"])
+  .card {
+  height: 100%;
+}
+
+:global([data-round-phase="choose"][data-run-layout-mode="tablet-landscape"])
+  .list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(14rem, 1fr));
+  align-content: start;
+}
+
+@media (min-width: 1600px) {
+  :global([data-round-phase="choose"][data-run-layout-mode="desktop-landscape"])
+    .list {
+    grid-template-columns: repeat(3, minmax(18rem, 1fr));
+  }
+}
+
 @media (max-width: 520px) {
   .tray {
     gap: 0.85rem;
@@ -536,6 +578,15 @@
 
 :global([data-run-layout-mode="portrait-panels"]) .tray {
   gap: 0.7rem;
+  grid-template-rows: auto auto auto;
+  height: auto;
+  overflow: visible;
+}
+
+:global([data-run-layout-mode="portrait-panels"]) .list {
+  min-height: auto;
+  overflow: visible;
+  padding-right: 0;
 }
 
 :global([data-run-layout-mode="portrait-panels"]) .title {
@@ -575,6 +626,8 @@
   padding: 0.55rem;
 }
 
-:global([data-run-layout-mode="portrait-panels"]) .controlsDocked .resolveButton {
+:global([data-run-layout-mode="portrait-panels"])
+  .controlsDocked
+  .resolveButton {
   min-height: 3rem;
 }

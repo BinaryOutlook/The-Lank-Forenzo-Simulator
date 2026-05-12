@@ -22,6 +22,7 @@ Implemented in the current build:
 - shared metric-semantics rules so inverse-pressure indicators such as `legalHeat`, `publicAnger`, and `debt` read correctly
 - multiple endings, including merger, extraction, prison, and Bahamas escape
 - two first-class themes: `Earth` and `Armonk Blue`
+- explicit read → choose → resolve round phases so the board packet, decision tray, and end-round confirmation have separate breathing room
 - scroll-less fitted run layouts for desktop landscape, tablet landscape, tablet portrait, and phone portrait browser play
 - a standalone About page that frames the aviation satire, motivation, and design intent without interrupting play
 - a dedicated Tutorial page that teaches the objective, interaction model, run flow, key concepts, and run UI before a first playthrough
@@ -34,7 +35,7 @@ There have been decades of airline and air-management games, but most define man
 
 You are not playing as a meticulous operator trying to build the best airline. You are playing from the macro level, managing the distance between two ledgers: the company and yourself. The airline can be failing while you are still winning, and that split is the product's core lens for every system, screen, and decision.
 
-Each round presents a board packet, a curated decision tray, and a consequence feed. The question is not how to optimize routes or tune fleet utilization. The question is how long you can keep the company just credible enough to keep extracting value before creditors, regulators, workers, and the market close in.
+Each round now moves through three explicit phases: read the board packet and pressure state, choose plays on a dedicated decision surface, then resolve the quarter from a confirmation docket. The question is not how to optimize routes or tune fleet utilization. The question is how long you can keep the company just credible enough to keep extracting value before creditors, regulators, workers, and the market close in.
 
 Strategic actions can now draw from three limited reserves: strategic cash, personal assets, and public relations capital. Expensive plays such as regulator influence, union-conflict maneuvers, lobbying, merger backchannels, and offshore networking show their reserve costs in the decision tray before they can be queued.
 
@@ -121,12 +122,13 @@ After the core gate passes, CI runs the lightweight balance and reachability dia
 
 ## Responsive Browser Play
 
-The run screen is designed as a fitted app surface across desktop landscape, tablet landscape, tablet portrait, and mobile portrait browser viewports.
+The run screen is designed as a fitted, phased app surface across desktop landscape, tablet landscape, tablet portrait, and mobile portrait browser viewports.
 
-- Desktop and tablet landscape use dense command-center grids with internal panel scrolling instead of document scrolling.
-- Very wide desktop windows promote the decision tray into a full-width lower deck so the actionable choices use the extra horizontal space.
-- Tablet and phone portrait use explicit Brief, State, Decisions, and Feed panels with a segmented tab bar.
-- Portrait quarter controls live in a persistent bottom control surface, so resolving a quarter stays reachable while inspecting any panel.
+- Every viewport uses the same Read / Board Packet, Choose Plays, and Resolve / End Round phase rail.
+- The Read phase keeps the board packet, run state, and consequence feed together as the situational packet.
+- The Choose phase gives the decision tray its own surface, with no end-round button competing for attention.
+- The Resolve phase owns the quarter controls, selected-play confirmation, hold-the-line posture, and validation copy.
+- Portrait layouts keep phase controls and resolution controls reachable while long phase content scrolls inside the run surface.
 - Viewport safe-area and dynamic-height CSS are used so browser chrome and virtual keyboards are less likely to cover critical controls.
 - `npm run test:e2e` runs the smoke flow and document-overflow assertions across desktop landscape, tablet landscape, tablet portrait, and mobile portrait Chromium projects.
 
