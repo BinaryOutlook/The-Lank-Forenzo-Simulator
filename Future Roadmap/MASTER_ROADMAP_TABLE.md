@@ -3,7 +3,9 @@
 Status: Authoritative candidate-work index
 Last updated: 2026-05-12
 
-This table is the queue. A row here does not mean the work is active. It means the work has been noticed, categorized, and given enough structure to decide whether it should wait, be clarified, receive architecture review, or be promoted to a GitHub issue.
+This table is the active candidate queue. A row here does not mean the work is active. It means the work has been noticed, categorized, and given enough structure to decide whether it should wait, be clarified, receive architecture review, or be promoted to a GitHub issue.
+
+Completed, rejected, or superseded records move to [`archive/`](archive/) after the post-merge or review audit. Keep this table focused on decisions still waiting in line.
 
 ## Status Values
 
@@ -15,8 +17,8 @@ This table is the queue. A row here does not mean the work is active. It means t
 - `Promoted to GitHub Issue`: active tracker item exists.
 - `In Progress`: promoted work is actively underway.
 - `Blocked`: cannot proceed until a dependency or decision clears.
-- `Done`: complete and merged.
-- `Rejected / Archived`: deliberately not moving forward.
+- `Done`: complete and merged, waiting for archive cleanup.
+- `Rejected / Archived`: deliberately not moving forward, waiting for or already represented by an archive record.
 
 ## Parallelism Class Legend
 
@@ -31,7 +33,6 @@ This table is the queue. A row here does not mean the work is active. It means t
 
 | ID | Title | Brief Link | Category | Reward / Value | Effort | Technical Difficulty | Conflict Risk | Core-System Risk | Dependencies | Parallelism Class | Priority | Status | Decision | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| FR-0001 | Centralize roadmap workflow | No brief; direct governance task | Documentation / process | Reduces premature issues, duplicate agent work, and roadmap drift. | S | Low | Low | Low | None | Green | P0 | Done | Keep as completed foundation | Created `Future Roadmap/`, normalized root docs, and marked older planning docs as historical or superseded where needed. |
 | FR-0002 | Refresh balance and reachability thresholds | Brief needed | Balance / tooling | Keeps dominant paths and low-reachability content visible before new systems expand the search space. | M | Medium | Medium | Medium | Current `balance:matrix` and `reachability:report` baselines | Yellow | P1 | Idea | Keep in roadmap | Distilled from `docs/FUTURE_REPORT.md`, `PRDs/v0.6/`, and historical issue #18 work. Promote only with current report output. |
 | FR-0003 | Decision tray diagnostics follow-up | Brief needed | Simulation / diagnostics | Explains why choices surface or miss, improving balance tuning and player-facing causality. | M | Medium | Medium | Medium | Existing tray composer and report hooks | Yellow | P2 | Idea | Keep in roadmap | Related to historical issue #22; require a fresh brief if expanding beyond shipped diagnostics. |
 | FR-0004 | Run archive implementation | Brief needed | Persistence / UX | Lets completed runs become durable local records instead of disappearing after the ending screen. | L | High | High | High | `docs/reference/run-archive.md`, current save model, archive storage decision | Orange | P2 | Needs Architecture Review | Wait for scoped implementation brief | Design reference exists, but no runtime archive should be implemented without storage, migration, and rollback review. |
@@ -50,3 +51,4 @@ This table is the queue. A row here does not mean the work is active. It means t
 - Existing historical GitHub issues remain valid records, but this table is the queue for future candidate work.
 - Red and orange rows should be split or architecture-reviewed before promotion.
 - Green rows can be parallelized only when file ownership is explicit.
+- Completed rows should move to [`archive/`](archive/) after issue -> PR -> merge to `main` -> post-merge audit.

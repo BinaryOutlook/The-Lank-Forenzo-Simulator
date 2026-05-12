@@ -138,7 +138,7 @@ After the core gate passes, CI runs the lightweight balance and reachability dia
 
 ## Planning and Issue Workflow
 
-Project planning now flows through [`Future Roadmap/`](Future%20Roadmap/README.md) before it becomes active GitHub work. Raw ideas, refactors, feature requests, and agent tasks should become candidate issue briefs first; promoted GitHub issues are reserved for scoped, prioritized, reviewable work.
+Project planning now flows through [`Future Roadmap/`](Future%20Roadmap/README.md) before it becomes active GitHub work. Raw ideas, refactors, feature requests, and agent tasks should become candidate issue briefs first; promoted GitHub issues are reserved for scoped, prioritized, reviewable work. Completed, rejected, and superseded roadmap records move to [`Future Roadmap/archive/`](Future%20Roadmap/archive/) after post-merge audit so the active table stays readable.
 
 Agents should not freely implement from scattered TODOs, historical plans, or roadmap prose. Before opening or working on broad issues, check [`Future Roadmap/MASTER_ROADMAP_TABLE.md`](Future%20Roadmap/MASTER_ROADMAP_TABLE.md), respect the listed parallelism class, and send high-conflict or core-system work through architecture review before promotion.
 
@@ -173,6 +173,7 @@ Future Roadmap/
   README.md
   MASTER_ROADMAP_TABLE.md
   ISSUE_BRIEF_TEMPLATE.md
+  archive/
   issue-briefs/
 idea.md
 public/
@@ -275,7 +276,7 @@ unless they are intentionally testing lower-level systems.
 
 ## Documentation
 
-- Future Roadmap workflow and candidate queue: [Future Roadmap/README.md](Future%20Roadmap/README.md), [Future Roadmap/MASTER_ROADMAP_TABLE.md](Future%20Roadmap/MASTER_ROADMAP_TABLE.md)
+- Future Roadmap workflow, candidate queue, and archive: [Future Roadmap/README.md](Future%20Roadmap/README.md), [Future Roadmap/MASTER_ROADMAP_TABLE.md](Future%20Roadmap/MASTER_ROADMAP_TABLE.md), [Future Roadmap/archive/README.md](Future%20Roadmap/archive/README.md)
 - Product requirements: [docs/PRD.md](docs/PRD.md)
 - Systems and design brief: [docs/TECHNICAL_BRIEF.md](docs/TECHNICAL_BRIEF.md)
 - Future report and technical rationale: [docs/FUTURE_REPORT.md](docs/FUTURE_REPORT.md)

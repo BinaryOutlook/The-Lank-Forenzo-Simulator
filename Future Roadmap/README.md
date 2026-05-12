@@ -39,6 +39,7 @@ Idea / request
 -> PR review
 -> merge
 -> post-merge audit
+-> archive or return to roadmap
 ```
 
 ### 1. Idea / Request
@@ -123,10 +124,18 @@ Merge in dependency order, not completion order. A later PR that finishes early 
 After merge:
 
 - update the master table status and decision
-- mark the brief as promoted, done, or archived
+- create or update an archive record under [`archive/`](archive/) for completed, rejected, or superseded work
+- remove or compact completed rows from the active master table once their archive record exists
+- mark the brief as promoted, done, archived, or replaced by successor candidates
 - update docs if commands, architecture, product scope, or workflow changed
 - close any stale roadmap notes that are now superseded
 - record follow-up candidates as new briefs rather than expanding completed issues
+
+### 10. Archive Or Return To Roadmap
+
+Completed work moves to [`archive/`](archive/) after the issue, PR, merge, and post-merge audit are complete. The active table should stay focused on work that still needs a decision.
+
+If a PR only partially resolves a candidate, keep the active row and add notes for the remaining scope. If the work was split, archive the original candidate and add successor rows with new IDs.
 
 ## Audit Summary
 
@@ -166,6 +175,7 @@ Docs marked superseded or historical:
 - **Pre-issue queue**: this folder.
 - **Candidate ranking and status**: [`MASTER_ROADMAP_TABLE.md`](MASTER_ROADMAP_TABLE.md).
 - **Candidate brief format**: [`ISSUE_BRIEF_TEMPLATE.md`](ISSUE_BRIEF_TEMPLATE.md).
+- **Completed, rejected, and superseded records**: [`archive/`](archive/).
 - **Active work**: promoted GitHub issues.
 - **Durable product direction**: [`docs/PRD.md`](../docs/PRD.md).
 - **Iteration contracts**: [`PRDs/`](../PRDs/).

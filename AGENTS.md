@@ -22,6 +22,7 @@ Use `Future Roadmap/` as the controlled queue before GitHub issues.
 - Do not independently promote high-risk or core-system work without review.
 - When creating a new candidate, write a standalone brief under `Future Roadmap/issue-briefs/` using `Future Roadmap/ISSUE_BRIEF_TEMPLATE.md`.
 - Update `Future Roadmap/MASTER_ROADMAP_TABLE.md` when adding, changing, promoting, blocking, completing, or archiving briefs.
+- After issue -> PR -> merge to `main`, move completed, rejected, or superseded roadmap records to `Future Roadmap/archive/` during post-merge audit.
 - Respect the parallelism class in the master table.
 - Avoid parallel mutation of red-zone systems.
 - Include conflict-risk notes in PR summaries for promoted roadmap work.
@@ -60,6 +61,12 @@ Update `Future Roadmap/MASTER_ROADMAP_TABLE.md` when:
 
 - candidate work is added, re-prioritized, promoted, blocked, completed, or archived
 - risk, dependency, status, decision, or parallelism class changes
+
+Update `Future Roadmap/archive/` when:
+
+- a roadmap item is completed and merged
+- a candidate is rejected, superseded, or split into successor candidates
+- post-merge audit needs a durable record without keeping a completed row in the active table
 
 Update `docs/PRD.md` when:
 
