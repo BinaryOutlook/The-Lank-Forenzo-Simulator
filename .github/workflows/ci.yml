@@ -42,6 +42,9 @@ jobs:
       - name: Lint, typecheck, and unit tests
         run: npm run check
 
+      - name: Validate generated roadmap table
+        run: npm run roadmap:check
+
       - name: Validate authored content
         run: npm run content:validate
 

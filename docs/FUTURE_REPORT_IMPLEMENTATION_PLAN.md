@@ -58,8 +58,9 @@ Roadmap work must also obey these guardrails:
 The following issues were the original slices derived from the Future Report.
 GitHub remains the source of truth for their live or historical status, but new
 candidate work should be recorded in
-[`Future Roadmap/MASTER_ROADMAP_TABLE.md`](../Future%20Roadmap/MASTER_ROADMAP_TABLE.md)
-before promotion.
+[`Future Roadmap/issue-briefs/`](../Future%20Roadmap/issue-briefs/)
+frontmatter before promotion. The master roadmap table is generated from those
+briefs.
 
 | Issue | Milestone | Workstream | Intended outcome | Required evidence |
 | --- | --- | --- | --- | --- |
@@ -203,9 +204,8 @@ Exit gate:
 
 The lightweight template below is preserved for interpreting older issues.
 For new candidate work, use
-[`Future Roadmap/ISSUE_BRIEF_TEMPLATE.md`](../Future%20Roadmap/ISSUE_BRIEF_TEMPLATE.md)
-and update
-[`Future Roadmap/MASTER_ROADMAP_TABLE.md`](../Future%20Roadmap/MASTER_ROADMAP_TABLE.md).
+[`Future Roadmap/ISSUE_BRIEF_TEMPLATE.md`](../Future%20Roadmap/ISSUE_BRIEF_TEMPLATE.md),
+update the issue brief frontmatter, then run `npm run roadmap:generate`.
 
 Each promoted issue should still be small enough for one focused PR:
 

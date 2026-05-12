@@ -2,7 +2,7 @@
 
 Status: Authoritative pre-GitHub-issue queue
 Owner: BinaryOutlook
-Last updated: 2026-05-12
+Last updated: 2026-05-13
 
 ## Purpose
 
@@ -32,7 +32,8 @@ If clarity is low, the work waits. If risk is high, the work gets review before 
 ```text
 Idea / request
 -> candidate issue brief
--> evaluation in master table
+-> frontmatter evaluation
+-> generated master table index
 -> priority decision
 -> promotion to GitHub issue
 -> agent assignment
@@ -59,13 +60,20 @@ Good inputs include:
 
 Create a standalone brief under [`issue-briefs/`](issue-briefs/) using [`ISSUE_BRIEF_TEMPLATE.md`](ISSUE_BRIEF_TEMPLATE.md).
 
-A brief must be understandable without reading a chat transcript. It should explain the value, scope, risks, dependencies, likely touched areas, acceptance criteria, test plan, documentation impact, rollback path, and open questions.
+A brief must be understandable without reading a chat transcript. Its YAML frontmatter feeds the generated Supermaster table, and its body should explain the value, scope, risks, dependencies, likely touched areas, acceptance criteria, test plan, documentation impact, rollback path, and open questions.
 
-### 3. Evaluation In The Master Table
+### 3. Evaluation In Brief Frontmatter
 
-Add or update the row in [`MASTER_ROADMAP_TABLE.md`](MASTER_ROADMAP_TABLE.md). The table is where the queue is compared across value, effort, difficulty, conflict risk, core-system risk, dependencies, parallelism class, priority, status, and decision.
+Add or update the metadata in the issue brief frontmatter. Individual issue briefs are the source of truth for value, effort, difficulty, conflict risk, core-system risk, dependencies, parallelism class, priority, status, GitHub issue link, owner, and latest decision.
 
-The table answers:
+Do not manually edit [`MASTER_ROADMAP_TABLE.md`](MASTER_ROADMAP_TABLE.md). It is a generated dashboard. After changing issue brief frontmatter, run:
+
+```bash
+npm run roadmap:generate
+npm run roadmap:check
+```
+
+The generated table answers:
 
 - Is this valuable now?
 - Is the scope reviewable?
@@ -90,8 +98,9 @@ When promoting:
 
 - copy the brief into the GitHub issue or link to it
 - preserve scope, non-goals, risks, dependencies, and test plan
-- add the GitHub issue link back to the master table
-- change status to `Promoted to GitHub Issue`
+- add the GitHub issue link to the issue brief frontmatter
+- change the brief frontmatter status to `Promoted to GitHub Issue`
+- regenerate the master table with `npm run roadmap:generate`
 - keep dependency order visible
 
 GitHub issues are for actionable work, not raw possibilities.
@@ -123,9 +132,10 @@ Merge in dependency order, not completion order. A later PR that finishes early 
 
 After merge:
 
-- update the master table status and decision
+- update the issue brief frontmatter status and latest decision
 - create or update an archive record under [`archive/`](archive/) for completed, rejected, or superseded work
-- remove or compact completed rows from the active master table once their archive record exists
+- move or compact completed source briefs once their archive record exists
+- regenerate the master table
 - mark the brief as promoted, done, archived, or replaced by successor candidates
 - update docs if commands, architecture, product scope, or workflow changed
 - close any stale roadmap notes that are now superseded
@@ -135,7 +145,7 @@ After merge:
 
 Completed work moves to [`archive/`](archive/) after the issue, PR, merge, and post-merge audit are complete. The active table should stay focused on work that still needs a decision.
 
-If a PR only partially resolves a candidate, keep the active row and add notes for the remaining scope. If the work was split, archive the original candidate and add successor rows with new IDs.
+If a PR only partially resolves a candidate, keep the active brief and update `last_decision` for the remaining scope. If the work was split, archive the original candidate and create successor briefs with new IDs.
 
 ## Audit Summary
 
@@ -173,7 +183,8 @@ Docs marked superseded or historical:
 ## Source Of Truth
 
 - **Pre-issue queue**: this folder.
-- **Candidate ranking and status**: [`MASTER_ROADMAP_TABLE.md`](MASTER_ROADMAP_TABLE.md).
+- **Candidate ranking and status source**: issue brief frontmatter under [`issue-briefs/`](issue-briefs/).
+- **Generated candidate index**: [`MASTER_ROADMAP_TABLE.md`](MASTER_ROADMAP_TABLE.md).
 - **Candidate brief format**: [`ISSUE_BRIEF_TEMPLATE.md`](ISSUE_BRIEF_TEMPLATE.md).
 - **Completed, rejected, and superseded records**: [`archive/`](archive/).
 - **Active work**: promoted GitHub issues.
@@ -181,3 +192,10 @@ Docs marked superseded or historical:
 - **Iteration contracts**: [`PRDs/`](../PRDs/).
 - **Architecture decisions**: [`docs/decisions/`](../docs/decisions/).
 - **Current repo setup**: [`README.md`](../README.md).
+
+## Roadmap Commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm run roadmap:generate` | Regenerates `MASTER_ROADMAP_TABLE.md` from `issue-briefs/*.md` frontmatter. |
+| `npm run roadmap:check` | Validates required metadata, duplicate IDs, allowed parallelism classes, and whether the generated table is current. |

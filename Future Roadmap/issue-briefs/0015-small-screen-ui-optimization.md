@@ -1,3 +1,21 @@
+---
+id: FR-0015
+title: Small-screen UI optimization
+status: Needs Clarification
+category: Responsive UX
+reward: Reduces excessive tab-by-tab scrolling and makes dense screens usable on smaller displays.
+effort: L
+technical_difficulty: Medium
+conflict_risk: High
+core_system_risk: Low
+dependencies: [Responsive audit, screen inventory, decision between longer pages and reduced mobile density]
+parallelism_class: Orange
+priority: P1
+github_issue: null
+owner: null
+last_decision: Clarify responsive strategy first. Candidate includes two possible approaches; needs product/design direction before promotion.
+---
+
 # Candidate Issue: Small-Screen UI Optimization
 
 ## Summary

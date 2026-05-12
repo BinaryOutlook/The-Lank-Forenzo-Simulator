@@ -1,3 +1,21 @@
+---
+id: FR-0013
+title: Remove dashboard theme selector
+status: Candidate Brief
+category: UI / settings
+reward: Frees dashboard space, especially on smaller screens, while preserving theme control in the options menu.
+effort: S
+technical_difficulty: Low
+conflict_risk: Low
+core_system_risk: Low
+dependencies: [Existing options-menu theme control]
+parallelism_class: Green
+priority: P1
+github_issue: null
+owner: null
+last_decision: Keep in roadmap. Scoped UI cleanup requested on 2026-05-13; verify theme remains reachable from options before promotion.
+---
+
 # Candidate Issue: Remove Dashboard Theme Selector
 
 ## Summary

@@ -115,6 +115,8 @@ npm run typecheck
 npm run test
 npm run test:e2e
 npm run check
+npm run roadmap:generate
+npm run roadmap:check
 npm run content:compile
 npm run content:validate
 npm run simulate:runs
@@ -126,19 +128,19 @@ npm run reachability:report
 
 `npm run simulate:runs` and `npm run balance:report` run a deterministic seeded campaign report without opening the browser. The report summarizes ending distribution, average run length, surfaced decision coverage, triggered event coverage, and repeated-tray pressure using the documented greedy pressure-relief bot.
 
-`npm run content:compile` prints the compiled manifest summary and content hash. `npm run balance:matrix` runs the archetype matrix across extraction, merger, offshore, stabilizer, safety-denial, shadow-subsidiary, creditor-trench, and regulatory-theatre bots; each archetype section includes surfaced and selected decision IDs for lane diagnostics. `npm run reachability:report` runs the bounded reachability explorer with state abstraction and low-confidence content reporting.
+`npm run roadmap:generate` rebuilds `Future Roadmap/MASTER_ROADMAP_TABLE.md` from issue brief frontmatter, and `npm run roadmap:check` verifies the generated table is current with valid metadata. `npm run content:compile` prints the compiled manifest summary and content hash. `npm run balance:matrix` runs the archetype matrix across extraction, merger, offshore, stabilizer, safety-denial, shadow-subsidiary, creditor-trench, and regulatory-theatre bots; each archetype section includes surfaced and selected decision IDs for lane diagnostics. `npm run reachability:report` runs the bounded reachability explorer with state abstraction and low-confidence content reporting.
 
 `npm run report:nightly` generates the deep seeded simulation artifact set under `artifacts/nightly-simulation-report/` by default. The nightly profile runs `750` simulations per archetype (`6,000` total across the current eight bots), tracks ending distribution and low-confidence content, and ranks dominant decision-sequence prefixes. The generated warnings are intentionally soft: use them for balance review, not as automatic PR blockers.
 
 ## Continuous Integration
 
-GitHub Actions runs the CI workflow in `.github/workflows/ci.yml` on pull requests targeting `main`, pushes to `main`, and manual dispatches. The core gate uses Node.js `22` with npm dependency caching, then runs `npm run check`, `npm run content:validate`, `npm run content:compile`, and `npm run build`.
+GitHub Actions runs the CI workflow in `.github/workflows/ci.yml` on pull requests targeting `main`, pushes to `main`, and manual dispatches. The core gate uses Node.js `22` with npm dependency caching, then runs `npm run check`, `npm run roadmap:check`, `npm run content:validate`, `npm run content:compile`, and `npm run build`.
 
 After the core gate passes, CI runs the lightweight balance and reachability diagnostics (`npm run balance:matrix` and `npm run reachability:report`) and uploads their console output as the `simulation-diagnostics` artifact. The existing Playwright smoke suite (`npm run test:e2e`) also runs on normal PRs across the configured Chromium viewport projects; long nightly-style simulation sweeps are intentionally out of scope for standard PR CI.
 
 ## Planning and Issue Workflow
 
-Project planning now flows through [`Future Roadmap/`](Future%20Roadmap/README.md) before it becomes active GitHub work. Raw ideas, refactors, feature requests, and agent tasks should become candidate issue briefs first; promoted GitHub issues are reserved for scoped, prioritized, reviewable work. Completed, rejected, and superseded roadmap records move to [`Future Roadmap/archive/`](Future%20Roadmap/archive/) after post-merge audit so the active table stays readable.
+Project planning now flows through [`Future Roadmap/`](Future%20Roadmap/README.md) before it becomes active GitHub work. Raw ideas, refactors, feature requests, and agent tasks should become candidate issue briefs first; promoted GitHub issues are reserved for scoped, prioritized, reviewable work. Individual issue briefs are the roadmap source of truth, while [`Future Roadmap/MASTER_ROADMAP_TABLE.md`](Future%20Roadmap/MASTER_ROADMAP_TABLE.md) is a generated index. Do not manually edit the table; update issue brief frontmatter, then run `npm run roadmap:generate` and `npm run roadmap:check`. Completed, rejected, and superseded roadmap records move to [`Future Roadmap/archive/`](Future%20Roadmap/archive/) after post-merge audit so the active table stays readable.
 
 Agents should not freely implement from scattered TODOs, historical plans, or roadmap prose. Before opening or working on broad issues, check [`Future Roadmap/MASTER_ROADMAP_TABLE.md`](Future%20Roadmap/MASTER_ROADMAP_TABLE.md), respect the listed parallelism class, and send high-conflict or core-system work through architecture review before promotion.
 
@@ -208,6 +210,7 @@ src/
 scripts/
   balance-matrix.ts
   compile-content.ts
+  generate-roadmap-table.ts
   nightly-report.ts
   reachability-report.ts
   simulate-runs.ts
@@ -276,7 +279,7 @@ unless they are intentionally testing lower-level systems.
 
 ## Documentation
 
-- Future Roadmap workflow, candidate queue, and archive: [Future Roadmap/README.md](Future%20Roadmap/README.md), [Future Roadmap/MASTER_ROADMAP_TABLE.md](Future%20Roadmap/MASTER_ROADMAP_TABLE.md), [Future Roadmap/archive/README.md](Future%20Roadmap/archive/README.md)
+- Future Roadmap workflow, generated candidate index, and archive: [Future Roadmap/README.md](Future%20Roadmap/README.md), [Future Roadmap/MASTER_ROADMAP_TABLE.md](Future%20Roadmap/MASTER_ROADMAP_TABLE.md), [Future Roadmap/archive/README.md](Future%20Roadmap/archive/README.md)
 - Product requirements: [docs/PRD.md](docs/PRD.md)
 - Systems and design brief: [docs/TECHNICAL_BRIEF.md](docs/TECHNICAL_BRIEF.md)
 - Future report and technical rationale: [docs/FUTURE_REPORT.md](docs/FUTURE_REPORT.md)

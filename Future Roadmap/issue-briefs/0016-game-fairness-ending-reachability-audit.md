@@ -1,3 +1,21 @@
+---
+id: FR-0016
+title: Game fairness and ending reachability audit
+status: Needs Architecture Review
+category: Simulation / balance
+reward: Prevents player frustration by checking whether events and paths can fairly reach the available endings.
+effort: L
+technical_difficulty: High
+conflict_risk: High
+core_system_risk: High
+dependencies: [Current reachability reports, event graph, ending conditions, balance tooling]
+parallelism_class: Red
+priority: P1
+github_issue: null
+owner: null
+last_decision: Research before promotion. Treat as core-system work; start with an audit/reporting pass before changing simulation or content rules.
+---
+
 # Candidate Issue: Game Fairness and Ending Reachability Audit
 
 ## Summary
