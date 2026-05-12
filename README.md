@@ -22,11 +22,15 @@ Implemented in the current build:
 - shared metric-semantics rules so inverse-pressure indicators such as `legalHeat`, `publicAnger`, and `debt` read correctly
 - multiple endings, including merger, extraction, prison, and Bahamas escape
 - two first-class themes: `Earth` and `Armonk Blue`
-- scroll-less fitted run layouts for desktop landscape, tablet landscape, tablet portrait, and phone portrait browser play
+- responsive fitted run layouts for desktop landscape, tablet landscape, tablet portrait, and phone portrait browser play
 - a standalone About page that frames the aviation satire, motivation, and design intent without interrupting play
 - a dedicated Tutorial page that teaches the objective, interaction model, run flow, key concepts, and run UI before a first playthrough
 - an accessible Options page with locally persisted wallpaper presets, audio controls, UI density, animation, graphical-effect, interaction-feedback, and interaction sound-cue settings
 - unit tests, content validation, build checks, seeded balance tooling, nightly report artifacts, reachability tooling, and a Playwright smoke test
+
+Documented next UX direction:
+
+- `V0.8` shifts round UX toward explicit Read / Board Packet, Choose Plays, and Resolve / End Round phases so decision comparison no longer has to fight every other run panel in one strict frame.
 
 ## Product Shape
 
@@ -37,6 +41,16 @@ You are not playing as a meticulous operator trying to build the best airline. Y
 Each round presents a board packet, a curated decision tray, and a consequence feed. The question is not how to optimize routes or tune fleet utilization. The question is how long you can keep the company just credible enough to keep extracting value before creditors, regulators, workers, and the market close in.
 
 Strategic actions can now draw from three limited reserves: strategic cash, personal assets, and public relations capital. Expensive plays such as regulator influence, union-conflict maneuvers, lobbying, merger backchannels, and offshore networking show their reserve costs in the decision tray before they can be queued.
+
+## Round-Flow UX Direction
+
+The durable UX direction is no longer a strict single-surface, scroll-less round screen. The app should still feel like a severe command surface, but the round itself should move through clear phases:
+
+1. **Read / Board Packet**: inspect the quarter, pressure reads, state, reserves, and consequence feed.
+2. **Choose Plays**: compare available decisions in a dedicated selection surface with readable costs, consequences, selected state, and selection-count feedback.
+3. **Resolve / End Round**: confirm complete selections or recover from incomplete selections before deterministic resolution.
+
+The end-round modal is a confirmation and recovery layer, not the primary place to choose between available plays. See [PRDs/v0.8/v0.8.md](PRDs/v0.8/v0.8.md) for the shared planning contract behind issues #69, #70, #71, and #72.
 
 ## Winning, Losing, and End States
 
@@ -121,12 +135,13 @@ After the core gate passes, CI runs the lightweight balance and reachability dia
 
 ## Responsive Browser Play
 
-The run screen is designed as a fitted app surface across desktop landscape, tablet landscape, tablet portrait, and mobile portrait browser viewports.
+The run experience is designed as a fitted app surface across desktop landscape, tablet landscape, tablet portrait, and mobile portrait browser viewports. Earlier layout work targeted zero document-level overflow; the revised round-flow direction keeps that discipline for shell and critical controls while relaxing the idea that every task must be simultaneously visible.
 
 - Desktop and tablet landscape use dense command-center grids with internal panel scrolling instead of document scrolling.
-- Very wide desktop windows promote the decision tray into a full-width lower deck so the actionable choices use the extra horizontal space.
+- Very wide desktop windows may promote decisions into a full-width lower deck or a dedicated Choose Plays phase so actionable choices use the extra horizontal space.
 - Tablet and phone portrait use explicit Brief, State, Decisions, and Feed panels with a segmented tab bar.
 - Portrait quarter controls live in a persistent bottom control surface, so resolving a quarter stays reachable while inspecting any panel.
+- Decision-selection views may use vertical breathing room or internal scrolling on narrow screens as long as selection count, selected state, and recovery paths stay obvious.
 - Viewport safe-area and dynamic-height CSS are used so browser chrome and virtual keyboards are less likely to cover critical controls.
 - `npm run test:e2e` runs the smoke flow and document-overflow assertions across desktop landscape, tablet landscape, tablet portrait, and mobile portrait Chromium projects.
 
@@ -219,6 +234,9 @@ PRDs/
     v0.6.md
   v0.7/
     v0.7.md
+  v0.8/
+    v0.8.md
+    v0.8-demo.html
 tests/
   unit/
   e2e/
@@ -245,4 +263,4 @@ unless they are intentionally testing lower-level systems.
 - V0.5 dossier hooks: [docs/reference/dossier-system.md](docs/reference/dossier-system.md)
 - Nightly simulation reporting: [docs/reference/nightly-simulation-reporting.md](docs/reference/nightly-simulation-reporting.md)
 - Local-first run archive design: [docs/reference/run-archive.md](docs/reference/run-archive.md)
-- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md), [PRDs/v0.5/v0.5.md](PRDs/v0.5/v0.5.md), [PRDs/v0.6/v0.6.md](PRDs/v0.6/v0.6.md)
+- Versioned iteration packets: [PRDs/v0.1.1/v0.1.1.md](PRDs/v0.1.1/v0.1.1.md), [PRDs/v0.2/v0.2.md](PRDs/v0.2/v0.2.md), [PRDs/v0.3/v0.3.md](PRDs/v0.3/v0.3.md), [PRDs/v0.3.1/v0.3.1.md](PRDs/v0.3.1/v0.3.1.md), [PRDs/v0.4/v0.4.md](PRDs/v0.4/v0.4.md), [PRDs/v0.5/v0.5.md](PRDs/v0.5/v0.5.md), [PRDs/v0.6/v0.6.md](PRDs/v0.6/v0.6.md), [PRDs/v0.7/v0.7.md](PRDs/v0.7/v0.7.md), [PRDs/v0.8/v0.8.md](PRDs/v0.8/v0.8.md)

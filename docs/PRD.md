@@ -113,7 +113,8 @@ For the first serious browser version, the product should:
 - let factions, operations, and dossier evidence remember the style of the player's misconduct
 - provide deterministic balance and reachability tooling so content coverage problems are visible
 - support two complete visual themes without fragmenting the product
-- remain usable in scroll-less fitted desktop, tablet, and phone browser layouts, including portrait play with touch controls
+- support a phase-based round flow that gives board reading, decision selection, and round resolution enough room to breathe
+- preserve fitted, app-like browser play across desktop, tablet, and phone layouts without treating strict one-screen compression as the highest UX rule
 - provide local-first player options for presentation, audio, and graphical load
 - explain the game motivation and aviation-management satire through a lightweight secondary About page
 - teach first-time players the objective, interaction model, run flow, key concepts, and run UI through a dedicated Tutorial page
@@ -242,9 +243,29 @@ It must not look like:
 - a stack of cards pretending to be a strategy game
 - a dev tool with a few buttons glued on
 
+### 8.7 Round flow should protect attention
+
+The original strict scroll-less run screen created useful discipline when the game had fewer systems. The current product has denser board context, strategic reserves, faction pressure, dossier evidence, hazard fallout, and five detailed decisions. Forcing all of that into one permanently visible surface now increases cognitive friction instead of sharpening focus.
+
+The guiding relationship is:
+
+$$
+\text{interaction strain} \propto \frac{\text{state} + \text{choices} + \text{targets}}{\text{breathing room}}
+$$
+
+The durable direction is therefore a phase-based round experience:
+
+1. **Read / Board Packet**: understand the quarter, pressure reads, state changes, reserves, and consequence feed.
+2. **Choose Plays**: compare the available decisions in a dedicated selection surface with readable costs, consequences, selected state, and selection-count feedback.
+3. **Resolve / End Round**: review the selected actions, recover from incomplete selections if needed, and advance the deterministic simulation.
+
+This is a product philosophy, not a mandate for one technical shape. The implementation may use routes, internal run-screen state, modal affordances, or a phase component if the player clearly understands where they are in the round and how to move forward or back.
+
 ## 9. Product Format
 
 The first serious version is a **browser-based single-page application** with a local-first simulation engine.
+
+Single-page application means one browser app shell and local runtime. It does **not** mean every round activity must remain crammed into one permanent, scroll-less screen.
 
 This product format is deliberate.
 
@@ -340,14 +361,40 @@ This is the primary game surface and should hold most session time.
 It should contain:
 
 - a board-packet summary header
-- a central decision workspace
+- a phase-aware decision workspace
 - visible company and personal metrics
 - a current narrative panel or event stack
 - an end-turn control
 
-It should behave like a fitted game interface, not a long web page. Normal play across supported desktop landscape, tablet landscape,
-tablet portrait, and phone portrait viewports should keep document-level vertical scrolling at zero. Long content should scroll inside
-explicit panels, collapse, summarize, or move behind portrait panel navigation rather than pushing the whole run page beyond the viewport.
+It should behave like a fitted game interface, not a generic long-form web page. The older hard rule that all board context, decisions, feed, and controls must fit in one always-visible scroll-less canvas is now relaxed. The run surface should keep global navigation, phase status, and critical controls clear, but comparison-heavy decision work may claim a dedicated phase, route-like view, or internal panel with its own scroll budget when that improves comprehension.
+
+#### 11.2.1 Round-flow phases
+
+The intended round flow has three durable phases:
+
+1. **Read / Board Packet**: foreground the board packet, state deltas, pressure reads, reserve ledger, relevant history, and consequence feed. The player should understand the quarter before choosing plays.
+2. **Choose Plays**: foreground all available decision cards with enough room for title, category, reserve cost, consequence preview, affordability, selected state, and selection-count feedback.
+3. **Resolve / End Round**: foreground validation and final confirmation. When the selection is complete, this phase should summarize what will resolve. When the selection is incomplete, it should explain the missing count and give a direct path back to decision selection.
+
+Movement between phases should be obvious and reversible until the player confirms resolution. Phase changes must not change simulation results by themselves.
+
+#### 11.2.2 End-round confirmation role
+
+The end-round modal or dialog is a final gate, not the primary choice surface.
+
+It should:
+
+- confirm the selected decisions when the round is ready
+- warn and recover gracefully when required selections are missing
+- preserve existing selected decisions when dismissed
+- provide a direct path back to the Choose Plays phase
+- remain concise enough that the player is not expected to compare all possible decisions inside the modal
+
+#### 11.2.3 Fitted-shell and scroll policy
+
+The product should still feel like an app under glass. The app shell, phase navigation, selection count, and resolve affordance should remain reachable without hunting.
+
+Responsive layouts may use internal panel scrolling, paged panels, drawers, or route-like phase surfaces. They should avoid horizontal overflow, hidden required controls, and document-level scrolling that makes the shell feel like an article. If a narrow viewport needs vertical breathing room for decision comparison, the preferred answer is a dedicated phase surface with clear controls, not a return to cramped all-at-once compression.
 
 ### 11.3 Options page
 
@@ -462,7 +509,7 @@ The MVP should be intentionally compact but unmistakably this game.
 
 ### 13.2 Core visible metrics
 
-The main run screen must show:
+The main run experience must keep the following metrics immediately understandable, especially during the Read / Board Packet phase:
 
 - airline cash
 - personal wealth
@@ -475,7 +522,7 @@ The main run screen must show:
 - legal heat
 - safety integrity
 
-The player should not need secondary screens to understand the state of the run.
+The player should not need to leave the run flow to understand the state of the run. A later phase may summarize, collapse, or pin the most important metrics, but the full state read must remain easy to recover.
 
 ### 13.3 Responsive browser usability
 
@@ -484,9 +531,9 @@ The browser UI must remain playable across conventional desktop landscape, table
 Responsive behavior should preserve:
 
 - access to required round controls through touch-friendly targets
-- visibility of the board packet, major run metrics, decisions, and consequence feed
+- clear access to the board packet, major run metrics, decisions, and consequence feed through the round phases
 - readable text without horizontal scrolling
-- no document-level vertical scrolling during normal run play on supported viewport projects
+- a fitted app-shell feel during normal run play on supported viewport projects, while allowing dedicated phase surfaces or internal panels to carry decision-comparison overflow when necessary
 - safe-area spacing for notches, browser chrome, and virtual keyboard resizing
 - the same simulation information and decision rules across device classes
 
@@ -495,8 +542,10 @@ Portrait layouts may reorganize sections into tabs, drawers, or paged panels, bu
 ### 13.4 Decision system
 
 - The player receives a curated set of decisions each round.
+- Decision selection should happen in a dedicated Choose Plays phase or view, not as an afterthought squeezed beside every other high-priority panel.
 - Decisions may have immediate and delayed consequences.
 - Decisions should preview the likely direction of impact before confirmation.
+- Decision cards should expose reserve costs, consequence previews, selected state, and the required selection count in a way that remains readable at desktop and narrow viewport sizes.
 - Some decisions should be locked behind prior conditions.
 - Some decisions should create future event hooks rather than immediate numeric rewards.
 - The decision library should be able to scale through maintainable authored packs rather than a single indefinitely growing file.
@@ -527,6 +576,7 @@ Portrait layouts may reorganize sections into tabs, drawers, or paged panels, bu
 - The game must support voluntary exit attempts before total collapse.
 - Exit opportunities should depend on the current state of wealth, heat, and market conditions.
 - The player should sometimes have to decide between one more profitable turn and immediate escape.
+- End-round confirmation must validate readiness, summarize the selected plays when complete, and recover from incomplete selections without becoming the main decision-comparison surface.
 
 ### 13.9 Theme behavior
 
@@ -738,6 +788,7 @@ This section is the anti-spaghetti contract for the reboot.
 - The game UI should not degrade into card mosaics and small metric tiles everywhere.
 - Information hierarchy must feel like an authored strategy game, not a SaaS analytics page.
 - Motion should be restrained, meaningful, and removable when it adds no value.
+- The phase-based round flow should not be collapsed back into one overloaded dashboard merely to satisfy an old scroll-less constraint.
 
 ### 19.6 Backend is optional, not default
 
