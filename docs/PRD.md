@@ -118,6 +118,7 @@ For the first serious browser version, the product should:
 - provide local-first player options for presentation, audio, and graphical load
 - explain the game motivation and aviation-management satire through a lightweight secondary About page
 - teach first-time players the objective, interaction model, run flow, key concepts, and run UI through a dedicated Tutorial page
+- provide a dedicated decision-selection phase so dense round choices can be compared deliberately without fighting the rest of the board for space
 - remain local-first and easy to run during early development
 - be maintainable enough for re-entry after long breaks
 
@@ -361,7 +362,7 @@ This is the primary game surface and should hold most session time.
 It should contain:
 
 - a board-packet summary header
-- a phase-aware decision workspace
+- a central decision workspace with an escape hatch into a dedicated decision-selection phase
 - visible company and personal metrics
 - a current narrative panel or event stack
 - an end-turn control
@@ -428,9 +429,9 @@ The Tutorial page should:
 - identify the main run UI areas a new player will encounter
 - preserve the same theme tokens, spacing language, and responsive behavior as the rest of the app shell
 
-### 11.6 Decision tray
+### 11.6 Decision tray and selection phase
 
-This surface should present the player's actionable choices for the round.
+This surface should present the player's actionable choices for the round. The fitted run screen may summarize or embed the tray, but players also need a dedicated decision-selection phase when the five options require deliberate comparison.
 
 It must prioritize:
 
@@ -438,6 +439,11 @@ It must prioritize:
 - consequence preview
 - hierarchy of importance
 - fast scanning
+- visible selected-count progress such as `0/2 selected`
+- readable strategic reserve costs and consequence chips without clipping
+- card click/touch selection, deselection, keyboard focus, and accessible selected state
+- visually distinct selected, unselected, and unavailable states that do not rely on color alone
+- responsive layouts that avoid fixed desktop-only compression
 
 ### 11.7 Event and consequence feed
 
@@ -532,6 +538,7 @@ Responsive behavior should preserve:
 
 - access to required round controls through touch-friendly targets
 - clear access to the board packet, major run metrics, decisions, and consequence feed through the round phases
+- access to a dedicated decision-selection phase when comparing dense round options
 - readable text without horizontal scrolling
 - a fitted app-shell feel during normal run play on supported viewport projects, while allowing dedicated phase surfaces or internal panels to carry decision-comparison overflow when necessary
 - safe-area spacing for notches, browser chrome, and virtual keyboard resizing
@@ -717,6 +724,7 @@ src/
   screens/
     landing/
     run/
+    decision-selection/
     ending/
     options/
     about/

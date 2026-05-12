@@ -1,0 +1,119 @@
+.page {
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  width: min(100%, 118rem);
+  margin: 0 auto;
+}
+
+.masthead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(1rem, 3vw, 2rem);
+  align-items: end;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid color-mix(in oklab, var(--accent) 28%, var(--border));
+  background:
+    linear-gradient(
+      140deg,
+      color-mix(in oklab, var(--panel-strong) 86%, transparent),
+      color-mix(in oklab, var(--panel) 72%, var(--accent-soft))
+    ),
+    var(--panel);
+  box-shadow: var(--shadow-ambient);
+}
+
+.copy {
+  display: grid;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--accent-strong);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.title {
+  max-width: 15ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 7vw, 6.6rem);
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+.summary {
+  max-width: 58rem;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: clamp(1rem, 1.2vw, 1.1rem);
+  line-height: 1.65;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0 1rem;
+  border: 1px solid color-mix(in oklab, var(--border) 82%, var(--accent) 18%);
+  background: color-mix(in oklab, var(--panel-strong) 82%, transparent);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.backLink:focus-visible {
+  outline: none;
+  border-color: color-mix(in oklab, var(--accent) 60%, var(--border));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+}
+
+@media (hover: hover) {
+  .backLink:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in oklab, var(--accent) 50%, var(--border));
+    background: color-mix(in oklab, var(--accent-soft) 48%, var(--panel));
+  }
+}
+
+@media (max-width: 860px) {
+  .masthead {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .title {
+    max-width: 100%;
+    font-size: clamp(2.15rem, 13vw, 4rem);
+  }
+
+  .backLink {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .page {
+    gap: 0.85rem;
+  }
+
+  .masthead {
+    padding: 0.9rem;
+  }
+
+  .summary {
+    line-height: 1.55;
+  }
+}
