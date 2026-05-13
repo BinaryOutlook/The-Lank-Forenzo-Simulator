@@ -247,9 +247,9 @@ export function OptionsScreen() {
       <div className={styles.layout}>
         <div className={styles.sections}>
           <SettingsSection
-            eyebrow="General"
-            title="Boardroom presentation"
-            description="Choose the main visual identity, font behavior, and how densely the interface should hold information."
+            eyebrow="Presentation"
+            title="Theme"
+            description="Choose the main visual identity that frames the simulation."
           >
             <div className={styles.choiceGrid} aria-label="Theme selector">
               {themeOptions.map((option) => (
@@ -270,7 +270,13 @@ export function OptionsScreen() {
                 </InteractionFeedbackButton>
               ))}
             </div>
+          </SettingsSection>
 
+          <SettingsSection
+            eyebrow="Presentation"
+            title="Font"
+            description="Set the reading voice for menus, reports, and dense audit text."
+          >
             <div className={styles.choiceGrid} aria-label="Font selector">
               {fontOptions.map((option) => (
                 <InteractionFeedbackButton
@@ -291,7 +297,13 @@ export function OptionsScreen() {
                 </InteractionFeedbackButton>
               ))}
             </div>
+          </SettingsSection>
 
+          <SettingsSection
+            eyebrow="Presentation"
+            title="UI density and design"
+            description="Control spacing and interface motion without changing the simulation state."
+          >
             <div className={styles.choiceGrid} aria-label="UI density selector">
               {densityOptions.map((option) => (
                 <InteractionFeedbackButton
