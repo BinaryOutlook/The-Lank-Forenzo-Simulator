@@ -29,6 +29,19 @@
   --decision-preview-negative-border: oklch(0.66 0.15 18 / 0.46);
   --decision-preview-negative-text: oklch(0.36 0.13 18);
   --warning: oklch(0.76 0.15 86);
+  --halftone-artwork-surface:
+    linear-gradient(
+      145deg,
+      color-mix(in oklab, var(--panel-strong) 78%, rgb(255 255 255)),
+      color-mix(in oklab, var(--canvas-elevated) 86%, var(--accent) 14%)
+    );
+  --halftone-artwork-ink: oklch(0.45 0.12 174);
+  --halftone-artwork-tint: color-mix(in oklab, var(--accent) 22%, transparent);
+  --halftone-artwork-outline: oklch(0.6 0.08 174 / 0.34);
+  --halftone-artwork-shadow: 0 16px 36px rgb(22 136 126 / 0.14);
+  --halftone-artwork-filter: grayscale(18%) sepia(20%) saturate(145%) hue-rotate(120deg) brightness(104%) contrast(106%);
+  --halftone-artwork-opacity: 0.84;
+  --halftone-artwork-blend-mode: multiply;
   --shadow-ambient: 0 16px 40px rgb(22 136 126 / 0.11);
   --backdrop:
     radial-gradient(circle at top left, rgb(0 151 137 / 0.09), transparent 28%),

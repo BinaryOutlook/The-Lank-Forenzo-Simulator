@@ -184,6 +184,29 @@ Theme references live in:
 - [Themes/Highwire.md](../Themes/Highwire.md)
 - [Themes/Civic-Glass.md](../Themes/Civic-Glass.md)
 
+### Theme-Adaptive Artwork Tokens
+
+The landing halftone poster treatment is designed to use one neutral LFS
+artwork asset and translate it through theme tokens instead of shipping separate
+colorized files. Keep the translation contract in every
+`src/theme/*/tokens.css` file:
+
+| Token | Purpose |
+| --- | --- |
+| `--halftone-artwork-surface` | Theme-colored matte behind the image. |
+| `--halftone-artwork-ink` | Primary ink color for masks, SVG fills, or generated overlays. |
+| `--halftone-artwork-tint` | Accent wash for pseudo-elements or blend overlays. |
+| `--halftone-artwork-outline` | Border/line color for the artwork frame. |
+| `--halftone-artwork-shadow` | Theme-appropriate elevation around the artwork. |
+| `--halftone-artwork-filter` | CSS `filter` chain that translates the neutral asset into the palette. |
+| `--halftone-artwork-opacity` | Final image-layer opacity. |
+| `--halftone-artwork-blend-mode` | Image-layer `mix-blend-mode` for dark or light surfaces. |
+
+Name reusable artwork translation tokens by treatment (`halftone-artwork`) rather
+than by placement (`landing-poster`) or theme (`earth-filter`). Landing-specific
+CSS may create local aliases for layout, but it should consume this token family
+and avoid hard-coded theme literals.
+
 Typography uses system-safe fallback stacks for Windows 10, Windows 11, and
 modern macOS. The Options page exposes `Theme Default`, `System UI`, and
 `Ledger Mono` font presets without runtime web-font downloads.
