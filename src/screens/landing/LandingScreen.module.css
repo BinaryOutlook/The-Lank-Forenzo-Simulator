@@ -103,41 +103,12 @@
   height: 100%;
 }
 
-.posterPrimaryDot {
+.posterHighlightDots {
   fill: var(--landing-poster-dot-primary, var(--text));
 }
 
-.posterSecondaryDot {
+.posterShadowDots {
   fill: var(--landing-poster-dot-secondary, var(--accent-strong));
-}
-
-.posterField {
-  opacity: 0.16;
-}
-
-.aircraftBody,
-.aircraftTail,
-.figureBust,
-.figureHead {
-  opacity: 0.76;
-}
-
-.aircraftWing,
-.aircraftStripe,
-.figureCollar,
-.figureTie,
-.figureHair,
-.figureProfile {
-  opacity: 0.9;
-}
-
-.aircraftMark {
-  font-family: var(--font-display);
-  font-size: 3.4rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  transform: rotate(8deg);
-  transform-origin: 330px 126px;
 }
 
 .pillars {

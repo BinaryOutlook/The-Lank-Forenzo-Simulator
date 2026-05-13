@@ -191,7 +191,9 @@ modern macOS. The Options page exposes `Theme Default`, `System UI`, and
 Landing poster art uses a lightweight two-tone dotted composition rather than a
 raster image export. Keep the treatment driven by `--landing-poster-*` theme
 tokens for its two display colors and surface so Earth, Armonk Blue, Highwire,
-and Civic Glass stay on the same path without per-theme image exports.
+and Civic Glass stay on the same path without per-theme image exports. Visual
+changes to the poster must follow the screenshot gate in
+[`docs/reference/landing-poster-visual-qa.md`](reference/landing-poster-visual-qa.md).
 
 ## Project Layout
 
