@@ -10,8 +10,9 @@ The main documentation layers are:
 
 - `Future Roadmap/`: pre-GitHub-issue queue, candidate briefs, priority, and parallelism guidance
 - `docs/PRD.md`: stable product foundation, scope, and maintainability rules
+- `docs/TECH_STACK.md`: stack, commands, CI, content pipeline, and repo structure reference
 - `PRDs/`: version-scoped iteration packets
-- `README.md`: current repo overview, setup, structure, and developer-facing orientation
+- `README.md`: gameplay-first public overview, hook, quick start, and documentation wayfinding
 
 ## Future Roadmap Before Issues
 
@@ -94,6 +95,14 @@ Update `README.md` when:
 - supported modes or major features change
 - repo structure changes
 - important documentation locations change
+- player-facing positioning, hook, or gameplay summary changes
+
+Update `docs/TECH_STACK.md` when:
+
+- stack choices change
+- commands or CI behavior change
+- content tooling changes
+- repo structure or public simulation entry points change
 
 ## Maintenance Expectations
 
