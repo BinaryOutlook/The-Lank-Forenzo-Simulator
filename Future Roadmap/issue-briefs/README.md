@@ -28,7 +28,10 @@ The number should match or clearly map to the `FR-0001` style `id` in the brief 
 5. Run `npm run roadmap:generate`.
 6. Run `npm run roadmap:check`.
 7. Promote to GitHub issue only after the queue decision says it is actionable.
-8. After issue -> PR -> merge to `main`, move the completed record to [`../archive/`](../archive/) during post-merge audit and regenerate the table.
+8. When a promoted issue is fully fixed by a PR, move the completed record to [`../archive/`](../archive/) on that PR branch before merge, then run `npm run roadmap:generate` and `npm run roadmap:check`.
+9. After merge, verify `main` still passes `npm run roadmap:check`; if a completed row slipped through, archive it immediately in a cleanup branch.
+
+If a PR only partially resolves a brief, keep the brief here and update `last_decision` so the remaining work is visible in the generated table.
 
 ## Brief Quality Bar
 

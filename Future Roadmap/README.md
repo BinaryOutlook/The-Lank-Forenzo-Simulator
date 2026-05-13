@@ -38,9 +38,10 @@ Idea / request
 -> promotion to GitHub issue
 -> agent assignment
 -> PR review
+-> completion archive prep
 -> merge
--> post-merge audit
--> archive or return to roadmap
+-> post-merge audit / verification
+-> archive validation or return to roadmap
 ```
 
 ### 1. Idea / Request
@@ -124,18 +125,30 @@ PRs should be small, reviewable, and honest about conflict risk. PR summaries sh
 - conflict-risk notes
 - documentation updates
 
+If a PR fully fixes a promoted roadmap issue, the branch should also prepare the roadmap closure before merge:
+
+- create or update the archive record under [`archive/`](archive/)
+- remove the completed source brief from [`issue-briefs/`](issue-briefs/)
+- regenerate [`MASTER_ROADMAP_TABLE.md`](MASTER_ROADMAP_TABLE.md)
+- run `npm run roadmap:check`
+- mention the archive/table change in the PR summary
+
+This makes the branch merge-ready. When it lands on `main`, the active generated table should already be free of the completed row. If the merge commit hash is not known when the archive record is written, use the PR link and fill the hash later only if a post-merge audit needs it.
+
 ### 8. Merge
 
 Merge in dependency order, not completion order. A later PR that finishes early should wait if it depends on a foundation PR still under review.
+
+Do not intentionally merge a PR that fully closes a roadmap issue while leaving that completed issue brief in [`issue-briefs/`](issue-briefs/), unless the PR explicitly states that a separate immediate cleanup branch will archive it. A stale active row is a merge-preparation gap, not normal roadmap state.
 
 ### 9. Post-Merge Audit
 
 After merge:
 
-- update the issue brief frontmatter status and latest decision
-- create or update an archive record under [`archive/`](archive/) for completed, rejected, or superseded work
-- move or compact completed source briefs once their archive record exists
-- regenerate the master table
+- verify the archive record exists for each completed, rejected, or superseded item
+- verify completed source briefs have left [`issue-briefs/`](issue-briefs/)
+- rerun `npm run roadmap:check` on `main`
+- fill in merge-commit details in archive records when useful
 - mark the brief as promoted, done, archived, or replaced by successor candidates
 - update docs if commands, architecture, product scope, or workflow changed
 - close any stale roadmap notes that are now superseded
@@ -143,7 +156,7 @@ After merge:
 
 ### 10. Archive Or Return To Roadmap
 
-Completed work moves to [`archive/`](archive/) after the issue, PR, merge, and post-merge audit are complete. The active table should stay focused on work that still needs a decision.
+Completed work moves to [`archive/`](archive/) as part of the completion PR whenever the PR fully closes the roadmap item. The post-merge audit verifies that `main` is clean. The active table should stay focused on work that still needs a decision.
 
 If a PR only partially resolves a candidate, keep the active brief and update `last_decision` for the remaining scope. If the work was split, archive the original candidate and create successor briefs with new IDs.
 
