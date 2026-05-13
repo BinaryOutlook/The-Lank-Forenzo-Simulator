@@ -1,7 +1,7 @@
 ---
 id: FR-0023
 title: Full and minimal text display modes
-status: Needs Architecture Review
+status: In Progress
 category: Settings / accessibility / responsive UX
 reward: Gives players a full explanatory mode and a minimal phone-friendly mode so the game remains usable across aspect ratios and device sizes.
 effort: L
@@ -11,9 +11,9 @@ core_system_risk: Medium
 dependencies: [Settings model, UI copy inventory, mobile rendering audit, content summarization strategy, FR-0022 panel model decision]
 parallelism_class: Orange
 priority: P1
-github_issue: null
+github_issue: https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/99
 owner: null
-last_decision: Add as a concern because current full-text presentation strains phone compatibility. Needs design review to decide whether minimal text is authored, generated, or component-level summarized.
+last_decision: Promoted to GitHub issue #99 for a text-density design contract before broad UI copy changes.
 ---
 
 # Candidate Issue: Full and Minimal Text Display Modes

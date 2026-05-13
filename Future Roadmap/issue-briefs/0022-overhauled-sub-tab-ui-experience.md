@@ -1,7 +1,7 @@
 ---
 id: FR-0022
 title: Overhauled sub-tab UI experience
-status: Needs Architecture Review
+status: In Progress
 category: UI architecture / responsive UX
 reward: Lets each gameplay panel focus on its core job instead of forcing dense text and state into one cluttered adaptive surface.
 effort: L
@@ -11,9 +11,9 @@ core_system_risk: Medium
 dependencies: [Current run-screen panel inventory, mobile and desktop navigation model, route and tab ownership decision, text-density direction]
 parallelism_class: Orange
 priority: P1
-github_issue: null
+github_issue: https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/98
 owner: null
-last_decision: Add as a concern after repeated density pressure in the current run UI. Needs architecture review before implementation because it changes navigation and panel ownership.
+last_decision: Promoted to GitHub issue #98 for an architecture/design PR that defines the sub-tab model before implementation.
 ---
 
 # Candidate Issue: Overhauled Sub-Tab UI Experience

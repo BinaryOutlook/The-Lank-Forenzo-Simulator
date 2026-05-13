@@ -1,7 +1,7 @@
 ---
 id: FR-0016
 title: Game fairness and ending reachability audit
-status: Needs Architecture Review
+status: In Progress
 category: Simulation / balance
 reward: Prevents player frustration by checking whether events and paths can fairly reach the available endings.
 effort: L
@@ -11,9 +11,9 @@ core_system_risk: High
 dependencies: [Current reachability reports, event graph, ending conditions, balance tooling]
 parallelism_class: Red
 priority: P1
-github_issue: null
+github_issue: https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/97
 owner: null
-last_decision: Research before promotion. Treat as core-system work; start with an audit/reporting pass before changing simulation or content rules.
+last_decision: Promoted to GitHub issue #97 as an audit-only pass. Do not change simulation or content rules in the first PR.
 ---
 
 # Candidate Issue: Game Fairness and Ending Reachability Audit
