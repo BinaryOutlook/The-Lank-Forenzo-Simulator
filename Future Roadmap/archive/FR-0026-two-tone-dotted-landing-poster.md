@@ -1,7 +1,7 @@
 ---
 id: FR-0026
 title: Two-tone dotted landing poster
-status: In Progress
+status: Done
 category: UI / visual theming
 reward: Replaces the heavy photo-style poster with a lightweight two-color dotted composition that adapts cleanly to every theme.
 effort: Medium
@@ -13,7 +13,7 @@ parallelism_class: Yellow
 priority: P1
 github_issue: https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/113
 owner: BinaryOutlook / sub-agents
-last_decision: Promoted to GitHub issue #113 and started immediately per user request.
+last_decision: Implemented in PR #114 for GitHub issue #113; archived before merge so the active roadmap table does not keep a stale completed row.
 ---
 
 # Candidate Issue: Two-Tone Dotted Landing Poster
