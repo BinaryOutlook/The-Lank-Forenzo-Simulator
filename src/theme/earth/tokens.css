@@ -1,11 +1,14 @@
 :root[data-theme="earth"] {
-  --font-display: "Space Grotesk", "IBM Plex Sans", "Aptos Display",
+  --font-display:
+    "Space Grotesk", "IBM Plex Sans", "Aptos Display",
     "Segoe UI Variable Display", "Segoe UI", "Avenir Next", system-ui,
     sans-serif;
-  --font-body: "IBM Plex Sans", "Aptos", "Segoe UI Variable Text", "Segoe UI",
+  --font-body:
+    "IBM Plex Sans", "Aptos", "Segoe UI Variable Text", "Segoe UI",
     "Avenir Next", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", "Cascadia Mono", "Cascadia Code",
-    "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-mono:
+    "IBM Plex Mono", "Cascadia Mono", "Cascadia Code", "SFMono-Regular",
+    Consolas, "Liberation Mono", monospace;
 
   --canvas: oklch(0.18 0.02 145);
   --canvas-elevated: oklch(0.22 0.025 145);
@@ -29,9 +32,30 @@
   --decision-preview-negative-border: oklch(0.76 0.16 28 / 0.44);
   --decision-preview-negative-text: oklch(0.97 0.015 28);
   --warning: oklch(0.8 0.14 84);
+  --landing-poster-background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--panel-strong) 88%, var(--canvas)),
+    color-mix(in oklab, var(--panel) 82%, var(--canvas))
+  );
+  --landing-poster-image-filter: invert(1) sepia(1) saturate(1.35)
+    hue-rotate(72deg) brightness(0.88) contrast(1.1);
+  --landing-poster-image-blend-mode: screen;
+  --landing-poster-image-opacity: 0.58;
+  --landing-poster-color-wash: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--accent) 12%, transparent),
+    transparent 42%,
+    color-mix(in oklab, var(--canvas) 76%, transparent)
+  );
+  --landing-poster-wash-blend-mode: normal;
+  --landing-poster-wash-opacity: 1;
   --shadow-ambient: 0 20px 60px rgb(0 0 0 / 0.28);
   --backdrop:
     radial-gradient(circle at top left, rgb(34 83 61 / 0.25), transparent 32%),
-    radial-gradient(circle at right center, rgb(19 57 41 / 0.22), transparent 36%),
+    radial-gradient(
+      circle at right center,
+      rgb(19 57 41 / 0.22),
+      transparent 36%
+    ),
     linear-gradient(180deg, rgb(6 16 12 / 0.94), rgb(10 20 15 / 0.98));
 }

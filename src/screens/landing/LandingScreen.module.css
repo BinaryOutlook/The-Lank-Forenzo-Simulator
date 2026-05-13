@@ -72,14 +72,61 @@
 
 .poster {
   display: grid;
+  grid-template-rows: minmax(16rem, 1fr) auto auto;
   gap: 1rem;
-  align-content: end;
+  align-content: stretch;
+  min-height: clamp(34rem, 68svh, 48rem);
   padding: clamp(1.1rem, 2vw, 1.6rem);
   border: 1px solid var(--border);
   background:
-    linear-gradient(160deg, color-mix(in oklab, var(--panel-strong) 78%, transparent), var(--panel)),
+    linear-gradient(
+      160deg,
+      color-mix(in oklab, var(--panel-strong) 78%, transparent),
+      var(--panel)
+    ),
     var(--panel);
   box-shadow: var(--shadow-ambient);
+}
+
+.posterArt {
+  position: relative;
+  isolation: isolate;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--border) 72%, transparent);
+  background: var(--landing-poster-background, var(--panel-strong));
+}
+
+.posterArt::before,
+.posterArt::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+}
+
+.posterArt::before {
+  z-index: 1;
+  background-image: url("/brand/lfs-halftone-poster.jpg");
+  background-position: center top;
+  background-size: cover;
+  filter: var(--landing-poster-image-filter, grayscale(1) contrast(1.1));
+  mix-blend-mode: var(--landing-poster-image-blend-mode, multiply);
+  opacity: var(--landing-poster-image-opacity, 0.68);
+}
+
+.posterArt::after {
+  z-index: 2;
+  pointer-events: none;
+  background: var(
+    --landing-poster-color-wash,
+    linear-gradient(
+      180deg,
+      transparent,
+      color-mix(in oklab, var(--panel) 72%, transparent)
+    )
+  );
+  mix-blend-mode: var(--landing-poster-wash-blend-mode, normal);
+  opacity: var(--landing-poster-wash-opacity, 1);
 }
 
 .pillars {
@@ -144,6 +191,7 @@
   }
 
   .poster {
+    min-height: clamp(28rem, 70svh, 38rem);
     padding: 0.95rem;
   }
 }
