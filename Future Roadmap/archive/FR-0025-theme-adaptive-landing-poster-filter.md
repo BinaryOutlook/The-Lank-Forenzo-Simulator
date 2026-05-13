@@ -1,7 +1,7 @@
 ---
 id: FR-0025
 title: Theme-adaptive landing poster filter
-status: In Progress
+status: Done
 category: UI / visual theming
 reward: Lets the LFS halftone aircraft poster feel native in every current theme without duplicating artwork per theme.
 effort: Medium
@@ -13,7 +13,7 @@ parallelism_class: Yellow
 priority: P1
 github_issue: https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/109
 owner: BinaryOutlook / AO agents
-last_decision: Promoted to GitHub issue #109 and started immediately per user request.
+last_decision: Implemented in PR #112 for GitHub issue #109; archived before merge so the active roadmap table does not keep a stale completed row.
 ---
 
 # Candidate Issue: Theme-Adaptive Landing Poster Filter
