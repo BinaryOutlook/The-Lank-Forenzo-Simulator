@@ -1,11 +1,13 @@
 :root[data-theme="armonk-blue"] {
-  --font-display: "IBM Plex Sans", "Aptos Display",
-    "Segoe UI Variable Display", "Segoe UI", "Avenir Next", system-ui,
-    sans-serif;
-  --font-body: "IBM Plex Sans", "Aptos", "Segoe UI Variable Text", "Segoe UI",
+  --font-display:
+    "IBM Plex Sans", "Aptos Display", "Segoe UI Variable Display", "Segoe UI",
     "Avenir Next", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", "Cascadia Mono", "Cascadia Code",
-    "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-body:
+    "IBM Plex Sans", "Aptos", "Segoe UI Variable Text", "Segoe UI",
+    "Avenir Next", system-ui, sans-serif;
+  --font-mono:
+    "IBM Plex Mono", "Cascadia Mono", "Cascadia Code", "SFMono-Regular",
+    Consolas, "Liberation Mono", monospace;
 
   --canvas: oklch(0.985 0.004 255);
   --canvas-elevated: oklch(0.95 0.008 255);
@@ -29,6 +31,22 @@
   --decision-preview-negative-border: oklch(0.68 0.14 28 / 0.45);
   --decision-preview-negative-text: oklch(0.4 0.12 28);
   --warning: oklch(0.82 0.17 86);
+  --landing-poster-background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--panel-strong) 84%, var(--canvas)),
+    color-mix(in oklab, var(--panel) 88%, var(--canvas-elevated))
+  );
+  --landing-poster-image-filter: grayscale(1) contrast(1.16) brightness(0.9);
+  --landing-poster-image-blend-mode: multiply;
+  --landing-poster-image-opacity: 0.58;
+  --landing-poster-color-wash: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--accent) 12%, transparent),
+    transparent 48%,
+    color-mix(in oklab, var(--canvas) 82%, transparent)
+  );
+  --landing-poster-wash-blend-mode: multiply;
+  --landing-poster-wash-opacity: 0.72;
   --shadow-ambient: 0 16px 42px rgb(15 98 254 / 0.08);
   --backdrop:
     radial-gradient(circle at top left, rgb(15 98 254 / 0.08), transparent 28%),

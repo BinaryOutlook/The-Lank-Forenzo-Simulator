@@ -70,6 +70,11 @@ export function LandingScreen() {
         </div>
 
         <div className={styles.poster}>
+          <div
+            className={styles.posterArt}
+            data-testid="landing-poster-art"
+            aria-hidden="true"
+          />
           <p className={styles.posterLabel}>Operating doctrine</p>
           <ul className={styles.pillars}>
             {pillars.map((pillar) => (

@@ -1,11 +1,13 @@
 :root[data-theme="civic-glass"] {
-  --font-display: "IBM Plex Sans", "Aptos Display",
-    "Segoe UI Variable Display", "Segoe UI", "Avenir Next", system-ui,
-    sans-serif;
-  --font-body: "IBM Plex Sans", "Aptos", "Segoe UI Variable Text", "Segoe UI",
+  --font-display:
+    "IBM Plex Sans", "Aptos Display", "Segoe UI Variable Display", "Segoe UI",
     "Avenir Next", system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", "Cascadia Mono", "Cascadia Code",
-    "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-body:
+    "IBM Plex Sans", "Aptos", "Segoe UI Variable Text", "Segoe UI",
+    "Avenir Next", system-ui, sans-serif;
+  --font-mono:
+    "IBM Plex Mono", "Cascadia Mono", "Cascadia Code", "SFMono-Regular",
+    Consolas, "Liberation Mono", monospace;
 
   --canvas: oklch(0.982 0.008 166);
   --canvas-elevated: oklch(0.948 0.012 166);
@@ -29,9 +31,29 @@
   --decision-preview-negative-border: oklch(0.66 0.15 18 / 0.46);
   --decision-preview-negative-text: oklch(0.36 0.13 18);
   --warning: oklch(0.76 0.15 86);
+  --landing-poster-background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--panel-strong) 84%, var(--canvas)),
+    color-mix(in oklab, var(--panel) 88%, var(--canvas-elevated))
+  );
+  --landing-poster-image-filter: grayscale(1) contrast(1.14) brightness(0.92);
+  --landing-poster-image-blend-mode: multiply;
+  --landing-poster-image-opacity: 0.6;
+  --landing-poster-color-wash: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--accent) 10%, transparent),
+    transparent 48%,
+    color-mix(in oklab, var(--canvas) 82%, transparent)
+  );
+  --landing-poster-wash-blend-mode: multiply;
+  --landing-poster-wash-opacity: 0.74;
   --shadow-ambient: 0 16px 40px rgb(22 136 126 / 0.11);
   --backdrop:
     radial-gradient(circle at top left, rgb(0 151 137 / 0.09), transparent 28%),
-    radial-gradient(circle at right center, rgb(197 46 86 / 0.055), transparent 32%),
+    radial-gradient(
+      circle at right center,
+      rgb(197 46 86 / 0.055),
+      transparent 32%
+    ),
     linear-gradient(180deg, rgb(252 255 253 / 0.98), rgb(235 246 243 / 1));
 }

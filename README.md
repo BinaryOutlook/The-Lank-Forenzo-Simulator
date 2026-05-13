@@ -106,6 +106,7 @@ The current browser build includes:
 - board packet, decision selection, consequence feed, and ending case summary
 - decision, event, hazard, faction, operation, and dossier systems
 - multiple visual themes, font presets, wallpapers, audio, and feedback options
+- a theme-adaptive LFS halftone landing poster driven by shared filter tokens
 - responsive browser play across desktop, tablet, and phone layouts
 - About, Tutorial, Run, Options, and ending screens
 - deterministic balance, content validation, and reachability tooling
