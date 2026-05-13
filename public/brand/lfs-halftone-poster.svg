@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Fictional LFS halftone poster mask</title>
+  <desc id="desc">Neutral abstract aircraft and executive silhouette artwork for The Lank Forenzo Simulator, with no real airline branding or real-person likeness.</desc>
+  <defs>
+    <pattern id="dot-field-wide" width="44" height="44" patternUnits="userSpaceOnUse">
+      <circle cx="8" cy="8" r="3.8" fill="#000" opacity="0.38" />
+      <circle cx="30" cy="28" r="2.6" fill="#000" opacity="0.28" />
+    </pattern>
+    <pattern id="dot-field-dense" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="6" cy="6" r="2.8" fill="#000" opacity="0.68" />
+      <circle cx="20" cy="19" r="1.8" fill="#000" opacity="0.52" />
+    </pattern>
+    <clipPath id="aircraft-clip">
+      <path d="M97 378c118-55 260-89 425-101 160-12 332 2 516 40 38 8 64 22 78 42 5 7 5 13 1 18-13 16-63 25-148 27-125 3-251-4-378-22L330 544c-18 11-40 13-60 6l-49-18 178-174c-71-16-138-35-201-57l-88 58c-19 13-42 17-65 12L14 364l75-72c12-12 30-16 46-11l126 41c-47-31-89-67-127-107l41-22c20-11 44-10 63 2l178 111c58-11 116-19 175-24l-111-154 56-12c20-4 41 4 54 20l161 140c130 3 260 22 389 58 34 10 57 25 70 44Z" />
+    </clipPath>
+    <clipPath id="executive-clip">
+      <path d="M840 778c7-93 39-165 96-216 32 28 67 42 104 42s72-14 104-42c57 51 89 123 96 216H840Z" />
+      <circle cx="1040" cy="462" r="91" />
+    </clipPath>
+  </defs>
+
+  <g fill="#000">
+    <path d="M68 112h574v48H68z" opacity="0.13" />
+    <path d="M68 184h444v24H68z" opacity="0.18" />
+    <path d="M68 232h332v24H68z" opacity="0.14" />
+    <path d="M912 80h188v28H912z" opacity="0.18" />
+    <path d="M836 126h264v18H836z" opacity="0.13" />
+    <path d="M784 164h316v18H784z" opacity="0.11" />
+
+    <path d="M0 698 1200 524v64L0 762Z" opacity="0.11" />
+    <path d="M0 628 1200 454v29L0 657Z" opacity="0.12" />
+    <path d="M0 93 1200 0v35L0 128Z" opacity="0.12" />
+
+    <g clip-path="url(#aircraft-clip)">
+      <rect x="0" y="80" width="1200" height="530" fill="#000" opacity="0.86" />
+      <rect x="38" y="82" width="1110" height="526" fill="url(#dot-field-dense)" opacity="0.95" />
+      <path d="M0 282c278 62 529 90 753 85 167-4 317-27 447-70v54c-148 44-307 67-476 70-232 4-474-22-724-79Z" opacity="0.2" />
+    </g>
+
+    <g opacity="0.82">
+      <circle cx="775" cy="352" r="9" />
+      <circle cx="823" cy="357" r="9" />
+      <circle cx="871" cy="362" r="9" />
+      <circle cx="919" cy="367" r="9" />
+      <circle cx="967" cy="371" r="9" />
+    </g>
+
+    <g clip-path="url(#executive-clip)">
+      <rect x="796" y="352" width="436" height="440" fill="#000" opacity="0.52" />
+      <rect x="818" y="356" width="404" height="440" fill="url(#dot-field-wide)" opacity="0.95" />
+      <path d="M930 602 1039 760l110-158-55 22-55 88-56-88Z" opacity="0.44" />
+    </g>
+
+    <path d="M880 770h318v30H880z" opacity="0.25" />
+    <path d="M66 730h192v34H66z" opacity="0.2" />
+    <path d="M66 681h148v23H66z" opacity="0.16" />
+    <path d="M285 730h78v34h-78z" opacity="0.14" />
+    <path d="M388 730h78v34h-78z" opacity="0.14" />
+    <path d="M491 730h78v34h-78z" opacity="0.14" />
+  </g>
+</svg>

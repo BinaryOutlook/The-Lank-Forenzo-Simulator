@@ -71,6 +71,17 @@
 }
 
 .poster {
+  --poster-art-primary: color-mix(in oklab, var(--accent) 82%, var(--text));
+  --poster-art-secondary: color-mix(
+    in oklab,
+    var(--accent-strong) 72%,
+    var(--canvas)
+  );
+  --poster-art-shadow: color-mix(in oklab, var(--text) 74%, var(--accent));
+  --poster-art-filter: saturate(1.08) contrast(1.06);
+  --poster-art-opacity: 0.94;
+  --poster-frame-opacity: 0.78;
+
   display: grid;
   gap: 1rem;
   align-content: end;
@@ -80,6 +91,85 @@
     linear-gradient(160deg, color-mix(in oklab, var(--panel-strong) 78%, transparent), var(--panel)),
     var(--panel);
   box-shadow: var(--shadow-ambient);
+}
+
+.posterArtwork {
+  position: relative;
+  isolation: isolate;
+  min-height: clamp(12.5rem, 28vw, 19rem);
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--accent) 30%, var(--border));
+  background:
+    radial-gradient(
+      circle at 24% 22%,
+      color-mix(in oklab, var(--accent-soft) 82%, transparent),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      color-mix(in oklab, var(--panel-strong) 88%, var(--accent-soft)),
+      color-mix(in oklab, var(--panel) 92%, var(--canvas))
+    );
+}
+
+.posterArtwork::before {
+  position: absolute;
+  inset: clamp(0.7rem, 1.5vw, 1.05rem);
+  z-index: 1;
+  pointer-events: none;
+  content: "";
+  background:
+    radial-gradient(
+      circle at 75% 26%,
+      color-mix(in oklab, var(--poster-art-secondary) 74%, transparent),
+      transparent 28%
+    ),
+    linear-gradient(
+      140deg,
+      var(--poster-art-primary),
+      var(--poster-art-secondary) 46%,
+      var(--poster-art-shadow)
+    );
+  filter: var(--poster-art-filter);
+  mask-image: url("/brand/lfs-halftone-poster.svg");
+  mask-mode: alpha;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+  opacity: var(--poster-art-opacity);
+  -webkit-mask-image: url("/brand/lfs-halftone-poster.svg");
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+}
+
+.posterArtwork::after {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  content: "";
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--poster-art-primary) 18%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in oklab, var(--poster-art-secondary) 16%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      145deg,
+      transparent,
+      color-mix(in oklab, var(--canvas) 22%, transparent)
+    );
+  background-size:
+    24px 24px,
+    24px 24px,
+    auto;
+  opacity: var(--poster-frame-opacity);
 }
 
 .pillars {
@@ -96,6 +186,82 @@
   font-family: var(--font-display);
   font-size: clamp(1.2rem, 2vw, 1.7rem);
   line-height: 1.1;
+}
+
+:global(:root[data-theme="earth"]) .posterArtwork {
+  --poster-art-primary: color-mix(in oklab, var(--accent) 86%, var(--text));
+  --poster-art-secondary: color-mix(
+    in oklab,
+    var(--accent-strong) 78%,
+    var(--canvas)
+  );
+  --poster-art-shadow: color-mix(in oklab, var(--text) 72%, var(--accent));
+  --poster-art-filter: saturate(1.12) contrast(1.08);
+}
+
+:global(:root[data-theme="armonk-blue"]) .posterArtwork {
+  --poster-art-primary: color-mix(in oklab, var(--accent) 88%, var(--text));
+  --poster-art-secondary: color-mix(
+    in oklab,
+    var(--accent-strong) 70%,
+    var(--canvas)
+  );
+  --poster-art-shadow: color-mix(in oklab, var(--text) 76%, var(--accent));
+  --poster-art-filter: saturate(1.06) contrast(1.04);
+  --poster-frame-opacity: 0.68;
+}
+
+:global(:root[data-theme="highwire"]) .posterArtwork {
+  --poster-art-primary: color-mix(in oklab, var(--accent) 84%, var(--text));
+  --poster-art-secondary: color-mix(
+    in oklab,
+    var(--accent-strong) 76%,
+    var(--warning)
+  );
+  --poster-art-shadow: color-mix(in oklab, var(--text) 68%, var(--accent));
+  --poster-art-filter: saturate(1.18) contrast(1.12);
+}
+
+:global(:root[data-theme="civic-glass"]) .posterArtwork {
+  --poster-art-primary: color-mix(in oklab, var(--accent) 84%, var(--text));
+  --poster-art-secondary: color-mix(
+    in oklab,
+    var(--accent-strong) 66%,
+    var(--canvas)
+  );
+  --poster-art-shadow: color-mix(in oklab, var(--text) 70%, var(--accent));
+  --poster-art-filter: saturate(1.05) contrast(1.03);
+  --poster-frame-opacity: 0.7;
+}
+
+@supports not (
+  (mask-image: url("/brand/lfs-halftone-poster.svg")) or
+    (-webkit-mask-image: url("/brand/lfs-halftone-poster.svg"))
+) {
+  .posterArtwork {
+    background:
+      linear-gradient(
+        145deg,
+        color-mix(in oklab, var(--poster-art-primary) 28%, transparent),
+        color-mix(in oklab, var(--panel) 84%, var(--canvas))
+      ),
+      var(--panel);
+  }
+
+  .posterArtwork::before {
+    background:
+      linear-gradient(
+        140deg,
+        color-mix(in oklab, var(--poster-art-primary) 72%, transparent),
+        color-mix(in oklab, var(--poster-art-shadow) 82%, transparent)
+      ),
+      url("/brand/lfs-halftone-poster.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
 }
 
 @media (max-width: 920px) {
@@ -145,5 +311,9 @@
 
   .poster {
     padding: 0.95rem;
+  }
+
+  .posterArtwork {
+    min-height: clamp(10rem, 44vw, 15rem);
   }
 }
