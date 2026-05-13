@@ -31,6 +31,52 @@ afterEach(() => {
 });
 
 describe("OptionsScreen", () => {
+  it("organizes presentation controls into focused settings groups", () => {
+    renderOptionsScreen();
+
+    expect(
+      screen.getByRole("heading", {
+        name: /^theme$/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", {
+        name: /^font$/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", {
+        name: /ui density and design/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", {
+        name: /boardroom presentation/i,
+      }),
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.getByRole("button", {
+        name: /armonk blue/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: /ledger mono/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: /compact/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("checkbox", {
+        name: /interface animation/i,
+      }),
+    ).toBeInTheDocument();
+  });
+
   it("updates persisted presentation, audio, and effect settings", async () => {
     const user = userEvent.setup();
 
