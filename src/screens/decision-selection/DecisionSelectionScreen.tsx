@@ -33,6 +33,9 @@ export function DecisionSelectionScreen() {
   const backLinkFeedback = useInteractionFeedback<HTMLAnchorElement>(
     interactionEffectsEnabled,
   );
+  const loadLinkFeedback = useInteractionFeedback<HTMLAnchorElement>(
+    interactionEffectsEnabled,
+  );
 
   useEffect(() => {
     if (!run) {
@@ -125,15 +128,26 @@ export function DecisionSelectionScreen() {
           </p>
         </div>
 
-        <Link
-          className={`interaction-feedback-control ${styles.backLink}`}
-          data-interaction-feedback={backLinkFeedback.feedbackState}
-          to="/run"
-          onKeyDown={backLinkFeedback.onFeedbackKeyDown}
-          onPointerDown={backLinkFeedback.onFeedbackPointerDown}
-        >
-          Return to board
-        </Link>
+        <div className={styles.mastheadActions}>
+          <Link
+            className={`interaction-feedback-control ${styles.backLink}`}
+            data-interaction-feedback={backLinkFeedback.feedbackState}
+            to="/run"
+            onKeyDown={backLinkFeedback.onFeedbackKeyDown}
+            onPointerDown={backLinkFeedback.onFeedbackPointerDown}
+          >
+            Return to board
+          </Link>
+          <Link
+            className={`interaction-feedback-control ${styles.backLink}`}
+            data-interaction-feedback={loadLinkFeedback.feedbackState}
+            to="/load"
+            onKeyDown={loadLinkFeedback.onFeedbackKeyDown}
+            onPointerDown={loadLinkFeedback.onFeedbackPointerDown}
+          >
+            Load manager
+          </Link>
+        </div>
       </motion.header>
 
       <DecisionTray

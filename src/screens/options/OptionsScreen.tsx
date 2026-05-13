@@ -512,6 +512,13 @@ export function OptionsScreen() {
             <InteractionFeedbackButton
               feedbackEnabled={interactionEffectsEnabled}
               className={styles.secondaryAction}
+              onClick={() => navigate("/load")}
+            >
+              Open load manager
+            </InteractionFeedbackButton>
+            <InteractionFeedbackButton
+              feedbackEnabled={interactionEffectsEnabled}
+              className={styles.secondaryAction}
               onClick={resetSettings}
             >
               Reset options

@@ -102,6 +102,7 @@ world could prove, and which exit windows slipped away.
 The current browser build includes:
 
 - deterministic round resolution and local save persistence
+- a Load Manager for non-encrypted browser save slots and local JSON import/export
 - board packet, decision selection, consequence feed, and ending case summary
 - decision, event, hazard, faction, operation, and dossier systems
 - multiple visual themes, font presets, wallpapers, audio, and feedback options
@@ -113,6 +114,7 @@ The current browser build includes:
 
 - `Run`: the active gameplay surface.
 - `Choose Plays`: a dedicated decision-comparison phase entered from a run.
+- `Load Manager`: saved sessions, local-file imports, and save exports.
 - `Tutorial`: first-run guidance for objectives, concepts, flow, and controls.
 - `About`: the in-game statement of motivation and design intent.
 - `Options`: local-first presentation, audio, theme, font, density, wallpaper,

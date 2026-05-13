@@ -38,6 +38,9 @@ describe("DecisionSelectionScreen", () => {
     expect(
       screen.getByRole("link", { name: /return to board/i }),
     ).toHaveAttribute("href", "/run");
+    expect(
+      screen.getByRole("link", { name: /load manager/i }),
+    ).toHaveAttribute("href", "/load");
     expect(screen.getByText("0/2 selected")).toBeInTheDocument();
     expect(screen.getByLabelText("Strategic resources")).toBeInTheDocument();
     expect(screen.getAllByRole("button", { pressed: false })).toHaveLength(5);

@@ -1,7 +1,7 @@
 ---
 id: FR-0021
 title: Local save options exploration
-status: Needs Architecture Review
+status: Done
 category: Persistence / player experience
 reward: Lets players resume sessions while creating a path toward future save integrity protections.
 effort: L
@@ -11,9 +11,9 @@ core_system_risk: High
 dependencies: [State serialization inventory, save versioning decision, storage target decision, tamper policy]
 parallelism_class: Orange
 priority: P1
-github_issue: null
-owner: null
-last_decision: Start with an unencrypted local-save exploration and versioned schema. Treat encrypted or tamper-resistant saves as a later follow-up.
+github_issue: https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/106
+owner: tlfs-orchestrator
+last_decision: Completed by PR #107 as a non-encrypted Load Manager. Encrypted or tamper-resistant saves are tracked separately in FR-0024.
 ---
 
 # Candidate Issue: Local Save Options Exploration
@@ -91,9 +91,9 @@ Research first, implementation later.
 
 ## Acceptance Criteria
 
-- [ ] Observable outcome: the project has a recommended local-save approach and save schema boundary.
-- [ ] Required behavior: the first pass remains non-encrypted and clearly separates future encrypted-save work.
-- [ ] Required documentation: save format, migration assumptions, and tamper-policy notes are recorded before implementation.
+- [x] Observable outcome: the project has a recommended local-save approach and save schema boundary.
+- [x] Required behavior: the first pass remains non-encrypted and clearly separates future encrypted-save work.
+- [x] Required documentation: save format, migration assumptions, and tamper-policy notes are recorded before implementation.
 
 ## Test Plan
 
@@ -116,17 +116,23 @@ Which docs need updates if this lands?
 
 Keep save/load code behind a narrow entry point. If the feature misfires, remove the save UI and persistence hook while leaving the state store behavior intact.
 
+## Implementation Record
+
+- GitHub issue: https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/106
+- Pull request: https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/pull/107
+- Follow-up ticket: `Future Roadmap/issue-briefs/0024-encrypted-local-save-integrity.md`
+
 ## Open Questions
 
-- [ ] Should local saves use browser storage, explicit import/export files, or both?
-- [ ] What minimum state is needed to resume a session reliably?
-- [ ] How should stale or incompatible saves be handled?
-- [ ] When should encrypted or tamper-resistant saves become necessary?
+- [x] Should local saves use browser storage, explicit import/export files, or both? Both: browser slots plus explicit plain JSON import/export.
+- [x] What minimum state is needed to resume a session reliably? `theme`, `settings`, and `run`.
+- [x] How should stale or incompatible saves be handled? Corrupt files fail visibly; future explicit imports are rejected; incompatible slots are ignored.
+- [x] When should encrypted or tamper-resistant saves become necessary? Only after FR-0024 clarifies the threat model.
 
 ## Promotion Decision
 
 - [ ] Keep in roadmap
 - [ ] Needs clarification
-- [x] Needs architecture review
-- [ ] Ready to promote to GitHub issue
-- [ ] Reject / archive
+- [ ] Needs architecture review
+- [x] Ready to promote to GitHub issue
+- [x] Reject / archive

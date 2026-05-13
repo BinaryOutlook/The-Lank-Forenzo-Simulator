@@ -23,7 +23,7 @@ The current build is a clean-slate browser application. It includes:
 
 - a React, TypeScript, and Vite app shell
 - browser-native deterministic simulation runtime
-- local save persistence
+- local save persistence with a Load Manager for browser slots and plain JSON import/export
 - expanded multi-pack decision and event libraries with deterministic
   delayed-event pools
 - authored hazard rules that turn accumulated state into scheduler pressure
@@ -247,6 +247,7 @@ src/
     about/
     decision-selection/
     ending/
+    load-manager/
     options/
     run/
     tutorial/

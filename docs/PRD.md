@@ -120,6 +120,7 @@ For the first serious browser version, the product should:
 - support a phase-based round flow that gives board reading, decision selection, and round resolution enough room to breathe
 - preserve fitted, app-like browser play across desktop, tablet, and phone layouts without treating strict one-screen compression as the highest UX rule
 - provide local-first player options for presentation, audio, and graphical load
+- provide a local-first Load Manager for browser save slots, plain JSON import/export, and future save-integrity work
 - explain the game motivation and aviation-management satire through a lightweight secondary About page
 - teach first-time players the objective, interaction model, run flow, key concepts, and run UI through a dedicated Tutorial page
 - provide a dedicated decision-selection phase so dense round choices can be compared deliberately without fighting the rest of the board for space
@@ -134,6 +135,7 @@ The current phase is not trying to become:
 - a sprawling airline operations simulator with player-controlled dispatch or detailed route planning
 - a multiplayer game
 - a server-dependent live-service product
+- an encrypted or tamper-resistant save system in the first local-save pass
 - a content-heavy narrative RPG
 - a mobile-native app
 - a hybrid legacy migration project
@@ -603,6 +605,8 @@ Portrait layouts may reorganize sections into tabs, drawers, or paged panels, bu
 - The product must autosave after major state changes or at end of round.
 - The player must be able to abandon a run and return later.
 - Save format must be versioned so future migrations are possible.
+- The Load Manager must expose saved browser sessions, local-file import, and save/export actions from a dedicated surface.
+- The first Load Manager format is intentionally non-encrypted; encrypted or tamper-resistant saves are follow-up scope.
 
 ## 14. Non-Functional Requirements
 

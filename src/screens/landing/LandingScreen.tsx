@@ -58,6 +58,14 @@ export function LandingScreen() {
             >
               Resume local save
             </InteractionFeedbackButton>
+
+            <InteractionFeedbackButton
+              feedbackEnabled={interactionEffectsEnabled}
+              className={styles.secondaryAction}
+              onClick={() => navigate("/load")}
+            >
+              Open load manager
+            </InteractionFeedbackButton>
           </div>
         </div>
 
