@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { InteractionFeedbackButton } from "../../components/interaction/InteractionFeedbackButton.js";
 import { useGameStore } from "../../simulation/state/gameStore.js";
 import type {
+  FontPreset,
   UiDensity,
   WallpaperPreset,
 } from "../../simulation/state/settings.js";
@@ -77,6 +78,27 @@ const wallpaperOptions: Array<ChoiceOption<WallpaperPreset>> = [
     id: "clean-boardroom",
     label: "Clean Boardroom",
     description: "A calmer wall for lower visual noise and sharper reading.",
+  },
+];
+
+const fontOptions: Array<ChoiceOption<FontPreset>> = [
+  {
+    id: "theme",
+    label: "Theme Default",
+    description:
+      "Use the theme's intended voice with Windows and macOS fallbacks.",
+  },
+  {
+    id: "system",
+    label: "System UI",
+    description:
+      "Prefer native interface fonts for maximum cross-platform clarity.",
+  },
+  {
+    id: "ledger",
+    label: "Ledger Mono",
+    description:
+      "Use a restrained monospaced stack for dense audit-style reading.",
   },
 ];
 
@@ -178,6 +200,7 @@ export function OptionsScreen() {
   const run = useGameStore((state) => state.run);
   const setTheme = useGameStore((state) => state.setTheme);
   const setWallpaper = useGameStore((state) => state.setWallpaper);
+  const setFontPreset = useGameStore((state) => state.setFontPreset);
   const setMusicEnabled = useGameStore((state) => state.setMusicEnabled);
   const setMusicVolume = useGameStore((state) => state.setMusicVolume);
   const setSoundEffectsEnabled = useGameStore(
@@ -226,7 +249,7 @@ export function OptionsScreen() {
           <SettingsSection
             eyebrow="General"
             title="Boardroom presentation"
-            description="Choose the main visual identity and how densely the interface should hold information."
+            description="Choose the main visual identity, font behavior, and how densely the interface should hold information."
           >
             <div className={styles.choiceGrid} aria-label="Theme selector">
               {themeOptions.map((option) => (
@@ -239,6 +262,27 @@ export function OptionsScreen() {
                   )}
                   aria-pressed={option.id === theme}
                   onClick={() => setTheme(option.id)}
+                >
+                  <span className={styles.choiceLabel}>{option.label}</span>
+                  <span className={styles.choiceDescription}>
+                    {option.description}
+                  </span>
+                </InteractionFeedbackButton>
+              ))}
+            </div>
+
+            <div className={styles.choiceGrid} aria-label="Font selector">
+              {fontOptions.map((option) => (
+                <InteractionFeedbackButton
+                  key={option.id}
+                  feedbackEnabled={interactionEffectsEnabled}
+                  className={clsx(
+                    styles.choiceCard,
+                    option.id === settings.fontPreset &&
+                      styles.choiceCardActive,
+                  )}
+                  aria-pressed={option.id === settings.fontPreset}
+                  onClick={() => setFontPreset(option.id)}
                 >
                   <span className={styles.choiceLabel}>{option.label}</span>
                   <span className={styles.choiceDescription}>
@@ -389,6 +433,16 @@ export function OptionsScreen() {
                 {
                   wallpaperOptions.find(
                     (option) => option.id === settings.wallpaper,
+                  )?.label
+                }
+              </dd>
+            </div>
+            <div>
+              <dt>Font</dt>
+              <dd>
+                {
+                  fontOptions.find(
+                    (option) => option.id === settings.fontPreset,
                   )?.label
                 }
               </dd>

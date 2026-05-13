@@ -1,7 +1,11 @@
 :root[data-theme="earth"] {
-  --font-display: "Space Grotesk", "IBM Plex Sans", "Avenir Next", sans-serif;
-  --font-body: "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;
-  --font-mono: "IBM Plex Mono", "SFMono-Regular", monospace;
+  --font-display: "Space Grotesk", "IBM Plex Sans", "Aptos Display",
+    "Segoe UI Variable Display", "Segoe UI", "Avenir Next", system-ui,
+    sans-serif;
+  --font-body: "IBM Plex Sans", "Aptos", "Segoe UI Variable Text", "Segoe UI",
+    "Avenir Next", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Cascadia Mono", "Cascadia Code",
+    "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 
   --canvas: oklch(0.18 0.02 145);
   --canvas-elevated: oklch(0.22 0.025 145);

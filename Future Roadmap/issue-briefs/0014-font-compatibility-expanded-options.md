@@ -1,7 +1,7 @@
 ---
 id: FR-0014
 title: Font compatibility and expanded options
-status: Candidate Brief
+status: In Progress
 category: Frontend / platform compatibility
 reward: Keeps the game's visual identity consistent across Windows 10, Windows 11, and modern macOS without harming performance.
 effort: M
@@ -11,12 +11,14 @@ core_system_risk: Low
 dependencies: [Font inventory, platform test access, current typography tokens]
 parallelism_class: Yellow
 priority: P1
-github_issue: null
+github_issue: https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/86
 owner: null
-last_decision: Keep in roadmap. Should include fallback stacks, option expansion, and platform checks before implementation.
+last_decision: Promoted to GitHub issue #86; implementation adds system fallback stacks and player-facing font presets.
 ---
 
 # Candidate Issue: Font Compatibility and Expanded Options
+
+GitHub issue: [#86](https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/86)
 
 ## Summary
 
@@ -119,8 +121,8 @@ Revert font stack and options changes to the previous typography tokens. Remove 
 
 ## Promotion Decision
 
-- [x] Keep in roadmap
+- [ ] Keep in roadmap
 - [ ] Needs clarification
 - [ ] Needs architecture review
-- [ ] Ready to promote to GitHub issue
+- [x] Ready to promote to GitHub issue
 - [ ] Reject / archive

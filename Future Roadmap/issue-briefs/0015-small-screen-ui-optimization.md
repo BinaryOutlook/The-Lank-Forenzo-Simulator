@@ -1,7 +1,7 @@
 ---
 id: FR-0015
 title: Small-screen UI optimization
-status: Needs Clarification
+status: In Progress
 category: Responsive UX
 reward: Reduces excessive tab-by-tab scrolling and makes dense screens usable on smaller displays.
 effort: L
@@ -11,12 +11,14 @@ core_system_risk: Low
 dependencies: [Responsive audit, screen inventory, decision between longer pages and reduced mobile density]
 parallelism_class: Orange
 priority: P1
-github_issue: null
+github_issue: https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/87
 owner: null
-last_decision: Clarify responsive strategy first. Candidate includes two possible approaches; needs product/design direction before promotion.
+last_decision: Promoted to GitHub issue #87; implementation uses a hybrid compact-header and density pass before deeper redesign.
 ---
 
 # Candidate Issue: Small-Screen UI Optimization
+
+GitHub issue: [#87](https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/87)
 
 ## Summary
 
@@ -121,7 +123,7 @@ Revert responsive layout changes screen by screen, preserving any audit notes th
 ## Promotion Decision
 
 - [ ] Keep in roadmap
-- [x] Needs clarification
+- [ ] Needs clarification
 - [ ] Needs architecture review
-- [ ] Ready to promote to GitHub issue
+- [x] Ready to promote to GitHub issue
 - [ ] Reject / archive
