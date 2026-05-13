@@ -349,7 +349,7 @@ This table is the active candidate queue. A row here does not mean the work is a
 
 Individual issue briefs are the source of truth. To change this table, edit the frontmatter in the relevant brief under [\`issue-briefs/\`](issue-briefs/) and run \`npm run roadmap:generate\`.
 
-Completed, rejected, or superseded records move to [\`archive/\`](archive/) after the post-merge or review audit. Keep this table focused on decisions still waiting in line.
+Completed, rejected, or superseded records move to [\`archive/\`](archive/). When a PR fully fixes a promoted roadmap issue, archive the completed brief and regenerate this table on that PR branch before merge so \`main\` lands without stale completed rows.
 
 ## Status Values
 
@@ -387,7 +387,8 @@ ${rows}
 - Use \`npm run roadmap:generate\` after changing issue brief frontmatter.
 - Use \`npm run roadmap:check\` before opening a PR.
 - PRs should include both issue brief metadata changes and the regenerated table when the table is committed.
-- Completed rows should move to [\`archive/\`](archive/) after issue -> PR -> merge to \`main\` -> post-merge audit, then this table should be regenerated.
+- Completed rows should move to [\`archive/\`](archive/) before merging the PR that fully closes the promoted issue, then this table should be regenerated and checked.
+- Post-merge audit should verify \`main\` has no stale completed rows in the active table.
 `;
 }
 
