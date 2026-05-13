@@ -28,11 +28,11 @@ afterEach(() => {
 describe("LandingScreen", () => {
   it("places decorative token-driven poster art above the operating doctrine", () => {
     const { getByTestId } = renderLandingScreen();
+    const posterArt = getByTestId("landing-poster-art");
 
-    expect(getByTestId("landing-poster-art")).toHaveAttribute(
-      "aria-hidden",
-      "true",
-    );
+    expect(posterArt).toHaveAttribute("aria-hidden", "true");
+    expect(posterArt.querySelector("svg")).not.toBeNull();
+    expect(posterArt.textContent).toBe("");
     expect(screen.getByText(/operating doctrine/i)).toBeInTheDocument();
     expect(
       screen.getByText(/separate your fortune from the airline's health/i),
