@@ -24,6 +24,7 @@ It does not replace:
 - `README.md` for repo overview and setup
 - `Future Roadmap/` for candidate work before GitHub issues
 - `docs/TECHNICAL_BRIEF.md` for deeper design and systems reasoning
+- `docs/TECH_STACK.md` for stack, commands, CI, content tooling, and repo structure
 - `PRDs/vX.Y/` for iteration-specific delivery packets
 
 Planning workflow note: candidate work is centralized in [`Future Roadmap/`](../Future%20Roadmap/). This PRD defines durable product direction; it does not turn ideas directly into active implementation tasks.
