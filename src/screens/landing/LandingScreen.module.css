@@ -97,36 +97,47 @@
   background: var(--landing-poster-background, var(--panel-strong));
 }
 
-.posterArt::before,
-.posterArt::after {
-  position: absolute;
-  inset: 0;
-  content: "";
+.posterArtSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-.posterArt::before {
-  z-index: 1;
-  background-image: url("/brand/lfs-halftone-poster.jpg");
-  background-position: center top;
-  background-size: cover;
-  filter: var(--landing-poster-image-filter, grayscale(1) contrast(1.1));
-  mix-blend-mode: var(--landing-poster-image-blend-mode, multiply);
-  opacity: var(--landing-poster-image-opacity, 0.68);
+.posterPrimaryDot {
+  fill: var(--landing-poster-dot-primary, var(--text));
 }
 
-.posterArt::after {
-  z-index: 2;
-  pointer-events: none;
-  background: var(
-    --landing-poster-color-wash,
-    linear-gradient(
-      180deg,
-      transparent,
-      color-mix(in oklab, var(--panel) 72%, transparent)
-    )
-  );
-  mix-blend-mode: var(--landing-poster-wash-blend-mode, normal);
-  opacity: var(--landing-poster-wash-opacity, 1);
+.posterSecondaryDot {
+  fill: var(--landing-poster-dot-secondary, var(--accent-strong));
+}
+
+.posterField {
+  opacity: 0.16;
+}
+
+.aircraftBody,
+.aircraftTail,
+.figureBust,
+.figureHead {
+  opacity: 0.76;
+}
+
+.aircraftWing,
+.aircraftStripe,
+.figureCollar,
+.figureTie,
+.figureHair,
+.figureProfile {
+  opacity: 0.9;
+}
+
+.aircraftMark {
+  font-family: var(--font-display);
+  font-size: 3.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  transform: rotate(8deg);
+  transform-origin: 330px 126px;
 }
 
 .pillars {
