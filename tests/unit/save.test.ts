@@ -38,6 +38,22 @@ afterEach(() => {
 });
 
 describe("save storage", () => {
+  it.each(["highwire", "civic-glass"] as const)(
+    "accepts the %s theme in persisted saves",
+    (theme) => {
+      const payload = migrateGameSavePayload(
+        {
+          theme,
+          settings: defaultGameSettings,
+          run: null,
+        },
+        GAME_SAVE_STORAGE_VERSION,
+      );
+
+      expect(payload.theme).toBe(theme);
+    },
+  );
+
   it("parses a valid current save payload", () => {
     const run = createInitialRunState();
     const snapshot = {

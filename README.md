@@ -22,7 +22,7 @@ Implemented in the current build:
 - personal wealth, legal heat, creditor patience, safety, market confidence, and workforce systems
 - shared metric-semantics rules so inverse-pressure indicators such as `legalHeat`, `publicAnger`, and `debt` read correctly
 - multiple endings, including merger, extraction, prison, and Bahamas escape
-- two first-class themes: `Earth` and `Armonk Blue`
+- four first-class themes: `Earth`, `Armonk Blue`, `Highwire`, and `Civic Glass`
 - explicit read, choose, and resolve round phases so the board packet, decision tray, and end-round confirmation have separate breathing room
 - an end-round review dialog that confirms complete selections and routes incomplete trays back to decision selection
 - responsive fitted run layouts for desktop landscape, tablet landscape, tablet portrait, and phone portrait browser play
@@ -161,8 +161,10 @@ The run experience is designed as a fitted app surface across desktop landscape,
 
 - `Earth`: dark, predatory, near-black surfaces with restrained green signal accents
 - `Armonk Blue`: bright, procedural, boardroom-clean surfaces with IBM-style blue authority
+- `Highwire`: dark graphite command surfaces with taut cyan signal accents
+- `Civic Glass`: bright civic-record surfaces with tempered teal control accents
 
-Theme references live in [`Themes/Earth.md`](Themes/Earth.md) and [`Themes/Armonk-Blue.md`](Themes/Armonk-Blue.md).
+Theme references live in [`Themes/Earth.md`](Themes/Earth.md), [`Themes/Armonk-Blue.md`](Themes/Armonk-Blue.md), [`Themes/Highwire.md`](Themes/Highwire.md), and [`Themes/Civic-Glass.md`](Themes/Civic-Glass.md).
 
 Typography uses system-safe fallback stacks for Windows 10, Windows 11, and modern macOS. The Options page exposes `Theme Default`, `System UI`, and `Ledger Mono` font presets without runtime web-font downloads.
 
