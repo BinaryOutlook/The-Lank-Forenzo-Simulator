@@ -26,7 +26,7 @@ afterEach(() => {
 });
 
 describe("LandingScreen", () => {
-  it("places the theme-filtered poster art above the operating doctrine", () => {
+  it("places decorative token-driven poster art above the operating doctrine", () => {
     const { getByTestId } = renderLandingScreen();
 
     expect(getByTestId("landing-poster-art")).toHaveAttribute(

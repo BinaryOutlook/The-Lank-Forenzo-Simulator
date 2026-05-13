@@ -37,18 +37,16 @@
     color-mix(in oklab, var(--panel-strong) 88%, var(--canvas)),
     color-mix(in oklab, var(--panel) 82%, var(--canvas))
   );
-  --landing-poster-image-filter: invert(1) sepia(1) saturate(1.25)
-    hue-rotate(132deg) brightness(0.9) contrast(1.12);
-  --landing-poster-image-blend-mode: screen;
-  --landing-poster-image-opacity: 0.6;
-  --landing-poster-color-wash: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--accent) 10%, transparent),
-    transparent 44%,
-    color-mix(in oklab, var(--canvas) 78%, transparent)
+  --landing-poster-dot-primary: color-mix(
+    in oklab,
+    var(--text) 78%,
+    var(--accent)
   );
-  --landing-poster-wash-blend-mode: normal;
-  --landing-poster-wash-opacity: 1;
+  --landing-poster-dot-secondary: color-mix(
+    in oklab,
+    var(--accent) 84%,
+    var(--text)
+  );
   --shadow-ambient: 0 18px 58px rgb(0 0 0 / 0.32);
   --backdrop:
     radial-gradient(

@@ -188,10 +188,10 @@ Typography uses system-safe fallback stacks for Windows 10, Windows 11, and
 modern macOS. The Options page exposes `Theme Default`, `System UI`, and
 `Ledger Mono` font presets without runtime web-font downloads.
 
-Landing poster art uses a single neutral LFS halftone asset in `public/brand/`
-and adapts it through `--landing-poster-*` theme tokens for filter, blend mode,
-opacity, surface, and color-wash behavior. Add new poster-like artwork to that
-token path before creating per-theme image exports.
+Landing poster art uses a lightweight two-tone dotted composition rather than a
+raster image export. Keep the treatment driven by `--landing-poster-*` theme
+tokens for its two display colors and surface so Earth, Armonk Blue, Highwire,
+and Civic Glass stay on the same path without per-theme image exports.
 
 ## Project Layout
 
