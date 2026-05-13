@@ -1,5 +1,7 @@
 @import "../earth/tokens.css";
 @import "../armonk-blue/tokens.css";
+@import "../highwire/tokens.css";
+@import "../civic-glass/tokens.css";
 
 :root {
   font-family: var(--font-body);

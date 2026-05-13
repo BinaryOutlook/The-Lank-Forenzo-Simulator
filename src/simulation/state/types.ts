@@ -18,7 +18,7 @@ import type {
 import type { NetworkState } from "../operations/networkState";
 import type { EventSchedulerState } from "../scheduler/eventScheduler";
 
-export type ThemeName = "earth" | "armonk-blue";
+export type ThemeName = "earth" | "armonk-blue" | "highwire" | "civic-glass";
 
 export type MetricKey = (typeof metricKeys)[number];
 

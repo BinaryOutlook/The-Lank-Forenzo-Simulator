@@ -31,7 +31,7 @@ afterEach(() => {
 });
 
 describe("OptionsScreen", () => {
-  it("organizes presentation controls into focused settings groups", () => {
+  it("organizes presentation controls and exposes every design theme choice", () => {
     renderOptionsScreen();
 
     expect(
@@ -57,7 +57,22 @@ describe("OptionsScreen", () => {
 
     expect(
       screen.getByRole("button", {
+        name: /earth/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
         name: /armonk blue/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: /highwire/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: /civic glass/i,
       }),
     ).toBeInTheDocument();
     expect(

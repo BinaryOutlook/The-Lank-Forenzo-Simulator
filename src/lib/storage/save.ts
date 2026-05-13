@@ -29,7 +29,7 @@ export const SAVE_MIGRATIONS: Record<number, (state: unknown) => unknown> = {
   4: (state) => state,
 };
 
-const themeSchema = z.enum(["earth", "armonk-blue"]);
+const themeSchema = z.enum(["earth", "armonk-blue", "highwire", "civic-glass"]);
 const endingIdSchema = z.enum([
   "prison",
   "forcedRemoval",

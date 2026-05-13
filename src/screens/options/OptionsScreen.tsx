@@ -54,6 +54,16 @@ const themeOptions: Array<ChoiceOption<ThemeName>> = [
     label: "Armonk Blue",
     description: "Bright boardroom polish with procedural blue authority.",
   },
+  {
+    id: "highwire",
+    label: "Highwire",
+    description: "Graphite command surfaces cut with cyan signal pressure.",
+  },
+  {
+    id: "civic-glass",
+    label: "Civic Glass",
+    description: "Bright civic records, tempered teal, and crisp glass borders.",
+  },
 ];
 
 const wallpaperOptions: Array<ChoiceOption<WallpaperPreset>> = [

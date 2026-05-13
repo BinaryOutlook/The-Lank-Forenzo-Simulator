@@ -1,0 +1,37 @@
+:root[data-theme="highwire"] {
+  --font-display: "Space Grotesk", "IBM Plex Sans", "Aptos Display",
+    "Segoe UI Variable Display", "Segoe UI", "Avenir Next", system-ui,
+    sans-serif;
+  --font-body: "IBM Plex Sans", "Aptos", "Segoe UI Variable Text", "Segoe UI",
+    "Avenir Next", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "Cascadia Mono", "Cascadia Code",
+    "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  --canvas: oklch(0.17 0.014 198);
+  --canvas-elevated: oklch(0.21 0.018 198);
+  --panel: oklch(0.235 0.022 198 / 0.9);
+  --panel-strong: oklch(0.275 0.026 198 / 0.96);
+  --text: oklch(0.95 0.012 190);
+  --text-muted: oklch(0.72 0.024 190);
+  --border: oklch(0.45 0.045 190 / 0.46);
+  --grid: oklch(0.36 0.035 190 / 0.22);
+  --accent: oklch(0.81 0.15 188);
+  --accent-soft: oklch(0.58 0.11 188 / 0.2);
+  --accent-strong: oklch(0.76 0.17 188);
+  --danger: oklch(0.68 0.21 26);
+  --danger-soft: oklch(0.43 0.1 26 / 0.2);
+  --success: oklch(0.76 0.15 150);
+  --success-soft: oklch(0.45 0.09 150 / 0.18);
+  --decision-preview-positive-bg: oklch(0.48 0.1 154 / 0.34);
+  --decision-preview-positive-border: oklch(0.78 0.14 154 / 0.44);
+  --decision-preview-positive-text: oklch(0.96 0.015 154);
+  --decision-preview-negative-bg: oklch(0.48 0.12 26 / 0.34);
+  --decision-preview-negative-border: oklch(0.76 0.16 26 / 0.45);
+  --decision-preview-negative-text: oklch(0.97 0.015 26);
+  --warning: oklch(0.83 0.14 92);
+  --shadow-ambient: 0 18px 58px rgb(0 0 0 / 0.32);
+  --backdrop:
+    radial-gradient(circle at top left, rgb(38 194 208 / 0.18), transparent 30%),
+    radial-gradient(circle at right center, rgb(213 236 97 / 0.12), transparent 34%),
+    linear-gradient(180deg, rgb(5 15 17 / 0.97), rgb(11 22 24 / 0.99));
+}
