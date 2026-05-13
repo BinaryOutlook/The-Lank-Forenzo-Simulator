@@ -1,9 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createInitialRunState } from "../../src/simulation/resolution/resolveRound.js";
 import {
+  createLocalSaveSlot,
+  parseGameSaveImport,
+  readLocalSaveSlots,
+  removeLocalSaveSlot,
   GAME_SAVE_STORAGE_VERSION,
   migrateGameSavePayload,
   readGameSaveStorageValue,
+  serializeGameSaveFile,
 } from "../../src/lib/storage/save.js";
 import { defaultGameSettings } from "../../src/simulation/state/settings.js";
 import { initialConsumableResources } from "../../src/simulation/systems/consumables.js";
@@ -196,5 +201,70 @@ describe("save storage", () => {
 
     expect(useGameStore.getState().theme).toBe("earth");
     expect(useGameStore.getState().run).toBeNull();
+  });
+
+  it("creates readable non-encrypted local save slots", () => {
+    const storage = createMockStorage();
+    const run = createInitialRunState();
+    const payload = {
+      theme: "highwire" as const,
+      settings: defaultGameSettings,
+      run,
+    };
+    const slot = createLocalSaveSlot(
+      payload,
+      "Quarter one",
+      storage,
+      new Date("2026-05-13T08:00:00.000Z"),
+    );
+
+    expect(slot?.label).toBe("Quarter one");
+    expect(readLocalSaveSlots(storage)).toEqual([
+      {
+        id: slot?.id,
+        label: "Quarter one",
+        savedAt: "2026-05-13T08:00:00.000Z",
+        storageVersion: GAME_SAVE_STORAGE_VERSION,
+        payload,
+      },
+    ]);
+
+    expect(removeLocalSaveSlot(slot!.id, storage)).toBe(true);
+    expect(readLocalSaveSlots(storage)).toEqual([]);
+  });
+
+  it("imports manager files and rejects unsupported future saves", () => {
+    const payload = {
+      theme: "civic-glass" as const,
+      settings: defaultGameSettings,
+      run: createInitialRunState(),
+    };
+    const imported = parseGameSaveImport(
+      serializeGameSaveFile(payload, "Board file"),
+    );
+
+    expect(imported).toEqual({
+      ok: true,
+      label: "Board file",
+      payload,
+      source: "manager-file",
+      storageVersion: GAME_SAVE_STORAGE_VERSION,
+    });
+
+    expect(
+      parseGameSaveImport(
+        JSON.stringify({
+          format: "the-lank-forenzo-simulator.save",
+          fileVersion: 999,
+          storageVersion: GAME_SAVE_STORAGE_VERSION,
+          label: "Future format",
+          payload,
+        }),
+      ),
+    ).toEqual({
+      ok: false,
+      error:
+        "This save file uses file format 999, but this build only supports 1.",
+    });
   });
 });

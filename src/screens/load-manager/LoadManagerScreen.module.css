@@ -1,0 +1,282 @@
+.page {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(18rem, 0.7fr);
+  gap: 1rem;
+  align-items: end;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--panel-strong), var(--panel));
+  box-shadow: var(--shadow-ambient);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--accent-strong);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0.35rem 0 0;
+  max-width: 12ch;
+  font-family: var(--font-display);
+  font-size: clamp(2.35rem, 5vw, 4.85rem);
+  line-height: 0.94;
+}
+
+.summary,
+.panelDescription,
+.slotCopy p,
+.emptyState p,
+.fileDrop small {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.summary {
+  max-width: 36rem;
+}
+
+.message {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.message[data-message-tone="success"] {
+  border-color: color-mix(in oklab, var(--success) 48%, var(--border));
+  background: color-mix(in oklab, var(--success-soft) 58%, var(--panel));
+}
+
+.message[data-message-tone="error"] {
+  border-color: color-mix(in oklab, var(--danger) 58%, var(--border));
+  background: color-mix(in oklab, var(--danger-soft) 44%, var(--panel));
+}
+
+.managerGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.5fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.panel {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  padding: clamp(1rem, 1.6vw, 1.35rem);
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.panel:first-child {
+  grid-row: span 2;
+}
+
+.panelHeader {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.panelTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1.7vw, 1.75rem);
+  line-height: 1.08;
+}
+
+.slotList {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.slotItem,
+.emptyState {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--panel-strong) 64%, transparent);
+}
+
+.slotCopy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.slotCopy h3,
+.emptyState h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.slotCopy span {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.metaRow span {
+  display: inline-flex;
+  min-height: 1.8rem;
+  align-items: center;
+  padding: 0 0.55rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 34%, var(--border));
+  color: var(--accent-strong);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.slotActions,
+.saveActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.primaryAction,
+.secondaryAction {
+  min-height: 2.9rem;
+  padding: 0 1rem;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.primaryAction {
+  border-color: color-mix(in oklab, var(--accent) 55%, var(--border));
+  background: var(--accent);
+  color: var(--canvas);
+}
+
+.secondaryAction {
+  background: color-mix(in oklab, var(--panel-strong) 86%, transparent);
+  color: var(--text-muted);
+}
+
+.primaryAction:focus-visible,
+.secondaryAction:focus-visible,
+.fileDrop:focus-within,
+.labelField input:focus-visible {
+  outline: none;
+  border-color: color-mix(in oklab, var(--accent) 58%, var(--border));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+}
+
+.fileDrop,
+.labelField {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.fileDrop {
+  min-height: 10rem;
+  align-content: center;
+  padding: 1rem;
+  border: 1px dashed color-mix(in oklab, var(--accent) 42%, var(--border));
+  background: color-mix(in oklab, var(--panel-strong) 66%, transparent);
+  cursor: pointer;
+}
+
+.fileDrop span,
+.labelField span {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.fileDrop input {
+  width: 100%;
+  color: var(--text-muted);
+}
+
+.fileDrop input::file-selector-button {
+  min-height: 2.2rem;
+  margin-right: 0.65rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 55%, var(--border));
+  background: var(--accent);
+  color: var(--canvas);
+  font-weight: 700;
+}
+
+.currentSave {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.currentSave div {
+  display: grid;
+  gap: 0.25rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--border);
+}
+
+.currentSave span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.currentSave strong {
+  line-height: 1.35;
+}
+
+.labelField input {
+  min-height: 2.8rem;
+  padding: 0 0.85rem;
+  border: 1px solid var(--border);
+  background: color-mix(in oklab, var(--panel-strong) 72%, transparent);
+  color: var(--text);
+}
+
+@media (max-width: 1020px) {
+  .managerGrid,
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .panel:first-child {
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .title {
+    font-size: clamp(2.2rem, 12vw, 3.35rem);
+    max-width: 100%;
+  }
+
+  .slotActions,
+  .saveActions {
+    display: grid;
+  }
+
+  .primaryAction,
+  .secondaryAction {
+    width: 100%;
+  }
+}

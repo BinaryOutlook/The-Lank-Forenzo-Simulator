@@ -1,10 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import {
+  coerceGameSavePayload,
   createGameSaveStorage,
+  GAME_SAVE_STORAGE_KEY,
   GAME_SAVE_STORAGE_VERSION,
   migrateGameSavePayload,
 } from "../../lib/storage/save.js";
+import type { GameSavePayload } from "../../lib/storage/save.js";
 import { simulationRuntime } from "../runtime.js";
 import { defaultGameSettings, normalizeGameSettings } from "./settings.js";
 import type {
@@ -37,14 +40,13 @@ interface GameStoreState {
   setUiDensity: (density: UiDensity) => void;
   resetSettings: () => void;
   startNewRun: () => void;
+  loadSavePayload: (payload: GameSavePayload) => void;
   toggleDecision: (decisionId: string) => void;
   endTurn: () => void;
   clearRun: () => void;
   availableDecisions: () => DecisionDefinition[];
   currentEnding: () => EndingDefinition | null;
 }
-
-const storageKey = "the-lank-forenzo-simulator/v1";
 
 export const useGameStore = create<GameStoreState>()(
   persist(
@@ -129,6 +131,7 @@ export const useGameStore = create<GameStoreState>()(
           settings: defaultGameSettings,
         }),
       startNewRun: () => set({ run: simulationRuntime.createInitialRun() }),
+      loadSavePayload: (payload) => set(coerceGameSavePayload(payload)),
       toggleDecision: (decisionId) =>
         set((state) => {
           if (!state.run) {
@@ -178,7 +181,7 @@ export const useGameStore = create<GameStoreState>()(
       },
     }),
     {
-      name: storageKey,
+      name: GAME_SAVE_STORAGE_KEY,
       storage: createGameSaveStorage(() => localStorage),
       version: GAME_SAVE_STORAGE_VERSION,
       migrate: migrateGameSavePayload,

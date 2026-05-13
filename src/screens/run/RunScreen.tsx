@@ -54,6 +54,7 @@ interface RoundPhaseHeaderProps {
   selectedDecisionCount: number;
   selectionValidation: RoundSelectionValidation;
   onActivatePhase: (phase: RoundPhase) => void;
+  onOpenLoadManager: () => void;
 }
 
 interface PhaseActionBarProps {
@@ -178,6 +179,7 @@ function RoundPhaseHeader({
   selectedDecisionCount,
   selectionValidation,
   onActivatePhase,
+  onOpenLoadManager,
 }: RoundPhaseHeaderProps) {
   return (
     <header className={styles.flowHeader}>
@@ -210,6 +212,13 @@ function RoundPhaseHeader({
         <span className={styles.statusGuidance}>
           {selectionValidation.guidance}
         </span>
+        <InteractionFeedbackButton
+          feedbackEnabled={interactionEffectsEnabled}
+          className={styles.loadManagerAction}
+          onClick={onOpenLoadManager}
+        >
+          Load manager
+        </InteractionFeedbackButton>
       </aside>
     </header>
   );
@@ -469,6 +478,7 @@ export function RunScreen() {
         selectedDecisionCount={run.selectedDecisionIds.length}
         selectionValidation={selectionValidation}
         onActivatePhase={activatePhase}
+        onOpenLoadManager={() => navigate("/load")}
       />
 
       <div className={styles.phaseBody}>

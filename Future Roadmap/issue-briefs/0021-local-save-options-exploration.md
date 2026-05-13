@@ -1,7 +1,7 @@
 ---
 id: FR-0021
 title: Local save options exploration
-status: Needs Architecture Review
+status: In Progress
 category: Persistence / player experience
 reward: Lets players resume sessions while creating a path toward future save integrity protections.
 effort: L
@@ -11,9 +11,9 @@ core_system_risk: High
 dependencies: [State serialization inventory, save versioning decision, storage target decision, tamper policy]
 parallelism_class: Orange
 priority: P1
-github_issue: null
-owner: null
-last_decision: Start with an unencrypted local-save exploration and versioned schema. Treat encrypted or tamper-resistant saves as a later follow-up.
+github_issue: https://github.com/BinaryOutlook/The-Lank-Forenzo-Simulator/issues/106
+owner: tlfs-orchestrator
+last_decision: Promoted to GitHub issue #106 and implemented as a non-encrypted Load Manager. Encrypted or tamper-resistant saves are tracked separately in FR-0024.
 ---
 
 # Candidate Issue: Local Save Options Exploration
@@ -127,6 +127,6 @@ Keep save/load code behind a narrow entry point. If the feature misfires, remove
 
 - [ ] Keep in roadmap
 - [ ] Needs clarification
-- [x] Needs architecture review
-- [ ] Ready to promote to GitHub issue
+- [ ] Needs architecture review
+- [x] Ready to promote to GitHub issue
 - [ ] Reject / archive

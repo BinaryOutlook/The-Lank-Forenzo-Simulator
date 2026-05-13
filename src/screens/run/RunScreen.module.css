@@ -98,7 +98,8 @@
 .phaseTab:focus-visible,
 .phaseTabActive:focus-visible,
 .primaryAction:focus-visible,
-.secondaryAction:focus-visible {
+.secondaryAction:focus-visible,
+.loadManagerAction:focus-visible {
   outline: none;
   border-color: color-mix(in oklab, var(--accent) 60%, var(--border));
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
@@ -154,6 +155,20 @@
   font-family: var(--font-display);
   font-size: 1.05rem;
   line-height: 1.05;
+}
+
+.loadManagerAction {
+  width: fit-content;
+  min-height: 2.2rem;
+  padding: 0 0.72rem;
+  border: 1px solid color-mix(in oklab, var(--accent) 42%, var(--border));
+  background: color-mix(in oklab, var(--panel-strong) 84%, transparent);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .phaseBody,
@@ -606,6 +621,11 @@
   .layout[data-run-layout-mode="portrait-panels"] .statusLabel {
     font-size: 0.92rem;
     text-align: right;
+  }
+
+  .layout[data-run-layout-mode="portrait-panels"] .loadManagerAction {
+    grid-column: 1 / -1;
+    width: 100%;
   }
 
   .phaseLabel {
